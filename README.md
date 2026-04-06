@@ -115,4 +115,4 @@ This project is part of CIT 320 - Software Development Project-II at Patuakhali 
 ---
 
 **Submitted by:** Rajesh Biswas (ID: 2002060)  
-**Semester:** 6 (Level-3, Semester-11)
+**Semester:** 6 (Level-3, Semester-II)
