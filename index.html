@@ -3,63 +3,134 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="PaperHub - Secure Digital Document and File Management Platform"
-    />
-    <title>PaperHub | Home</title>
+    <meta name="description" content="PaperHub - Digital Document and File Management System" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <title>PaperHub | Landing</title>
   </head>
   <body>
-    <header>
-      <h1>PaperHub</h1>
-      <p>Secure Digital Document and File Management Platform</p>
-      <nav aria-label="Main navigation">
-        <a href="index.html">Home</a> | <a href="pages/about.html">About</a> |
-        <a href="pages/features.html">Features</a> | <a href="pages/workflow.html">Workflow</a> |
-        <a href="pages/contact.html">Contact</a>
-      </nav>
-      <hr />
-    </header>
+    <input class="theme-switch" type="checkbox" id="theme-switch" />
 
-    <main>
-      <section>
-        <h2>Welcome to PaperHub</h2>
-        <p>
-          PaperHub is a modern web platform designed to help institutions manage admissions,
-          document verification, approvals, and payments in one secure digital system.
-        </p>
-        <p>
-          It replaces manual paperwork with a transparent and traceable process where each action is
-          recorded and easy to monitor.
-        </p>
-      </section>
+    <div class="ph-app ph-landing">
+      <header class="ph-container">
+        <nav class="ph-landing__nav" aria-label="Main navigation">
+          <a class="ph-brand" href="index.html">
+            <span class="ph-brand__mark">PH</span>
+            <span>PaperHub</span>
+          </a>
 
-      <section>
-        <h2>Core Benefits</h2>
-        <ul>
-          <li>Centralized document submission and storage</li>
-          <li>Multi-level review process for better control</li>
-          <li>Role-based access for admins, officers, and applicants</li>
-          <li>Payment activation only after pre-approval</li>
-          <li>Audit-friendly workflow with full activity history</li>
-        </ul>
-      </section>
+          <div class="ph-landing__links">
+            <a href="#features">Features</a>
+            <a href="#workflows">Workflows</a>
+            <a href="pages/dashboard.html">Dashboard</a>
+            <a href="pages/documents.html">Documents</a>
+            <a href="pages/login.html">Login</a>
+            <label class="ph-theme-btn" for="theme-switch">
+              <span class="ph-theme-btn__light">Dark</span>
+              <span class="ph-theme-btn__dark">Light</span>
+            </label>
+          </div>
+        </nav>
 
-      <section>
-        <h2>Quick Access</h2>
-        <p>Explore key platform sections:</p>
-        <ul>
-          <li><a href="pages/about.html">Company and Platform Vision</a></li>
-          <li><a href="pages/features.html">Core Capabilities</a></li>
-          <li><a href="pages/workflow.html">Operational Lifecycle</a></li>
-          <li><a href="pages/contact.html">Sales and Support Contacts</a></li>
-        </ul>
-      </section>
-    </main>
+        <section class="ph-card ph-landing__hero">
+          <div>
+            <span class="ph-badge ph-badge--review">Digital File Operations Suite</span>
+            <h1>Manage documents with speed, control, and complete visibility.</h1>
+            <p>
+              PaperHub centralizes document intake, review, approval, and audit trails in one secure
+              platform designed for modern teams.
+            </p>
+            <div class="ph-landing__links">
+              <a class="ph-btn ph-btn--primary" href="pages/login.html">Start Free</a>
+              <a class="ph-btn ph-btn--outline" href="pages/dashboard.html">Open Live Dashboard</a>
+            </div>
 
-    <footer>
-      <hr />
-      <p>&copy; 2026 PaperHub. All rights reserved.</p>
-    </footer>
+            <div class="ph-grid ph-grid--3" style="margin-top: 1rem">
+              <article class="ph-stat ph-card">
+                <h3 class="ph-stat__value">98.7%</h3>
+                <p class="ph-stat__label">Process reliability</p>
+              </article>
+              <article class="ph-stat ph-card">
+                <h3 class="ph-stat__value">3.4x</h3>
+                <p class="ph-stat__label">Faster review cycles</p>
+              </article>
+              <article class="ph-stat ph-card">
+                <h3 class="ph-stat__value">100%</h3>
+                <p class="ph-stat__label">Action traceability</p>
+              </article>
+            </div>
+          </div>
+
+          <!-- Right-side product summary panel -->
+          <aside class="ph-hero-panel" aria-label="Product highlights">
+            <h3>Why teams choose PaperHub</h3>
+            <ul class="ph-list">
+              <li>Role-based visibility for admins, reviewers, and users</li>
+              <li>Version history with evidence-linked activity logs</li>
+              <li>Status-driven lifecycle from intake to archive</li>
+              <li>Built-in interface for secure upload and review</li>
+            </ul>
+          </aside>
+        </section>
+      </header>
+
+      <main class="ph-container ph-landing__section">
+        <section
+          id="features"
+          class="ph-grid ph-grid--3 ph-feature-grid"
+          aria-label="Feature cards"
+        >
+          <article class="ph-card ph-section ph-feature-card">
+            <p class="ph-badge ph-badge--active">Upload</p>
+            <h2 class="ph-section__title">Fast document intake</h2>
+            <p class="ph-muted">
+              Drag-and-drop style upload interface with clean validation states.
+            </p>
+          </article>
+          <article class="ph-card ph-section ph-feature-card">
+            <p class="ph-badge ph-badge--review">Review</p>
+            <h2 class="ph-section__title">Review and audit timeline</h2>
+            <p class="ph-muted">Track each action with timestamped activity and version logs.</p>
+          </article>
+          <article class="ph-card ph-section ph-feature-card">
+            <p class="ph-badge ph-badge--archived">Control</p>
+            <h2 class="ph-section__title">Role-based access controls</h2>
+            <p class="ph-muted">Separate admin and user views to protect sensitive operations.</p>
+          </article>
+        </section>
+
+        <section
+          id="workflows"
+          class="ph-grid ph-grid--2"
+          aria-label="Use case highlights"
+          style="margin-top: 1rem"
+        >
+          <article class="ph-card ph-section">
+            <h2 class="ph-section__title">Document lifecycle automation</h2>
+            <ul class="ph-list">
+              <li>Intake validation with required metadata checks</li>
+              <li>Stage transitions controlled by policy and role</li>
+              <li>Archive-ready history for every document version</li>
+            </ul>
+          </article>
+          <article class="ph-card ph-section">
+            <h2 class="ph-section__title">Team collaboration without chaos</h2>
+            <ul class="ph-list">
+              <li>Reviewer assignment and queue-based work views</li>
+              <li>Decision notes connected to each version entry</li>
+              <li>Audit-friendly timeline for compliance teams</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="ph-card ph-landing__cta">
+          <h2 class="ph-section__title">Ready to modernize your document operations?</h2>
+          <p class="ph-muted">
+            Launch your workflow with secure role views, structured review states, and complete
+            activity traceability.
+          </p>
+          <a class="ph-btn ph-btn--primary" href="pages/documents.html">Open Document Management</a>
+        </section>
+      </main>
+    </div>
   </body>
 </html>

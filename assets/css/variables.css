@@ -1,0 +1,42 @@
+:root {
+  --ph-primary: #00bfa6;
+  --ph-primary-strong: #00a38e;
+  --ph-secondary: #00aeef;
+  --ph-secondary-strong: #008fc6;
+  --ph-accent: #dff8f4;
+  --ph-bg: #f5f5f5;
+  --ph-bg-gradient:
+    radial-gradient(circle at 8% -10%, rgba(0, 191, 166, 0.2), transparent 30%),
+    radial-gradient(circle at 92% -5%, rgba(0, 174, 239, 0.18), transparent 32%), #f5f5f5;
+  --ph-surface: #ffffff;
+  --ph-surface-soft: #f7fbfd;
+  --ph-text: #142534;
+  --ph-text-muted: #617384;
+  --ph-border: #d8e3ea;
+  --ph-shadow: 0 14px 32px rgba(17, 39, 58, 0.09);
+  --ph-shadow-hover: 0 18px 38px rgba(17, 39, 58, 0.16);
+  --ph-radius-sm: 8px;
+  --ph-radius-md: 10px;
+  --ph-radius-lg: 12px;
+  --ph-radius-xl: 16px;
+  --ph-space-1: 0.5rem;
+  --ph-space-2: 0.75rem;
+  --ph-space-3: 1rem;
+  --ph-space-4: 1.5rem;
+  --ph-space-5: 2rem;
+  --ph-space-6: 2.5rem;
+}
+
+.theme-switch:checked ~ .ph-app {
+  --ph-bg: #0f1a22;
+  --ph-bg-gradient:
+    radial-gradient(circle at 8% -10%, rgba(0, 191, 166, 0.18), transparent 35%),
+    radial-gradient(circle at 92% -5%, rgba(0, 174, 239, 0.16), transparent 32%), #0f1a22;
+  --ph-surface: #162630;
+  --ph-surface-soft: #1c303c;
+  --ph-text: #e6f1f8;
+  --ph-text-muted: #9bb0c1;
+  --ph-border: #29404f;
+  --ph-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  --ph-shadow-hover: 0 16px 32px rgba(0, 0, 0, 0.4);
+}

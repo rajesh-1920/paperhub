@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="PaperHub document management" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <title>PaperHub | Document Management</title>
+  </head>
+  <body>
+    <input class="theme-switch" type="checkbox" id="theme-switch" />
+    <input class="ph-nav-toggle" type="checkbox" id="nav-toggle" />
+
+    <div class="ph-app">
+      <div class="ph-shell">
+        <aside class="ph-sidebar">
+          <a class="ph-brand" href="../index.html">
+            <span class="ph-brand__mark">PH</span>
+            <span class="ph-sidebar__text">PaperHub</span>
+          </a>
+
+          <div class="ph-sidebar__group">
+            <h4 class="ph-sidebar__title">Workspace</h4>
+            <nav class="ph-sidebar__nav">
+              <a href="dashboard.html"><span class="ph-sidebar__text">Dashboard</span></a>
+              <a class="ph-is-active" href="documents.html"
+                ><span class="ph-sidebar__text">Documents</span></a
+              >
+              <a href="profile.html"><span class="ph-sidebar__text">Profile</span></a>
+              <a href="login.html"><span class="ph-sidebar__text">Login</span></a>
+            </nav>
+          </div>
+        </aside>
+
+        <main class="ph-main">
+          <section class="ph-page-head" aria-label="Documents header">
+            <div class="ph-crumbs">
+              <a href="../index.html">Home</a>
+              <span>/</span>
+              <a href="dashboard.html">Dashboard</a>
+              <span>/</span>
+              <span>Documents</span>
+            </div>
+            <div class="ph-page-head__row">
+              <div>
+                <h1>Document Management</h1>
+                <p>Manage uploads, versions, statuses, and approval-ready records.</p>
+              </div>
+              <a class="ph-btn ph-btn--primary" href="#upload-modal">Upload New</a>
+            </div>
+            <div class="ph-chip-row">
+              <span class="ph-chip ph-chip--active"
+                ><span class="ph-chip__dot"></span>All Files</span
+              >
+              <span class="ph-chip"><span class="ph-chip__dot"></span>Active</span>
+              <span class="ph-chip"><span class="ph-chip__dot"></span>Review</span>
+              <span class="ph-chip"><span class="ph-chip__dot"></span>Archived</span>
+            </div>
+          </section>
+
+          <header class="ph-topbar ph-card">
+            <div class="ph-topbar__left">
+              <label class="ph-btn ph-btn--outline" for="nav-toggle">Menu</label>
+              <input class="ph-search" type="search" placeholder="Search by filename or tag" />
+            </div>
+            <div class="ph-topbar__right">
+              <span class="ph-role-pill">User View</span>
+              <label class="ph-theme-btn" for="theme-switch">
+                <span class="ph-theme-btn__light">Dark</span>
+                <span class="ph-theme-btn__dark">Light</span>
+              </label>
+              <span class="ph-avatar">RB</span>
+            </div>
+          </header>
+
+          <section class="ph-card ph-section">
+            <div class="ph-section__head">
+              <h2 class="ph-section__title">Document Management</h2>
+              <a class="ph-btn ph-btn--primary" href="#upload-modal">Upload File</a>
+            </div>
+
+            <div class="ph-grid ph-grid--3" style="margin-bottom: 1rem">
+              <article class="ph-stat ph-card">
+                <h3 class="ph-stat__value">824</h3>
+                <p class="ph-stat__label">Active documents</p>
+              </article>
+              <article class="ph-stat ph-card">
+                <h3 class="ph-stat__value">57</h3>
+                <p class="ph-stat__label">Under review</p>
+              </article>
+              <article class="ph-stat ph-card">
+                <h3 class="ph-stat__value">143</h3>
+                <p class="ph-stat__label">Archived records</p>
+              </article>
+            </div>
+
+            <div class="ph-table-wrap">
+              <table class="ph-table">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Version</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Admission_Form_2026.pdf</td>
+                    <td>Apr 07, 2026</td>
+                    <td><span class="ph-badge ph-badge--active">Active</span></td>
+                    <td>v5</td>
+                    <td><a href="#">Open</a></td>
+                  </tr>
+                  <tr>
+                    <td>KYC_Documents.zip</td>
+                    <td>Apr 07, 2026</td>
+                    <td><span class="ph-badge ph-badge--review">Review</span></td>
+                    <td>v3</td>
+                    <td><a href="#">Review</a></td>
+                  </tr>
+                  <tr>
+                    <td>Policy_Archive_2025.docx</td>
+                    <td>Apr 05, 2026</td>
+                    <td><span class="ph-badge ph-badge--archived">Archived</span></td>
+                    <td>v12</td>
+                    <td><a href="#">Restore</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="ph-grid ph-grid--2" style="margin-top: 1rem">
+            <article class="ph-card ph-section">
+              <h2 class="ph-section__title">Version History</h2>
+              <ul class="ph-list">
+                <li><strong>v5:</strong> Added corrected signature block</li>
+                <li><strong>v4:</strong> Updated applicant metadata</li>
+                <li><strong>v3:</strong> Reviewer comments attached</li>
+                <li><strong>v2:</strong> Initial verification notes</li>
+              </ul>
+            </article>
+
+            <article class="ph-card ph-section">
+              <h2 class="ph-section__title">Audit Log</h2>
+              <ul class="ph-list">
+                <li>10:14 AM - File uploaded by Rajesh Biswas</li>
+                <li>10:24 AM - Reviewer assigned to case PH-1221</li>
+                <li>10:37 AM - Status changed to In Review</li>
+                <li>10:52 AM - Version v5 published</li>
+              </ul>
+            </article>
+          </section>
+
+          <section class="ph-card ph-section" style="margin-top: 1rem">
+            <h2 class="ph-section__title">Role-based indicators</h2>
+            <div class="ph-landing__links">
+              <span class="ph-badge ph-badge--admin">Admin</span>
+              <span class="ph-badge ph-badge--user">User</span>
+              <span class="ph-badge ph-badge--review">Reviewer</span>
+              <span class="ph-badge ph-badge--archived">Archive Manager</span>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- Upload modal UI only -->
+    <div class="ph-modal" id="upload-modal" aria-label="Upload modal">
+      <section class="ph-modal__content">
+        <h2 class="ph-section__title">Upload Document</h2>
+        <p class="ph-muted">Select a file and add details before submitting to the queue.</p>
+
+        <form class="ph-form" action="#" method="post">
+          <div>
+            <label for="file-name">Document Name</label>
+            <input id="file-name" type="text" placeholder="Enter display name" />
+          </div>
+          <div>
+            <label for="doc-type">Document Type</label>
+            <select id="doc-type">
+              <option>Admission</option>
+              <option>KYC</option>
+              <option>Financial</option>
+              <option>Policy</option>
+            </select>
+          </div>
+          <div class="ph-upload-zone">Drop files here or click to browse (UI only)</div>
+
+          <div class="ph-form__row" style="margin-top: 1rem">
+            <a class="ph-btn ph-btn--outline" href="documents.html">Cancel</a>
+            <button class="ph-btn ph-btn--primary" type="submit">Upload</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </body>
+</html>

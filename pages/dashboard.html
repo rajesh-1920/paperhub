@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="PaperHub dashboard" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <title>PaperHub | Dashboard</title>
+  </head>
+  <body>
+    <input class="theme-switch" type="checkbox" id="theme-switch" />
+    <input class="ph-nav-toggle" type="checkbox" id="nav-toggle" />
+
+    <div class="ph-app">
+      <div class="ph-shell">
+        <aside class="ph-sidebar">
+          <a class="ph-brand" href="../index.html">
+            <span class="ph-brand__mark">PH</span>
+            <span class="ph-sidebar__text">PaperHub</span>
+          </a>
+
+          <div class="ph-sidebar__group">
+            <h4 class="ph-sidebar__title">Workspace</h4>
+            <nav class="ph-sidebar__nav">
+              <a class="ph-is-active" href="dashboard.html"
+                ><span class="ph-sidebar__text">Dashboard</span></a
+              >
+              <a href="documents.html"><span class="ph-sidebar__text">Documents</span></a>
+              <a href="profile.html"><span class="ph-sidebar__text">Profile</span></a>
+              <a href="login.html"><span class="ph-sidebar__text">Login</span></a>
+            </nav>
+          </div>
+        </aside>
+
+        <main class="ph-main">
+          <section class="ph-page-head" aria-label="Dashboard header">
+            <div class="ph-crumbs">
+              <a href="../index.html">Home</a>
+              <span>/</span>
+              <span>Dashboard</span>
+            </div>
+            <div class="ph-page-head__row">
+              <div>
+                <h1>Operations Dashboard</h1>
+                <p>Monitor case flow, review backlog, and recent document actions.</p>
+              </div>
+              <a class="ph-btn ph-btn--primary" href="documents.html">New Upload</a>
+            </div>
+            <div class="ph-chip-row">
+              <span class="ph-chip ph-chip--active"
+                ><span class="ph-chip__dot"></span>Live View</span
+              >
+              <span class="ph-chip"><span class="ph-chip__dot"></span>Verification</span>
+              <span class="ph-chip"><span class="ph-chip__dot"></span>Approval</span>
+              <span class="ph-chip"><span class="ph-chip__dot"></span>Audit</span>
+            </div>
+          </section>
+
+          <header class="ph-topbar ph-card">
+            <div class="ph-topbar__left">
+              <label class="ph-btn ph-btn--outline" for="nav-toggle">Menu</label>
+              <input
+                class="ph-search"
+                type="search"
+                placeholder="Search documents, users, case IDs"
+              />
+            </div>
+            <div class="ph-topbar__right">
+              <span class="ph-role-pill">Admin View</span>
+              <label class="ph-theme-btn" for="theme-switch">
+                <span class="ph-theme-btn__light">Dark</span>
+                <span class="ph-theme-btn__dark">Light</span>
+              </label>
+              <span class="ph-avatar">AR</span>
+            </div>
+          </header>
+
+          <!-- Dashboard metrics -->
+          <section class="ph-grid ph-grid--3" aria-label="Dashboard metrics">
+            <article class="ph-card ph-stat">
+              <h3 class="ph-stat__value">1,284</h3>
+              <p class="ph-stat__label">Total documents</p>
+            </article>
+            <article class="ph-card ph-stat">
+              <h3 class="ph-stat__value">147</h3>
+              <p class="ph-stat__label">Pending review</p>
+            </article>
+            <article class="ph-card ph-stat">
+              <h3 class="ph-stat__value">98.4%</h3>
+              <p class="ph-stat__label">Compliance score</p>
+            </article>
+          </section>
+
+          <section
+            class="ph-grid ph-grid--2"
+            aria-label="Dashboard details"
+            style="margin-top: 1rem"
+          >
+            <article class="ph-card ph-section">
+              <div class="ph-section__head">
+                <h2 class="ph-section__title">Recent documents</h2>
+                <a class="ph-btn ph-btn--outline" href="documents.html">Open documents</a>
+              </div>
+              <div class="ph-table-wrap">
+                <table class="ph-table">
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Enrollment_2026.pdf</td>
+                      <td>Apr 07, 2026</td>
+                      <td><span class="ph-badge ph-badge--active">Active</span></td>
+                      <td><a href="#">View</a></td>
+                    </tr>
+                    <tr>
+                      <td>Identity_KYC.zip</td>
+                      <td>Apr 07, 2026</td>
+                      <td><span class="ph-badge ph-badge--review">In Review</span></td>
+                      <td><a href="#">Review</a></td>
+                    </tr>
+                    <tr>
+                      <td>Financial_Audit_2025.xlsx</td>
+                      <td>Apr 06, 2026</td>
+                      <td><span class="ph-badge ph-badge--archived">Archived</span></td>
+                      <td><a href="#">Restore</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="ph-kpi">
+                <strong>27 min</strong>
+                <p class="ph-muted">Average time from upload to first reviewer action</p>
+              </div>
+            </article>
+
+            <article class="ph-card ph-section">
+              <div class="ph-section__head">
+                <h2 class="ph-section__title">Audit activity</h2>
+              </div>
+              <ul class="ph-list">
+                <li>Admin approved document PH-1172 at 10:42 AM</li>
+                <li>User uploaded Academic_Records.pdf at 10:31 AM</li>
+                <li>Version 4 published for Policy_Draft.docx at 09:50 AM</li>
+                <li>Archive action completed by reviewer at 09:15 AM</li>
+              </ul>
+            </article>
+          </section>
+
+          <section
+            class="ph-card ph-section"
+            aria-label="Operational summary"
+            style="margin-top: 1rem"
+          >
+            <div class="ph-section__head">
+              <h2 class="ph-section__title">Operational summary</h2>
+              <span class="ph-badge ph-badge--security">Live</span>
+            </div>
+            <div class="ph-grid ph-grid--3">
+              <article class="ph-list">
+                <li><strong>Verification Queue:</strong> 62 active items</li>
+              </article>
+              <article class="ph-list">
+                <li><strong>Approval Queue:</strong> 21 awaiting decisions</li>
+              </article>
+              <article class="ph-list">
+                <li><strong>Escalations:</strong> 4 items need policy review</li>
+              </article>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
