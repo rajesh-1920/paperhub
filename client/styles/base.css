@@ -170,3 +170,21 @@ a:hover {
   opacity: 0;
   pointer-events: none;
 }
+
+@media (max-width: 640px) {
+  h1 {
+    font-size: clamp(1.5rem, 6vw, 1.9rem);
+  }
+
+  h2 {
+    font-size: clamp(1.3rem, 5.2vw, 1.55rem);
+  }
+
+  h3 {
+    font-size: clamp(1.12rem, 4.6vw, 1.3rem);
+  }
+
+  .page-width {
+    width: min(var(--container-width), calc(100% - 1.2rem));
+  }
+}

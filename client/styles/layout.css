@@ -164,6 +164,7 @@
   .top-navbar__left,
   .top-navbar__right {
     justify-content: flex-start;
+    min-width: 0;
   }
 
   .top-navbar__center {
@@ -177,5 +178,21 @@
   .layout-grid--3,
   .layout-grid--4 {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .top-navbar {
+    padding: var(--space-2);
+  }
+
+  .top-navbar__left,
+  .top-navbar__right {
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+
+  .main-content__inner {
+    padding: var(--space-2);
   }
 }

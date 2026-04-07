@@ -131,6 +131,16 @@
   accent-color: var(--color-primary);
 }
 
+@media (max-width: 920px) {
+  .profile-hero {
+    align-items: flex-start;
+  }
+
+  .profile-kpi {
+    flex: 1;
+  }
+}
+
 @media (max-width: 640px) {
   .profile-hero__identity {
     width: 100%;
@@ -146,6 +156,7 @@
 
   .settings-item {
     align-items: flex-start;
+    flex-direction: column;
   }
 
   .profile-panel--wide {

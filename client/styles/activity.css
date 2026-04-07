@@ -116,3 +116,19 @@
   flex-wrap: wrap;
   gap: var(--space-1);
 }
+
+@media (max-width: 640px) {
+  .activity-item {
+    margin-left: 0.4rem;
+    padding: 0.72rem 0.76rem;
+  }
+
+  .activity-item::before {
+    left: -1.08rem;
+  }
+
+  .activity-item__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

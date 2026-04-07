@@ -84,6 +84,11 @@
 }
 
 @media (max-width: 640px) {
+  .upload-file-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .upload-actions {
     justify-content: stretch;
     flex-wrap: wrap;

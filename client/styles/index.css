@@ -26,3 +26,22 @@
 .landing-cta .btn {
   margin-top: 1rem;
 }
+
+@media (max-width: 920px) {
+  .page-index .top-navbar__right {
+    grid-column: 1 / -1;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-actions {
+    width: 100%;
+  }
+
+  .landing-actions .btn {
+    width: 100%;
+  }
+}

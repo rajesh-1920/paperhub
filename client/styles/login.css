@@ -17,3 +17,17 @@
 .auth-feature-title {
   font-size: var(--font-size-md);
 }
+
+@media (max-width: 640px) {
+  .auth-shell {
+    padding: 1rem 0;
+  }
+
+  .auth-layout .form__row {
+    width: 100%;
+  }
+
+  .auth-layout .form__row .btn {
+    width: 100%;
+  }
+}

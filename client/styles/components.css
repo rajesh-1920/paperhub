@@ -253,7 +253,7 @@
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  width: 180px;
+  width: min(180px, calc(100vw - 1.2rem));
   display: grid;
   gap: 0.1rem;
   padding: 0.45rem;
@@ -585,6 +585,15 @@
 
   .search-field {
     width: 100%;
+  }
+
+  .table {
+    min-width: 560px;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.76rem 0.72rem;
   }
 
   .form__row {
