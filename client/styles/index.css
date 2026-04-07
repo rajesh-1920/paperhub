@@ -1,0 +1,28 @@
+/* Landing page styles */
+.page-index-main {
+  padding: 2rem 0;
+}
+
+.landing-hero {
+  align-items: center;
+}
+
+.landing-actions {
+  justify-content: flex-start;
+}
+
+.landing-feature-title {
+  margin-top: 0.5rem;
+}
+
+.landing-cta {
+  text-align: center;
+}
+
+.landing-cta .section__hint {
+  margin-top: 0.6rem;
+}
+
+.landing-cta .btn {
+  margin-top: 1rem;
+}

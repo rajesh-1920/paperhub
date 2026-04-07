@@ -1,0 +1,4 @@
+/* Dashboard page styles */
+.page-dashboard .dashboard-kpi .card__title {
+  font-size: clamp(1.2rem, 0.9vw + 1rem, 1.6rem);
+}

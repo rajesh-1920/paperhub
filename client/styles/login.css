@@ -1,0 +1,19 @@
+/* Login page styles */
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 0;
+}
+
+.auth-layout {
+  width: min(980px, 100%);
+}
+
+.auth-hero-title {
+  font-size: var(--font-size-2xl);
+}
+
+.auth-feature-title {
+  font-size: var(--font-size-md);
+}
