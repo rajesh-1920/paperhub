@@ -25,6 +25,12 @@
   box-shadow: var(--shadow-sm);
 }
 
+.upload-dropzone.is-dragover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 16%, var(--color-surface));
+  box-shadow: var(--shadow-md);
+}
+
 .upload-dropzone__icon {
   width: 3rem;
   height: 3rem;
