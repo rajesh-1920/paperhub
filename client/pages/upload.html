@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="PaperHub dashboard with sidebar, top navbar, KPI cards, and document table"
+      content="PaperHub upload page with drag-and-drop file UI and file details form"
     />
-    <title>PaperHub | Dashboard</title>
+    <title>PaperHub | Upload</title>
 
     <link rel="stylesheet" href="../styles/variables.css" />
     <link rel="stylesheet" href="../styles/base.css" />
@@ -28,7 +28,7 @@
         <div class="sidebar__section">
           <p class="sidebar__section-title">Workspace</p>
           <nav class="sidebar__nav" aria-label="Sidebar navigation">
-            <a class="side-nav-link side-nav-link--active" href="dashboard.html"
+            <a class="side-nav-link" href="dashboard.html"
               ><span class="side-nav-link__icon" aria-hidden="true"
                 ><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect
@@ -98,7 +98,7 @@
                   /></svg></span
               ><span>Documents</span></a
             >
-            <a class="side-nav-link" href="upload.html"
+            <a class="side-nav-link side-nav-link--active" href="upload.html"
               ><span class="side-nav-link__icon" aria-hidden="true"
                 ><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -173,7 +173,7 @@
           </div>
 
           <div class="top-navbar__center">
-            <label class="search-field" aria-label="Search">
+            <label class="search-field" aria-label="Search upload templates">
               <span class="search-field__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -195,7 +195,7 @@
               <input
                 class="search-field__input"
                 type="search"
-                placeholder="Search documents, users, or status"
+                placeholder="Search templates or tags"
               />
             </label>
           </div>
@@ -249,83 +249,113 @@
         </header>
 
         <section class="main-content__inner page-stack">
-          <section class="card" aria-label="Dashboard heading">
+          <section class="card" aria-label="Upload header">
             <div class="card__body section-stack">
-              <span class="badge badge--review">Overview</span>
-              <h1 class="card__title">Operations Dashboard</h1>
+              <span class="badge badge--review">File Intake</span>
+              <h1 class="card__title">Upload Documents</h1>
               <p class="card__subtitle">
-                Monitor document status, review queues, and team actions from one central view.
+                Add new files to PaperHub with structured metadata so your team can review and
+                process them faster.
               </p>
             </div>
           </section>
 
-          <section class="layout-grid layout-grid--4" aria-label="Dashboard cards">
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">1,284</h2>
-                <p class="card__subtitle">Total Documents</p>
-              </div>
-            </article>
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">147</h2>
-                <p class="card__subtitle">Pending Review</p>
-              </div>
-            </article>
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">98.4%</h2>
-                <p class="card__subtitle">Compliance Score</p>
-              </div>
-            </article>
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">62</h2>
-                <p class="card__subtitle">Items In Verification</p>
-              </div>
-            </article>
-          </section>
+          <section class="layout-grid layout-grid--2" aria-label="Upload workspace">
+            <article class="card">
+              <div class="card__body section-stack">
+                <h2 class="card__title">Upload Area</h2>
 
-          <section class="card" aria-label="Document table layout">
-            <div class="card__body section-stack">
-              <div class="form__row">
-                <h2 class="card__title">Document List</h2>
-                <a class="btn btn--primary btn--sm" href="documents.html">Manage Documents</a>
-              </div>
+                <label
+                  class="upload-dropzone"
+                  for="upload-file-input"
+                  aria-label="Drag and drop upload area"
+                >
+                  <span class="upload-dropzone__icon">U</span>
+                  <span class="upload-dropzone__title">Drag and drop files here</span>
+                  <span class="upload-dropzone__hint"
+                    >or click below to choose files from your device</span
+                  >
+                  <span class="btn btn--primary btn--sm">Choose Files</span>
+                </label>
 
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Document Name</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                      <th>Owner</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Enrollment_2026.pdf</td>
-                      <td>Apr 07, 2026</td>
-                      <td><span class="badge badge--active">Active</span></td>
-                      <td>Operations</td>
-                    </tr>
-                    <tr>
-                      <td>Identity_KYC.zip</td>
-                      <td>Apr 07, 2026</td>
-                      <td><span class="badge badge--review">In Review</span></td>
-                      <td>Compliance</td>
-                    </tr>
-                    <tr>
-                      <td>Financial_Audit_2025.xlsx</td>
-                      <td>Apr 06, 2026</td>
-                      <td><span class="badge badge--archived">Archived</span></td>
-                      <td>Governance</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <input
+                  class="visually-hidden"
+                  id="upload-file-input"
+                  name="upload-file-input"
+                  type="file"
+                  multiple
+                />
+
+                <div class="upload-file-list" aria-label="Selected files list">
+                  <div class="upload-file-item">
+                    <div class="upload-file-item__meta">
+                      <span class="upload-file-item__name">Q1_Audit_Report.pdf</span>
+                      <span class="upload-file-item__size">2.8 MB • PDF</span>
+                    </div>
+                    <span class="badge badge--active">Ready</span>
+                  </div>
+                  <div class="upload-file-item">
+                    <div class="upload-file-item__meta">
+                      <span class="upload-file-item__name">Vendor_Contracts.zip</span>
+                      <span class="upload-file-item__size">14.2 MB • ZIP</span>
+                    </div>
+                    <span class="badge badge--review">Validating</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            </article>
+
+            <article class="card">
+              <div class="card__body section-stack">
+                <h2 class="card__title">File Details</h2>
+                <form class="form" action="#" method="post" aria-label="File details form">
+                  <div class="form__group">
+                    <label class="form__label" for="file-name">Document Name</label>
+                    <input
+                      class="form__control"
+                      id="file-name"
+                      name="file-name"
+                      type="text"
+                      placeholder="Enter document name"
+                    />
+                  </div>
+
+                  <div class="form__group">
+                    <label class="form__label" for="file-category">Category</label>
+                    <select class="form__control" id="file-category" name="file-category">
+                      <option value="">Select category</option>
+                      <option>Compliance</option>
+                      <option>Finance</option>
+                      <option>Operations</option>
+                      <option>Legal</option>
+                    </select>
+                  </div>
+
+                  <div class="form__group">
+                    <label class="form__label" for="file-tags">Tags</label>
+                    <input
+                      class="form__control"
+                      id="file-tags"
+                      name="file-tags"
+                      type="text"
+                      placeholder="e.g. kyc, urgent, q1"
+                    />
+                    <div class="upload-tags" aria-label="Suggested tags">
+                      <span class="upload-tag">kyc</span>
+                      <span class="upload-tag">priority</span>
+                      <span class="upload-tag">finance</span>
+                      <span class="upload-tag">review</span>
+                    </div>
+                  </div>
+
+                  <div class="upload-actions">
+                    <button class="btn btn--outline" type="button">Clear</button>
+                    <button class="btn btn--soft" type="button">Save Draft</button>
+                    <button class="btn btn--primary" type="submit">Upload Files</button>
+                  </div>
+                </form>
+              </div>
+            </article>
           </section>
         </section>
       </main>

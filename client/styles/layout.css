@@ -1,0 +1,181 @@
+/* Layout layer for PaperHub.
+   Contains page structure, grid system, sidebar/navbar shells, and breakpoints.
+   Keep colors/components in variables.css and components.css. */
+
+/* Generic grid utilities */
+.layout-grid {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.layout-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.layout-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.layout-grid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Main dashboard shell */
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+}
+
+/* Sidebar structure */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-3) var(--space-5);
+  border-right: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-soft) 100%);
+  box-shadow: var(--shadow-sm);
+  z-index: calc(var(--z-fixed) + 1);
+  overflow-y: auto;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.sidebar__section {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.sidebar__section-title {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sidebar__nav {
+  display: grid;
+  gap: var(--space-1);
+}
+
+/* Main content wrapper */
+.main-content {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+  margin-left: var(--sidebar-width);
+}
+
+.main-content__inner {
+  padding: var(--space-4);
+  min-width: 0;
+}
+
+/* Top navbar layout */
+.top-navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-fixed);
+  min-height: var(--navbar-height);
+  display: grid;
+  grid-template-columns: auto minmax(320px, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+}
+
+.top-navbar__left,
+.top-navbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.top-navbar__center {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.top-navbar__right {
+  justify-content: flex-end;
+}
+
+/* Page section spacing helpers */
+.page-stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.section-stack {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Responsive structure */
+@media (max-width: 1100px) {
+  .layout-grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 920px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    width: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-3);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .main-content__inner {
+    padding: var(--space-3);
+  }
+
+  .top-navbar {
+    grid-template-columns: auto auto;
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .top-navbar__left,
+  .top-navbar__right {
+    justify-content: flex-start;
+  }
+
+  .top-navbar__center {
+    grid-column: 1 / -1;
+    order: 3;
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .layout-grid--2,
+  .layout-grid--3,
+  .layout-grid--4 {
+    grid-template-columns: 1fr;
+  }
+}

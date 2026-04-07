@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="PaperHub dashboard with sidebar, top navbar, KPI cards, and document table"
+      content="PaperHub documents page with file table, upload UI, and status indicators"
     />
-    <title>PaperHub | Dashboard</title>
+    <title>PaperHub | Documents</title>
 
     <link rel="stylesheet" href="../styles/variables.css" />
     <link rel="stylesheet" href="../styles/base.css" />
@@ -28,7 +28,7 @@
         <div class="sidebar__section">
           <p class="sidebar__section-title">Workspace</p>
           <nav class="sidebar__nav" aria-label="Sidebar navigation">
-            <a class="side-nav-link side-nav-link--active" href="dashboard.html"
+            <a class="side-nav-link" href="dashboard.html"
               ><span class="side-nav-link__icon" aria-hidden="true"
                 ><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect
@@ -69,7 +69,7 @@
                   /></svg></span
               ><span>Dashboard</span></a
             >
-            <a class="side-nav-link" href="documents.html"
+            <a class="side-nav-link side-nav-link--active" href="documents.html"
               ><span class="side-nav-link__icon" aria-hidden="true"
                 ><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -173,7 +173,7 @@
           </div>
 
           <div class="top-navbar__center">
-            <label class="search-field" aria-label="Search">
+            <label class="search-field" aria-label="Search documents">
               <span class="search-field__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -195,7 +195,7 @@
               <input
                 class="search-field__input"
                 type="search"
-                placeholder="Search documents, users, or status"
+                placeholder="Search by document name, owner, or status"
               />
             </label>
           </div>
@@ -249,78 +249,56 @@
         </header>
 
         <section class="main-content__inner page-stack">
-          <section class="card" aria-label="Dashboard heading">
+          <section class="card" aria-label="Documents header">
             <div class="card__body section-stack">
-              <span class="badge badge--review">Overview</span>
-              <h1 class="card__title">Operations Dashboard</h1>
-              <p class="card__subtitle">
-                Monitor document status, review queues, and team actions from one central view.
-              </p>
+              <div class="form__row">
+                <div>
+                  <span class="badge badge--active">Management</span>
+                  <h1 class="card__title u-mt-sm">Documents</h1>
+                  <p class="card__subtitle">
+                    Track, review, and organize uploaded files with full lifecycle visibility.
+                  </p>
+                </div>
+                <button class="btn btn--primary" type="button">Upload File</button>
+              </div>
             </div>
           </section>
 
-          <section class="layout-grid layout-grid--4" aria-label="Dashboard cards">
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">1,284</h2>
-                <p class="card__subtitle">Total Documents</p>
-              </div>
-            </article>
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">147</h2>
-                <p class="card__subtitle">Pending Review</p>
-              </div>
-            </article>
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">98.4%</h2>
-                <p class="card__subtitle">Compliance Score</p>
-              </div>
-            </article>
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">62</h2>
-                <p class="card__subtitle">Items In Verification</p>
-              </div>
-            </article>
-          </section>
-
-          <section class="card" aria-label="Document table layout">
+          <section class="card" aria-label="File table">
             <div class="card__body section-stack">
-              <div class="form__row">
-                <h2 class="card__title">Document List</h2>
-                <a class="btn btn--primary btn--sm" href="documents.html">Manage Documents</a>
-              </div>
-
+              <h2 class="card__title">File Register</h2>
               <div class="table-wrap">
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>Document Name</th>
-                      <th>Date</th>
-                      <th>Status</th>
+                      <th>File Name</th>
+                      <th>Uploaded Date</th>
                       <th>Owner</th>
+                      <th>Status</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>Enrollment_2026.pdf</td>
                       <td>Apr 07, 2026</td>
+                      <td>Operations Team</td>
                       <td><span class="badge badge--active">Active</span></td>
-                      <td>Operations</td>
+                      <td><a class="btn btn--soft btn--sm" href="#">Open</a></td>
                     </tr>
                     <tr>
                       <td>Identity_KYC.zip</td>
                       <td>Apr 07, 2026</td>
-                      <td><span class="badge badge--review">In Review</span></td>
                       <td>Compliance</td>
+                      <td><span class="badge badge--review">In Review</span></td>
+                      <td><a class="btn btn--soft btn--sm" href="#">Review</a></td>
                     </tr>
                     <tr>
                       <td>Financial_Audit_2025.xlsx</td>
                       <td>Apr 06, 2026</td>
-                      <td><span class="badge badge--archived">Archived</span></td>
                       <td>Governance</td>
+                      <td><span class="badge badge--archived">Archived</span></td>
+                      <td><a class="btn btn--soft btn--sm" href="#">Restore</a></td>
                     </tr>
                   </tbody>
                 </table>

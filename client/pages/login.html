@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="PaperHub login page with a clean and modern authentication interface"
+    />
+    <title>PaperHub | Log In</title>
+
+    <link rel="stylesheet" href="../styles/variables.css" />
+    <link rel="stylesheet" href="../styles/base.css" />
+    <link rel="stylesheet" href="../styles/layout.css" />
+    <link rel="stylesheet" href="../styles/components.css" />
+  </head>
+  <body>
+    <main class="page-width auth-shell">
+      <section class="layout-grid layout-grid--2 auth-layout" aria-label="Login layout">
+        <article class="card">
+          <div class="card__body section-stack">
+            <span class="badge badge--review">Secure Access</span>
+            <h1 class="card__title title-2xl">Welcome to PaperHub</h1>
+            <p class="card__subtitle">
+              Sign in to manage documents, monitor workflow status, and collaborate with your team
+              in one secure workspace.
+            </p>
+
+            <div class="layout-grid layout-grid--2">
+              <article class="card card--interactive">
+                <div class="card__body">
+                  <h2 class="card__title title-md">Role-Based Access</h2>
+                  <p class="card__subtitle">
+                    Admin, reviewer, and user views with scoped permissions.
+                  </p>
+                </div>
+              </article>
+              <article class="card card--interactive">
+                <div class="card__body">
+                  <h2 class="card__title title-md">Audit Visibility</h2>
+                  <p class="card__subtitle">
+                    Every action is tracked for operational transparency.
+                  </p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__body section-stack">
+            <div>
+              <h2 class="card__title">Log in</h2>
+              <p class="card__subtitle">Enter your credentials to continue.</p>
+            </div>
+
+            <form class="form" action="#" method="post" aria-label="Login form">
+              <div class="form__group">
+                <label class="form__label" for="email">Work Email</label>
+                <input
+                  class="form__control"
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  required
+                />
+              </div>
+
+              <div class="form__group">
+                <label class="form__label" for="password">Password</label>
+                <input
+                  class="form__control"
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter password"
+                  required
+                />
+              </div>
+
+              <div class="form__row">
+                <label class="form__help"><input type="checkbox" /> Remember me</label>
+                <a href="#" class="form__help">Forgot password?</a>
+              </div>
+
+              <button class="btn btn--primary" type="submit">Log In</button>
+            </form>
+
+            <div class="form__row">
+              <a class="btn btn--soft btn--sm" href="dashboard.html">Open Demo Dashboard</a>
+              <a class="btn btn--outline btn--sm" href="index.html">Back to Home</a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

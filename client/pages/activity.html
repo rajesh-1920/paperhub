@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="PaperHub dashboard with sidebar, top navbar, KPI cards, and document table"
+      content="PaperHub activity page with audit timeline for document uploads, updates, and deletions"
     />
-    <title>PaperHub | Dashboard</title>
+    <title>PaperHub | Activity</title>
 
     <link rel="stylesheet" href="../styles/variables.css" />
     <link rel="stylesheet" href="../styles/base.css" />
@@ -28,7 +28,7 @@
         <div class="sidebar__section">
           <p class="sidebar__section-title">Workspace</p>
           <nav class="sidebar__nav" aria-label="Sidebar navigation">
-            <a class="side-nav-link side-nav-link--active" href="dashboard.html"
+            <a class="side-nav-link" href="dashboard.html"
               ><span class="side-nav-link__icon" aria-hidden="true"
                 ><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect
@@ -122,7 +122,7 @@
                   /></svg></span
               ><span>Upload</span></a
             >
-            <a class="side-nav-link" href="activity.html"
+            <a class="side-nav-link side-nav-link--active" href="activity.html"
               ><span class="side-nav-link__icon" aria-hidden="true"
                 ><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" />
@@ -173,7 +173,7 @@
           </div>
 
           <div class="top-navbar__center">
-            <label class="search-field" aria-label="Search">
+            <label class="search-field" aria-label="Search activities">
               <span class="search-field__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -192,11 +192,7 @@
                   />
                 </svg>
               </span>
-              <input
-                class="search-field__input"
-                type="search"
-                placeholder="Search documents, users, or status"
-              />
+              <input class="search-field__input" type="search" placeholder="Search audit logs" />
             </label>
           </div>
 
@@ -249,81 +245,125 @@
         </header>
 
         <section class="main-content__inner page-stack">
-          <section class="card" aria-label="Dashboard heading">
+          <section class="card" aria-label="Activity header">
             <div class="card__body section-stack">
-              <span class="badge badge--review">Overview</span>
-              <h1 class="card__title">Operations Dashboard</h1>
+              <span class="badge badge--review">Audit Log</span>
+              <h1 class="card__title">Document Activity Timeline</h1>
               <p class="card__subtitle">
-                Monitor document status, review queues, and team actions from one central view.
+                Review a chronological log of document uploads, updates, and deletions across your
+                workspace.
               </p>
             </div>
           </section>
 
-          <section class="layout-grid layout-grid--4" aria-label="Dashboard cards">
+          <section class="layout-grid layout-grid--3" aria-label="Activity summary cards">
             <article class="card card--interactive">
               <div class="card__body">
-                <h2 class="card__title">1,284</h2>
-                <p class="card__subtitle">Total Documents</p>
+                <h2 class="card__title">28</h2>
+                <p class="card__subtitle">Uploads today</p>
               </div>
             </article>
             <article class="card card--interactive">
               <div class="card__body">
-                <h2 class="card__title">147</h2>
-                <p class="card__subtitle">Pending Review</p>
+                <h2 class="card__title">41</h2>
+                <p class="card__subtitle">Updates today</p>
               </div>
             </article>
             <article class="card card--interactive">
               <div class="card__body">
-                <h2 class="card__title">98.4%</h2>
-                <p class="card__subtitle">Compliance Score</p>
-              </div>
-            </article>
-            <article class="card card--interactive">
-              <div class="card__body">
-                <h2 class="card__title">62</h2>
-                <p class="card__subtitle">Items In Verification</p>
+                <h2 class="card__title">6</h2>
+                <p class="card__subtitle">Deletions today</p>
               </div>
             </article>
           </section>
 
-          <section class="card" aria-label="Document table layout">
+          <section class="card" aria-label="Activity timeline list">
             <div class="card__body section-stack">
               <div class="form__row">
-                <h2 class="card__title">Document List</h2>
-                <a class="btn btn--primary btn--sm" href="documents.html">Manage Documents</a>
+                <h2 class="card__title">Recent Events</h2>
+                <span class="badge badge--active">Live Feed</span>
               </div>
 
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Document Name</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                      <th>Owner</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Enrollment_2026.pdf</td>
-                      <td>Apr 07, 2026</td>
-                      <td><span class="badge badge--active">Active</span></td>
-                      <td>Operations</td>
-                    </tr>
-                    <tr>
-                      <td>Identity_KYC.zip</td>
-                      <td>Apr 07, 2026</td>
-                      <td><span class="badge badge--review">In Review</span></td>
-                      <td>Compliance</td>
-                    </tr>
-                    <tr>
-                      <td>Financial_Audit_2025.xlsx</td>
-                      <td>Apr 06, 2026</td>
-                      <td><span class="badge badge--archived">Archived</span></td>
-                      <td>Governance</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="activity-timeline" role="list" aria-label="Audit log timeline">
+                <article class="activity-item activity-item--upload" role="listitem">
+                  <div class="activity-item__top">
+                    <div class="activity-item__event">
+                      <span class="activity-item__icon">U</span>
+                      <span>Document Uploaded</span>
+                    </div>
+                    <time class="activity-item__time" datetime="2026-04-07T11:25:00"
+                      >Apr 07, 2026 • 11:25 AM</time
+                    >
+                  </div>
+                  <p class="activity-item__description">
+                    Rajesh uploaded Q2_Compliance_Checklist.pdf to the Compliance folder.
+                  </p>
+                  <div class="activity-item__meta">
+                    <span class="badge badge--success">Upload</span>
+                    <span class="upload-tag">compliance</span>
+                    <span class="upload-tag">q2</span>
+                  </div>
+                </article>
+
+                <article class="activity-item activity-item--update" role="listitem">
+                  <div class="activity-item__top">
+                    <div class="activity-item__event">
+                      <span class="activity-item__icon">E</span>
+                      <span>Document Updated</span>
+                    </div>
+                    <time class="activity-item__time" datetime="2026-04-07T10:03:00"
+                      >Apr 07, 2026 • 10:03 AM</time
+                    >
+                  </div>
+                  <p class="activity-item__description">
+                    Operations Team updated Vendor_Onboarding_Guide.docx with version 1.4.
+                  </p>
+                  <div class="activity-item__meta">
+                    <span class="badge badge--review">Update</span>
+                    <span class="upload-tag">operations</span>
+                    <span class="upload-tag">versioned</span>
+                  </div>
+                </article>
+
+                <article class="activity-item activity-item--delete" role="listitem">
+                  <div class="activity-item__top">
+                    <div class="activity-item__event">
+                      <span class="activity-item__icon">D</span>
+                      <span>Document Deleted</span>
+                    </div>
+                    <time class="activity-item__time" datetime="2026-04-07T08:47:00"
+                      >Apr 07, 2026 • 08:47 AM</time
+                    >
+                  </div>
+                  <p class="activity-item__description">
+                    Finance Team removed Legacy_Statement_2019.xlsx after retention policy review.
+                  </p>
+                  <div class="activity-item__meta">
+                    <span class="badge badge--danger">Delete</span>
+                    <span class="upload-tag">finance</span>
+                    <span class="upload-tag">retention</span>
+                  </div>
+                </article>
+
+                <article class="activity-item activity-item--upload" role="listitem">
+                  <div class="activity-item__top">
+                    <div class="activity-item__event">
+                      <span class="activity-item__icon">U</span>
+                      <span>Bulk Upload Completed</span>
+                    </div>
+                    <time class="activity-item__time" datetime="2026-04-06T18:15:00"
+                      >Apr 06, 2026 • 06:15 PM</time
+                    >
+                  </div>
+                  <p class="activity-item__description">
+                    12 onboarding files were uploaded to the HR verification queue.
+                  </p>
+                  <div class="activity-item__meta">
+                    <span class="badge badge--success">Upload</span>
+                    <span class="upload-tag">hr</span>
+                    <span class="upload-tag">bulk</span>
+                  </div>
+                </article>
               </div>
             </div>
           </section>

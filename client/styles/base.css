@@ -1,7 +1,13 @@
-/* Base styles for PaperHub.
-   This file holds reset rules and global typography defaults only. */
+/* Base layer for PaperHub.
+   Contains reset rules, global typography, and body defaults.
+   Keep layout and component-specific styles in dedicated files. */
 
 * {
+  box-sizing: border-box;
+}
+
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -17,13 +23,74 @@ body {
 
 body {
   min-height: 100vh;
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-base);
   background: var(--color-background);
   color: var(--color-text);
-  line-height: 1.6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-display);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: var(--font-size-3xl);
+}
+
+h2 {
+  font-size: var(--font-size-2xl);
+}
+
+h3 {
+  font-size: var(--font-size-xl);
+}
+
+h4 {
+  font-size: var(--font-size-lg);
+}
+
+h5 {
+  font-size: var(--font-size-md);
+}
+
+h6 {
+  font-size: var(--font-size-base);
+}
+
+p,
+li,
+label,
+input,
+textarea,
+select,
+button {
+  font-size: var(--font-size-base);
 }
 
 img,
@@ -32,6 +99,20 @@ video,
 canvas {
   display: block;
   max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style-position: inside;
 }
 
 button,
@@ -49,6 +130,8 @@ input,
 select,
 textarea {
   color: inherit;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 a {
@@ -62,10 +145,11 @@ a:hover {
 :focus-visible {
   outline: 2px solid var(--color-secondary);
   outline-offset: 2px;
+  box-shadow: var(--focus-ring);
 }
 
 .page-width {
-  width: min(1200px, calc(100% - 2rem));
+  width: min(var(--container-width), calc(100% - 2rem));
   margin: 0 auto;
 }
 
