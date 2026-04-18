@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - PaperHub</title>
+    <link rel="stylesheet" href="../../assets/css/global.css" />
+    <link rel="stylesheet" href="../../assets/css/pages/account/settings.css" />
+  </head>
+  <body class="account-page">
+    <div id="navbar-container"></div>
+    <div id="sidebar-container"></div>
+
+    <main>
+      <div class="page-content account-shell">
+        <div class="page-header">
+          <div>
+            <p class="eyebrow">Account</p>
+            <h1>Settings</h1>
+            <p class="page-subtitle">Tune preferences, notifications, and workspace behavior.</p>
+          </div>
+          <a href="../dashboard/user.html" class="btn btn-outline">Back to dashboard</a>
+        </div>
+
+        <div class="account-grid">
+          <section class="card">
+            <h2>Preferences</h2>
+            <form id="settingsForm" class="settings-form">
+              <div class="form-group">
+                <label for="language">Language</label>
+                <select id="language">
+                  <option>English</option>
+                  <option>Spanish</option>
+                  <option>French</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="timezone">Timezone</label>
+                <select id="timezone">
+                  <option>UTC +00:00</option>
+                  <option>UTC +05:30</option>
+                  <option>UTC -05:00</option>
+                </select>
+              </div>
+              <div class="toggle-list">
+                <label class="toggle-row">
+                  <span>Email notifications</span>
+                  <input type="checkbox" checked />
+                </label>
+                <label class="toggle-row">
+                  <span>SMS alerts</span>
+                  <input type="checkbox" />
+                </label>
+                <label class="toggle-row">
+                  <span>Dark mode preference</span>
+                  <input type="checkbox" id="settingsDarkMode" />
+                </label>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save preferences</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="card">
+            <h2>Notification rules</h2>
+            <div class="settings-stack">
+              <div class="settings-item">
+                <div>
+                  <h3>Approval updates</h3>
+                  <p>Notify when a document is approved or rejected.</p>
+                </div>
+                <span class="badge badge-success">Enabled</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Review assignments</h3>
+                  <p>Notify officers when a new review lands in the queue.</p>
+                </div>
+                <span class="badge badge-primary">Enabled</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Payment confirmations</h3>
+                  <p>Alert finance users after successful payment processing.</p>
+                </div>
+                <span class="badge badge-warning">Manual</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Security</h2>
+            <div class="settings-stack">
+              <div class="settings-item">
+                <div>
+                  <h3>Change password</h3>
+                  <p>Update your password regularly to keep the workspace secure.</p>
+                </div>
+                <button class="btn btn-outline btn-sm" type="button">Update</button>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Session timeout</h3>
+                  <p>Sessions expire after 30 minutes of inactivity.</p>
+                </div>
+                <span class="badge badge-info">Active</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Login alerts</h3>
+                  <p>Receive alerts when a new device signs in.</p>
+                </div>
+                <span class="badge badge-success">On</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/pages/settings.js"></script>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Review Queue - PaperHub</title>
+    <link rel="stylesheet" href="../../assets/css/global.css" />
+    <link rel="stylesheet" href="../../assets/css/pages/review/review-queue.css" />
+  </head>
+  <body class="review-queue-page">
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main>
+      <div class="page-content">
+        <div class="page-header">
+          <h1>Review Queue</h1>
+        </div>
+
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="high">High Priority</button>
+          <button class="filter-btn" data-filter="pending">Pending</button>
+          <button class="filter-btn" data-filter="in-review">In Review</button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <input
+              type="text"
+              placeholder="Search documents..."
+              class="review-search-input"
+            />
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="review-checkbox" /></th>
+                <th>Document Name</th>
+                <th>Submitted By</th>
+                <th>Date Submitted</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reviewTableBody">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/review.js"></script>
+  </body>
+</html>

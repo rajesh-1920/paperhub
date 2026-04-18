@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - PaperHub</title>
+    <link rel="stylesheet" href="../../assets/css/global.css" />
+    <link rel="stylesheet" href="../../assets/css/pages/dashboard/admin.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main>
+      <div class="dashboard-content">
+        <div class="dashboard-header">
+          <h1>Admin Dashboard</h1>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value">2,456</div>
+            <div class="stat-change">↑ 8.2% from last month</div>
+          </div>
+
+          <div class="stat-card stat-warning">
+            <div class="stat-label">Active Sessions</div>
+            <div class="stat-value">342</div>
+            <div class="stat-change">Currently online</div>
+          </div>
+
+          <div class="stat-card stat-success">
+            <div class="stat-label">Documents Processed</div>
+            <div class="stat-value">45.2K</div>
+            <div class="stat-change">This month</div>
+          </div>
+
+          <div class="stat-card stat-danger">
+            <div class="stat-label">System Uptime</div>
+            <div class="stat-value">99.9%</div>
+            <div class="stat-change">Last 30 days</div>
+          </div>
+        </div>
+
+        <!-- User Management -->
+        <h2 class="section-title">User Management</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Alice Johnson</strong></td>
+                <td>alice@company.com</td>
+                <td><span class="badge badge-primary">User</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td>Mar 15, 2024</td>
+                <td>
+                  <button class="btn btn-sm btn-outline">Edit</button>
+                  <button class="btn btn-sm btn-outline">Suspend</button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Bob Smith</strong></td>
+                <td>bob@company.com</td>
+                <td><span class="badge badge-info">Officer</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td>Feb 20, 2024</td>
+                <td>
+                  <button class="btn btn-sm btn-outline">Edit</button>
+                  <button class="btn btn-sm btn-outline">Suspend</button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Charlie Brown</strong></td>
+                <td>charlie@company.com</td>
+                <td><span class="badge badge-warning">Reviewer</span></td>
+                <td><span class="badge badge-danger">Inactive</span></td>
+                <td>Jan 10, 2024</td>
+                <td>
+                  <button class="btn btn-sm btn-outline">Edit</button>
+                  <button class="btn btn-sm btn-outline">Activate</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- System Health -->
+        <h2 class="section-title mt-lg">System Health</h2>
+        <div class="grid gap-lg system-health-grid">
+          <div class="card">
+            <h4>Server Status</h4>
+            <p>
+              <strong>Status:</strong> <span class="badge badge-success">Operational</span><br />
+              <strong>CPU Usage:</strong> 34%<br />
+              <strong>Memory:</strong> 62% of 64GB<br />
+              <strong>Storage:</strong> 78% of 2TB
+            </p>
+          </div>
+          <div class="card">
+            <h4>Security</h4>
+            <p>
+              <strong>SSL:</strong> <span class="badge badge-success">Valid</span><br />
+              <strong>Last Scan:</strong> 2 hours ago<br />
+              <strong>Threats:</strong> <span class="badge badge-success">None Detected</span><br />
+              <strong>Backup:</strong> <span class="badge badge-success">Recent</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/main.js"></script>
+  </body>
+</html>

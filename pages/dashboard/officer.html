@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Officer Dashboard - PaperHub</title>
+    <link rel="stylesheet" href="../../assets/css/global.css" />
+    <link rel="stylesheet" href="../../assets/css/pages/dashboard/officer.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main>
+      <div class="dashboard-content">
+        <div class="dashboard-header">
+          <h1>Officer Dashboard</h1>
+          <a href="/pages/review/review-queue.html" class="btn btn-primary">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
+            </svg>
+            Review Queue
+          </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Pending Reviews</div>
+            <div class="stat-value">24</div>
+            <div class="stat-change">+ 5 new today</div>
+          </div>
+
+          <div class="stat-card stat-success">
+            <div class="stat-label">Reviewed This Month</div>
+            <div class="stat-value">187</div>
+            <div class="stat-change">↑ 12% from last month</div>
+          </div>
+
+          <div class="stat-card stat-warning">
+            <div class="stat-label">Avg Review Time</div>
+            <div class="stat-value">2.3h</div>
+            <div class="stat-change">Per document</div>
+          </div>
+
+          <div class="stat-card stat-danger">
+            <div class="stat-label">Rejections</div>
+            <div class="stat-value">12</div>
+            <div class="stat-change">This month</div>
+          </div>
+        </div>
+
+        <!-- Review Queue Summary -->
+        <h2 class="section-title">Review Queue</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" />
+                </th>
+                <th>Document</th>
+                <th>Submitted By</th>
+                <th>Date Submitted</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td><strong>Q4 Financial Report.pdf</strong></td>
+                <td>Alice Johnson</td>
+                <td>Apr 6, 2024</td>
+                <td><span class="badge badge-danger">High</span></td>
+                <td><span class="badge badge-warning">Pending</span></td>
+                <td>
+                  <a href="../review/review-details.html" class="btn btn-sm btn-primary">Review</a>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td><strong>Annual Summary.pdf</strong></td>
+                <td>Bob Smith</td>
+                <td>Apr 5, 2024</td>
+                <td><span class="badge badge-warning">Medium</span></td>
+                <td><span class="badge badge-info">In Review</span></td>
+                <td>
+                  <a href="../review/review-details.html" class="btn btn-sm btn-primary">Review</a>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td><strong>Budget Analysis.pdf</strong></td>
+                <td>Charlie Brown</td>
+                <td>Apr 4, 2024</td>
+                <td><span class="badge badge-info">Low</span></td>
+                <td><span class="badge badge-warning">Pending</span></td>
+                <td>
+                  <a href="../review/review-details.html" class="btn btn-sm btn-primary">Review</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Performance -->
+        <h2 class="section-title mt-lg">Monthly Performance</h2>
+        <div class="grid gap-lg performance-grid">
+          <div class="card">
+            <h4>Approval Rate</h4>
+            <p class="metric-value metric-value-success">87%</p>
+            <p class="metric-subtitle">Of all reviewed documents</p>
+          </div>
+          <div class="card">
+            <h4>Review Speed</h4>
+            <p class="metric-value metric-value-primary">4.2h</p>
+            <p class="metric-subtitle">Average processing time</p>
+          </div>
+          <div class="card">
+            <h4>On-Time Rate</h4>
+            <p class="metric-value metric-value-success">94%</p>
+            <p class="metric-subtitle">Documents reviewed on schedule</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/main.js"></script>
+  </body>
+</html>

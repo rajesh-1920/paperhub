@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Document - PaperHub</title>
+    <link rel="stylesheet" href="../../assets/css/global.css" />
+    <link rel="stylesheet" href="../../assets/css/pages/file/upload.css" />
+  </head>
+  <body class="file-upload-page">
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main>
+      <div class="page-content">
+        <div class="page-header">
+          <h1>Upload Document</h1>
+        </div>
+
+        <div class="upload-card">
+          <h2 class="upload-title">Select or drag files to upload</h2>
+
+          <div class="upload-dropzone">
+            <div class="upload-icon">📤</div>
+            <input type="file" id="fileInput" class="hidden-input" multiple />
+            <div class="upload-text">Drag and drop files here</div>
+            <div class="upload-hint">or click to browse from your computer</div>
+            <div class="upload-hint upload-hint-meta">
+              Supported formats: PDF, DOCX, XLSX, PNG, JPG (Max 50MB each)
+            </div>
+          </div>
+
+          <div class="file-preview-list"></div>
+
+          <button type="button" id="uploadBtn" class="btn btn-primary hidden">
+            <span class="spinner"></span>
+            Upload Files
+          </button>
+        </div>
+
+        <!-- Upload Information -->
+        <div class="upload-card">
+          <h3>Before uploading</h3>
+          <ul class="upload-checklist">
+            <li class="upload-checklist-item">
+              Ensure all files are complete and in the correct format
+            </li>
+            <li class="upload-checklist-item">
+              Files larger than 50MB will need to be compressed
+            </li>
+            <li class="upload-checklist-item">
+              Keep sensitive information secure - we encrypt all files
+            </li>
+            <li>You can upload multiple files at once</li>
+          </ul>
+        </div>
+
+        <!-- Privacy Notice -->
+        <div class="alert alert-info">
+          <strong>Your documents are secure:</strong> All uploads are encrypted using AES-256
+          encryption and stored securely with automatic backups. Your data is protected with SOC 2,
+          GDPR, and ISO 27001 compliance.
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/file.js"></script>
+  </body>
+</html>

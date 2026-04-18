@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Support - PaperHub</title>
+    <link rel="stylesheet" href="../../assets/css/global.css" />
+    <link rel="stylesheet" href="../../assets/css/pages/support/contact.css" />
+  </head>
+  <body class="support-page">
+    <div id="navbar-container"></div>
+
+    <main>
+      <section class="support-hero">
+        <div class="support-hero-content">
+          <p class="eyebrow">Support</p>
+          <h1>Talk to the PaperHub team</h1>
+          <p>
+            Contact us for product help, security questions, onboarding guidance, or enterprise
+            rollout support.
+          </p>
+        </div>
+      </section>
+
+      <div class="page-content support-layout">
+        <section class="card">
+          <h2>Send a message</h2>
+          <form id="contactForm" class="contact-form">
+            <div class="grid grid-cols-2 gap-md">
+              <div class="form-group">
+                <label for="contactName">Name</label>
+                <input id="contactName" type="text" placeholder="Your name" />
+              </div>
+              <div class="form-group">
+                <label for="contactEmail">Email</label>
+                <input id="contactEmail" type="email" placeholder="you@company.com" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="contactTopic">Topic</label>
+              <select id="contactTopic">
+                <option>Product support</option>
+                <option>Security</option>
+                <option>Billing</option>
+                <option>Partnership</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="contactMessage">Message</label>
+              <textarea
+                id="contactMessage"
+                rows="6"
+                placeholder="Tell us what you need help with"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit request</button>
+          </form>
+        </section>
+
+        <aside class="support-sidebar">
+          <section class="card">
+            <h2>Response channels</h2>
+            <ul class="support-list">
+              <li><strong>Email:</strong> support@paperhub.local</li>
+              <li><strong>Response time:</strong> Within 1 business day</li>
+              <li><strong>Priority support:</strong> Enterprise accounts</li>
+            </ul>
+          </section>
+          <section class="card">
+            <h2>Office hours</h2>
+            <p>Monday to Friday</p>
+            <p>09:00 - 18:00 UTC</p>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/pages/contact.js"></script>
+  </body>
+</html>
