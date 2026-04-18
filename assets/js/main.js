@@ -23,12 +23,10 @@ const COMPONENT_CACHE_KEY = "paperhub-component-cache";
 })();
 
 async function initApp() {
-  await Promise.all([ensureNavbarScript(), loadComponents()]);
+  await Promise.all([ensureNavbarScript(), ensureSidebarScript(), loadComponents()]);
 
   initNavbar();
   initSidebar();
-
-  setActiveSidebarItem();
 }
 
 async function ensureNavbarScript() {
@@ -44,6 +42,26 @@ async function ensureNavbarScript() {
       script.onload = resolve;
       script.onerror = () => {
         console.warn("Unable to load navbar module.");
+        resolve();
+      };
+      document.body.appendChild(script);
+    });
+  }
+}
+
+async function ensureSidebarScript() {
+  if (typeof window.initPaperHubSidebar === "function") {
+    return;
+  }
+
+  if (!document.querySelector('script[data-paperhub-sidebar="true"]')) {
+    await new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "/assets/js/sidebar.js";
+      script.dataset.paperhubSidebar = "true";
+      script.onload = resolve;
+      script.onerror = () => {
+        console.warn("Unable to load sidebar module.");
         resolve();
       };
       document.body.appendChild(script);
@@ -77,24 +95,28 @@ async function loadComponents() {
   };
 
   const cache = getComponentCache();
+  const containers = new Map(
+    componentsToLoad.map((component) => [component.file, getElement("#" + component.id)]),
+  );
 
   componentsToLoad.forEach((component) => {
-    const container = getElement("#" + component.id);
+    const container = containers.get(component.file);
     if (container && cache[component.file]) {
       container.innerHTML = cache[component.file];
     }
   });
 
-  const fetchedComponents = await Promise.all(
-    componentsToLoad.map(async (component) => {
-      const container = getElement("#" + component.id);
-      if (!container) {
-        return null;
-      }
+  const pendingComponents = componentsToLoad.filter((component) => {
+    return !cache[component.file] && containers.get(component.file);
+  });
 
-      if (cache[component.file]) {
-        return null;
-      }
+  if (pendingComponents.length === 0) {
+    return;
+  }
+
+  const fetchedComponents = await Promise.all(
+    pendingComponents.map(async (component) => {
+      const container = containers.get(component.file);
 
       try {
         const response = await fetch(component.file, { cache: "force-cache" });
@@ -134,63 +156,11 @@ function initNavbar() {
 }
 
 function initSidebar() {
-  const sidebarToggle = getElement("#sidebarToggle");
-  const sidebar = getElement("#sidebar");
-  const sidebarClose = getElement("#sidebarClose");
-  const sidebarOverlay = getElement("#sidebarOverlay");
-
-  const closeSidebar = () => {
-    removeClass(sidebar, "sidebar-mobile-open");
-    removeClass(sidebarOverlay, "active");
-  };
-
-  if (sidebarToggle && sidebar) {
-    addEvent(sidebarToggle, "click", () => {
-      addClass(sidebar, "sidebar-mobile-open");
-      addClass(sidebarOverlay, "active");
+  if (typeof window.initPaperHubSidebar === "function") {
+    window.initPaperHubSidebar({
+      user: currentUser,
     });
   }
-
-  if (sidebarClose && sidebar) {
-    addEvent(sidebarClose, "click", closeSidebar);
-  }
-
-  if (sidebarOverlay && sidebar) {
-    addEvent(sidebarOverlay, "click", closeSidebar);
-  }
-
-  const sidebarItems = getElements(".sidebar-item");
-  sidebarItems.forEach((item) => {
-    addEvent(item, "click", () => {
-      if (window.innerWidth <= 768) {
-        closeSidebar();
-      }
-    });
-  });
-}
-
-function setActiveSidebarItem() {
-  const normalizePath = (path) => {
-    const value = String(path || "")
-      .replace(/index\.html$/, "")
-      .replace(/\/+$/, "");
-
-    return value || "/";
-  };
-
-  const currentPath = normalizePath(window.location.pathname);
-  const sidebarItems = getElements(".sidebar-item");
-
-  sidebarItems.forEach((item) => {
-    const href = normalizePath(item.getAttribute("href"));
-    const isMatch = href !== "/" && (currentPath === href || currentPath.startsWith(href + "/"));
-
-    if (isMatch) {
-      addClass(item, "active");
-    } else {
-      removeClass(item, "active");
-    }
-  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -49,9 +49,13 @@ async function loadReviewQueue() {
   try {
     reviewTableBody.innerHTML = "";
 
+    const fragment = document.createDocumentFragment();
+
     MOCK_REVIEWS.forEach((review) => {
-      reviewTableBody.appendChild(createReviewRow(review));
+      fragment.appendChild(createReviewRow(review));
     });
+
+    reviewTableBody.appendChild(fragment);
 
     showSuccess(`Loaded ${MOCK_REVIEWS.length} items for review`);
   } catch (error) {

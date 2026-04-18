@@ -1,52 +1,300 @@
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <h3 class="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Workspace</h3>
-    <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close sidebar">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
+<aside
+  id="paperhubSidebar"
+  class="fixed inset-y-0 left-0 z-40 flex h-screen w-72 -translate-x-full flex-col overflow-hidden border-r border-slate-200 bg-white/95 shadow-xl shadow-slate-900/10 backdrop-blur transition-all duration-300 ease-out md:translate-x-0"
+  aria-label="PaperHub sidebar"
+>
+  <div class="flex items-center gap-3 border-b border-slate-200 px-4 py-4">
+    <div
+      class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-sm font-extrabold text-white shadow-md shadow-cyan-500/40"
+    >
+      PH
+    </div>
+    <div class="min-w-0 flex-1" data-sidebar-brand>
+      <p class="truncate text-sm font-semibold text-slate-900">PaperHub</p>
+      <p class="truncate text-xs text-slate-500">Secure Document Platform</p>
+    </div>
+
+    <button
+      id="sidebarCollapseBtn"
+      type="button"
+      class="hidden h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 md:inline-flex"
+      aria-label="Collapse sidebar"
+      aria-expanded="true"
+    >
+      <svg
+        class="h-5 w-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+
+    <button
+      id="sidebarClose"
+      type="button"
+      class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 md:hidden"
+      aria-label="Close sidebar"
+    >
+      <svg
+        class="h-5 w-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path d="M18 6L6 18"></path>
+        <path d="M6 6l12 12"></path>
       </svg>
     </button>
   </div>
 
-  <nav class="sidebar-nav" aria-label="Sidebar navigation">
-    <div class="sidebar-section">
-      <p class="sidebar-section-title">Dashboards</p>
-      <div class="sidebar-items">
-        <a href="/pages/dashboard/user.html" class="sidebar-item active">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span>User</span>
+  <nav
+    id="paperhubSidebarNav"
+    class="flex-1 space-y-6 overflow-y-auto px-3 py-4"
+    aria-label="Primary navigation"
+  >
+    <div>
+      <p
+        class="px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400"
+        data-sidebar-section-title
+      >
+        Workspace
+      </p>
+      <div class="mt-2 space-y-1.5">
+        <a
+          href="/pages/dashboard/user.html"
+          data-sidebar-link
+          data-dashboard-link
+          data-sidebar-roles="admin,officer,user"
+          class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          <svg
+            class="h-5 w-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M3 10l9-7 9 7"></path>
+            <path d="M5 10v10a1 1 0 001 1h12a1 1 0 001-1V10"></path>
+            <path d="M9 21v-6h6v6"></path>
+          </svg>
+          <span class="truncate" data-sidebar-label>Dashboard</span>
         </a>
-        <a href="/pages/dashboard/officer.html" class="sidebar-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-          <span>Officer</span>
+
+        <a
+          href="/pages/file/file-details.html"
+          data-sidebar-link
+          data-sidebar-roles="officer,user"
+          class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          <svg
+            class="h-5 w-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+            <path d="M14 2v6h6"></path>
+          </svg>
+          <span class="truncate" data-sidebar-label>Files</span>
         </a>
-        <a href="/pages/dashboard/admin.html" class="sidebar-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.3 1.1 6.2L12 16.8l-5.6 2.6 1.1-6.2L3 8.9 9 8z"></path></svg>
-          <span>Admin</span>
+
+        <a
+          href="/pages/file/upload.html"
+          data-sidebar-link
+          data-sidebar-roles="user"
+          class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          <svg
+            class="h-5 w-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M12 16V4"></path>
+            <path d="M7 9l5-5 5 5"></path>
+            <path d="M5 20h14"></path>
+          </svg>
+          <span class="truncate" data-sidebar-label>Upload</span>
+        </a>
+
+        <a
+          href="/pages/review/review-queue.html"
+          data-sidebar-link
+          data-sidebar-roles="admin,officer"
+          class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          <svg
+            class="h-5 w-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12A9 9 0 1112 3"></path>
+          </svg>
+          <span class="truncate" data-sidebar-label>Reviews</span>
+        </a>
+
+        <a
+          href="/pages/payment/payment.html"
+          data-sidebar-link
+          data-sidebar-roles="user"
+          class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          <svg
+            class="h-5 w-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <path d="M2 10h20"></path>
+          </svg>
+          <span class="truncate" data-sidebar-label>Payments</span>
         </a>
       </div>
     </div>
 
-    <div class="sidebar-section">
-      <p class="sidebar-section-title">Files</p>
-      <div class="sidebar-items">
-        <a href="/pages/file/upload.html" class="sidebar-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg><span>Upload</span></a>
-        <a href="/pages/file/file-details.html" class="sidebar-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg><span>Library</span></a>
-        <a href="/pages/file/version-history.html" class="sidebar-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span>History</span></a>
-      </div>
-    </div>
+    <div
+      class="border-t border-slate-200 pt-4"
+      data-sidebar-divider-roles="admin"
+    >
+      <p
+        class="px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400"
+        data-sidebar-section-title
+      >
+        Administration
+      </p>
+      <div class="mt-2 space-y-1.5">
+        <a
+          href="/pages/dashboard/admin.html#users"
+          data-sidebar-link
+          data-sidebar-roles="admin"
+          class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          <svg
+            class="h-5 w-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <path d="M20 8v6"></path>
+            <path d="M23 11h-6"></path>
+          </svg>
+          <span class="truncate" data-sidebar-label>Users</span>
+        </a>
 
-    <div class="sidebar-section">
-      <p class="sidebar-section-title">Operations</p>
-      <div class="sidebar-items">
-        <a href="/pages/review/review-queue.html" class="sidebar-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg><span>Review Queue</span><span class="sidebar-badge">3</span></a>
-        <a href="/pages/review/review-details.html" class="sidebar-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg><span>Review Detail</span></a>
-        <a href="/pages/payment/payment.html" class="sidebar-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><path d="M1 8h22"></path></svg><span>Payment</span></a>
-        <a href="/pages/support/contact.html" class="sidebar-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span>Support</span></a>
+        <a
+          href="/pages/dashboard/admin.html#reports"
+          data-sidebar-link
+          data-sidebar-roles="admin"
+          class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          <svg
+            class="h-5 w-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M3 3v18h18"></path>
+            <path d="M7 14l4-4 3 3 5-6"></path>
+          </svg>
+          <span class="truncate" data-sidebar-label>Reports</span>
+        </a>
+
+        <a
+          href="/pages/account/settings.html"
+          data-sidebar-link
+          data-sidebar-roles="admin"
+          class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          <svg
+            class="h-5 w-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+              d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06A1.65 1.65 0 0015 19.4a1.65 1.65 0 00-1 .6 1.65 1.65 0 00-.4 1V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-.4-1 1.65 1.65 0 00-1-.6 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-.6-1 1.65 1.65 0 00-1-.4H3a2 2 0 010-4h.09a1.65 1.65 0 001-.4 1.65 1.65 0 00.6-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6c.3-.23.69-.39 1-.6V4a2 2 0 014 0v.09c0 .38.14.74.4 1 .31.21.7.37 1 .6a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82c.23.3.39.69.6 1 .26.31.62.45 1 .4H21a2 2 0 010 4h-.09c-.38 0-.74.14-1 .4-.21.31-.37.7-.6 1z"
+            ></path>
+          </svg>
+          <span class="truncate" data-sidebar-label>Settings</span>
+        </a>
       </div>
     </div>
   </nav>
+
+  <div class="border-t border-slate-200 p-3">
+    <a
+      href="/pages/auth/login.html"
+      data-sidebar-roles="admin,officer,user"
+      class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 hover:text-rose-700"
+      aria-label="Logout"
+    >
+      <svg
+        class="h-5 w-5 shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
+        <path d="M16 17l5-5-5-5"></path>
+        <path d="M21 12H9"></path>
+      </svg>
+      <span class="truncate" data-sidebar-label>Logout</span>
+    </a>
+  </div>
 </aside>
 
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<button
+  id="sidebarMobileToggle"
+  type="button"
+  class="fixed left-4 top-4 z-30 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-lg shadow-slate-900/10 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 md:hidden"
+  aria-label="Open sidebar"
+>
+  <svg
+    class="h-5 w-5"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</button>
+
+<div
+  id="sidebarOverlay"
+  class="fixed inset-0 z-30 hidden bg-slate-950/45 backdrop-blur-[1px] md:hidden"
+  aria-hidden="true"
+></div>

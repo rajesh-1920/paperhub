@@ -79,9 +79,8 @@
     }
   }
 
-  function markActiveLink() {
+  function markActiveLink(navLinks) {
     const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll("[data-nav-link]");
 
     navLinks.forEach((link) => {
       const href = link.getAttribute("href") || "";
@@ -117,7 +116,7 @@
     });
   }
 
-  function setupMobileMenu() {
+  function setupMobileMenu(navLinks) {
     const toggleButton = document.getElementById("navbarHamburger");
     const mobileMenu = document.getElementById("mobileMenu");
 
@@ -136,7 +135,7 @@
       toggleButton.setAttribute("aria-expanded", String(!isOpen));
     });
 
-    mobileMenu.querySelectorAll("[data-nav-link]").forEach((link) => {
+    navLinks.forEach((link) => {
       link.addEventListener("click", closeMenu);
     });
   }
@@ -252,25 +251,15 @@
 
     const role = normalizeRole(options.user?.role || getStoredRole());
     const currentUser = options.user || getUserProfile(role);
+    const navLinks = document.querySelectorAll("[data-nav-link]");
 
     applyRoleVisibility(role);
-    markActiveLink();
-    setupMobileMenu();
+    markActiveLink(navLinks);
+    setupMobileMenu(navLinks);
     setupUserDropdown();
     setupThemeToggle();
     setupRoleSwitcher();
     updateUser(currentUser);
-
-    document.querySelectorAll("[data-nav-link]").forEach((link) => {
-      link.addEventListener("click", () => {
-        const mobileMenu = document.getElementById("mobileMenu");
-        const toggleButton = document.getElementById("navbarHamburger");
-        if (mobileMenu && toggleButton) {
-          mobileMenu.classList.add("hidden");
-          toggleButton.setAttribute("aria-expanded", "false");
-        }
-      });
-    });
   }
 
   window.initPaperHubNavbar = initPaperHubNavbar;

@@ -72,6 +72,7 @@ function handleFileSelect(e) {
 
 function handleFiles(files) {
   const fileList = getElement(".file-preview-list");
+  const uploadBtn = getElement("#uploadBtn");
   if (!fileList) return;
 
   Array.from(files).forEach((file) => {
@@ -88,9 +89,8 @@ function handleFiles(files) {
     addFilePreview(fileList, file);
   });
 
-  if (fileList.children.length > 0) {
-    const uploadBtn = getElement("#uploadBtn");
-    if (uploadBtn) showElement(uploadBtn);
+  if (fileList.children.length > 0 && uploadBtn) {
+    showElement(uploadBtn);
   }
 }
 
@@ -115,7 +115,6 @@ function validateFile(file) {
 function addFilePreview(container, file) {
   const fileId = createUploadId();
   const fileKey = getFileSignature(file);
-  uploadState.set(fileKey, file);
 
   const filePreview = createElement("div", "file-preview-item");
   filePreview.setAttribute("data-file-id", fileId);
@@ -143,6 +142,10 @@ function addFilePreview(container, file) {
 
   container.appendChild(filePreview);
 
+  const statusEl = filePreview.querySelector(".file-status");
+  const progressEl = filePreview.querySelector(".progress-bar");
+  uploadState.set(fileKey, { file, filePreview, statusEl, progressEl });
+
   const removeBtn = filePreview.querySelector(".file-remove");
   addEvent(removeBtn, "click", () => {
     uploadState.delete(fileKey);
@@ -161,51 +164,53 @@ async function handleUpload() {
   const fileList = getElement(".file-preview-list");
   if (!fileList) return;
 
-  const files = fileList.querySelectorAll(".file-preview-item");
-  if (files.length === 0) {
+  const fileEntries = Array.from(uploadState.values());
+  if (fileEntries.length === 0) {
     showError("No files to upload");
     return;
   }
 
   const uploadBtn = getElement("#uploadBtn");
+  if (!uploadBtn) {
+    return;
+  }
+
   uploadBtn.disabled = true;
 
   let uploadedCount = 0;
 
-  for (const filePreview of files) {
-    const file = uploadState.get(filePreview.getAttribute("data-file-key"));
-    const fileId = filePreview.getAttribute("data-file-id");
+  try {
+    for (const entry of fileEntries) {
+      const { file, filePreview, statusEl, progressEl } = entry;
 
-    if (!file) {
-      continue;
-    }
-
-    try {
-      const statusEl = getElement(`#status-${fileId}`);
-      const progressEl = getElement(`#progress-${fileId}`);
-
-      if (statusEl) {
-        statusEl.textContent = "Uploading...";
+      if (!file || !filePreview) {
+        continue;
       }
 
-      await simulateUpload(progressEl);
+      try {
+        if (statusEl) {
+          statusEl.textContent = "Uploading...";
+        }
 
-      if (statusEl) {
-        statusEl.textContent = "Uploaded successfully";
-        statusEl.style.color = "var(--success)";
+        await simulateUpload(progressEl);
+
+        if (statusEl) {
+          statusEl.textContent = "Uploaded successfully";
+          statusEl.style.color = "var(--success)";
+        }
+        addClass(filePreview, "file-preview-success");
+        uploadedCount++;
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (error) {
+        showError(`Failed to upload ${file.name}`);
       }
-      addClass(filePreview, "file-preview-success");
-      uploadedCount++;
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    } catch (error) {
-      showError(`Failed to upload ${file.name}`);
     }
+  } finally {
+    uploadBtn.disabled = false;
   }
 
-  uploadBtn.disabled = false;
-
-  if (uploadedCount === files.length) {
+  if (uploadedCount === fileEntries.length) {
     showSuccess("All files uploaded successfully!");
     setTimeout(() => {
       window.location.href = "/pages/file/file-details.html";
@@ -259,8 +264,17 @@ async function loadFileList() {
     const response = await apiCall("/api/files");
 
     if (response.success && response.data) {
+      const fragment = document.createDocumentFragment();
+
       response.data.forEach((file) => {
         const row = createElement("tr");
+        const statusClass =
+          file.status === "completed"
+            ? "success"
+            : file.status === "reviewing"
+              ? "warning"
+              : "primary";
+
         row.innerHTML = `
           <td>
             <div class="file-cell">
@@ -269,7 +283,7 @@ async function loadFileList() {
             </div>
           </td>
           <td>${formatFileSize(file.size)}</td>
-          <td><span class="badge badge-${file.status === "completed" ? "success" : file.status === "reviewing" ? "warning" : "primary"}">${file.status}</span></td>
+          <td><span class="badge badge-${statusClass}">${file.status}</span></td>
           <td>${formatDate(file.uploadedAt)}</td>
           <td>
             <div class="file-actions">
@@ -278,8 +292,10 @@ async function loadFileList() {
             </div>
           </td>
         `;
-        fileTableBody.appendChild(row);
+        fragment.appendChild(row);
       });
+
+      fileTableBody.appendChild(fragment);
     }
   } catch (error) {
     console.error("Error loading files:", error);
@@ -320,6 +336,8 @@ async function loadVersionHistory() {
       },
     ];
 
+    const fragment = document.createDocumentFragment();
+
     versions.forEach((version, index) => {
       const versionItem = createElement("div", "version-item");
       versionItem.innerHTML = `
@@ -341,8 +359,10 @@ async function loadVersionHistory() {
         <p class="version-size">File size: ${version.size}</p>
         ${index < versions.length - 1 ? '<div class="version-divider"></div>' : ""}
       `;
-      historyContainer.appendChild(versionItem);
+      fragment.appendChild(versionItem);
     });
+
+    historyContainer.appendChild(fragment);
   } catch (error) {
     console.error("Error loading version history:", error);
     showError("Failed to load version history");
