@@ -1,14 +1,20 @@
 <nav id="paperhubNavbar" class="site-navbar ph-navbar" aria-label="Main navigation">
   <div class="site-navbar-inner">
     <!-- Logo & Brand -->
-    <div class="flex items-center gap-3 flex-shrink-0">
+    <div class="site-brand-wrap">
       <button
         id="sidebarToggle"
         type="button"
-        class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200/60 text-slate-600 transition-all duration-200 hover:border-cyan-400 hover:text-cyan-700 hover:bg-cyan-50 lg:hidden"
+        class="site-sidebar-toggle"
         aria-label="Open sidebar"
       >
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          class="site-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -21,24 +27,24 @@
           alt="PaperHub logo"
           class="site-brand-icon ph-brand-mark"
         />
-        <span class="site-brand-copy ph-brand-text hidden sm:flex sm:flex-col">
-          <span class="ph-brand-title">PaperHub</span>
-          <span class="ph-brand-subtitle">Docs & Approvals</span>
+        <span class="site-brand-copy ph-brand-text">
+          <span class="site-brand-title ph-brand-title">PaperHub</span>
+          <span class="site-brand-subtitle ph-brand-subtitle">Docs & Approvals</span>
         </span>
       </a>
     </div>
 
     <!-- Desktop Navigation Menu -->
-    <ul class="site-nav ph-nav-list" role="menubar">
+    <ul class="site-nav" role="menubar">
       <li>
-        <a href="/" data-nav-link class="site-nav-link ph-nav-link">Home</a>
+        <a href="/" data-nav-link class="site-nav-link">Home</a>
       </li>
       <li>
         <a
           href="/pages/dashboard/user.html"
           data-nav-link
           data-roles="student,teacher,admin"
-          class="site-nav-link ph-nav-link"
+          class="site-nav-link"
           >Dashboard</a
         >
       </li>
@@ -47,7 +53,7 @@
           href="/pages/file/file-details.html"
           data-nav-link
           data-roles="student,teacher,admin"
-          class="site-nav-link ph-nav-link"
+          class="site-nav-link"
           >Files</a
         >
       </li>
@@ -56,7 +62,7 @@
           href="/pages/review/review-queue.html"
           data-nav-link
           data-roles="teacher,admin"
-          class="site-nav-link ph-nav-link"
+          class="site-nav-link"
           >Reviews</a
         >
       </li>
@@ -65,14 +71,12 @@
           href="/pages/payment/payment.html"
           data-nav-link
           data-roles="student,admin"
-          class="site-nav-link ph-nav-link"
+          class="site-nav-link"
           >Payments</a
         >
       </li>
       <li>
-        <a href="/pages/support/contact.html" data-nav-link class="site-nav-link ph-nav-link"
-          >Support</a
-        >
+        <a href="/pages/support/contact.html" data-nav-link class="site-nav-link">Support</a>
       </li>
     </ul>
 
@@ -93,7 +97,13 @@
         aria-label="Toggle dark mode"
         aria-pressed="false"
       >
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          class="site-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <circle cx="12" cy="12" r="4"></circle>
           <path
             d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
@@ -112,16 +122,12 @@
           aria-controls="userDropdown"
         >
           <img
-            class="user-avatar h-8 w-8 rounded-md object-cover ring-1 ring-slate-200"
+            class="user-avatar"
             src="https://ui-avatars.com/api/?name=John+Doe"
             alt="User avatar"
           />
           <span class="site-user-name user-name">John</span>
-          <svg
-            class="h-4 w-4 text-slate-400 transition-transform duration-200"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
+          <svg class="site-icon" viewBox="0 0 20 20" fill="currentColor">
             <path
               fill-rule="evenodd"
               d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.937a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
@@ -219,12 +225,18 @@
       <button
         id="navbarHamburger"
         type="button"
-        class="site-mobile-trigger ph-hamburger"
+        class="site-mobile-trigger"
         aria-label="Toggle mobile menu"
         aria-expanded="false"
         aria-controls="mobileMenu"
       >
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          class="site-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -247,7 +259,13 @@
         aria-label="Toggle dark mode"
         aria-pressed="false"
       >
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          class="site-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <circle cx="12" cy="12" r="4"></circle>
           <path
             d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
