@@ -4,13 +4,12 @@
 
 ## 🎯 Overview
 
-PaperHub Frontend is a modern, responsive, production-ready web interface for a document management system. Built with vanilla HTML5, CSS3, and JavaScript (no frameworks), it features a complete SaaS-style dashboard with authentication, file management, review workflows, and payment handling.
+PaperHub Frontend is a modern, responsive, production-ready web interface for a document management system. Built with vanilla HTML5, CSS3, and JavaScript (no frameworks), it features a complete SaaS-style dashboard with file management, review workflows, and payment handling.
 
 **No build steps required** – works immediately in any browser with a simple HTTP server.
 
 ## ✨ Key Features
 
-- ✅ **Authentication System** – Login/Register with password strength validation
 - ✅ **Role-Based Dashboards** – User, Officer, and Admin dashboard variants
 - ✅ **File Management** – Drag & drop upload, file listing, version history
 - ✅ **Review Workflows** – Queue management, document review, approval/rejection
@@ -31,7 +30,6 @@ paperhub/
 │   ├── js/
 │   │   ├── utils.js             # Shared utilities (700+ lines)
 │   │   ├── main.js              # App initialization
-│   │   ├── auth.js              # Login/Register logic
 │   │   ├── file.js              # File management
 │   │   └── review.js            # Review workflows
 │   └── images/                  # Image assets
@@ -40,9 +38,6 @@ paperhub/
 │   ├── sidebar.html             # Side navigation
 │   └── footer.html              # Footer component
 └── pages/
-    ├── auth/
-    │   ├── login.html
-    │   └── register.html
     ├── dashboard/
     │   ├── user.html
     │   ├── admin.html
@@ -92,28 +87,14 @@ Simply open `index.html` in your browser (file:// protocol)
 
 ### Landing Page (`index.html`)
 
-- Hero section with call-to-action buttons
+- Hero section with direct workspace call-to-action buttons
 - Features showcase with 6 key benefits
 - Workflow visualization (4-step process)
-- Links to Login and Register
+- Direct links into the dashboard and upload flow
 
-### Authentication Pages
+### Public Access
 
-**Login Page** (`pages/auth/login.html`)
-
-- Email and password input
-- "Remember me" checkbox
-- "Forgot password" link
-- Social login button (styled, non-functional in demo)
-- Link to Registration page
-
-**Register Page** (`pages/auth/register.html`)
-
-- Name, Email, Password, Confirm Password fields
-- Real-time password strength meter
-- Password requirements display
-- Terms of service checkbox
-- Show/hide password toggle
+The demo build has no login or registration screens. All pages are directly accessible so the project can be presented without extra setup.
 
 ### Dashboard Pages
 
@@ -250,9 +231,6 @@ Shared utility library with no dependencies.
 
 - `getStorage(key, default)` – Get localStorage value
 - `setStorage(key, value)` – Set localStorage value
-- `getSession()` – Get user session
-- `setSession(session)` – Save user session
-- `isLoggedIn()` – Check if user authenticated
 
 **Validation Utilities:**
 
@@ -277,46 +255,18 @@ Shared utility library with no dependencies.
 **API Utilities:**
 
 - `apiCall(endpoint, method, data)` – Mock API with configurable endpoints
-  - Supported endpoints: `/api/auth/login`, `/api/auth/register`, `/api/dashboard/stats`, `/api/files`, `/api/reviews`
+  - Supported endpoints: `/api/dashboard/stats`, `/api/files`, `/api/reviews`
   - Returns Promise with mock data
   - Configurable 300ms delay for realism
 
 **Keyboard Utilities:**
 
-- `onKeyPress(key, handler)` – Trigger on key press
+- `initApp()` – Bootstrap application and load shared components
 - `onKeyCombo(combo, handler)` – Trigger on key combination (Ctrl+S)
+- `initNavbar()` – Setup navbar interactions and role preference handling
+  **Scroll Utilities:**
 
-**Scroll Utilities:**
-
-- `scrollToElement(selector)` – Scroll element into view
-- `isInViewport(element)` – Check if element visible
-
-### `assets/js/main.js` (200+ lines)
-
-Application initialization and component management.
-
-**Key Functions:**
-
-- `initApp()` – Bootstrap application, check authentication, load components
-- `loadComponents()` – Fetch and inject navbar, sidebar, footer
-- `initNavbar()` – Setup navbar interactions (notifications, user menu, logout)
-- `initSidebar()` – Setup sidebar (mobile toggle, active highlighting)
-- `setActiveSidebarItem()` – Highlight current page in navigation
-- `logout()` – Clear session and redirect to home
-- `updateUserProfile()` – Update navbar user info from session
-
-**Session Management:**
-
-- Global `currentUser` object tracks logged-in user
-- Persisted in localStorage under 'session' key
-- Redirects to login if accessing protected pages while logged out
-
-### `assets/js/auth.js` (250+ lines)
-
-Authentication workflows.
-
-**Functions:**
-
+- `updateUserProfile()` – Update navbar user info from the current profile
 - `initLoginPage()` – Setup login form submit handler
 - `handleLogin(e)` – Process login: validate → API call → session → redirect
 - `initRegisterPage()` – Setup register form with password strength watcher
@@ -432,19 +382,19 @@ Replace mock `apiCall()` in `utils.js`:
 async function apiCall(endpoint, method = "GET", data = null) {
   const response = await fetch(`https://your-api.com${endpoint}`, {
     method,
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${getSession().token}` },
+    headers: { "Content-Type": "application/json" },
     body: data ? JSON.stringify(data) : null,
   });
   return response.json();
 }
 ```
 
-### Disabling Protected Routes
+### Shared Startup Logic
 
-Edit `initApp()` in `main.js` to control which pages require login:
+Edit `initApp()` in `main.js` to control any shared startup logic:
 
 ```javascript
-const isProtected = !window.location.pathname.includes(["index.html", "login.html"]);
+const shouldLoadDashboard = window.location.pathname.includes("dashboard");
 ```
 
 ## 🌐 Browser Support
@@ -493,20 +443,19 @@ CMD ["nginx", "-g", "daemon off;"]
 
 **Current State (Demo):**
 
-- Authentication uses localStorage (insecure for production)
-- No encryption on stored sessions
+- Public demo build with no gated access flow
+- No stored session data
 - Mock API endpoints (no real backend)
 
 **For Production:**
 
-1. Implement server-side session management with secure HTTP-only cookies
-2. Use JWT tokens for API authentication
-3. Validate all inputs server-side
-4. Add CSRF protection
-5. Implement rate limiting
-6. Use HTTPS only
-7. Add Content Security Policy headers
-8. Sanitize all user inputs
+1. Add proper server-side access control if needed later
+2. Validate all inputs server-side
+3. Add CSRF protection
+4. Implement rate limiting
+5. Use HTTPS only
+6. Add Content Security Policy headers
+7. Sanitize all user inputs
 
 ## 📝 Code Examples
 
@@ -533,23 +482,11 @@ showWarning("This action cannot be undone.");
 showInfo("Processing your request...");
 ```
 
-### Working with Session Data
+### Working with Profile Data
 
 ```javascript
-// Store session
-setSession({ token: "abc123", user: { id: 1, name: "John", email: "john@example.com" } });
-
-// Retrieve session
-const session = getSession();
-console.log(session.user.name);
-
-// Check if logged in
-if (isLoggedIn()) {
-  console.log("User is authenticated");
-}
-
-// Clear session (logout)
-clearSession();
+const profile = getCurrentUserProfile();
+console.log(profile.name);
 ```
 
 ## 🎯 Future Enhancements

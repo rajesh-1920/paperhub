@@ -765,7 +765,8 @@ tr:hover td {
   margin: 0 auto;
   padding: 24px 18px;
 }
-ll files .footer-grid {
+
+.footer-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 14px;
@@ -1005,5 +1006,204 @@ body:has(#sidebar-container) main {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* Professional navbar styling */
+#paperhubNavbar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+#paperhubNavbar:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Navbar links active state styling */
+#paperhubNavbar a[data-nav-link] {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#paperhubNavbar a[data-nav-link]:hover {
+  background-color: rgba(226, 232, 240, 0.6);
+  transform: translateY(-1px);
+}
+
+#paperhubNavbar a[aria-current="page"] {
+  background-color: rgba(34, 211, 238, 0.1);
+  color: #0891b2;
+  font-weight: 600;
+  border-radius: 0.5rem;
+}
+
+/* Mobile menu smooth transitions */
+#mobileMenu {
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+#mobileMenu.hidden {
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* Dropdown menu styling */
+#userDropdown {
+  animation: fadeInScale 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: top right;
+}
+
+#userDropdown.hidden {
+  animation: fadeOutScale 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+}
+
+/* Button hover effects */
+#paperhubNavbar button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#paperhubNavbar button:hover:not(:active) {
+  transform: translateY(-1px);
+}
+
+#paperhubNavbar button:active {
+  transform: translateY(0);
+}
+
+/* Logo animation on hover */
+#paperhubNavbar a[aria-label="PaperHub Home"] {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#paperhubNavbar a[aria-label="PaperHub Home"]:hover {
+  transform: translateY(-2px);
+}
+
+/* Avatar with ring effect */
+#paperhubNavbar .user-avatar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#paperhubNavbar button:hover .user-avatar {
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  transform: scale(1.05);
+}
+
+/* Navbar link active state indicator */
+#paperhubNavbar a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: #0891b2;
+  border-radius: 50%;
+  opacity: 0;
+  animation: slideInDot 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes slideInDot {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Responsive navbar adjustments */
+@media (max-width: 640px) {
+  #paperhubNavbar {
+    height: 4.5rem;
+  }
+
+  #paperhubNavbar .max-w-7xl {
+    height: 100%;
+  }
+
+  #mobileMenu ul li a {
+    animation: slideInLi 0.3s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  }
+}
+
+@keyframes slideInLi {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Theme toggle smooth rotation */
+#themeToggle,
+#mobileThemeToggle {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#themeToggle:hover,
+#mobileThemeToggle:hover {
+  transform: rotate(180deg) scale(1.1);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  #paperhubNavbar,
+  #paperhubNavbar *,
+  #mobileMenu,
+  #userDropdown {
+    animation: none !important;
+    transition:
+      background-color 0.1s,
+      color 0.1s !important;
   }
 }

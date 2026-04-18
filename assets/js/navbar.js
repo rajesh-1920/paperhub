@@ -1,27 +1,46 @@
 (function () {
-  const ACTIVE_CLASSES = ["text-sky-600", "bg-sky-50", "dark:text-sky-300", "dark:bg-slate-800"];
+  const ACTIVE_CLASSES = ["text-cyan-700", "bg-cyan-50", "dark:text-cyan-400", "dark:bg-slate-800"];
+  const VALID_ROLES = ["student", "teacher", "admin"];
+  const ROLE_STORAGE_KEY = "paperhub-role";
+  const DEFAULT_USER = {
+    name: "Rajesh Biswas",
+    email: "rajesh18@cse.pstu.ac.bd",
+    avatar: "https://ui-avatars.com/api/?name=Rajesh+Biswas",
+  };
 
-  function getSessionUser() {
-    if (typeof getSession === "function") {
-      const session = getSession();
-      return session?.user || null;
-    }
-
+  function getStoredRole() {
     try {
-      const raw = localStorage.getItem("session");
-      return raw ? JSON.parse(raw)?.user || null : null;
+      return localStorage.getItem(ROLE_STORAGE_KEY);
     } catch (error) {
-      console.warn("Unable to parse session from localStorage", error);
-      return null;
+      console.warn("Unable to read role from localStorage", error);
+      return "student";
     }
   }
 
   function normalizeRole(role) {
-    const safeRole = String(role || "user").toLowerCase();
-    if (["admin", "officer", "user"].includes(safeRole)) {
+    const safeRole = String(role || "student").toLowerCase();
+    if (VALID_ROLES.includes(safeRole)) {
       return safeRole;
     }
-    return "user";
+    return "student";
+  }
+
+  function setUserRole(role) {
+    const normalized = normalizeRole(role);
+    try {
+      localStorage.setItem(ROLE_STORAGE_KEY, normalized);
+      return normalized;
+    } catch (error) {
+      console.warn("Unable to set user role", error);
+      return normalized;
+    }
+  }
+
+  function getUserProfile(role) {
+    return {
+      ...DEFAULT_USER,
+      role: normalizeRole(role),
+    };
   }
 
   function applyRoleVisibility(role) {
@@ -39,12 +58,24 @@
 
     const roleBadge = document.querySelector("[data-role-badge]");
     if (roleBadge) {
-      roleBadge.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+      const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
+      roleBadge.textContent = roleLabel;
+      roleBadge.className =
+        "hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold sm:inline-flex transition-all duration-200";
+
+      if (role === "admin") {
+        roleBadge.classList.add("border-red-300", "bg-red-50", "text-red-700");
+      } else if (role === "teacher") {
+        roleBadge.classList.add("border-purple-300", "bg-purple-50", "text-purple-700");
+      } else {
+        roleBadge.classList.add("text-slate-600");
+      }
     }
 
     const mobileRoleBadge = document.querySelector("[data-role-badge-mobile]");
     if (mobileRoleBadge) {
-      mobileRoleBadge.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+      const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
+      mobileRoleBadge.textContent = roleLabel;
     }
   }
 
@@ -66,6 +97,23 @@
         link.setAttribute("aria-current", "page");
         ACTIVE_CLASSES.forEach((className) => link.classList.add(className));
       }
+    });
+  }
+
+  function setupRoleSwitcher() {
+    const roleOptions = document.querySelectorAll("[data-role-option]");
+    const currentRole = normalizeRole(getStoredRole());
+
+    roleOptions.forEach((option) => {
+      if (option.value === currentRole) {
+        option.checked = true;
+      }
+
+      option.addEventListener("change", () => {
+        const newRole = setUserRole(option.value);
+        applyRoleVisibility(newRole);
+        window.location.reload();
+      });
     });
   }
 
@@ -104,10 +152,9 @@
     }
   }
 
-  function setupUserDropdown(onLogout) {
+  function setupUserDropdown() {
     const menuButton = document.getElementById("userMenuBtn");
     const menu = document.getElementById("userDropdown");
-    const logoutButton = document.getElementById("logoutBtn");
 
     if (menuButton && menu) {
       menuButton.addEventListener("click", (event) => {
@@ -121,15 +168,6 @@
         if (!menuButton.contains(event.target) && !menu.contains(event.target)) {
           menu.classList.add("hidden");
           menuButton.setAttribute("aria-expanded", "false");
-        }
-      });
-    }
-
-    if (logoutButton) {
-      logoutButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        if (typeof onLogout === "function") {
-          onLogout();
         }
       });
     }
@@ -162,9 +200,10 @@
   }
 
   function updateUser(user) {
-    const currentUser = user || getSessionUser();
+    const currentUser = user || getUserProfile(getStoredRole());
     const nameElement = document.querySelector(".user-name");
     const avatarElement = document.querySelector(".user-avatar");
+    const emailElement = document.querySelector("[data-user-email]");
 
     if (nameElement && currentUser?.name) {
       nameElement.textContent = currentUser.name.split(" ")[0];
@@ -174,6 +213,10 @@
       avatarElement.src = currentUser.avatar;
       avatarElement.alt = currentUser.name || "User";
     }
+
+    if (emailElement && currentUser?.email) {
+      emailElement.textContent = currentUser.email;
+    }
   }
 
   function initPaperHubNavbar(options = {}) {
@@ -182,14 +225,15 @@
       return;
     }
 
-    const currentUser = options.user || getSessionUser();
-    const role = normalizeRole(currentUser?.role);
+    const role = normalizeRole(options.user?.role || getStoredRole());
+    const currentUser = options.user || getUserProfile(role);
 
     applyRoleVisibility(role);
     markActiveLink();
     setupMobileMenu();
-    setupUserDropdown(options.onLogout);
+    setupUserDropdown();
     setupThemeToggle();
+    setupRoleSwitcher();
     updateUser(currentUser);
 
     document.querySelectorAll("[data-nav-link]").forEach((link) => {

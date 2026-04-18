@@ -121,27 +121,6 @@ function clearStorage() {
   }
 }
 
-function getSession() {
-  return getStorage("session", null);
-}
-
-function setSession(session) {
-  return setStorage("session", session);
-}
-
-function clearSession() {
-  return removeStorage("session");
-}
-
-function isLoggedIn() {
-  return getSession() !== null;
-}
-
-function getCurrentUser() {
-  const session = getSession();
-  return session ? session.user : null;
-}
-
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -310,19 +289,6 @@ async function apiCall(endpoint, options = {}) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const mockResponses = {
-        "/api/auth/login": {
-          success: true,
-          data: {
-            token: "mock-token-" + Date.now(),
-            user: {
-              id: "1",
-              name: "John Doe",
-              email: "john@paperhub.com",
-              role: "user",
-              avatar: "https://ui-avatars.com/api/?name=John+Doe",
-            },
-          },
-        },
         "/api/dashboard/stats": {
           success: true,
           data: {

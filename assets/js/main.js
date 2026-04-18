@@ -1,21 +1,13 @@
-let currentUser = null;
+const defaultUserProfile = {
+  name: "Rajesh Biswas",
+  email: "rajesh18@cse.pstu.ac.bd",
+  role: "student",
+  avatar: "https://ui-avatars.com/api/?name=Rajesh+Biswas",
+};
+
+let currentUser = { ...defaultUserProfile };
 
 async function initApp() {
-  const session = getSession();
-
-  if (session) {
-    currentUser = session.user;
-    console.log("User logged in:", currentUser);
-  } else {
-    const protectedPages = ["dashboard", "file", "review", "payment"];
-    const currentPath = window.location.pathname;
-    const isProtected = protectedPages.some((page) => currentPath.includes(page));
-
-    if (isProtected) {
-      window.location.href = "/pages/auth/login.html";
-    }
-  }
-
   await ensureTailwindCDN();
   await ensureNavbarScript();
 
@@ -126,7 +118,6 @@ function initNavbar() {
   if (typeof window.initPaperHubNavbar === "function") {
     window.initPaperHubNavbar({
       user: currentUser,
-      onLogout: logout,
     });
   }
 }
@@ -183,25 +174,15 @@ function setActiveSidebarItem() {
   });
 }
 
-function logout() {
-  if (confirm("Are you sure you want to logout?")) {
-    clearSession();
-    showSuccess("Logged out successfully");
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 500);
-  }
-}
-
 function updateUserProfile(user) {
   const userNameElement = getElement(".user-name");
   const userAvatarElement = getElement(".user-avatar");
 
-  if (userNameElement && user.name) {
+  if (userNameElement && user?.name) {
     userNameElement.textContent = user.name.split(" ")[0];
   }
 
-  if (userAvatarElement && user.avatar) {
+  if (userAvatarElement && user?.avatar) {
     userAvatarElement.src = user.avatar;
   }
 
@@ -209,11 +190,11 @@ function updateUserProfile(user) {
     window.updatePaperHubNavbarUser(user);
   }
 
-  currentUser = user;
+  currentUser = { ...currentUser, ...user };
 }
 
 function getCurrentUserProfile() {
-  return currentUser || getCurrentUser();
+  return currentUser;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
