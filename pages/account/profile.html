@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile - PaperHub</title>
     <script src="../../assets/js/tailwind-setup.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
     <link rel="stylesheet" href="../../assets/css/global.css" />
   </head>
   <body class="account-page">
@@ -27,11 +28,18 @@
         <div class="account-grid">
           <section class="card profile-summary-card">
             <div class="profile-hero">
-              <img
+              <svg
                 class="profile-avatar"
-                src="https://ui-avatars.com/api/?name=John+Doe&background=0ea5e9&color=fff"
-                alt="John Doe"
-              />
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M12 2a5 5 0 100 10 5 5 0 000-10zM7 17a6 6 0 1112 0H7z"
+                  clip-rule="evenodd"
+                />
+              </svg>
               <div>
                 <h2>John Doe</h2>
                 <p>Senior Document Analyst</p>
@@ -123,6 +131,5 @@
 
     <script src="../../assets/js/utils.js"></script>
     <script src="../../assets/js/main.js"></script>
-    <script src="../../assets/js/pages/profile.js"></script>
   </body>
 </html>

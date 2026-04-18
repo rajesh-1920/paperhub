@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact Support - PaperHub</title>
     <script src="../../assets/js/tailwind-setup.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
     <link rel="stylesheet" href="../../assets/css/global.css" />
   </head>
   <body class="support-page">
@@ -15,7 +16,10 @@
         <div class="support-hero-content">
           <p class="eyebrow">Support</p>
           <h1 class="mt-2 text-4xl font-bold text-slate-900">Talk to the PaperHub team</h1>
-          <p class="mt-3 text-slate-600">Contact us for product guidance, security requests, enterprise onboarding, or billing support.</p>
+          <p class="mt-3 text-slate-600">
+            Contact us for product guidance, security requests, enterprise onboarding, or billing
+            support.
+          </p>
         </div>
       </section>
 
@@ -24,11 +28,32 @@
           <h2>Send a message</h2>
           <form id="contactForm" class="contact-form mt-4">
             <div class="grid gap-3 md:grid-cols-2">
-              <div class="form-group"><label for="contactName">Name</label><input id="contactName" type="text" placeholder="Your name" /></div>
-              <div class="form-group"><label for="contactEmail">Email</label><input id="contactEmail" type="email" placeholder="you@company.com" /></div>
+              <div class="form-group">
+                <label for="contactName">Name</label
+                ><input id="contactName" type="text" placeholder="Your name" />
+              </div>
+              <div class="form-group">
+                <label for="contactEmail">Email</label
+                ><input id="contactEmail" type="email" placeholder="you@company.com" />
+              </div>
             </div>
-            <div class="form-group"><label for="contactTopic">Topic</label><select id="contactTopic"><option>Product support</option><option>Security</option><option>Billing</option><option>Partnership</option></select></div>
-            <div class="form-group"><label for="contactMessage">Message</label><textarea id="contactMessage" rows="6" placeholder="Tell us what you need help with"></textarea></div>
+            <div class="form-group">
+              <label for="contactTopic">Topic</label
+              ><select id="contactTopic">
+                <option>Product support</option>
+                <option>Security</option>
+                <option>Billing</option>
+                <option>Partnership</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="contactMessage">Message</label
+              ><textarea
+                id="contactMessage"
+                rows="6"
+                placeholder="Tell us what you need help with"
+              ></textarea>
+            </div>
             <button type="submit" class="btn btn-primary">Submit request</button>
           </form>
         </section>
@@ -55,6 +80,5 @@
 
     <script src="../../assets/js/utils.js"></script>
     <script src="../../assets/js/main.js"></script>
-    <script src="../../assets/js/pages/contact.js"></script>
   </body>
 </html>

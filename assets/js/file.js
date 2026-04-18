@@ -307,7 +307,7 @@ function initVersionHistoryPage() {
   loadVersionHistory();
 }
 
-async function loadVersionHistory() {
+function loadVersionHistory() {
   const historyContainer = getElement("#versionHistoryContainer");
   if (!historyContainer) return;
 

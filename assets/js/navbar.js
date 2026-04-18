@@ -1,12 +1,6 @@
 (function () {
   const ACTIVE_CLASSES = ["text-cyan-700", "bg-cyan-50", "dark:text-cyan-400", "dark:bg-slate-800"];
-  const VALID_ROLES = ["student", "teacher", "admin"];
   const ROLE_STORAGE_KEY = "paperhub-role";
-  const DEFAULT_USER = {
-    name: "Rajesh Biswas",
-    email: "rajesh18@cse.pstu.ac.bd",
-    avatar: "https://ui-avatars.com/api/?name=Rajesh+Biswas",
-  };
 
   function getStoredRole() {
     try {
@@ -15,14 +9,6 @@
       console.warn("Unable to read role from localStorage", error);
       return "student";
     }
-  }
-
-  function normalizeRole(role) {
-    const safeRole = String(role || "student").toLowerCase();
-    if (VALID_ROLES.includes(safeRole)) {
-      return safeRole;
-    }
-    return "student";
   }
 
   function setUserRole(role) {
@@ -34,13 +20,6 @@
       console.warn("Unable to set user role", error);
       return normalized;
     }
-  }
-
-  function getUserProfile(role) {
-    return {
-      ...DEFAULT_USER,
-      role: normalizeRole(role),
-    };
   }
 
   function applyRoleVisibility(role) {
@@ -145,17 +124,57 @@
     const menu = document.getElementById("userDropdown");
 
     if (menuButton && menu) {
+      const positionMenu = () => {
+        const buttonRect = menuButton.getBoundingClientRect();
+        const spacing = 8;
+        const viewportPadding = 12;
+        const menuWidth = menu.offsetWidth || 256;
+
+        let left = buttonRect.right - menuWidth;
+        left = Math.max(viewportPadding, left);
+
+        const maxLeft = window.innerWidth - menuWidth - viewportPadding;
+        left = Math.min(left, Math.max(viewportPadding, maxLeft));
+
+        menu.style.position = "fixed";
+        menu.style.top = `${buttonRect.bottom + spacing}px`;
+        menu.style.left = `${left}px`;
+        menu.style.right = "auto";
+      };
+
+      const closeMenu = () => {
+        menu.classList.add("hidden");
+        menuButton.setAttribute("aria-expanded", "false");
+      };
+
       menuButton.addEventListener("click", (event) => {
         event.stopPropagation();
         const isOpen = !menu.classList.contains("hidden");
-        menu.classList.toggle("hidden", isOpen);
-        menuButton.setAttribute("aria-expanded", String(!isOpen));
+
+        if (isOpen) {
+          closeMenu();
+        } else {
+          menu.classList.remove("hidden");
+          menuButton.setAttribute("aria-expanded", "true");
+          requestAnimationFrame(positionMenu);
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (!menu.classList.contains("hidden")) {
+          positionMenu();
+        }
+      });
+
+      window.addEventListener("scroll", () => {
+        if (!menu.classList.contains("hidden")) {
+          positionMenu();
+        }
       });
 
       document.addEventListener("click", (event) => {
         if (!menuButton.contains(event.target) && !menu.contains(event.target)) {
-          menu.classList.add("hidden");
-          menuButton.setAttribute("aria-expanded", "false");
+          closeMenu();
         }
       });
     }
@@ -185,7 +204,6 @@
 
     const applyTheme = (isDark, persist = false) => {
       root.classList.toggle("dark", isDark);
-      root.setAttribute("data-theme", isDark ? "dark" : "light");
       themeToggle?.setAttribute("aria-pressed", String(isDark));
       mobileThemeToggle?.setAttribute("aria-pressed", String(isDark));
 
@@ -223,34 +241,13 @@
     }
   }
 
-  function updateUser(user) {
-    const currentUser = user || getUserProfile(getStoredRole());
-    const nameElement = document.querySelector(".user-name");
-    const avatarElement = document.querySelector(".user-avatar");
-    const emailElement = document.querySelector("[data-user-email]");
-
-    if (nameElement && currentUser?.name) {
-      nameElement.textContent = currentUser.name.split(" ")[0];
-    }
-
-    if (avatarElement && currentUser?.avatar) {
-      avatarElement.src = currentUser.avatar;
-      avatarElement.alt = currentUser.name || "User";
-    }
-
-    if (emailElement && currentUser?.email) {
-      emailElement.textContent = currentUser.email;
-    }
-  }
-
-  function initPaperHubNavbar(options = {}) {
+  function initPaperHubNavbar() {
     const navbar = document.getElementById("paperhubNavbar");
     if (!navbar) {
       return;
     }
 
-    const role = normalizeRole(options.user?.role || getStoredRole());
-    const currentUser = options.user || getUserProfile(role);
+    const role = normalizeRole(getStoredRole());
     const navLinks = document.querySelectorAll("[data-nav-link]");
 
     applyRoleVisibility(role);
@@ -259,9 +256,7 @@
     setupUserDropdown();
     setupThemeToggle();
     setupRoleSwitcher();
-    updateUser(currentUser);
   }
 
   window.initPaperHubNavbar = initPaperHubNavbar;
-  window.updatePaperHubNavbarUser = updateUser;
 })();

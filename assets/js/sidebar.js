@@ -1,13 +1,17 @@
 (function () {
   const ROLE_STORAGE_KEY = "paperhub-role";
   const COLLAPSE_STORAGE_KEY = "paperhub-sidebar-collapsed";
-  const VALID_ROLES = ["admin", "officer", "user", "student", "teacher"];
+  const DASHBOARD_ROUTE = {
+    admin: "/pages/dashboard/admin.html",
+    officer: "/pages/dashboard/officer.html",
+    user: "/pages/dashboard/user.html",
+  };
 
   function normalizeRole(role) {
     const value = String(role || "user").toLowerCase();
     if (value === "student") return "user";
     if (value === "teacher") return "officer";
-    return VALID_ROLES.includes(value) ? value : "user";
+    return value === "admin" || value === "officer" || value === "user" ? value : "user";
   }
 
   function getCurrentRole(explicitRole) {
@@ -38,9 +42,6 @@
     document.querySelectorAll("[data-sidebar-roles]").forEach((element) => {
       const visible = matchesRole(element.getAttribute("data-sidebar-roles"), role);
       element.classList.toggle("hidden", !visible);
-      if (visible && element.tagName === "A") {
-        element.classList.add("flex");
-      }
     });
 
     document.querySelectorAll("[data-sidebar-divider-roles]").forEach((element) => {
@@ -50,12 +51,7 @@
 
     const dashboardLink = document.querySelector("[data-dashboard-link]");
     if (dashboardLink) {
-      const roleDashboards = {
-        admin: "/pages/dashboard/admin.html",
-        officer: "/pages/dashboard/officer.html",
-        user: "/pages/dashboard/user.html",
-      };
-      dashboardLink.setAttribute("href", roleDashboards[role] || roleDashboards.user);
+      dashboardLink.setAttribute("href", DASHBOARD_ROUTE[role] || DASHBOARD_ROUTE.user);
     }
   }
 
@@ -74,26 +70,10 @@
       const href = normalizePath(link.getAttribute("href"));
       const isMatch = href !== "/" && (currentPath === href || currentPath.startsWith(href + "/"));
 
-      link.classList.remove(
-        "bg-cyan-50",
-        "text-cyan-800",
-        "ring-1",
-        "ring-cyan-200",
-        "dark:bg-cyan-500/20",
-        "dark:text-cyan-200",
-        "dark:ring-cyan-500/40",
-      );
+      link.classList.remove("bg-cyan-50", "text-cyan-800", "ring-1", "ring-cyan-200");
 
       if (isMatch) {
-        link.classList.add(
-          "bg-cyan-50",
-          "text-cyan-800",
-          "ring-1",
-          "ring-cyan-200",
-          "dark:bg-cyan-500/20",
-          "dark:text-cyan-200",
-          "dark:ring-cyan-500/40",
-        );
+        link.classList.add("bg-cyan-50", "text-cyan-800", "ring-1", "ring-cyan-200");
         link.setAttribute("aria-current", "page");
       } else {
         link.removeAttribute("aria-current");
@@ -156,17 +136,6 @@
     }
   }
 
-  function addKeyboardClick(button, handler) {
-    if (!button) return;
-
-    button.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        handler();
-      }
-    });
-  }
-
   function initPaperHubSidebar(options) {
     const sidebar = document.getElementById("paperhubSidebar");
     const overlay = document.getElementById("sidebarOverlay");
@@ -186,6 +155,15 @@
 
     const open = () => openMobileSidebar(sidebar, overlay);
     const close = () => closeMobileSidebar(sidebar, overlay);
+    const syncForViewport = () => {
+      if (window.innerWidth >= 768) {
+        overlay.classList.add("hidden");
+        sidebar.classList.remove("-translate-x-full");
+        sidebar.classList.add("translate-x-0");
+      } else {
+        close();
+      }
+    };
 
     if (externalToggle && fallbackToggle) {
       fallbackToggle.classList.add("hidden");
@@ -195,14 +173,6 @@
     fallbackToggle?.addEventListener("click", open);
     closeButton?.addEventListener("click", close);
     overlay.addEventListener("click", close);
-
-    addKeyboardClick(externalToggle, open);
-    addKeyboardClick(fallbackToggle, open);
-    addKeyboardClick(closeButton, close);
-    addKeyboardClick(collapseButton, () => {
-      const nextState = !sidebar.classList.contains("md:w-20");
-      setCollapsed(sidebar, nextState, true);
-    });
 
     collapseButton?.addEventListener("click", () => {
       const nextState = !sidebar.classList.contains("md:w-20");
@@ -223,24 +193,13 @@
       }
     });
 
-    window.addEventListener("resize", () => {
-      if (window.innerWidth >= 768) {
-        overlay.classList.add("hidden");
-        sidebar.classList.remove("-translate-x-full");
-        sidebar.classList.add("translate-x-0");
-      } else {
-        sidebar.classList.remove("translate-x-0");
-        sidebar.classList.add("-translate-x-full");
-      }
-    });
+    window.addEventListener("resize", syncForViewport);
 
     if (window.innerWidth >= 768) {
-      sidebar.classList.remove("-translate-x-full");
-      sidebar.classList.add("translate-x-0");
       setCollapsed(sidebar, getPersistedCollapseState(), false);
-    } else {
-      close();
     }
+
+    syncForViewport();
   }
 
   window.initPaperHubSidebar = initPaperHubSidebar;

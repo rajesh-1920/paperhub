@@ -1,9 +1,3 @@
-let currentUser = {
-  name: "Rajesh Biswas",
-  email: "rajesh18@cse.pstu.ac.bd",
-  role: "student",
-  avatar: "https://ui-avatars.com/api/?name=Rajesh+Biswas",
-};
 const COMPONENT_CACHE_KEY = "paperhub-component-cache";
 
 (function applyInitialThemePreference() {
@@ -16,52 +10,48 @@ const COMPONENT_CACHE_KEY = "paperhub-component-cache";
     const useDark = storedTheme ? storedTheme === "dark" : prefersDark;
 
     root.classList.toggle("dark", useDark);
-    root.setAttribute("data-theme", useDark ? "dark" : "light");
   } catch (error) {
     console.warn("Unable to apply initial theme preference", error);
   }
 })();
 
 async function initApp() {
-  await Promise.all([ensureNavbarScript(), ensureSidebarScript(), loadComponents()]);
+  await Promise.all([
+    ensureScript({
+      globalKey: "initPaperHubNavbar",
+      selector: 'script[data-paperhub-navbar="true"]',
+      src: "/assets/js/navbar.js",
+      datasetKey: "paperhubNavbar",
+      errorMessage: "Unable to load navbar module.",
+    }),
+    ensureScript({
+      globalKey: "initPaperHubSidebar",
+      selector: 'script[data-paperhub-sidebar="true"]',
+      src: "/assets/js/sidebar.js",
+      datasetKey: "paperhubSidebar",
+      errorMessage: "Unable to load sidebar module.",
+    }),
+    loadComponents(),
+  ]);
 
   initNavbar();
   initSidebar();
+  initPageSpecificForms();
 }
 
-async function ensureNavbarScript() {
-  if (typeof window.initPaperHubNavbar === "function") {
+async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage }) {
+  if (typeof window[globalKey] === "function") {
     return;
   }
 
-  if (!document.querySelector('script[data-paperhub-navbar="true"]')) {
+  if (!document.querySelector(selector)) {
     await new Promise((resolve) => {
       const script = document.createElement("script");
-      script.src = "/assets/js/navbar.js";
-      script.dataset.paperhubNavbar = "true";
+      script.src = src;
+      script.dataset[datasetKey] = "true";
       script.onload = resolve;
       script.onerror = () => {
-        console.warn("Unable to load navbar module.");
-        resolve();
-      };
-      document.body.appendChild(script);
-    });
-  }
-}
-
-async function ensureSidebarScript() {
-  if (typeof window.initPaperHubSidebar === "function") {
-    return;
-  }
-
-  if (!document.querySelector('script[data-paperhub-sidebar="true"]')) {
-    await new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "/assets/js/sidebar.js";
-      script.dataset.paperhubSidebar = "true";
-      script.onload = resolve;
-      script.onerror = () => {
-        console.warn("Unable to load sidebar module.");
+        console.warn(errorMessage);
         resolve();
       };
       document.body.appendChild(script);
@@ -99,6 +89,9 @@ async function loadComponents() {
     componentsToLoad.map((component) => [component.file, getElement("#" + component.id)]),
   );
 
+  // Invalidate navbar cache to force fresh fetch
+  delete cache["/components/navbar.html"];
+
   componentsToLoad.forEach((component) => {
     const container = containers.get(component.file);
     if (container && cache[component.file]) {
@@ -119,7 +112,7 @@ async function loadComponents() {
       const container = containers.get(component.file);
 
       try {
-        const response = await fetch(component.file, { cache: "force-cache" });
+        const response = await fetch(component.file, { cache: "no-cache" });
         if (!response.ok) {
           throw new Error(`Failed with status ${response.status}`);
         }
@@ -149,20 +142,53 @@ async function loadComponents() {
 
 function initNavbar() {
   if (typeof window.initPaperHubNavbar === "function") {
-    window.initPaperHubNavbar({
-      user: currentUser,
-    });
+    window.initPaperHubNavbar();
   }
 }
 
 function initSidebar() {
   if (typeof window.initPaperHubSidebar === "function") {
-    window.initPaperHubSidebar({
-      user: currentUser,
+    window.initPaperHubSidebar();
+  }
+}
+
+function initPageSpecificForms() {
+  const registerSimpleForm = (formId, successMessage, options = {}) => {
+    const form = getElement(`#${formId}`);
+    if (!form) {
+      return;
+    }
+
+    addEvent(form, "submit", (event) => {
+      event.preventDefault();
+      showSuccess(successMessage);
+
+      if (options.resetAfterSubmit) {
+        form.reset();
+      }
+    });
+  };
+
+  registerSimpleForm("contactForm", "Your message has been sent to support", {
+    resetAfterSubmit: true,
+  });
+  registerSimpleForm("profileForm", "Profile updated successfully");
+  registerSimpleForm("settingsForm", "Settings saved successfully");
+
+  const darkModeToggle = getElement("#settingsDarkMode");
+  if (darkModeToggle) {
+    darkModeToggle.checked = document.documentElement.classList.contains("dark");
+    addEvent(darkModeToggle, "change", () => {
+      const useDark = Boolean(darkModeToggle.checked);
+      document.documentElement.classList.toggle("dark", useDark);
+
+      try {
+        localStorage.setItem("paperhub-theme", useDark ? "dark" : "light");
+      } catch (error) {
+        console.warn("Unable to persist theme preference", error);
+      }
     });
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  initApp();
-});
+document.addEventListener("DOMContentLoaded", initApp);

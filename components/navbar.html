@@ -2,25 +2,6 @@
   <div class="site-navbar-inner">
     <!-- Logo & Brand -->
     <div class="site-brand-wrap">
-      <button
-        id="sidebarToggle"
-        type="button"
-        class="site-sidebar-toggle"
-        aria-label="Open sidebar"
-      >
-        <svg
-          class="site-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
-
       <a href="/" class="site-brand ph-brand group" aria-label="PaperHub Home">
         <img
           src="/assets/images/logo.svg"
@@ -93,7 +74,7 @@
       <button
         id="themeToggle"
         type="button"
-        class="site-icon-button site-theme-toggle"
+        class="site-icon-button"
         aria-label="Toggle dark mode"
         aria-pressed="false"
       >
@@ -103,6 +84,8 @@
           fill="none"
           stroke="currentColor"
           stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         >
           <circle cx="12" cy="12" r="4"></circle>
           <path
@@ -116,23 +99,23 @@
         <button
           id="userMenuBtn"
           type="button"
-          class="site-avatar-button"
+          class="site-icon-button"
           aria-haspopup="menu"
           aria-expanded="false"
           aria-controls="userDropdown"
         >
-          <img
-            class="user-avatar"
-            src="https://ui-avatars.com/api/?name=John+Doe"
-            alt="User avatar"
-          />
-          <span class="site-user-name user-name">John</span>
-          <svg class="site-icon" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fill-rule="evenodd"
-              d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.937a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-              clip-rule="evenodd"
-            />
+          <svg
+            class="site-icon user-menu-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="8" r="3.5"></circle>
+            <path d="M5 20a7 7 0 0 1 14 0"></path>
           </svg>
         </button>
 

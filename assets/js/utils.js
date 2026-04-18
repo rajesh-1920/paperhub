@@ -35,10 +35,30 @@ function hideElement(element) {
 
 function addEvent(element, event, handler) {
   if (element) element.addEventListener(event, handler);
-  return () => element?.removeEventListener(event, handler);
 }
 
 function showToast(message, type = "info", duration = 3000) {
+  const getOrCreateToastContainer = () => {
+    const existing = getElement("#toast-container");
+    if (existing) {
+      return existing;
+    }
+
+    const container = createElement("div", "", "toast-container");
+    container.style.cssText = `
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 400px;
+    `;
+    document.body.appendChild(container);
+    return container;
+  };
+
   const toastId = "toast-" + Date.now();
   const toastHTML = `
     <div class="toast alert alert-${type}" id="${toastId}">
@@ -46,7 +66,7 @@ function showToast(message, type = "info", duration = 3000) {
     </div>
   `;
 
-  const container = getElement("#toast-container") || createToastContainer();
+  const container = getOrCreateToastContainer();
   container.insertAdjacentHTML("beforeend", toastHTML);
 
   const toastElement = getElement("#" + toastId);
@@ -58,22 +78,6 @@ function showToast(message, type = "info", duration = 3000) {
 
   addClass(toastElement, "show");
   return toastId;
-}
-
-function createToastContainer() {
-  const container = createElement("div", "", "toast-container");
-  container.style.cssText = `
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    max-width: 400px;
-  `;
-  document.body.appendChild(container);
-  return container;
 }
 
 function showSuccess(message, duration = 3000) {
@@ -88,20 +92,13 @@ function showWarning(message, duration = 3000) {
   return showToast(message, "warning", duration);
 }
 
-function formatDate(date, format = "MM/DD/YYYY") {
+function formatDate(date) {
   const d = new Date(date);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
-  const hours = String(d.getHours()).padStart(2, "0");
-  const minutes = String(d.getMinutes()).padStart(2, "0");
 
-  return format
-    .replace("YYYY", year)
-    .replace("MM", month)
-    .replace("DD", day)
-    .replace("HH", hours)
-    .replace("mm", minutes);
+  return `${month}/${day}/${year}`;
 }
 
 function formatFileSize(bytes) {
@@ -112,8 +109,8 @@ function formatFileSize(bytes) {
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
 
-async function apiCall(endpoint, options = {}) {
-  const { delay = 500 } = options;
+async function apiCall(endpoint) {
+  const delay = 500;
 
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -160,4 +157,13 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function normalizeRole(role) {
+  const VALID_ROLES = ["student", "teacher", "admin"];
+  const safeRole = String(role || "student").toLowerCase();
+  if (VALID_ROLES.includes(safeRole)) {
+    return safeRole;
+  }
+  return "student";
 }

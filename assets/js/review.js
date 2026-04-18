@@ -42,7 +42,7 @@ function initReviewQueuePage() {
   setupReviewFilters();
 }
 
-async function loadReviewQueue() {
+function loadReviewQueue() {
   const reviewTableBody = getElement("#reviewTableBody");
   if (!reviewTableBody) return;
 
@@ -105,7 +105,7 @@ function initReviewDetailsPage() {
   setupReviewActions();
 }
 
-async function loadReviewDetails() {
+function loadReviewDetails() {
   const params = new URLSearchParams(window.location.search);
   const reviewId = params.get("id");
 
