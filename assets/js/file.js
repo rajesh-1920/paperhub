@@ -1,23 +1,13 @@
-/**
- * PaperHub - File Management Module
- * Handles file upload, preview, and management
- */
-
-/**
- * Initialize file upload page
- */
 function initFileUploadPage() {
   const dropzone = getElement(".upload-dropzone");
   const fileInput = getElement("#fileInput");
   const uploadBtn = getElement("#uploadBtn");
 
   if (dropzone) {
-    // Drag and drop events
     addEvent(dropzone, "dragover", handleDragOver);
     addEvent(dropzone, "dragleave", handleDragLeave);
     addEvent(dropzone, "drop", handleFileDrop);
 
-    // Click to upload
     addEvent(dropzone, "click", () => fileInput?.click());
   }
 
@@ -30,27 +20,18 @@ function initFileUploadPage() {
   }
 }
 
-/**
- * Handle drag over
- */
 function handleDragOver(e) {
   e.preventDefault();
   e.stopPropagation();
   addClass(e.target, "upload-dropzone-active");
 }
 
-/**
- * Handle drag leave
- */
 function handleDragLeave(e) {
   e.preventDefault();
   e.stopPropagation();
   removeClass(e.target, "upload-dropzone-active");
 }
 
-/**
- * Handle file drop
- */
 function handleFileDrop(e) {
   e.preventDefault();
   e.stopPropagation();
@@ -62,41 +43,29 @@ function handleFileDrop(e) {
   }
 }
 
-/**
- * Handle file selection
- */
 function handleFileSelect(e) {
   handleFiles(e.target.files);
 }
 
-/**
- * Handle files
- */
 function handleFiles(files) {
   const fileList = getElement(".file-preview-list");
   if (!fileList) return;
 
   for (const file of files) {
-    // Validate file
     if (!validateFile(file)) {
       showError(`File ${file.name} is not allowed`);
       continue;
     }
 
-    // Add file to preview
     addFilePreview(fileList, file);
   }
 
-  // Show upload button
   if (fileList.children.length > 0) {
     const uploadBtn = getElement("#uploadBtn");
     if (uploadBtn) showElement(uploadBtn);
   }
 }
 
-/**
- * Validate file
- */
 function validateFile(file) {
   const maxSize = 50 * 1024 * 1024; // 50MB
   const allowedTypes = [
@@ -122,9 +91,6 @@ function validateFile(file) {
   return true;
 }
 
-/**
- * Add file preview
- */
 function addFilePreview(container, file) {
   const fileId = "file-" + Date.now() + "-" + Math.random();
 
@@ -153,10 +119,8 @@ function addFilePreview(container, file) {
 
   container.appendChild(filePreview);
 
-  // Store file reference
   filePreview._file = file;
 
-  // Add remove handler
   const removeBtn = filePreview.querySelector(".file-remove");
   addEvent(removeBtn, "click", () => {
     removeElement(filePreview);
@@ -166,9 +130,6 @@ function addFilePreview(container, file) {
   });
 }
 
-/**
- * Get file icon based on type
- */
 function getFileIcon(fileType) {
   const iconMap = {
     "application/pdf": "📄",
@@ -183,9 +144,6 @@ function getFileIcon(fileType) {
   return iconMap[fileType] || "📎";
 }
 
-/**
- * Handle upload
- */
 async function handleUpload() {
   const fileList = getElement(".file-preview-list");
   if (!fileList) return;
@@ -206,13 +164,11 @@ async function handleUpload() {
     const fileId = filePreview.getAttribute("data-file-id");
 
     try {
-      // Simulate file upload with progress
       const statusEl = getElement(`#status-${fileId}`);
       const progressEl = getElement(`#progress-${fileId}`);
 
       statusEl.textContent = "Uploading...";
 
-      // Simulate progress
       for (let i = 0; i <= 100; i += 10) {
         progressEl.style.width = i + "%";
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -223,7 +179,6 @@ async function handleUpload() {
       addClass(filePreview, "file-preview-success");
       uploadedCount++;
 
-      // Simulate processing
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
       showError(`Failed to upload ${file.name}`);
@@ -240,22 +195,15 @@ async function handleUpload() {
   }
 }
 
-/**
- * Initialize file details page
- */
 function initFileDetailsPage() {
   loadFileList();
 }
 
-/**
- * Load file list
- */
 async function loadFileList() {
   const fileTableBody = getElement("#fileTableBody");
   if (!fileTableBody) return;
 
   try {
-    // Mock API call
     const response = await apiCall("/api/files");
 
     if (response.success && response.data) {
@@ -287,22 +235,15 @@ async function loadFileList() {
   }
 }
 
-/**
- * Initialize version history page
- */
 function initVersionHistoryPage() {
   loadVersionHistory();
 }
 
-/**
- * Load version history
- */
 async function loadVersionHistory() {
   const historyContainer = getElement("#versionHistoryContainer");
   if (!historyContainer) return;
 
   try {
-    // Mock version history data
     const versions = [
       {
         version: "v3.0",
@@ -356,7 +297,6 @@ async function loadVersionHistory() {
   }
 }
 
-// Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.classList.contains("file-upload-page")) {
     initFileUploadPage();

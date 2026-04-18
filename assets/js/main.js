@@ -1,23 +1,12 @@
-/**
- * PaperHub - Main Application JS
- * Handles component loading and global app initialization
- */
-
-// Store currently logged in user
 let currentUser = null;
 
-/**
- * Initialize application
- */
 async function initApp() {
-  // Check if user is logged in
   const session = getSession();
 
   if (session) {
     currentUser = session.user;
     console.log("User logged in:", currentUser);
   } else {
-    // Redirect to login if on protected page
     const protectedPages = ["dashboard", "file", "review", "payment"];
     const currentPath = window.location.pathname;
     const isProtected = protectedPages.some((page) => currentPath.includes(page));
@@ -27,25 +16,18 @@ async function initApp() {
     }
   }
 
-  // Ensure navbar runtime dependencies are available
   await ensureTailwindCDN();
   await ensureNavbarScript();
 
-  // Load component styles and HTML
   loadComponentStyles();
   await loadComponents();
 
-  // Initialize component interactivity
   initNavbar();
   initSidebar();
 
-  // Set active sidebar item based on current page
   setActiveSidebarItem();
 }
 
-/**
- * Load Tailwind CSS CDN script once
- */
 async function ensureTailwindCDN() {
   if (window.tailwind && document.querySelector('script[data-paperhub-tailwind="true"]')) {
     return;
@@ -85,9 +67,6 @@ async function ensureTailwindCDN() {
   }
 }
 
-/**
- * Load navbar module once
- */
 async function ensureNavbarScript() {
   if (typeof window.initPaperHubNavbar === "function") {
     return;
@@ -108,9 +87,6 @@ async function ensureNavbarScript() {
   }
 }
 
-/**
- * Load component styles once (navbar, sidebar, footer)
- */
 function loadComponentStyles() {
   const styleFiles = [];
 
@@ -125,9 +101,6 @@ function loadComponentStyles() {
   });
 }
 
-/**
- * Load components (navbar, sidebar, footer) into page
- */
 async function loadComponents() {
   const componentsToLoad = [
     { id: "navbar-container", file: "/components/navbar.html" },
@@ -149,9 +122,6 @@ async function loadComponents() {
   }
 }
 
-/**
- * Initialize navbar interactions
- */
 function initNavbar() {
   if (typeof window.initPaperHubNavbar === "function") {
     window.initPaperHubNavbar({
@@ -161,9 +131,6 @@ function initNavbar() {
   }
 }
 
-/**
- * Initialize sidebar interactions
- */
 function initSidebar() {
   const sidebarToggle = getElement("#sidebarToggle");
   const sidebar = getElement("#sidebar");
@@ -191,7 +158,6 @@ function initSidebar() {
     });
   }
 
-  // Close sidebar on link click (mobile)
   const sidebarItems = getElements(".sidebar-item");
   sidebarItems.forEach((item) => {
     addEvent(item, "click", () => {
@@ -203,9 +169,6 @@ function initSidebar() {
   });
 }
 
-/**
- * Set active sidebar item based on current page
- */
 function setActiveSidebarItem() {
   const currentPath = window.location.pathname;
   const sidebarItems = getElements(".sidebar-item");
@@ -220,9 +183,6 @@ function setActiveSidebarItem() {
   });
 }
 
-/**
- * Logout user
- */
 function logout() {
   if (confirm("Are you sure you want to logout?")) {
     clearSession();
@@ -233,9 +193,6 @@ function logout() {
   }
 }
 
-/**
- * Update user profile in navbar
- */
 function updateUserProfile(user) {
   const userNameElement = getElement(".user-name");
   const userAvatarElement = getElement(".user-avatar");
@@ -255,14 +212,10 @@ function updateUserProfile(user) {
   currentUser = user;
 }
 
-/**
- * Get current user
- */
 function getCurrentUserProfile() {
   return currentUser || getCurrentUser();
 }
 
-// Initialize app when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
   initApp();
 });

@@ -1,8 +1,3 @@
-/**
- * PaperHub - Navbar Module
- * Tailwind CSS navbar interactions and role-aware navigation
- */
-
 (function () {
   const ACTIVE_CLASSES = ["text-sky-600", "bg-sky-50", "dark:text-sky-300", "dark:bg-slate-800"];
 

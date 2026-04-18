@@ -1,11 +1,3 @@
-/**
- * PaperHub - Authentication Module
- * Handles login, registration, and session management
- */
-
-/**
- * Initialize login page
- */
 function initLoginPage() {
   const loginForm = getElement("#loginForm");
   if (!loginForm) return;
@@ -13,15 +5,11 @@ function initLoginPage() {
   addEvent(loginForm, "submit", handleLogin);
 }
 
-/**
- * Handle login form submission
- */
 async function handleLogin(e) {
   e.preventDefault();
 
   const formData = getFormData(e.target);
 
-  // Validate
   const errors = validateForm(formData, {
     email: {
       label: "Email",
@@ -39,17 +27,14 @@ async function handleLogin(e) {
     return;
   }
 
-  // Show loading state
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const originalText = submitBtn.textContent;
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span class="spinner"></span> Logging in...';
 
   try {
-    // Mock API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Create session
     const session = {
       token: "mock-token-" + Date.now(),
       user: {
@@ -64,7 +49,6 @@ async function handleLogin(e) {
     setSession(session);
     showSuccess("Login successful!");
 
-    // Redirect to dashboard
     setTimeout(() => {
       window.location.href = "/pages/dashboard/user.html";
     }, 500);
@@ -75,22 +59,17 @@ async function handleLogin(e) {
   }
 }
 
-/**
- * Initialize register page
- */
 function initRegisterPage() {
   const registerForm = getElement("#registerForm");
   if (!registerForm) return;
 
   addEvent(registerForm, "submit", handleRegister);
 
-  // Password strength indicator
   const passwordInput = registerForm.querySelector("#password");
   if (passwordInput) {
     addEvent(passwordInput, "input", updatePasswordStrength);
   }
 
-  // Show password toggle
   const showPasswordCheckbox = registerForm.querySelector("#showPassword");
   if (showPasswordCheckbox) {
     addEvent(showPasswordCheckbox, "change", (e) => {
@@ -99,9 +78,6 @@ function initRegisterPage() {
   }
 }
 
-/**
- * Update password strength indicator
- */
 function updatePasswordStrength(e) {
   const password = e.target.value;
   const strengthIndicator = getElement("#passwordStrength");
@@ -145,15 +121,11 @@ function updatePasswordStrength(e) {
   }
 }
 
-/**
- * Handle register form submission
- */
 async function handleRegister(e) {
   e.preventDefault();
 
   const formData = getFormData(e.target);
 
-  // Validate
   const errors = validateForm(formData, {
     name: {
       label: "Full Name",
@@ -182,17 +154,14 @@ async function handleRegister(e) {
     return;
   }
 
-  // Show loading state
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const originalText = submitBtn.textContent;
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span class="spinner"></span> Creating account...';
 
   try {
-    // Mock API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Create session
     const session = {
       token: "mock-token-" + Date.now(),
       user: {
@@ -207,7 +176,6 @@ async function handleRegister(e) {
     setSession(session);
     showSuccess("Account created successfully!");
 
-    // Redirect to dashboard
     setTimeout(() => {
       window.location.href = "/pages/dashboard/user.html";
     }, 500);
@@ -218,15 +186,10 @@ async function handleRegister(e) {
   }
 }
 
-/**
- * Display form errors
- */
 function displayFormErrors(form, errors) {
-  // Clear previous errors
   const errorMessages = form.querySelectorAll(".form-error");
   errorMessages.forEach((err) => err.remove());
 
-  // Display new errors
   Object.entries(errors).forEach(([field, message]) => {
     const input = form.querySelector(`[name="${field}"]`);
     if (input) {
@@ -239,22 +202,15 @@ function displayFormErrors(form, errors) {
   showError("Please fix the errors above");
 }
 
-/**
- * Check authentication status
- */
 function isAuthenticated() {
   return isLoggedIn();
 }
 
-/**
- * Get auth token
- */
 function getAuthToken() {
   const session = getSession();
   return session ? session.token : null;
 }
 
-// Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.classList.contains("login-page")) {
     initLoginPage();

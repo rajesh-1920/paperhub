@@ -1,27 +1,11 @@
-/**
- * PaperHub - Utility Functions
- * Shared utility functions used across the application
- */
-
-// ==================== DOM Utilities ====================
-
-/**
- * Safely select DOM element
- */
 function getElement(selector) {
   return document.querySelector(selector);
 }
 
-/**
- * Get multiple DOM elements
- */
 function getElements(selector) {
   return document.querySelectorAll(selector);
 }
 
-/**
- * Create element with classes
- */
 function createElement(tag, className = "", id = "") {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -29,86 +13,51 @@ function createElement(tag, className = "", id = "") {
   return element;
 }
 
-/**
- * Add class to element
- */
 function addClass(element, className) {
   if (element) element.classList.add(className);
 }
 
-/**
- * Remove class from element
- */
 function removeClass(element, className) {
   if (element) element.classList.remove(className);
 }
 
-/**
- * Toggle class on element
- */
 function toggleClass(element, className) {
   if (element) element.classList.toggle(className);
 }
 
-/**
- * Check if element has class
- */
 function hasClass(element, className) {
   return element ? element.classList.contains(className) : false;
 }
 
-/**
- * Set multiple attributes at once
- */
 function setAttributes(element, attributes) {
   Object.keys(attributes).forEach((key) => {
     element.setAttribute(key, attributes[key]);
   });
 }
 
-/**
- * Remove element from DOM
- */
 function removeElement(element) {
   if (element) element.remove();
 }
 
-/**
- * Show element
- */
 function showElement(element) {
   if (element) removeClass(element, "hidden");
 }
 
-/**
- * Hide element
- */
 function hideElement(element) {
   if (element) addClass(element, "hidden");
 }
 
-// ==================== Event Utilities ====================
-
-/**
- * Add event listener with cleanup
- */
 function addEvent(element, event, handler) {
   if (element) element.addEventListener(event, handler);
   return () => element?.removeEventListener(event, handler);
 }
 
-/**
- * Add multiple events at once
- */
 function addEvents(element, events) {
   Object.entries(events).forEach(([event, handler]) => {
     element.addEventListener(event, handler);
   });
 }
 
-/**
- * Debounce function
- */
 function debounce(func, wait = 300) {
   let timeout;
   return function executedFunction(...args) {
@@ -121,9 +70,6 @@ function debounce(func, wait = 300) {
   };
 }
 
-/**
- * Throttle function
- */
 function throttle(func, limit = 300) {
   let inThrottle;
   return function (...args) {
@@ -135,11 +81,6 @@ function throttle(func, limit = 300) {
   };
 }
 
-// ==================== Storage Utilities ====================
-
-/**
- * Get from localStorage
- */
 function getStorage(key, defaultValue = null) {
   try {
     const value = localStorage.getItem(key);
@@ -150,9 +91,6 @@ function getStorage(key, defaultValue = null) {
   }
 }
 
-/**
- * Set to localStorage
- */
 function setStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
@@ -163,9 +101,6 @@ function setStorage(key, value) {
   }
 }
 
-/**
- * Remove from localStorage
- */
 function removeStorage(key) {
   try {
     localStorage.removeItem(key);
@@ -176,9 +111,6 @@ function removeStorage(key) {
   }
 }
 
-/**
- * Clear all localStorage
- */
 function clearStorage() {
   try {
     localStorage.clear();
@@ -189,57 +121,32 @@ function clearStorage() {
   }
 }
 
-// ==================== Session Utilities ====================
-
-/**
- * Get user session from storage
- */
 function getSession() {
   return getStorage("session", null);
 }
 
-/**
- * Set user session
- */
 function setSession(session) {
   return setStorage("session", session);
 }
 
-/**
- * Clear user session
- */
 function clearSession() {
   return removeStorage("session");
 }
 
-/**
- * Check if user is logged in
- */
 function isLoggedIn() {
   return getSession() !== null;
 }
 
-/**
- * Get current user
- */
 function getCurrentUser() {
   const session = getSession();
   return session ? session.user : null;
 }
 
-// ==================== Validation Utilities ====================
-
-/**
- * Validate email
- */
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
-/**
- * Validate password strength
- */
 function isStrongPassword(password) {
   return (
     password.length >= 8 &&
@@ -250,24 +157,15 @@ function isStrongPassword(password) {
   );
 }
 
-/**
- * Validate required field
- */
 function isRequired(value) {
   return value && value.trim().length > 0;
 }
 
-/**
- * Get form data as object
- */
 function getFormData(form) {
   const formData = new FormData(form);
   return Object.fromEntries(formData);
 }
 
-/**
- * Validate form object
- */
 function validateForm(formData, rules) {
   const errors = {};
 
@@ -293,11 +191,6 @@ function validateForm(formData, rules) {
   return errors;
 }
 
-// ==================== Toast Utilities ====================
-
-/**
- * Show toast notification
- */
 function showToast(message, type = "info", duration = 3000) {
   const toastId = "toast-" + Date.now();
   const toastHTML = `
@@ -320,9 +213,6 @@ function showToast(message, type = "info", duration = 3000) {
   return toastId;
 }
 
-/**
- * Create toast container if not exists
- */
 function createToastContainer() {
   const container = createElement("div", "", "toast-container");
   container.style.cssText = `
@@ -339,39 +229,22 @@ function createToastContainer() {
   return container;
 }
 
-/**
- * Show success toast
- */
 function showSuccess(message, duration = 3000) {
   return showToast(message, "success", duration);
 }
 
-/**
- * Show error toast
- */
 function showError(message, duration = 3000) {
   return showToast(message, "danger", duration);
 }
 
-/**
- * Show warning toast
- */
 function showWarning(message, duration = 3000) {
   return showToast(message, "warning", duration);
 }
 
-/**
- * Show info toast
- */
 function showInfo(message, duration = 3000) {
   return showToast(message, "info", duration);
 }
 
-// ==================== Modal Utilities ====================
-
-/**
- * Show modal
- */
 function showModal(modalId) {
   const modal = getElement("#" + modalId);
   if (modal) {
@@ -380,9 +253,6 @@ function showModal(modalId) {
   }
 }
 
-/**
- * Hide modal
- */
 function hideModal(modalId) {
   const modal = getElement("#" + modalId);
   if (modal) {
@@ -391,9 +261,6 @@ function hideModal(modalId) {
   }
 }
 
-/**
- * Toggle modal
- */
 function toggleModal(modalId) {
   const modal = getElement("#" + modalId);
   if (modal) {
@@ -402,11 +269,6 @@ function toggleModal(modalId) {
   }
 }
 
-// ==================== Formatting Utilities ====================
-
-/**
- * Format date
- */
 function formatDate(date, format = "MM/DD/YYYY") {
   const d = new Date(date);
   const year = d.getFullYear();
@@ -423,9 +285,6 @@ function formatDate(date, format = "MM/DD/YYYY") {
     .replace("mm", minutes);
 }
 
-/**
- * Format file size
- */
 function formatFileSize(bytes) {
   if (bytes === 0) return "0 Bytes";
   const k = 1024;
@@ -434,9 +293,6 @@ function formatFileSize(bytes) {
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
 
-/**
- * Format currency
- */
 function formatCurrency(amount, currency = "USD") {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -444,24 +300,15 @@ function formatCurrency(amount, currency = "USD") {
   }).format(amount);
 }
 
-/**
- * Format number with commas
- */
 function formatNumber(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// ==================== API Utilities ====================
-
-/**
- * Mock API call with delay
- */
 async function apiCall(endpoint, options = {}) {
   const { method = "GET", body = null, delay = 500 } = options;
 
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      // Mock response based on endpoint
       const mockResponses = {
         "/api/auth/login": {
           success: true,
@@ -511,11 +358,6 @@ async function apiCall(endpoint, options = {}) {
   });
 }
 
-// ==================== Keyboard Utilities ====================
-
-/**
- * Handle keyboard shortcut
- */
 function onKeyPress(key, callback, element = window) {
   const handler = (e) => {
     if (e.key.toLowerCase() === key.toLowerCase()) {
@@ -526,9 +368,6 @@ function onKeyPress(key, callback, element = window) {
   return () => element.removeEventListener("keypress", handler);
 }
 
-/**
- * Handle keyboard combination
- */
 function onKeyCombo(keys, callback, element = document) {
   const handler = (e) => {
     const pressed = keys.every(
@@ -543,11 +382,6 @@ function onKeyCombo(keys, callback, element = document) {
   return () => element.removeEventListener("keydown", handler);
 }
 
-// ==================== Scroll Utilities ====================
-
-/**
- * Smooth scroll to element
- */
 function scrollToElement(element, offset = 0) {
   const elementPosition = element.getBoundingClientRect().top + window.scrollY;
   window.scrollTo({
@@ -556,16 +390,10 @@ function scrollToElement(element, offset = 0) {
   });
 }
 
-/**
- * Scroll to top
- */
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/**
- * Check if element is in viewport
- */
 function isInViewport(element) {
   const rect = element.getBoundingClientRect();
   return (
@@ -576,25 +404,14 @@ function isInViewport(element) {
   );
 }
 
-// ==================== Array/Object Utilities ====================
-
-/**
- * Deep clone object
- */
 function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-/**
- * Merge objects
- */
 function mergeObjects(...objects) {
   return Object.assign({}, ...objects);
 }
 
-/**
- * Filter object by keys
- */
 function filterObject(obj, keys) {
   return keys.reduce((acc, key) => {
     acc[key] = obj[key];

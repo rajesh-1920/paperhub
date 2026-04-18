@@ -30,6 +30,7 @@ body {
 }
 
 body {
+  /* Layered gradients build the global page atmosphere; disable one layer at a time when debugging visual noise. */
   min-height: 100vh;
   background:
     radial-gradient(circle at 10% 10%, #dbeafe 0%, transparent 32%),
@@ -40,6 +41,7 @@ body {
 }
 
 body::before {
+  /* Fixed grid overlay sits behind content (z-index -1) and can affect perceived contrast on cards. */
   content: "";
   position: fixed;
   inset: 0;
@@ -121,6 +123,7 @@ p {
 .support-hero,
 .profile-summary-card,
 .payment-meta-card {
+  /* Shared "glass" surface baseline used across pages; start here when card visuals look inconsistent. */
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface-soft);
@@ -184,6 +187,7 @@ p {
 .comment-date,
 .version-meta,
 .version-size {
+  /* Consolidated muted-text aliases for legacy page classes and new utility-style classes. */
   color: var(--text-muted);
 }
 
@@ -208,6 +212,7 @@ textarea,
 .review-search-input,
 .dashboard-search-input,
 .dashboard-status-filter {
+  /* Unified control styling; inspect this block first if one input/select looks "different" than others. */
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -413,6 +418,7 @@ tr:hover td {
 .form-actions,
 .dashboard-header-actions,
 .review-actions {
+  /* Shared action-row layout for toolbars and button strips across modules. */
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -467,6 +473,7 @@ tr:hover td {
 .version-item,
 .comment-item,
 .settings-item {
+  /* Common list-card shell so JS-rendered rows keep a consistent border/padding contract. */
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #fff;
@@ -758,8 +765,7 @@ tr:hover td {
   margin: 0 auto;
   padding: 24px 18px;
 }
-
-.footer-grid {
+ll files .footer-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 14px;
@@ -794,6 +800,7 @@ tr:hover td {
 }
 
 .sidebar {
+  /* Desktop sidebar is fixed-position; overlaps are usually z-index/top offset issues here. */
   position: fixed;
   top: 84px;
   left: 16px;
@@ -883,6 +890,7 @@ tr:hover td {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Stagger animation only runs when user has not requested reduced motion. */
   .stagger-fade {
     opacity: 0;
     transform: translateY(10px) scale(0.995);
@@ -893,10 +901,12 @@ tr:hover td {
 }
 
 body:has(#sidebar-container) main {
+  /* Main content is offset only on pages that mount a sidebar container. */
   padding-left: 308px;
 }
 
 @media (max-width: 1024px) {
+  /* Tablet/mobile: sidebar becomes off-canvas and opens via the .sidebar-mobile-open toggle class. */
   .sidebar {
     left: 10px;
     width: 250px;
@@ -945,6 +955,7 @@ body:has(#sidebar-container) main {
 }
 
 @media (min-width: 900px) {
+  /* Desktop breakpoint promotes single-column mobile grids into 2-column dashboards/forms. */
   .auth-container {
     grid-template-columns: 1fr 1.1fr;
     align-items: stretch;

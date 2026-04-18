@@ -1,25 +1,13 @@
-/**
- * PaperHub - Review Module
- * Handles document review workflow
- */
-
-/**
- * Initialize review queue page
- */
 function initReviewQueuePage() {
   loadReviewQueue();
   setupReviewFilters();
 }
 
-/**
- * Load review queue
- */
 async function loadReviewQueue() {
   const reviewTableBody = getElement("#reviewTableBody");
   if (!reviewTableBody) return;
 
   try {
-    // Mock API call
     const mockReviews = [
       {
         id: "1",
@@ -97,9 +85,6 @@ async function loadReviewQueue() {
   }
 }
 
-/**
- * Setup review filters
- */
 function setupReviewFilters() {
   const filterBtns = getElements(".filter-btn");
 
@@ -107,10 +92,8 @@ function setupReviewFilters() {
     addEvent(btn, "click", (e) => {
       e.preventDefault();
 
-      // Remove active class from all buttons
       filterBtns.forEach((b) => removeClass(b, "active"));
 
-      // Add active class to clicked button
       addClass(btn, "active");
 
       const filter = btn.getAttribute("data-filter");
@@ -119,9 +102,6 @@ function setupReviewFilters() {
   });
 }
 
-/**
- * Filter reviews
- */
 function filterReviews(filter) {
   const reviewTableBody = getElement("#reviewTableBody");
   const rows = reviewTableBody.querySelectorAll("tr");
@@ -141,17 +121,11 @@ function filterReviews(filter) {
   });
 }
 
-/**
- * Initialize review details page
- */
 function initReviewDetailsPage() {
   loadReviewDetails();
   setupReviewActions();
 }
 
-/**
- * Load review details
- */
 async function loadReviewDetails() {
   const params = new URLSearchParams(window.location.search);
   const reviewId = params.get("id");
@@ -162,7 +136,6 @@ async function loadReviewDetails() {
   }
 
   try {
-    // Mock review details
     const reviewDetails = {
       id: reviewId,
       documentName: "Q4 Financial Report.pdf",
@@ -181,7 +154,6 @@ async function loadReviewDetails() {
       ],
     };
 
-    // Populate review details
     const detailsContainer = getElement("#reviewDetailsContent");
     if (detailsContainer) {
       detailsContainer.innerHTML = `
@@ -242,9 +214,6 @@ async function loadReviewDetails() {
   }
 }
 
-/**
- * Setup review action buttons
- */
 function setupReviewActions() {
   const approveBtn = getElement("#approveBtn");
   const rejectBtn = getElement("#rejectBtn");
@@ -263,9 +232,6 @@ function setupReviewActions() {
   }
 }
 
-/**
- * Handle review action
- */
 function handleReviewAction(action) {
   const comment = getElement("#reviewComment")?.value || "";
 
@@ -279,7 +245,6 @@ function handleReviewAction(action) {
       `Are you sure you want to ${action} this document? ${comment ? `Comment: ${comment}` : ""}`,
     )
   ) {
-    // Mock API call
     setTimeout(() => {
       showSuccess(`Document ${action} successfully`);
       setTimeout(() => {
@@ -289,9 +254,6 @@ function handleReviewAction(action) {
   }
 }
 
-/**
- * Add comment
- */
 function addComment() {
   const commentText = getElement("#reviewComment")?.value;
 
@@ -315,7 +277,6 @@ function addComment() {
   showSuccess("Comment added");
 }
 
-// Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.classList.contains("review-queue-page")) {
     initReviewQueuePage();
