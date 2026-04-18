@@ -6,11 +6,26 @@ const defaultUserProfile = {
 };
 
 let currentUser = { ...defaultUserProfile };
+const COMPONENT_CACHE_KEY = "paperhub-component-cache";
+
+(function applyInitialThemePreference() {
+  const root = document.documentElement;
+
+  try {
+    const storedTheme = localStorage.getItem("paperhub-theme");
+    const prefersDark =
+      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const useDark = storedTheme ? storedTheme === "dark" : prefersDark;
+
+    root.classList.toggle("dark", useDark);
+    root.setAttribute("data-theme", useDark ? "dark" : "light");
+  } catch (error) {
+    console.warn("Unable to apply initial theme preference", error);
+  }
+})();
 
 async function initApp() {
-  await ensureNavbarScript();
-
-  await loadComponents();
+  await Promise.all([ensureNavbarScript(), loadComponents()]);
 
   initNavbar();
   initSidebar();
@@ -45,17 +60,66 @@ async function loadComponents() {
     { id: "footer-container", file: "/components/footer.html" },
   ];
 
-  for (const component of componentsToLoad) {
+  const getComponentCache = () => {
+    try {
+      const cachedValue = sessionStorage.getItem(COMPONENT_CACHE_KEY);
+      return cachedValue ? JSON.parse(cachedValue) : {};
+    } catch (error) {
+      console.warn("Unable to read component cache", error);
+      return {};
+    }
+  };
+
+  const setComponentCache = (cache) => {
+    try {
+      sessionStorage.setItem(COMPONENT_CACHE_KEY, JSON.stringify(cache));
+    } catch (error) {
+      console.warn("Unable to persist component cache", error);
+    }
+  };
+
+  const cache = getComponentCache();
+
+  componentsToLoad.forEach((component) => {
     const container = getElement("#" + component.id);
-    if (container) {
+    if (container && cache[component.file]) {
+      container.innerHTML = cache[component.file];
+    }
+  });
+
+  const fetchedComponents = await Promise.all(
+    componentsToLoad.map(async (component) => {
+      const container = getElement("#" + component.id);
+      if (!container) {
+        return null;
+      }
+
+      if (cache[component.file]) {
+        return null;
+      }
+
       try {
-        const response = await fetch(component.file);
+        const response = await fetch(component.file, { cache: "force-cache" });
         const html = await response.text();
         container.innerHTML = html;
+        return [component.file, html];
       } catch (error) {
         console.error(`Error loading ${component.file}:`, error);
+        return null;
       }
+    }),
+  );
+
+  const nextCache = { ...cache };
+  fetchedComponents.forEach((entry) => {
+    if (entry) {
+      const [file, html] = entry;
+      nextCache[file] = html;
     }
+  });
+
+  if (Object.keys(nextCache).length > 0) {
+    setComponentCache(nextCache);
   }
 }
 

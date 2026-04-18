@@ -10,61 +10,44 @@
   <body>
     <div id="navbar-container"></div>
 
-    <main class="!px-0">
-      <section
-        class="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 pb-10 pt-24 md:grid-cols-2 md:px-6"
-      >
-        <div class="space-y-6">
-          <span
-            class="inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-cyan-700"
-            >Enterprise Ready</span
-          >
-          <h1 class="font-display text-4xl font-bold leading-tight text-slate-900 md:text-5xl">
-            Run Your Full Document Pipeline From One Smart Command Center
-          </h1>
-          <p class="max-w-xl text-lg text-slate-600">
+    <main class="site-main">
+      <section class="hero-section">
+        <div class="hero-copy">
+          <span class="eyebrow-chip">Enterprise Ready</span>
+          <h1 class="hero-title">Run Your Full Document Pipeline From One Smart Command Center</h1>
+          <p class="hero-description">
             PaperHub gives your teams one secure place to upload, review, approve, and pay across
             all document-heavy workflows.
           </p>
-          <div class="flex flex-wrap gap-3">
-            <a href="pages/dashboard/user.html" class="btn btn-primary btn-lg">Open Dashboard</a>
-            <a href="pages/file/upload.html" class="btn btn-outline btn-lg">Upload Document</a>
+          <div class="hero-actions">
+            <a href="/pages/dashboard/user.html" class="btn btn-primary btn-lg">Open Dashboard</a>
+            <a href="/pages/file/upload.html" class="btn btn-outline btn-lg">Upload Document</a>
           </div>
-          <div class="grid gap-3 sm:grid-cols-3">
-            <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Documents managed</p>
-              <p class="mt-2 font-display text-2xl font-bold text-slate-900">45.2k</p>
+          <div class="metric-grid sm:grid-cols-3">
+            <article class="metric-card">
+              <p class="metric-label">Documents managed</p>
+              <p class="metric-value">45.2k</p>
             </article>
-            <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Avg review time</p>
-              <p class="mt-2 font-display text-2xl font-bold text-slate-900">2.3h</p>
+            <article class="metric-card">
+              <p class="metric-label">Avg review time</p>
+              <p class="metric-value">2.3h</p>
             </article>
-            <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Compliance score</p>
-              <p class="mt-2 font-display text-2xl font-bold text-slate-900">98.7%</p>
+            <article class="metric-card">
+              <p class="metric-label">Compliance score</p>
+              <p class="metric-value">98.7%</p>
             </article>
           </div>
         </div>
 
-        <div
-          class="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-sky-950 to-cyan-900 p-6 text-white shadow-panel"
-        >
-          <div
-            class="absolute -right-14 -top-12 h-40 w-40 rounded-full bg-cyan-400/20 blur-2xl"
-          ></div>
-          <div
-            class="absolute -left-10 bottom-0 h-44 w-44 rounded-full bg-amber-300/20 blur-2xl"
-          ></div>
-          <div class="relative space-y-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
-              Live operations board
-            </p>
-            <div class="rounded-2xl border border-white/20 bg-white/10 p-4">
+        <div class="hero-visual">
+          <div class="hero-visual-panel">
+            <p class="eyebrow-chip">Live operations board</p>
+            <div class="hero-panel">
               <div class="flex items-center justify-between">
                 <h2 class="font-display text-lg font-semibold">Today's Pipeline</h2>
                 <span class="badge badge-success">Healthy</span>
               </div>
-              <ul class="mt-4 space-y-3 text-sm text-slate-100">
+              <ul class="mt-4 space-y-3 text-sm">
                 <li class="flex items-center justify-between">
                   <span>Uploads queued</span><strong>12</strong>
                 </li>
@@ -79,12 +62,12 @@
                 </li>
               </ul>
             </div>
-            <div class="grid gap-3 sm:grid-cols-2">
-              <div class="rounded-xl border border-white/20 bg-white/10 p-3">
+            <div class="hero-mini-grid">
+              <div class="hero-mini-panel">
                 <p class="text-xs uppercase tracking-[0.16em] text-cyan-100">Security</p>
                 <p class="mt-2 text-sm font-semibold">SOC 2 + ISO 27001 checks passed</p>
               </div>
-              <div class="rounded-xl border border-white/20 bg-white/10 p-3">
+              <div class="hero-mini-panel">
                 <p class="text-xs uppercase tracking-[0.16em] text-cyan-100">Automation</p>
                 <p class="mt-2 text-sm font-semibold">8 workflows auto-routed</p>
               </div>
@@ -93,55 +76,53 @@
         </div>
       </section>
 
-      <section class="mx-auto w-full max-w-7xl px-4 py-8 md:px-6" id="features">
-        <div class="mb-6 flex items-end justify-between gap-4">
+      <section class="feature-section" id="features">
+        <div class="section-header">
           <div>
             <p class="eyebrow">Why teams switch</p>
-            <h2 class="mt-1 text-3xl font-bold text-slate-900">
-              Designed for speed, trust, and clarity
-            </h2>
+            <h2 class="section-title-large mt-1">Designed for speed, trust, and clarity</h2>
           </div>
-          <a href="pages/dashboard/user.html" class="btn btn-outline">Preview dashboard</a>
+          <a href="/pages/dashboard/user.html" class="btn btn-outline">Preview dashboard</a>
         </div>
 
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <article class="card">
+        <div class="feature-grid">
+          <article class="card feature-card">
             <h3 class="text-lg font-semibold">Adaptive Role Workspaces</h3>
-            <p class="mt-2 text-sm text-slate-600">
+            <p>
               Dedicated experiences for users, officers, and admins reduce confusion and boost
               throughput.
             </p>
           </article>
-          <article class="card">
+          <article class="card feature-card">
             <h3 class="text-lg font-semibold">Smart Review Routing</h3>
-            <p class="mt-2 text-sm text-slate-600">
+            <p>
               Prioritize high-risk documents automatically with status-aware queues and clear
               accountability.
             </p>
           </article>
-          <article class="card">
+          <article class="card feature-card">
             <h3 class="text-lg font-semibold">Secure Billing Layer</h3>
-            <p class="mt-2 text-sm text-slate-600">
+            <p>
               Payments activate only after approvals, lowering compliance risk and financial
               leakage.
             </p>
           </article>
-          <article class="card">
+          <article class="card feature-card">
             <h3 class="text-lg font-semibold">Operational Analytics</h3>
-            <p class="mt-2 text-sm text-slate-600">
+            <p>
               Track bottlenecks, team efficiency, and approval rates in one consistent visual model.
             </p>
           </article>
-          <article class="card">
+          <article class="card feature-card">
             <h3 class="text-lg font-semibold">Audit-first History</h3>
-            <p class="mt-2 text-sm text-slate-600">
+            <p>
               Versioning and timeline context make every change reviewable for internal and external
               audits.
             </p>
           </article>
-          <article class="card">
+          <article class="card feature-card">
             <h3 class="text-lg font-semibold">Modular Frontend</h3>
-            <p class="mt-2 text-sm text-slate-600">
+            <p>
               Reusable components and vanilla JavaScript modules keep your stack light and
               maintainable.
             </p>
@@ -149,10 +130,8 @@
         </div>
       </section>
 
-      <section class="mx-auto w-full max-w-7xl px-4 py-8 md:px-6">
-        <div
-          class="card grid gap-4 bg-slate-900 p-8 text-white md:grid-cols-[1.2fr,auto] md:items-center"
-        >
+      <section class="promo-section">
+        <div class="promo-card">
           <div>
             <p class="eyebrow !text-cyan-300">Ready to launch</p>
             <h2 class="mt-2 text-3xl font-bold">
@@ -162,7 +141,7 @@
               Start with the redesigned flow now and customize workflows later.
             </p>
           </div>
-          <a href="pages/review/review-queue.html" class="btn btn-secondary btn-lg"
+          <a href="/pages/review/review-queue.html" class="btn btn-secondary btn-lg"
             >View Review Queue</a
           >
         </div>

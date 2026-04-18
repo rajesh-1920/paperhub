@@ -120,7 +120,6 @@
   function setupMobileMenu() {
     const toggleButton = document.getElementById("navbarHamburger");
     const mobileMenu = document.getElementById("mobileMenu");
-    const mobileThemeToggle = document.getElementById("mobileThemeToggle");
 
     if (!toggleButton || !mobileMenu) {
       return;
@@ -140,16 +139,6 @@
     mobileMenu.querySelectorAll("[data-nav-link]").forEach((link) => {
       link.addEventListener("click", closeMenu);
     });
-
-    if (mobileThemeToggle) {
-      mobileThemeToggle.addEventListener("click", () => {
-        const root = document.documentElement;
-        const isDark = root.classList.toggle("dark");
-        document.getElementById("themeToggle")?.setAttribute("aria-pressed", String(isDark));
-        mobileThemeToggle.setAttribute("aria-pressed", String(isDark));
-        localStorage.setItem("paperhub-theme", isDark ? "dark" : "light");
-      });
-    }
   }
 
   function setupUserDropdown() {
@@ -176,27 +165,63 @@
   function setupThemeToggle() {
     const themeToggle = document.getElementById("themeToggle");
     const mobileThemeToggle = document.getElementById("mobileThemeToggle");
+    const root = document.documentElement;
+
+    const getStoredTheme = () => {
+      try {
+        return localStorage.getItem("paperhub-theme");
+      } catch (error) {
+        console.warn("Unable to read theme preference", error);
+        return null;
+      }
+    };
+
+    const setStoredTheme = (theme) => {
+      try {
+        localStorage.setItem("paperhub-theme", theme);
+      } catch (error) {
+        console.warn("Unable to persist theme preference", error);
+      }
+    };
+
+    const applyTheme = (isDark, persist = false) => {
+      root.classList.toggle("dark", isDark);
+      root.setAttribute("data-theme", isDark ? "dark" : "light");
+      themeToggle?.setAttribute("aria-pressed", String(isDark));
+      mobileThemeToggle?.setAttribute("aria-pressed", String(isDark));
+
+      if (persist) {
+        setStoredTheme(isDark ? "dark" : "light");
+      }
+    };
+
+    const storedTheme = getStoredTheme();
+    const prefersDark =
+      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const shouldUseDark = storedTheme ? storedTheme === "dark" : prefersDark;
+
+    applyTheme(shouldUseDark, false);
 
     if (!themeToggle && !mobileThemeToggle) {
       return;
     }
 
-    const root = document.documentElement;
-    const storedTheme = localStorage.getItem("paperhub-theme");
-    const prefersDark =
-      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const shouldUseDark = storedTheme ? storedTheme === "dark" : prefersDark;
-
-    root.classList.toggle("dark", shouldUseDark);
-    themeToggle?.setAttribute("aria-pressed", String(shouldUseDark));
-    mobileThemeToggle?.setAttribute("aria-pressed", String(shouldUseDark));
-
     themeToggle?.addEventListener("click", () => {
-      const isDark = root.classList.toggle("dark");
-      themeToggle.setAttribute("aria-pressed", String(isDark));
-      mobileThemeToggle?.setAttribute("aria-pressed", String(isDark));
-      localStorage.setItem("paperhub-theme", isDark ? "dark" : "light");
+      const isDark = !root.classList.contains("dark");
+      applyTheme(isDark, true);
     });
+
+    mobileThemeToggle?.addEventListener("click", () => {
+      const isDark = !root.classList.contains("dark");
+      applyTheme(isDark, true);
+    });
+
+    if (!storedTheme && window.matchMedia) {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      mediaQuery.addEventListener("change", (event) => {
+        applyTheme(event.matches, false);
+      });
+    }
   }
 
   function updateUser(user) {

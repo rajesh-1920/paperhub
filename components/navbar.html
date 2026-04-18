@@ -1,11 +1,5 @@
-<nav
-  id="paperhubNavbar"
-  class="ph-navbar sticky top-0 z-50 border-b border-slate-200/50 bg-white/90 backdrop-blur-md shadow-sm transition-all duration-300"
-  aria-label="Main navigation"
->
-  <div
-    class="mx-auto flex h-20 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
-  >
+<nav id="paperhubNavbar" class="site-navbar ph-navbar" aria-label="Main navigation">
+  <div class="site-navbar-inner">
     <!-- Logo & Brand -->
     <div class="flex items-center gap-3 flex-shrink-0">
       <button
@@ -21,17 +15,13 @@
         </svg>
       </button>
 
-      <a
-        href="/"
-        class="ph-brand group inline-flex items-center gap-3 rounded-2xl transition-all duration-200 hover:-translate-y-0.5"
-        aria-label="PaperHub Home"
-      >
+      <a href="/" class="site-brand ph-brand group" aria-label="PaperHub Home">
         <img
           src="/assets/images/logo.svg"
           alt="PaperHub logo"
-          class="ph-brand-mark h-11 w-11"
+          class="site-brand-icon ph-brand-mark"
         />
-        <span class="ph-brand-text hidden sm:flex sm:flex-col">
+        <span class="site-brand-copy ph-brand-text hidden sm:flex sm:flex-col">
           <span class="ph-brand-title">PaperHub</span>
           <span class="ph-brand-subtitle">Docs & Approvals</span>
         </span>
@@ -39,24 +29,16 @@
     </div>
 
     <!-- Desktop Navigation Menu -->
-    <ul
-      class="ph-nav-list items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1"
-      role="menubar"
-    >
+    <ul class="site-nav ph-nav-list" role="menubar">
       <li>
-        <a
-          href="/"
-          data-nav-link
-          class="ph-nav-link rounded-full px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-white hover:text-cyan-700"
-          >Home</a
-        >
+        <a href="/" data-nav-link class="site-nav-link ph-nav-link">Home</a>
       </li>
       <li>
         <a
           href="/pages/dashboard/user.html"
           data-nav-link
           data-roles="student,teacher,admin"
-          class="ph-nav-link rounded-full px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-white hover:text-cyan-700"
+          class="site-nav-link ph-nav-link"
           >Dashboard</a
         >
       </li>
@@ -65,7 +47,7 @@
           href="/pages/file/file-details.html"
           data-nav-link
           data-roles="student,teacher,admin"
-          class="ph-nav-link rounded-full px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-white hover:text-cyan-700"
+          class="site-nav-link ph-nav-link"
           >Files</a
         >
       </li>
@@ -74,7 +56,7 @@
           href="/pages/review/review-queue.html"
           data-nav-link
           data-roles="teacher,admin"
-          class="ph-nav-link rounded-full px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-white hover:text-cyan-700"
+          class="site-nav-link ph-nav-link"
           >Reviews</a
         >
       </li>
@@ -83,22 +65,19 @@
           href="/pages/payment/payment.html"
           data-nav-link
           data-roles="student,admin"
-          class="ph-nav-link rounded-full px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-white hover:text-cyan-700"
+          class="site-nav-link ph-nav-link"
           >Payments</a
         >
       </li>
       <li>
-        <a
-          href="/pages/support/contact.html"
-          data-nav-link
-          class="ph-nav-link rounded-full px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-white hover:text-cyan-700"
+        <a href="/pages/support/contact.html" data-nav-link class="site-nav-link ph-nav-link"
           >Support</a
         >
       </li>
     </ul>
 
     <!-- Right Section: Actions & User Menu -->
-    <div class="flex items-center gap-2 sm:gap-3">
+    <div class="site-navbar-actions">
       <!-- Role Badge -->
       <span
         data-role-badge
@@ -110,7 +89,7 @@
       <button
         id="themeToggle"
         type="button"
-        class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200/60 text-slate-600 transition-all duration-200 hover:border-slate-300 hover:text-slate-900 hover:bg-slate-100"
+        class="site-icon-button site-theme-toggle"
         aria-label="Toggle dark mode"
         aria-pressed="false"
       >
@@ -127,7 +106,7 @@
         <button
           id="userMenuBtn"
           type="button"
-          class="inline-flex items-center gap-2.5 rounded-lg border border-slate-200/60 bg-white px-2.5 py-1.5 text-sm font-semibold text-slate-700 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50"
+          class="site-avatar-button"
           aria-haspopup="menu"
           aria-expanded="false"
           aria-controls="userDropdown"
@@ -137,11 +116,12 @@
             src="https://ui-avatars.com/api/?name=John+Doe"
             alt="User avatar"
           />
-          <span class="user-name hidden sm:inline text-slate-900">John</span>
+          <span class="site-user-name user-name">John</span>
           <svg
             class="h-4 w-4 text-slate-400 transition-transform duration-200"
             viewBox="0 0 20 20"
             fill="currentColor"
+          >
             <path
               fill-rule="evenodd"
               d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.937a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
@@ -153,7 +133,7 @@
         <!-- Dropdown Menu -->
         <ul
           id="userDropdown"
-          class="absolute right-0 z-50 mt-2 hidden w-64 overflow-hidden rounded-xl border border-slate-200/60 bg-white shadow-xl transition-all duration-200"
+          class="site-dropdown hidden"
           role="menu"
           aria-labelledby="userMenuBtn"
         >
@@ -239,7 +219,7 @@
       <button
         id="navbarHamburger"
         type="button"
-        class="ph-hamburger inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200/60 text-slate-600 transition-all duration-200 hover:border-slate-300 hover:text-slate-900 hover:bg-slate-100"
+        class="site-mobile-trigger ph-hamburger"
         aria-label="Toggle mobile menu"
         aria-expanded="false"
         aria-controls="mobileMenu"
@@ -254,19 +234,16 @@
   </div>
 
   <!-- Mobile Menu Panel -->
-  <div
-    id="mobileMenu"
-    class="hidden border-t border-slate-200/50 bg-white px-4 py-4 shadow-lg transition-all duration-200 lg:hidden"
-  >
-    <div class="mb-4 flex items-center justify-between rounded-lg bg-slate-50 p-3">
+  <div id="mobileMenu" class="site-mobile-menu hidden transition-all duration-200 lg:hidden">
+    <div class="site-mobile-panel">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Current role</p>
-        <p data-role-badge-mobile class="text-sm font-bold text-slate-900 mt-1">User</p>
+        <p class="site-mobile-role-label">Current role</p>
+        <p data-role-badge-mobile class="site-mobile-role-value">User</p>
       </div>
       <button
         id="mobileThemeToggle"
         type="button"
-        class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200/60 text-slate-600 transition-all duration-200 hover:bg-slate-100"
+        class="site-mobile-theme-toggle"
         aria-label="Toggle dark mode"
         aria-pressed="false"
       >
@@ -279,21 +256,16 @@
       </button>
     </div>
 
-    <ul class="space-y-2" role="menu">
+    <ul class="site-mobile-links" role="menu">
       <li>
-        <a
-          href="/"
-          data-nav-link
-          class="block rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition-all duration-150 hover:bg-slate-100 hover:text-cyan-700"
-          >🏠 Home</a
-        >
+        <a href="/" data-nav-link class="site-mobile-link">🏠 Home</a>
       </li>
       <li>
         <a
           href="/pages/dashboard/user.html"
           data-nav-link
           data-roles="student,teacher,admin"
-          class="block rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition-all duration-150 hover:bg-slate-100 hover:text-cyan-700"
+          class="site-mobile-link"
           >📊 Dashboard</a
         >
       </li>
@@ -302,7 +274,7 @@
           href="/pages/file/file-details.html"
           data-nav-link
           data-roles="student,teacher,admin"
-          class="block rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition-all duration-150 hover:bg-slate-100 hover:text-cyan-700"
+          class="site-mobile-link"
           >📁 Files</a
         >
       </li>
@@ -311,7 +283,7 @@
           href="/pages/review/review-queue.html"
           data-nav-link
           data-roles="teacher,admin"
-          class="block rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition-all duration-150 hover:bg-slate-100 hover:text-cyan-700"
+          class="site-mobile-link"
           >✅ Reviews</a
         >
       </li>
@@ -320,17 +292,12 @@
           href="/pages/payment/payment.html"
           data-nav-link
           data-roles="student,admin"
-          class="block rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition-all duration-150 hover:bg-slate-100 hover:text-cyan-700"
+          class="site-mobile-link"
           >💳 Payments</a
         >
       </li>
       <li>
-        <a
-          href="/pages/support/contact.html"
-          data-nav-link
-          class="block rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition-all duration-150 hover:bg-slate-100 hover:text-cyan-700"
-          >💬 Support</a
-        >
+        <a href="/pages/support/contact.html" data-nav-link class="site-mobile-link">💬 Support</a>
       </li>
     </ul>
   </div>

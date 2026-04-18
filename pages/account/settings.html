@@ -19,39 +19,95 @@
             <h1>Settings</h1>
             <p class="page-subtitle">Tune preferences, notifications, and security defaults.</p>
           </div>
-          <a href="../dashboard/user.html" class="btn btn-outline">Back to dashboard</a>
+          <a href="/pages/dashboard/user.html" class="btn btn-outline">Back to dashboard</a>
         </div>
 
         <div class="account-grid">
           <section class="card">
             <h2>Preferences</h2>
             <form id="settingsForm" class="settings-form">
-              <div class="form-group"><label for="language">Language</label><select id="language"><option>English</option><option>Spanish</option><option>French</option></select></div>
-              <div class="form-group"><label for="timezone">Timezone</label><select id="timezone"><option>UTC +00:00</option><option>UTC +05:30</option><option>UTC -05:00</option></select></div>
-              <div class="toggle-list">
-                <label class="toggle-row"><span>Email notifications</span><input type="checkbox" checked /></label>
-                <label class="toggle-row"><span>SMS alerts</span><input type="checkbox" /></label>
-                <label class="toggle-row"><span>Dark mode preference</span><input type="checkbox" id="settingsDarkMode" /></label>
+              <div class="form-group">
+                <label for="language">Language</label
+                ><select id="language">
+                  <option>English</option>
+                  <option>Spanish</option>
+                  <option>French</option>
+                </select>
               </div>
-              <div class="form-actions"><button type="submit" class="btn btn-primary">Save preferences</button></div>
+              <div class="form-group">
+                <label for="timezone">Timezone</label
+                ><select id="timezone">
+                  <option>UTC +00:00</option>
+                  <option>UTC +05:30</option>
+                  <option>UTC -05:00</option>
+                </select>
+              </div>
+              <div class="toggle-list">
+                <label class="toggle-row"
+                  ><span>Email notifications</span><input type="checkbox" checked
+                /></label>
+                <label class="toggle-row"><span>SMS alerts</span><input type="checkbox" /></label>
+                <label class="toggle-row"
+                  ><span>Dark mode preference</span><input type="checkbox" id="settingsDarkMode"
+                /></label>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save preferences</button>
+              </div>
             </form>
           </section>
 
           <section class="card">
             <h2>Notification rules</h2>
             <div class="settings-stack">
-              <div class="settings-item"><div><h3>Approval updates</h3><p>Notify when a document is approved or rejected.</p></div><span class="badge badge-success">Enabled</span></div>
-              <div class="settings-item"><div><h3>Review assignments</h3><p>Notify officers when a new review is added.</p></div><span class="badge badge-primary">Enabled</span></div>
-              <div class="settings-item"><div><h3>Payment confirmations</h3><p>Alert finance users after payment processing.</p></div><span class="badge badge-warning">Manual</span></div>
+              <div class="settings-item">
+                <div>
+                  <h3>Approval updates</h3>
+                  <p>Notify when a document is approved or rejected.</p>
+                </div>
+                <span class="badge badge-success">Enabled</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Review assignments</h3>
+                  <p>Notify officers when a new review is added.</p>
+                </div>
+                <span class="badge badge-primary">Enabled</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Payment confirmations</h3>
+                  <p>Alert finance users after payment processing.</p>
+                </div>
+                <span class="badge badge-warning">Manual</span>
+              </div>
             </div>
           </section>
 
           <section class="card">
             <h2>Security</h2>
             <div class="settings-stack">
-              <div class="settings-item"><div><h3>Change password</h3><p>Update your password regularly.</p></div><button class="btn btn-outline btn-sm" type="button">Update</button></div>
-              <div class="settings-item"><div><h3>Session timeout</h3><p>Sessions expire after 30 minutes.</p></div><span class="badge badge-info">Active</span></div>
-              <div class="settings-item"><div><h3>Login alerts</h3><p>Receive alerts when new devices sign in.</p></div><span class="badge badge-success">On</span></div>
+              <div class="settings-item">
+                <div>
+                  <h3>Change password</h3>
+                  <p>Update your password regularly.</p>
+                </div>
+                <button class="btn btn-outline btn-sm" type="button">Update</button>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Session timeout</h3>
+                  <p>Sessions expire after 30 minutes.</p>
+                </div>
+                <span class="badge badge-info">Active</span>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Login alerts</h3>
+                  <p>Receive alerts when new devices sign in.</p>
+                </div>
+                <span class="badge badge-success">On</span>
+              </div>
             </div>
           </section>
         </div>
