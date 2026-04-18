@@ -4,37 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - PaperHub</title>
+    <script src="../../assets/js/tailwind-setup.js"></script>
     <link rel="stylesheet" href="../../assets/css/global.css" />
-    <link rel="stylesheet" href="../../assets/css/pages/auth/register.css" />
   </head>
   <body class="register-page">
     <div class="auth-container">
-      <div class="auth-left">
+      <aside class="auth-left">
         <div>
-          <svg
-            width="80"
-            height="80"
-            viewBox="0 0 32 32"
-            fill="currentColor"
-            class="auth-logo-icon"
-          >
-            <path
-              d="M8 2C5.24 2 3 4.24 3 7v18c0 2.76 2.24 5 5 5h16c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H8zm0 2h16c1.66 0 3 1.34 3 3v18c0 1.66-1.34 3-3 3H8c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3z"
-            />
-            <path d="M10 8h12v2H10zm0 4h12v2H10zm0 4h12v2H10zm0 4h8v2h-8z" />
-          </svg>
-          <h1>Join PaperHub</h1>
-          <p>
-            Create your account and start managing your documents securely with enterprise-grade
-            tools.
-          </p>
+          <span class="badge badge-success">Start Free</span>
+          <h1 class="mt-4 font-display text-4xl font-bold">Build a cleaner, faster document operation</h1>
+          <p>Create your workspace to onboard teams, route reviews, and unlock compliant payment workflows.</p>
+          <div class="mt-6 grid gap-3">
+            <div class="rounded-xl border border-white/20 bg-white/10 p-3">
+              <p class="text-xs uppercase tracking-[0.15em]">Setup time</p>
+              <p class="mt-1 text-sm">Less than 5 minutes</p>
+            </div>
+            <div class="rounded-xl border border-white/20 bg-white/10 p-3">
+              <p class="text-xs uppercase tracking-[0.15em]">Included</p>
+              <p class="mt-1 text-sm">Dashboards, review engine, audit trail</p>
+            </div>
+          </div>
         </div>
-      </div>
+      </aside>
 
-      <div class="auth-right">
+      <section class="auth-right">
         <form class="auth-form" id="registerForm">
-          <h2>Create Account</h2>
-          <p class="auth-form-subtitle">Sign up to get started</p>
+          <h2 class="text-2xl font-bold">Create Account</h2>
+          <p class="auth-form-subtitle">Set up your PaperHub identity.</p>
 
           <div class="form-group">
             <label for="name">Full Name</label>
@@ -43,67 +39,44 @@
 
           <div class="form-group">
             <label for="register-email">Email Address</label>
-            <input
-              type="email"
-              id="register-email"
-              name="email"
-              placeholder="john@example.com"
-              required
-            />
+            <input type="email" id="register-email" name="email" placeholder="john@example.com" required />
           </div>
 
           <div class="form-group">
             <label for="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="At least 8 characters"
-              required
-            />
+            <input type="password" id="password" name="password" placeholder="At least 8 characters" required />
             <div class="password-strength">
-              <div class="password-strength-bar" id="passwordStrengthBar">
-                <div></div>
-              </div>
+              <div class="password-strength-bar" id="passwordStrengthBar"><div></div></div>
               <div class="password-strength-text" id="passwordStrength">Very Weak</div>
             </div>
           </div>
 
           <div class="form-group">
             <label for="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              placeholder="Confirm your password"
-              required
-            />
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required />
           </div>
 
           <div class="form-group">
-            <div class="checkbox-wrapper">
+            <div class="checkbox-wrapper !justify-start">
               <input type="checkbox" id="showPassword" name="showPassword" />
               <label for="showPassword">Show password</label>
             </div>
           </div>
 
           <div class="form-group">
-            <div class="checkbox-wrapper">
+            <div class="checkbox-wrapper !items-start !justify-start">
               <input type="checkbox" id="terms" name="terms" required />
-              <label for="terms"
-                >I agree to the <a href="#">Terms of Service</a> and
-                <a href="#">Privacy Policy</a></label
-              >
+              <label for="terms">I agree to the <a href="#" class="font-semibold text-cyan-700">Terms of Service</a> and <a href="#" class="font-semibold text-cyan-700">Privacy Policy</a></label>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+          <button type="submit" class="btn btn-primary btn-lg mt-3 w-full">Create Account</button>
 
-          <div class="auth-footer">
-            Already have an account? <a href="login.html">Sign in here</a>
-          </div>
+          <p class="auth-footer mt-4 text-center">
+            Already have an account? <a href="login.html" class="font-semibold text-cyan-700">Sign in</a>
+          </p>
         </form>
-      </div>
+      </section>
     </div>
 
     <script src="../../assets/js/utils.js"></script>

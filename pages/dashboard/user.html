@@ -3,79 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - PaperHub</title>
+    <title>User Dashboard - PaperHub</title>
+    <script src="../../assets/js/tailwind-setup.js"></script>
     <link rel="stylesheet" href="../../assets/css/global.css" />
-    <link rel="stylesheet" href="../../assets/css/pages/dashboard/user.css" />
   </head>
   <body>
-    <!-- Navbar -->
     <div id="navbar-container"></div>
-
-    <!-- Sidebar -->
     <div id="sidebar-container"></div>
 
-    <!-- Main Content -->
     <main>
       <div class="dashboard-content">
         <div class="dashboard-header">
-          <h1>User Dashboard</h1>
+          <div>
+            <p class="eyebrow">User Workspace</p>
+            <h1>Operations Overview</h1>
+            <p class="page-subtitle">Track your documents, approvals, and activity in one place.</p>
+          </div>
           <div class="dashboard-header-actions">
-            <a href="/pages/file/upload.html" class="btn btn-primary">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-              </svg>
-              Upload Document
-            </a>
+            <a href="/pages/file/upload.html" class="btn btn-primary">Upload Document</a>
           </div>
         </div>
 
-        <!-- Stats -->
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Total Documents</div>
-            <div class="stat-value">156</div>
-            <div class="stat-change">↑ 12.5% from last month</div>
-          </div>
-
-          <div class="stat-card stat-warning">
-            <div class="stat-label">Pending Review</div>
-            <div class="stat-value">12</div>
-            <div class="stat-change">Awaiting approval</div>
-          </div>
-
-          <div class="stat-card stat-success">
-            <div class="stat-label">Processed Documents</div>
-            <div class="stat-value">144</div>
-            <div class="stat-change">✓ Completed</div>
-          </div>
-
-          <div class="stat-card stat-danger">
-            <div class="stat-label">Total Payments</div>
-            <div class="stat-value">$2,450</div>
-            <div class="stat-change">This month</div>
-          </div>
+          <div class="stat-card"><div class="stat-label">Total Documents</div><div class="stat-value">156</div><div class="stat-change">12.5% from last month</div></div>
+          <div class="stat-card"><div class="stat-label">Pending Review</div><div class="stat-value">12</div><div class="stat-change">Awaiting approval</div></div>
+          <div class="stat-card"><div class="stat-label">Processed</div><div class="stat-value">144</div><div class="stat-change">Completed</div></div>
+          <div class="stat-card"><div class="stat-label">Payments</div><div class="stat-value">$2,450</div><div class="stat-change">This month</div></div>
         </div>
 
-        <!-- Recent Documents -->
         <h2 class="section-title">Recent Files</h2>
         <div class="table-container">
           <div class="table-header-actions">
-            <input
-              type="text"
-              placeholder="Search documents..."
-              class="form-control dashboard-search-input"
-              class="form-control"
-            />
-            <select class="form-control dashboard-status-filter">
+            <input type="text" placeholder="Search documents..." class="dashboard-search-input" />
+            <select class="dashboard-status-filter">
               <option value="">All Status</option>
               <option value="completed">Completed</option>
               <option value="reviewing">Reviewing</option>
@@ -84,54 +44,28 @@
           </div>
           <table>
             <thead>
-              <tr>
-                <th>Document Name</th>
-                <th>Size</th>
-                <th>Status</th>
-                <th>Uploaded</th>
-                <th>Actions</th>
-              </tr>
+              <tr><th>Document Name</th><th>Size</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr>
             </thead>
-            <tbody id="fileTableBody">
-              <!-- Populated by JavaScript -->
-            </tbody>
+            <tbody id="fileTableBody"></tbody>
           </table>
         </div>
 
-        <!-- Recent Activity -->
-        <h2 class="section-title mt-lg">Recent Activity</h2>
+        <h2 class="section-title">Recent Activity</h2>
         <div class="table-container">
           <table>
             <thead>
-              <tr>
-                <th>Activity</th>
-                <th>Document</th>
-                <th>Date</th>
-              </tr>
+              <tr><th>Activity</th><th>Document</th><th>Date</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Uploaded</td>
-                <td>Q4 Financial Report.pdf</td>
-                <td>Apr 6, 2024</td>
-              </tr>
-              <tr>
-                <td>Approves</td>
-                <td>Annual Summary.pdf</td>
-                <td>Apr 5, 2024</td>
-              </tr>
-              <tr>
-                <td>Submitted for Review</td>
-                <td>Budget Analysis.pdf</td>
-                <td>Apr 4, 2024</td>
-              </tr>
+              <tr><td>Uploaded</td><td>Q4 Financial Report.pdf</td><td>Apr 6, 2026</td></tr>
+              <tr><td>Approved</td><td>Annual Summary.pdf</td><td>Apr 5, 2026</td></tr>
+              <tr><td>Submitted for Review</td><td>Budget Analysis.pdf</td><td>Apr 4, 2026</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </main>
 
-    <!-- Footer -->
     <div id="footer-container"></div>
 
     <script src="../../assets/js/utils.js"></script>

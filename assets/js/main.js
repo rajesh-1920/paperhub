@@ -112,7 +112,7 @@ async function ensureNavbarScript() {
  * Load component styles once (navbar, sidebar, footer)
  */
 function loadComponentStyles() {
-  const styleFiles = ["/assets/css/components/sidebar.css", "/assets/css/components/footer.css"];
+  const styleFiles = [];
 
   styleFiles.forEach((href) => {
     const existingLink = document.querySelector(`link[href="${href}"]`);

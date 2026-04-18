@@ -4,45 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Files - PaperHub</title>
+    <script src="../../assets/js/tailwind-setup.js"></script>
     <link rel="stylesheet" href="../../assets/css/global.css" />
-    <link rel="stylesheet" href="../../assets/css/pages/file/file-details.css" />
   </head>
   <body class="file-details-page">
-    <!-- Navbar -->
     <div id="navbar-container"></div>
-
-    <!-- Sidebar -->
     <div id="sidebar-container"></div>
 
-    <!-- Main Content -->
     <main>
       <div class="page-content">
         <div class="page-header">
-          <h1>My Files</h1>
-          <a href="upload.html" class="btn btn-primary">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            Upload New
-          </a>
+          <div>
+            <p class="eyebrow">Repository</p>
+            <h1>My Files</h1>
+          </div>
+          <a href="upload.html" class="btn btn-primary">Upload New</a>
         </div>
 
         <div class="table-container">
           <div class="table-header">
-            <input
-              type="text"
-              placeholder="Search documents..."
-              class="file-search-input"
-            />
+            <input type="text" placeholder="Search documents..." class="file-search-input" />
             <select class="file-status-filter">
               <option value="">All Status</option>
               <option value="completed">Completed</option>
@@ -53,23 +34,14 @@
 
           <table>
             <thead>
-              <tr>
-                <th>Document Name</th>
-                <th>Size</th>
-                <th>Status</th>
-                <th>Uploaded</th>
-                <th>Actions</th>
-              </tr>
+              <tr><th>Document Name</th><th>Size</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr>
             </thead>
-            <tbody id="fileTableBody">
-              <!-- Populated by JavaScript -->
-            </tbody>
+            <tbody id="fileTableBody"></tbody>
           </table>
         </div>
       </div>
     </main>
 
-    <!-- Footer -->
     <div id="footer-container"></div>
 
     <script src="../../assets/js/utils.js"></script>

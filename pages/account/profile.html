@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile - PaperHub</title>
+    <script src="../../assets/js/tailwind-setup.js"></script>
     <link rel="stylesheet" href="../../assets/css/global.css" />
-    <link rel="stylesheet" href="../../assets/css/pages/account/profile.css" />
   </head>
   <body class="account-page">
     <div id="navbar-container"></div>
@@ -17,9 +17,7 @@
           <div>
             <p class="eyebrow">Account</p>
             <h1>Profile</h1>
-            <p class="page-subtitle">
-              Review personal details, role assignment, and account security.
-            </p>
+            <p class="page-subtitle">Manage identity details, role profile, and security context.</p>
           </div>
           <a href="../dashboard/user.html" class="btn btn-outline">Back to dashboard</a>
         </div>
@@ -27,11 +25,7 @@
         <div class="account-grid">
           <section class="card profile-summary-card">
             <div class="profile-hero">
-              <img
-                class="profile-avatar"
-                src="https://ui-avatars.com/api/?name=John+Doe&background=0ea5e9&color=fff"
-                alt="John Doe"
-              />
+              <img class="profile-avatar" src="https://ui-avatars.com/api/?name=John+Doe&background=0ea5e9&color=fff" alt="John Doe" />
               <div>
                 <h2>John Doe</h2>
                 <p>Senior Document Analyst</p>
@@ -40,79 +34,30 @@
             </div>
 
             <dl class="profile-metadata">
-              <div>
-                <dt>Email</dt>
-                <dd>john@example.com</dd>
-              </div>
-              <div>
-                <dt>Role</dt>
-                <dd>Officer</dd>
-              </div>
-              <div>
-                <dt>Department</dt>
-                <dd>Document Review</dd>
-              </div>
-              <div>
-                <dt>Last Login</dt>
-                <dd>Today, 08:45 AM</dd>
-              </div>
+              <div><dt>Email</dt><dd>john@example.com</dd></div>
+              <div><dt>Role</dt><dd>Officer</dd></div>
+              <div><dt>Department</dt><dd>Document Review</dd></div>
+              <div><dt>Last Login</dt><dd>Today, 08:45 AM</dd></div>
             </dl>
           </section>
 
           <section class="card">
             <h2>Update profile</h2>
             <form id="profileForm" class="profile-form">
-              <div class="form-group">
-                <label for="fullName">Full name</label>
-                <input id="fullName" type="text" value="John Doe" />
-              </div>
-              <div class="form-group">
-                <label for="jobTitle">Job title</label>
-                <input id="jobTitle" type="text" value="Senior Document Analyst" />
-              </div>
-              <div class="form-group">
-                <label for="emailAddress">Email address</label>
-                <input id="emailAddress" type="email" value="john@example.com" />
-              </div>
-              <div class="form-group">
-                <label for="department">Department</label>
-                <select id="department">
-                  <option>Document Review</option>
-                  <option>Operations</option>
-                  <option>Compliance</option>
-                </select>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Save changes</button>
-                <button type="reset" class="btn btn-outline">Reset</button>
-              </div>
+              <div class="form-group"><label for="fullName">Full name</label><input id="fullName" type="text" value="John Doe" /></div>
+              <div class="form-group"><label for="jobTitle">Job title</label><input id="jobTitle" type="text" value="Senior Document Analyst" /></div>
+              <div class="form-group"><label for="emailAddress">Email address</label><input id="emailAddress" type="email" value="john@example.com" /></div>
+              <div class="form-group"><label for="department">Department</label><select id="department"><option>Document Review</option><option>Operations</option><option>Compliance</option></select></div>
+              <div class="form-actions"><button type="submit" class="btn btn-primary">Save changes</button><button type="reset" class="btn btn-outline">Reset</button></div>
             </form>
           </section>
 
           <section class="card">
             <h2>Security activity</h2>
             <div class="timeline-list">
-              <article class="timeline-item">
-                <span class="timeline-dot"></span>
-                <div>
-                  <h3>Password updated</h3>
-                  <p>2 weeks ago</p>
-                </div>
-              </article>
-              <article class="timeline-item">
-                <span class="timeline-dot"></span>
-                <div>
-                  <h3>New device signed in</h3>
-                  <p>Desktop Chrome on Linux</p>
-                </div>
-              </article>
-              <article class="timeline-item">
-                <span class="timeline-dot"></span>
-                <div>
-                  <h3>Two-factor authentication enabled</h3>
-                  <p>Security setting updated successfully</p>
-                </div>
-              </article>
+              <article class="timeline-item"><span class="timeline-dot"></span><div><h3>Password updated</h3><p>2 weeks ago</p></div></article>
+              <article class="timeline-item"><span class="timeline-dot"></span><div><h3>New device signed in</h3><p>Desktop Chrome on Linux</p></div></article>
+              <article class="timeline-item"><span class="timeline-dot"></span><div><h3>Two-factor authentication enabled</h3><p>Security setting updated successfully</p></div></article>
             </div>
           </section>
         </div>

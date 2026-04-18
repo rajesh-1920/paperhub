@@ -1,1 +1,2 @@
-project-proposal
+*.git
+*.gitignore

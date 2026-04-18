@@ -1,17 +1,10 @@
-<!-- PaperHub Tailwind Navbar Component -->
-<nav
-  id="paperhubNavbar"
-  class="fixed top-0 left-0 right-0 z-[1000] border-b border-slate-200/80 bg-white/90 shadow-[0_8px_24px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-slate-700 dark:bg-slate-950/85"
-  aria-label="Main navigation"
->
-  <div
-    class="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8"
-  >
-    <div class="flex items-center gap-2 sm:gap-3 lg:gap-4">
+<nav id="paperhubNavbar" class="fixed inset-x-0 top-0 z-50 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl" aria-label="Main navigation">
+  <div class="mx-auto flex h-[76px] w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+    <div class="flex items-center gap-2">
       <button
         id="sidebarToggle"
         type="button"
-        class="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition duration-200 hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 lg:hidden dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-cyan-400 hover:text-cyan-700 lg:hidden"
         aria-label="Open sidebar"
       >
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -21,112 +14,54 @@
         </svg>
       </button>
 
-      <a
-        href="/"
-        class="group inline-flex items-center gap-3 rounded-2xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-sky-500"
-      >
-        <span
-          class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/20 transition-transform duration-200 group-hover:-rotate-6 group-hover:scale-105 dark:from-sky-400 dark:to-cyan-500"
-        >
+      <a href="/" class="group inline-flex items-center gap-2.5 rounded-2xl px-1 py-1" aria-label="PaperHub Home">
+        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-600 to-blue-700 text-white shadow-lg shadow-cyan-700/30">
           <svg class="h-5 w-5" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
-            <path
-              d="M8 2C5.24 2 3 4.24 3 7v18c0 2.76 2.24 5 5 5h16c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H8zm0 2h16c1.66 0 3 1.34 3 3v18c0 1.66-1.34 3-3 3H8c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3z"
-            />
+            <path d="M8 2C5.24 2 3 4.24 3 7v18c0 2.76 2.24 5 5 5h16c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H8zm0 2h16c1.66 0 3 1.34 3 3v18c0 1.66-1.34 3-3 3H8c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3z" />
             <path d="M10 8h12v2H10zm0 4h12v2H10zm0 4h12v2H10zm0 4h8v2h-8z" />
           </svg>
         </span>
         <span class="hidden sm:flex sm:flex-col">
-          <span class="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100"
-            >PaperHub</span
-          >
-          <span
-            class="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400"
-            >Secure Document Management</span
-          >
+          <span class="text-sm font-semibold tracking-tight text-slate-900">PaperHub</span>
+          <span class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Document Command Center</span>
         </span>
       </a>
     </div>
 
-    <div class="hidden flex-1 items-center justify-center lg:flex">
-      <ul
-        class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-1.5 py-1 shadow-sm dark:border-slate-700 dark:bg-slate-900"
-        role="menubar"
-      >
-        <li>
-          <a
-            href="/"
-            data-nav-link
-            class="rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition duration-200 hover:bg-white hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-            >Home</a
-          >
-        </li>
-        <li>
-          <a
-            href="/pages/dashboard/user.html"
-            data-nav-link
-            data-roles="user,officer,admin"
-            class="rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition duration-200 hover:bg-white hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-            >Dashboard</a
-          >
-        </li>
-        <li>
-          <a
-            href="/pages/file/file-details.html"
-            data-nav-link
-            data-roles="user,officer,admin"
-            class="rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition duration-200 hover:bg-white hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-            >Files</a
-          >
-        </li>
-        <li>
-          <a
-            href="/pages/review/review-queue.html"
-            data-nav-link
-            data-roles="officer,admin"
-            class="rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition duration-200 hover:bg-white hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-            >Reviews</a
-          >
-        </li>
-        <li>
-          <a
-            href="/pages/payment/payment.html"
-            data-nav-link
-            data-roles="user,admin"
-            class="rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition duration-200 hover:bg-white hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-            >Payments</a
-          >
-        </li>
-        <li>
-          <a
-            href="/#contact"
-            data-nav-link
-            class="rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition duration-200 hover:bg-white hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-            >Contact</a
-          >
-        </li>
-      </ul>
-    </div>
+    <ul class="hidden items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 lg:flex" role="menubar">
+      <li>
+        <a href="/" data-nav-link class="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-cyan-700">Home</a>
+      </li>
+      <li>
+        <a href="/pages/dashboard/user.html" data-nav-link data-roles="user,officer,admin" class="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-cyan-700">Dashboard</a>
+      </li>
+      <li>
+        <a href="/pages/file/file-details.html" data-nav-link data-roles="user,officer,admin" class="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-cyan-700">Files</a>
+      </li>
+      <li>
+        <a href="/pages/review/review-queue.html" data-nav-link data-roles="officer,admin" class="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-cyan-700">Reviews</a>
+      </li>
+      <li>
+        <a href="/pages/payment/payment.html" data-nav-link data-roles="user,admin" class="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-cyan-700">Payments</a>
+      </li>
+      <li>
+        <a href="/pages/support/contact.html" data-nav-link class="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-cyan-700">Support</a>
+      </li>
+    </ul>
 
-    <div class="flex items-center gap-2 sm:gap-3">
-      <span
-        data-role-badge
-        class="hidden rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-500 shadow-sm sm:inline-flex dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-      >
-        User
-      </span>
+    <div class="flex items-center gap-2">
+      <span data-role-badge class="hidden rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-500 sm:inline-flex">User</span>
 
       <button
         id="themeToggle"
         type="button"
-        class="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition duration-200 hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-cyan-400 hover:text-cyan-700"
         aria-label="Toggle dark mode"
         aria-pressed="false"
       >
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="4"></circle>
-          <path
-            d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-          ></path>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
         </svg>
       </button>
 
@@ -134,66 +69,31 @@
         <button
           id="userMenuBtn"
           type="button"
-          class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-sky-300 hover:text-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+          class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-2 py-1.5 text-sm font-semibold text-slate-700"
           aria-haspopup="menu"
           aria-expanded="false"
           aria-controls="userDropdown"
         >
-          <img
-            class="user-avatar h-8 w-8 rounded-lg object-cover"
-            src="https://ui-avatars.com/api/?name=John+Doe"
-            alt="John Doe"
-          />
+          <img class="user-avatar h-8 w-8 rounded-xl object-cover" src="https://ui-avatars.com/api/?name=John+Doe" alt="John Doe" />
           <span class="user-name hidden sm:inline">John</span>
           <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fill-rule="evenodd"
-              d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.937a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-              clip-rule="evenodd"
-            />
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.937a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
           </svg>
         </button>
 
-        <ul
-          id="userDropdown"
-          class="absolute right-0 z-50 mt-2 hidden w-52 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
-          role="menu"
-          aria-labelledby="userMenuBtn"
-        >
-          <li role="none">
-            <a
-              href="/pages/account/profile.html"
-              role="menuitem"
-              class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-              >Profile</a
-            >
-          </li>
-          <li role="none">
-            <a
-              href="/pages/account/settings.html"
-              role="menuitem"
-              class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-              >Settings</a
-            >
-          </li>
-          <li role="none"><hr class="my-1 border-slate-200 dark:border-slate-700" /></li>
-          <li role="none">
-            <a
-              id="logoutBtn"
-              href="#"
-              role="menuitem"
-              class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20"
-              >Logout</a
-            >
-            href="/pages/support/contact.html"
-          </li>
+        <ul id="userDropdown" class="absolute right-0 z-50 mt-2 hidden w-52 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-xl" role="menu" aria-labelledby="userMenuBtn">
+          <li role="none"><a href="/pages/account/profile.html" role="menuitem" class="block px-4 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Profile</a></li>
+          <li role="none"><a href="/pages/account/settings.html" role="menuitem" class="block px-4 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Settings</a></li>
+          <li role="none"><a href="/pages/support/contact.html" role="menuitem" class="block px-4 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Support</a></li>
+          <li role="none"><hr class="my-1 border-slate-200" /></li>
+          <li role="none"><a id="logoutBtn" href="#" role="menuitem" class="block px-4 py-2 text-sm text-rose-600 transition hover:bg-rose-50">Logout</a></li>
         </ul>
       </div>
 
       <button
         id="navbarHamburger"
         type="button"
-        class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 text-slate-600 transition duration-200 hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 md:hidden dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 md:hidden"
         aria-label="Toggle mobile menu"
         aria-expanded="false"
         aria-controls="mobileMenu"
@@ -207,112 +107,33 @@
     </div>
   </div>
 
-  <div
-    id="mobileMenu"
-    class="hidden border-t border-slate-200 bg-white/95 px-4 py-3 shadow-lg lg:hidden dark:border-slate-700 dark:bg-slate-950/95"
-  >
-    <div
-      class="mb-3 flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2 dark:bg-slate-900"
-    >
+  <div id="mobileMenu" class="hidden border-t border-slate-200 bg-white/95 px-4 py-3 shadow-lg lg:hidden">
+    <div class="mb-3 flex items-center justify-between rounded-2xl bg-slate-100 px-3 py-2">
       <div>
-        <p
-          class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400"
-        >
-          Current role
-        </p>
-        <p data-role-badge-mobile class="text-sm font-semibold text-slate-900 dark:text-slate-100">
-          User
-        </p>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Current role</p>
+        <p data-role-badge-mobile class="text-sm font-semibold text-slate-900">User</p>
       </div>
       <button
         id="mobileThemeToggle"
         type="button"
-        class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-sky-300 hover:bg-white hover:text-sky-600 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600"
         aria-label="Toggle dark mode"
         aria-pressed="false"
       >
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="4"></circle>
-          <path
-            d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-          ></path>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
         </svg>
       </button>
     </div>
 
     <ul class="space-y-1" role="menu">
-      <li>
-        <a
-          href="/"
-          data-nav-link
-          class="block rounded-xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-          >Home</a
-        >
-      </li>
-      <li>
-        <a
-          href="/pages/dashboard/user.html"
-          data-nav-link
-          data-roles="user,officer,admin"
-          class="block rounded-xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-          >Dashboard</a
-        >
-      </li>
-      <li>
-        <a
-          href="/pages/file/file-details.html"
-          data-nav-link
-          data-roles="user,officer,admin"
-          class="block rounded-xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-          >Files</a
-        >
-      </li>
-      <li>
-        <a
-          href="/pages/review/review-queue.html"
-          data-nav-link
-          data-roles="officer,admin"
-          class="block rounded-xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-          >Reviews</a
-        >
-      </li>
-      <li>
-        <a
-          href="/pages/payment/payment.html"
-          data-nav-link
-          data-roles="user,admin"
-          class="block rounded-xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-          >Payments</a
-        >
-      </li>
-      <li>
-        <a
-          href="/pages/support/contact.html"
-          data-nav-link
-          class="block rounded-xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-slate-800"
-          >Contact</a
-        >
-      </li>
+      <li><a href="/" data-nav-link class="block rounded-xl px-3 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Home</a></li>
+      <li><a href="/pages/dashboard/user.html" data-nav-link data-roles="user,officer,admin" class="block rounded-xl px-3 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Dashboard</a></li>
+      <li><a href="/pages/file/file-details.html" data-nav-link data-roles="user,officer,admin" class="block rounded-xl px-3 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Files</a></li>
+      <li><a href="/pages/review/review-queue.html" data-nav-link data-roles="officer,admin" class="block rounded-xl px-3 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Reviews</a></li>
+      <li><a href="/pages/payment/payment.html" data-nav-link data-roles="user,admin" class="block rounded-xl px-3 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Payments</a></li>
+      <li><a href="/pages/support/contact.html" data-nav-link class="block rounded-xl px-3 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-cyan-700">Support</a></li>
     </ul>
-
-    <div
-      class="mt-3 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2 dark:border-slate-700 dark:bg-slate-900 sm:grid-cols-3"
-    >
-      <a
-        href="/pages/file/upload.html"
-        class="inline-flex items-center justify-center rounded-xl bg-sky-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-sky-700"
-        >Upload</a
-      >
-      <a
-        href="/pages/review/review-queue.html"
-        class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:text-sky-600 dark:border-slate-700 dark:text-slate-200"
-        >Queue</a
-      >
-      <a
-        href="/pages/dashboard/user.html"
-        class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:text-sky-600 dark:border-slate-700 dark:text-slate-200 sm:col-span-1"
-        >Open app</a
-      >
-    </div>
   </div>
 </nav>
