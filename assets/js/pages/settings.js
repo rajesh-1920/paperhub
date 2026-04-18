@@ -10,12 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (form) {
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      if (typeof showSuccess === "function") {
-        showSuccess("Settings saved successfully");
-      }
-    });
-  }
+  if (!form) return;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    showSuccess("Settings saved successfully");
+  });
 });

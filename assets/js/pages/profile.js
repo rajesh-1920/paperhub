@@ -1,12 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("profileForm");
+  if (!form) return;
 
-  if (form) {
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      if (typeof showSuccess === "function") {
-        showSuccess("Profile updated successfully");
-      }
-    });
-  }
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    showSuccess("Profile updated successfully");
+  });
 });

@@ -43,8 +43,6 @@
 
   function applyStaggeredEntrance() {
     const selectors = [
-      ".auth-left",
-      ".auth-form",
       "main .card",
       "main .stat-card",
       "main .table-container",

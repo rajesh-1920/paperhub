@@ -1,3 +1,26 @@
+const MAX_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
+const FILE_ICON_MAP = {
+  "application/pdf": "📄",
+  "application/msword": "📝",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "📝",
+  "application/vnd.ms-excel": "📊",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "📊",
+  "image/jpeg": "🖼️",
+  "image/png": "🖼️",
+};
+const ALLOWED_FILE_TYPES = new Set(Object.keys(FILE_ICON_MAP));
+const ALLOWED_FILE_EXTENSIONS = new Set([
+  "pdf",
+  "doc",
+  "docx",
+  "xls",
+  "xlsx",
+  "jpg",
+  "jpeg",
+  "png",
+]);
+const uploadState = new Map();
+
 function initFileUploadPage() {
   const dropzone = getElement(".upload-dropzone");
   const fileInput = getElement("#fileInput");
@@ -23,19 +46,19 @@ function initFileUploadPage() {
 function handleDragOver(e) {
   e.preventDefault();
   e.stopPropagation();
-  addClass(e.target, "upload-dropzone-active");
+  addClass(e.currentTarget, "upload-dropzone-active");
 }
 
 function handleDragLeave(e) {
   e.preventDefault();
   e.stopPropagation();
-  removeClass(e.target, "upload-dropzone-active");
+  removeClass(e.currentTarget, "upload-dropzone-active");
 }
 
 function handleFileDrop(e) {
   e.preventDefault();
   e.stopPropagation();
-  removeClass(e.target, "upload-dropzone-active");
+  removeClass(e.currentTarget, "upload-dropzone-active");
 
   const files = e.dataTransfer.files;
   if (files.length > 0) {
@@ -51,14 +74,19 @@ function handleFiles(files) {
   const fileList = getElement(".file-preview-list");
   if (!fileList) return;
 
-  for (const file of files) {
+  Array.from(files).forEach((file) => {
     if (!validateFile(file)) {
       showError(`File ${file.name} is not allowed`);
-      continue;
+      return;
+    }
+
+    if (isDuplicateFile(file)) {
+      showWarning(`File ${file.name} is already selected`);
+      return;
     }
 
     addFilePreview(fileList, file);
-  }
+  });
 
   if (fileList.children.length > 0) {
     const uploadBtn = getElement("#uploadBtn");
@@ -67,23 +95,16 @@ function handleFiles(files) {
 }
 
 function validateFile(file) {
-  const maxSize = 50 * 1024 * 1024; // 50MB
-  const allowedTypes = [
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "image/jpeg",
-    "image/png",
-  ];
-
-  if (file.size > maxSize) {
+  if (file.size > MAX_UPLOAD_SIZE_BYTES) {
     showError(`File ${file.name} exceeds 50MB limit`);
     return false;
   }
 
-  if (!allowedTypes.includes(file.type)) {
+  const extension = getFileExtension(file.name);
+  const hasAllowedMimeType = ALLOWED_FILE_TYPES.has(file.type);
+  const hasAllowedExtension = ALLOWED_FILE_EXTENSIONS.has(extension);
+
+  if (!hasAllowedMimeType && !hasAllowedExtension) {
     showError(`File type ${file.type} not allowed`);
     return false;
   }
@@ -92,17 +113,20 @@ function validateFile(file) {
 }
 
 function addFilePreview(container, file) {
-  const fileId = "file-" + Date.now() + "-" + Math.random();
+  const fileId = createUploadId();
+  const fileKey = getFileSignature(file);
+  uploadState.set(fileKey, file);
 
   const filePreview = createElement("div", "file-preview-item");
   filePreview.setAttribute("data-file-id", fileId);
+  filePreview.setAttribute("data-file-key", fileKey);
 
   filePreview.innerHTML = `
     <div class="file-icon">
       ${getFileIcon(file.type)}
     </div>
     <div class="file-info">
-      <div class="file-name">${file.name}</div>
+      <div class="file-name">${escapeHtml(file.name)}</div>
       <div class="file-size">${formatFileSize(file.size)}</div>
       <div class="file-progress">
         <div class="progress-bar" id="progress-${fileId}" style="width: 0%"></div>
@@ -119,10 +143,9 @@ function addFilePreview(container, file) {
 
   container.appendChild(filePreview);
 
-  filePreview._file = file;
-
   const removeBtn = filePreview.querySelector(".file-remove");
   addEvent(removeBtn, "click", () => {
+    uploadState.delete(fileKey);
     removeElement(filePreview);
     if (container.children.length === 0) {
       hideElement(getElement("#uploadBtn"));
@@ -131,17 +154,7 @@ function addFilePreview(container, file) {
 }
 
 function getFileIcon(fileType) {
-  const iconMap = {
-    "application/pdf": "📄",
-    "application/msword": "document",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "📝",
-    "application/vnd.ms-excel": "📊",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "📊",
-    "image/jpeg": "🖼️",
-    "image/png": "🖼️",
-  };
-
-  return iconMap[fileType] || "📎";
+  return FILE_ICON_MAP[fileType] || "📎";
 }
 
 async function handleUpload() {
@@ -160,22 +173,27 @@ async function handleUpload() {
   let uploadedCount = 0;
 
   for (const filePreview of files) {
-    const file = filePreview._file;
+    const file = uploadState.get(filePreview.getAttribute("data-file-key"));
     const fileId = filePreview.getAttribute("data-file-id");
+
+    if (!file) {
+      continue;
+    }
 
     try {
       const statusEl = getElement(`#status-${fileId}`);
       const progressEl = getElement(`#progress-${fileId}`);
 
-      statusEl.textContent = "Uploading...";
-
-      for (let i = 0; i <= 100; i += 10) {
-        progressEl.style.width = i + "%";
-        await new Promise((resolve) => setTimeout(resolve, 100));
+      if (statusEl) {
+        statusEl.textContent = "Uploading...";
       }
 
-      statusEl.textContent = "✓ Uploaded successfully";
-      statusEl.style.color = "var(--success)";
+      await simulateUpload(progressEl);
+
+      if (statusEl) {
+        statusEl.textContent = "Uploaded successfully";
+        statusEl.style.color = "var(--success)";
+      }
       addClass(filePreview, "file-preview-success");
       uploadedCount++;
 
@@ -195,6 +213,39 @@ async function handleUpload() {
   }
 }
 
+function createUploadId() {
+  if (window.crypto?.randomUUID) {
+    return `file-${window.crypto.randomUUID()}`;
+  }
+
+  return `file-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getFileExtension(fileName) {
+  return String(fileName || "")
+    .split(".")
+    .pop()
+    .toLowerCase();
+}
+
+function getFileSignature(file) {
+  return [file.name, file.size, file.lastModified].join("::");
+}
+
+function isDuplicateFile(file) {
+  return uploadState.has(getFileSignature(file));
+}
+
+async function simulateUpload(progressElement) {
+  for (let i = 0; i <= 100; i += 10) {
+    if (progressElement) {
+      progressElement.style.width = i + "%";
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+}
+
 function initFileDetailsPage() {
   loadFileList();
 }
@@ -204,6 +255,7 @@ async function loadFileList() {
   if (!fileTableBody) return;
 
   try {
+    fileTableBody.innerHTML = "";
     const response = await apiCall("/api/files");
 
     if (response.success && response.data) {
