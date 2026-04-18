@@ -8,55 +8,14 @@ const defaultUserProfile = {
 let currentUser = { ...defaultUserProfile };
 
 async function initApp() {
-  await ensureTailwindCDN();
   await ensureNavbarScript();
 
-  loadComponentStyles();
   await loadComponents();
 
   initNavbar();
   initSidebar();
 
   setActiveSidebarItem();
-}
-
-async function ensureTailwindCDN() {
-  if (window.tailwind && document.querySelector('script[data-paperhub-tailwind="true"]')) {
-    return;
-  }
-
-  if (!document.getElementById("paperhub-tailwind-config")) {
-    const configScript = document.createElement("script");
-    configScript.id = "paperhub-tailwind-config";
-    configScript.textContent = `
-      window.tailwind = window.tailwind || {};
-      window.tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            boxShadow: {
-              soft: '0 8px 24px rgba(15, 23, 42, 0.08)'
-            }
-          }
-        }
-      };
-    `;
-    document.head.appendChild(configScript);
-  }
-
-  if (!document.querySelector('script[data-paperhub-tailwind="true"]')) {
-    await new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://cdn.tailwindcss.com";
-      script.dataset.paperhubTailwind = "true";
-      script.onload = resolve;
-      script.onerror = () => {
-        console.warn("Unable to load Tailwind CDN. Navbar may not be fully styled.");
-        resolve();
-      };
-      document.head.appendChild(script);
-    });
-  }
 }
 
 async function ensureNavbarScript() {
@@ -77,20 +36,6 @@ async function ensureNavbarScript() {
       document.body.appendChild(script);
     });
   }
-}
-
-function loadComponentStyles() {
-  const styleFiles = [];
-
-  styleFiles.forEach((href) => {
-    const existingLink = document.querySelector(`link[href="${href}"]`);
-    if (!existingLink) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      document.head.appendChild(link);
-    }
-  });
 }
 
 async function loadComponents() {
