@@ -17,9 +17,10 @@
         <!-- Header -->
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-slate-900">⚡ Admin Dashboard</h1>
-          <p class="text-slate-600 mt-2">
+          <p class="text-slate-600 mt-2" data-dashboard-description>
             Complete system control, user management, and all review authority
           </p>
+          <div class="mt-4 flex flex-wrap gap-2" data-user-permissions></div>
         </div>
 
         <!-- Key Metrics -->
@@ -30,7 +31,9 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-blue-600 font-semibold text-sm">👥 Total Users</p>
-                <p class="text-3xl font-bold text-blue-900 mt-2">245</p>
+                <p class="text-3xl font-bold text-blue-900 mt-2" data-dashboard-stat="totalUsers">
+                  245
+                </p>
                 <p class="text-xs text-blue-600 mt-1">↑ 12 this week</p>
               </div>
               <span class="text-4xl opacity-20">👥</span>
@@ -43,7 +46,9 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-green-600 font-semibold text-sm">📁 Documents</p>
-                <p class="text-3xl font-bold text-green-900 mt-2">1.2K</p>
+                <p class="text-3xl font-bold text-green-900 mt-2" data-dashboard-stat="documents">
+                  1.2K
+                </p>
                 <p class="text-xs text-green-600 mt-1">↑ 89 today</p>
               </div>
               <span class="text-4xl opacity-20">📁</span>
@@ -56,7 +61,9 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-purple-600 font-semibold text-sm">✅ Approved</p>
-                <p class="text-3xl font-bold text-purple-900 mt-2">892</p>
+                <p class="text-3xl font-bold text-purple-900 mt-2" data-dashboard-stat="approved">
+                  892
+                </p>
                 <p class="text-xs text-purple-600 mt-1">89% success rate</p>
               </div>
               <span class="text-4xl opacity-20">✅</span>
@@ -69,7 +76,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-red-600 font-semibold text-sm">🔔 Alerts</p>
-                <p class="text-3xl font-bold text-red-900 mt-2">2</p>
+                <p class="text-3xl font-bold text-red-900 mt-2" data-dashboard-stat="alerts">2</p>
                 <p class="text-xs text-red-600 mt-1">Requires action</p>
               </div>
               <span class="text-4xl opacity-20">🔔</span>

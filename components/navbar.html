@@ -23,6 +23,7 @@
       <li>
         <a
           href="/pages/dashboard/user.html"
+          data-user-dashboard-link
           data-nav-link
           data-roles="student,teacher,admin"
           class="site-nav-link"
@@ -128,53 +129,19 @@
         >
           <li class="border-b border-slate-100 px-4 py-3" role="none">
             <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Signed in as</p>
-            <p class="user-name text-sm font-bold text-slate-900 mt-1">Rajesh Biswas</p>
+            <p data-user-name class="user-name text-sm font-bold text-slate-900 mt-1">
+              Rajesh Biswas
+            </p>
             <p data-user-email class="text-xs text-slate-500">rajesh18@cse.pstu.ac.bd</p>
+            <p data-user-title class="text-xs text-slate-500 mt-1">Final Year Student</p>
           </li>
 
           <!-- Role Switcher -->
           <li class="border-b border-slate-100 px-4 py-3" role="none">
             <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
-              Switch Role
+              Switch User
             </p>
-            <div class="space-y-2" id="roleSwitcher">
-              <label
-                class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors"
-              >
-                <input
-                  type="radio"
-                  name="user-role"
-                  value="student"
-                  data-role-option
-                  class="w-4 h-4 cursor-pointer"
-                />
-                <span class="text-sm font-medium text-slate-700">🎓 Student</span>
-              </label>
-              <label
-                class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors"
-              >
-                <input
-                  type="radio"
-                  name="user-role"
-                  value="teacher"
-                  data-role-option
-                  class="w-4 h-4 cursor-pointer"
-                />
-                <span class="text-sm font-medium text-slate-700">👨‍🏫 Teacher</span>
-              </label>
-              <label
-                class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors"
-              >
-                <input
-                  type="radio"
-                  name="user-role"
-                  value="admin"
-                  data-role-option
-                  class="w-4 h-4 cursor-pointer"
-                />
-                <span class="text-sm font-medium text-slate-700">⚡ Admin</span>
-              </label>
-            </div>
+            <div class="space-y-2" data-user-switcher-list id="roleSwitcher"></div>
           </li>
 
           <li role="none">
@@ -264,6 +231,7 @@
       <li>
         <a
           href="/pages/dashboard/user.html"
+          data-user-dashboard-link
           data-nav-link
           data-roles="student,teacher,admin"
           class="site-mobile-link"

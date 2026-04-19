@@ -1,26 +1,5 @@
 (function () {
   const ACTIVE_CLASSES = ["text-cyan-700", "bg-cyan-50", "dark:text-cyan-400", "dark:bg-slate-800"];
-  const ROLE_STORAGE_KEY = "paperhub-role";
-
-  function getStoredRole() {
-    try {
-      return localStorage.getItem(ROLE_STORAGE_KEY);
-    } catch (error) {
-      console.warn("Unable to read role from localStorage", error);
-      return "student";
-    }
-  }
-
-  function setUserRole(role) {
-    const normalized = normalizeRole(role);
-    try {
-      localStorage.setItem(ROLE_STORAGE_KEY, normalized);
-      return normalized;
-    } catch (error) {
-      console.warn("Unable to set user role", error);
-      return normalized;
-    }
-  }
 
   function applyRoleVisibility(role) {
     const roleElements = document.querySelectorAll("[data-roles]");
@@ -58,6 +37,24 @@
     }
   }
 
+  function applyUserIdentity(user) {
+    if (!user) {
+      return;
+    }
+
+    document.querySelectorAll("[data-user-name]").forEach((element) => {
+      element.textContent = user.name;
+    });
+
+    document.querySelectorAll("[data-user-email]").forEach((element) => {
+      element.textContent = user.email;
+    });
+
+    document.querySelectorAll("[data-user-title]").forEach((element) => {
+      element.textContent = user.title;
+    });
+  }
+
   function markActiveLink(navLinks) {
     const currentPath = window.location.pathname;
 
@@ -78,19 +75,59 @@
     });
   }
 
-  function setupRoleSwitcher() {
-    const roleOptions = document.querySelectorAll("[data-role-option]");
-    const currentRole = normalizeRole(getStoredRole());
+  function setupUserSwitcher() {
+    const switcherContainer = document.querySelector("[data-user-switcher-list]");
+    if (!switcherContainer || typeof getAllMockUsers !== "function") {
+      return;
+    }
 
-    roleOptions.forEach((option) => {
-      if (option.value === currentRole) {
-        option.checked = true;
-      }
+    const users = getAllMockUsers();
+    const currentUser =
+      typeof getCurrentUserData === "function" ? getCurrentUserData() : users[0] || null;
 
+    if (!currentUser) {
+      return;
+    }
+
+    switcherContainer.innerHTML = users
+      .map((user) => {
+        const roleLabel = user.role === "student" ? "Student" : String(user.role || "user");
+        const checked = user.id === currentUser.id ? "checked" : "";
+        return `
+          <label
+            class="flex items-start gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors"
+          >
+            <input
+              type="radio"
+              name="paperhub-user"
+              value="${escapeHtml(user.id)}"
+              data-user-option
+              class="w-4 h-4 cursor-pointer mt-0.5"
+              ${checked}
+            />
+            <span>
+              <span class="block text-sm font-medium text-slate-700">${escapeHtml(roleLabel)}</span>
+            </span>
+          </label>
+        `;
+      })
+      .join("");
+
+    switcherContainer.querySelectorAll("[data-user-option]").forEach((option) => {
       option.addEventListener("change", () => {
-        const newRole = setUserRole(option.value);
-        applyRoleVisibility(newRole);
-        window.location.reload();
+        if (!option.checked || typeof setCurrentUserById !== "function") {
+          return;
+        }
+
+        const nextUser = setCurrentUserById(option.value);
+        applyUserIdentity(nextUser);
+        applyRoleVisibility(normalizeRole(nextUser.role));
+
+        const nextRoute =
+          typeof getDashboardRouteForUser === "function"
+            ? getDashboardRouteForUser(nextUser)
+            : "/pages/dashboard/user.html";
+        window.location.assign(nextRoute);
       });
     });
   }
@@ -247,15 +284,17 @@
       return;
     }
 
-    const role = normalizeRole(getStoredRole());
+    const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+    const role = normalizeRole(user?.role || "student");
     const navLinks = document.querySelectorAll("[data-nav-link]");
 
     applyRoleVisibility(role);
+    applyUserIdentity(user);
     markActiveLink(navLinks);
     setupMobileMenu(navLinks);
     setupUserDropdown();
     setupThemeToggle();
-    setupRoleSwitcher();
+    setupUserSwitcher();
   }
 
   window.initPaperHubNavbar = initPaperHubNavbar;

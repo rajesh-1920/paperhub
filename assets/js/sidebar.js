@@ -19,6 +19,11 @@
       return normalizeRole(explicitRole);
     }
 
+    if (typeof getCurrentUserData === "function") {
+      const user = getCurrentUserData();
+      return normalizeRole(user?.role);
+    }
+
     try {
       return normalizeRole(localStorage.getItem(ROLE_STORAGE_KEY));
     } catch (error) {
