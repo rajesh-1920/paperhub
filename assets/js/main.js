@@ -167,8 +167,9 @@ async function loadComponents() {
     componentsToLoad.map((component) => [component.file, getElement("#" + component.id)]),
   );
 
-  // Invalidate navbar cache to force fresh fetch
+  // Invalidate cached navigation shells to force fresh fetch
   delete cache["/components/navbar.html"];
+  delete cache["/components/sidebar.html"];
 
   componentsToLoad.forEach((component) => {
     const container = containers.get(component.file);
