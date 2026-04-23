@@ -719,6 +719,70 @@ tr:hover td {
   margin: 18px 0;
 }
 
+#paperhubSidebar {
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 52%, #f2f7ff 100%);
+  color: #1e293b;
+  border-right: 1px solid rgba(148, 163, 184, 0.26);
+  box-shadow: 0 20px 54px rgba(15, 23, 42, 0.18);
+}
+
+#paperhubSidebar > div:first-child {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+#paperhubSidebar [data-sidebar-user-card],
+#paperhubSidebar #sidebarQuickActions > div,
+#paperhubSidebar #sidebarInsightCard {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(241, 245, 249, 0.96) 100%);
+  border-color: rgba(148, 163, 184, 0.24);
+}
+
+#paperhubSidebar #sidebarInsightButton {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.92) 0%, rgba(14, 165, 233, 0.82) 100%);
+  color: #ffffff;
+  border-color: rgba(59, 130, 246, 0.36);
+}
+
+#sidebarOverlay {
+  background: rgba(15, 23, 42, 0.42);
+}
+
+html.dark #paperhubSidebar {
+  background: linear-gradient(180deg, #030916 0%, #081425 50%, #0d1c34 100%);
+  color: #e6eef8;
+  border-right: 1px solid rgba(103, 164, 203, 0.32);
+  box-shadow: 0 26px 84px rgba(2, 8, 23, 0.58);
+}
+
+html.dark #paperhubSidebar > div:first-child {
+  background: rgba(8, 23, 43, 0.92);
+  border-bottom: 1px solid rgba(125, 211, 252, 0.18);
+}
+
+html.dark #paperhubSidebar [data-sidebar-user-card],
+html.dark #paperhubSidebar #sidebarQuickActions > div,
+html.dark #paperhubSidebar #sidebarInsightCard {
+  background: linear-gradient(180deg, rgba(13, 31, 57, 0.95) 0%, rgba(9, 22, 44, 0.98) 100%);
+  border-color: rgba(125, 211, 252, 0.24);
+}
+
+html.dark #paperhubSidebar #sidebarInsightButton {
+  background: linear-gradient(
+    90deg,
+    rgba(31, 79, 151, 0.96) 0%,
+    rgba(37, 99, 235, 0.92) 52%,
+    rgba(14, 165, 233, 0.78) 100%
+  );
+  color: #eff6ff;
+  border-color: rgba(125, 211, 252, 0.3);
+  box-shadow: 0 10px 24px rgba(30, 64, 175, 0.35);
+}
+
+html.dark #sidebarOverlay {
+  background: rgba(2, 8, 23, 0.82);
+}
+
 .sidebar {
   position: fixed;
   top: 84px;
@@ -923,7 +987,6 @@ body:has(#sidebar-container) main {
   border-bottom: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
   backdrop-filter: blur(12px);
 }
-
 
 .ph-brand {
   text-decoration: none;
@@ -1180,7 +1243,6 @@ body:has(#sidebar-container) main {
     display: none;
   }
 }
-
 
 .site-icon-button:hover,
 .site-mobile-trigger:hover,
@@ -1502,7 +1564,6 @@ body:has(#sidebar-container) main {
 .promo-card p {
   color: rgba(255, 255, 255, 0.78);
 }
-
 
 #paperhubNavbar {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

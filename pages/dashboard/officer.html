@@ -16,9 +16,10 @@
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-slate-900">👨‍🏫 Teacher Dashboard</h1>
-          <p class="text-slate-600 mt-2">
+          <p class="text-slate-600 mt-2" data-dashboard-description>
             Review and evaluate student submissions, manage approvals
           </p>
+          <div class="mt-4 flex flex-wrap gap-2" data-user-permissions></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -26,7 +27,9 @@
             class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-lg transition cursor-pointer"
           >
             <p class="text-slate-500 text-sm font-medium">📋 Pending Reviews</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-2">7</p>
+            <p class="text-3xl font-bold text-yellow-600 mt-2" data-dashboard-stat="pendingReviews">
+              7
+            </p>
             <p class="text-xs text-slate-600 mt-2">Awaiting your evaluation</p>
           </div>
 
@@ -34,7 +37,7 @@
             class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-lg transition cursor-pointer"
           >
             <p class="text-slate-500 text-sm font-medium">✅ Approved</p>
-            <p class="text-3xl font-bold text-green-600 mt-2">24</p>
+            <p class="text-3xl font-bold text-green-600 mt-2" data-dashboard-stat="approved">24</p>
             <p class="text-xs text-slate-600 mt-2">This month</p>
           </div>
 
@@ -42,7 +45,7 @@
             class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-lg transition cursor-pointer"
           >
             <p class="text-slate-500 text-sm font-medium">❌ Rejected</p>
-            <p class="text-3xl font-bold text-red-600 mt-2">3</p>
+            <p class="text-3xl font-bold text-red-600 mt-2" data-dashboard-stat="rejected">3</p>
             <p class="text-xs text-slate-600 mt-2">Requires revision</p>
           </div>
 
@@ -50,7 +53,9 @@
             class="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-lg transition cursor-pointer"
           >
             <p class="text-slate-500 text-sm font-medium">📚 Students</p>
-            <p class="text-3xl font-bold text-blue-600 mt-2">42</p>
+            <p class="text-3xl font-bold text-blue-600 mt-2" data-dashboard-stat="assignedStudents">
+              42
+            </p>
             <p class="text-xs text-slate-600 mt-2">Under your review</p>
           </div>
         </div>

@@ -48,16 +48,19 @@ function loadReviewQueue() {
 
   try {
     reviewTableBody.innerHTML = "";
+    const currentReviews =
+      typeof getCurrentUserReviews === "function" ? getCurrentUserReviews() : null;
+    const reviews = currentReviews && currentReviews.length > 0 ? currentReviews : MOCK_REVIEWS;
 
     const fragment = document.createDocumentFragment();
 
-    MOCK_REVIEWS.forEach((review) => {
+    reviews.forEach((review) => {
       fragment.appendChild(createReviewRow(review));
     });
 
     reviewTableBody.appendChild(fragment);
 
-    showSuccess(`Loaded ${MOCK_REVIEWS.length} items for review`);
+    showSuccess(`Loaded ${reviews.length} items for review`);
   } catch (error) {
     console.error("Error loading review queue:", error);
     showError("Failed to load review queue");

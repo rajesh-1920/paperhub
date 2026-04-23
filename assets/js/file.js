@@ -261,7 +261,11 @@ async function loadFileList() {
 
   try {
     fileTableBody.innerHTML = "";
-    const response = await apiCall("/api/files");
+    const currentFiles = typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : null;
+    const response =
+      currentFiles && currentFiles.length > 0
+        ? { success: true, data: currentFiles }
+        : await apiCall("/api/files");
 
     if (response.success && response.data) {
       const fragment = document.createDocumentFragment();

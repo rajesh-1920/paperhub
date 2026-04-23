@@ -34,9 +34,87 @@ async function initApp() {
     loadComponents(),
   ]);
 
+  if (typeof enforcePageAccess === "function") {
+    const canRender = enforcePageAccess();
+    if (!canRender) {
+      return;
+    }
+  }
+
   initNavbar();
   initSidebar();
+  applyCurrentUserPageData();
   initPageSpecificForms();
+}
+
+function applyCurrentUserPageData() {
+  if (typeof getCurrentUserData !== "function") {
+    return;
+  }
+
+  const user = getCurrentUserData();
+  const roleLabel = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+  const dashboardRoute =
+    typeof getDashboardRouteForUser === "function"
+      ? getDashboardRouteForUser(user)
+      : "/pages/dashboard/user.html";
+
+  const applyText = (selector, value) => {
+    if (value === undefined || value === null) {
+      return;
+    }
+
+    document.querySelectorAll(selector).forEach((element) => {
+      if ("value" in element && ["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName)) {
+        element.value = String(value);
+        return;
+      }
+
+      element.textContent = String(value);
+    });
+  };
+
+  applyText("[data-user-name]", user.name);
+  applyText("[data-user-email]", user.email);
+  applyText("[data-user-role]", roleLabel);
+  applyText("[data-user-title]", user.title);
+  applyText("[data-user-department]", user.department);
+  applyText("[data-user-last-login]", user.lastLogin);
+  applyText("[data-dashboard-description]", user.dashboard?.description);
+
+  document.querySelectorAll("[data-user-dashboard-link]").forEach((element) => {
+    if (element.tagName.toLowerCase() === "a") {
+      element.setAttribute("href", dashboardRoute);
+    }
+  });
+
+  const stats = user.dashboard?.stats || {};
+  document.querySelectorAll("[data-dashboard-stat]").forEach((element) => {
+    const key = element.getAttribute("data-dashboard-stat");
+    if (key && Object.prototype.hasOwnProperty.call(stats, key)) {
+      element.textContent = String(stats[key]);
+    }
+  });
+
+  document.querySelectorAll("[data-user-permissions]").forEach((container) => {
+    const permissions = Array.isArray(user.permissions) ? user.permissions : [];
+    container.innerHTML = permissions
+      .map(
+        (permission) =>
+          `<span class="inline-flex items-center rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">${escapeHtml(permission)}</span>`,
+      )
+      .join(" ");
+  });
+
+  if (typeof getCurrentUserPayment === "function") {
+    const payment = getCurrentUserPayment();
+    if (payment) {
+      applyText("[data-payment-status]", payment.status);
+      applyText("[data-payment-total-due]", payment.totalDue);
+      applyText("[data-payment-last-updated]", payment.lastUpdated);
+      applyText("[data-payment-next-review]", payment.nextReview);
+    }
+  }
 }
 
 async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage }) {
@@ -89,8 +167,9 @@ async function loadComponents() {
     componentsToLoad.map((component) => [component.file, getElement("#" + component.id)]),
   );
 
-  // Invalidate navbar cache to force fresh fetch
+  // Invalidate cached navigation shells to force fresh fetch
   delete cache["/components/navbar.html"];
+  delete cache["/components/sidebar.html"];
 
   componentsToLoad.forEach((component) => {
     const container = containers.get(component.file);
