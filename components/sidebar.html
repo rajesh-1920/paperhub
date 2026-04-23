@@ -1,23 +1,29 @@
+<!-- PaperHub Sidebar Component -->
+<!-- Responsive sidebar with role-based menu items, collapse functionality, and mobile support -->
 <aside
   id="paperhubSidebar"
   class="fixed inset-y-0 left-0 z-40 flex h-screen w-72 -translate-x-full flex-col overflow-hidden border-r border-slate-200 bg-white/95 shadow-xl shadow-slate-900/10 backdrop-blur transition-all duration-300 ease-out md:translate-x-0"
   aria-label="PaperHub sidebar"
 >
-  <div class="flex items-center gap-3 border-b border-slate-200 px-4 py-4">
-    <div
-      class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-sm font-extrabold text-white shadow-md shadow-cyan-500/40"
-    >
-      PH
-    </div>
-    <div class="min-w-0 flex-1" data-sidebar-brand>
-      <p class="truncate text-sm font-semibold text-slate-900">PaperHub</p>
-      <p class="truncate text-xs text-slate-500">Secure Document Platform</p>
+  <!-- Header with Logo -->
+  <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-4">
+    <div class="flex min-w-0 flex-1 items-center gap-3">
+      <div
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-sm font-extrabold text-white shadow-md shadow-cyan-500/40"
+      >
+        PH
+      </div>
+      <div class="min-w-0 flex-1" data-sidebar-brand>
+        <p class="truncate text-sm font-semibold text-slate-900">PaperHub</p>
+        <p class="truncate text-xs text-slate-500">Secure Platform</p>
+      </div>
     </div>
 
+    <!-- Collapse Button (Desktop only) -->
     <button
       id="sidebarCollapseBtn"
       type="button"
-      class="hidden h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 md:inline-flex"
+      class="hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 md:inline-flex"
       aria-label="Collapse sidebar"
       aria-expanded="true"
     >
@@ -33,10 +39,11 @@
       </svg>
     </button>
 
+    <!-- Close Button (Mobile only) -->
     <button
       id="sidebarClose"
       type="button"
-      class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 md:hidden"
+      class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 md:hidden"
       aria-label="Close sidebar"
     >
       <svg
@@ -53,11 +60,13 @@
     </button>
   </div>
 
+  <!-- Navigation Menu -->
   <nav
     id="paperhubSidebarNav"
     class="flex-1 space-y-6 overflow-y-auto px-3 py-4"
     aria-label="Primary navigation"
   >
+    <!-- Workspace Section -->
     <div>
       <p
         class="px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400"
@@ -66,6 +75,7 @@
         Workspace
       </p>
       <div class="mt-2 space-y-1.5">
+        <!-- Dashboard Link -->
         <a
           href="/pages/dashboard/user.html"
           data-sidebar-link
@@ -88,6 +98,7 @@
           <span class="truncate" data-sidebar-label>Dashboard</span>
         </a>
 
+        <!-- Files Link -->
         <a
           href="/pages/file/file-details.html"
           data-sidebar-link
@@ -108,6 +119,7 @@
           <span class="truncate" data-sidebar-label>Files</span>
         </a>
 
+        <!-- Upload Link -->
         <a
           href="/pages/file/upload.html"
           data-sidebar-link
@@ -129,10 +141,11 @@
           <span class="truncate" data-sidebar-label>Upload</span>
         </a>
 
+        <!-- Reviews Link -->
         <a
           href="/pages/review/review-queue.html"
           data-sidebar-link
-          data-sidebar-roles="admin,officer"
+          data-sidebar-roles="officer"
           class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
         >
           <svg
@@ -149,6 +162,7 @@
           <span class="truncate" data-sidebar-label>Reviews</span>
         </a>
 
+        <!-- Payments Link -->
         <a
           href="/pages/payment/payment.html"
           data-sidebar-link
@@ -171,10 +185,8 @@
       </div>
     </div>
 
-    <div
-      class="border-t border-slate-200 pt-4"
-      data-sidebar-divider-roles="admin"
-    >
+    <!-- Admin Section (visible only for admins) -->
+    <div class="border-t border-slate-200 pt-4" data-sidebar-divider-roles="admin">
       <p
         class="px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400"
         data-sidebar-section-title
@@ -182,6 +194,7 @@
         Administration
       </p>
       <div class="mt-2 space-y-1.5">
+        <!-- Users Link -->
         <a
           href="/pages/dashboard/admin.html#users"
           data-sidebar-link
@@ -204,6 +217,7 @@
           <span class="truncate" data-sidebar-label>Users</span>
         </a>
 
+        <!-- Reports Link -->
         <a
           href="/pages/dashboard/admin.html#reports"
           data-sidebar-link
@@ -224,6 +238,7 @@
           <span class="truncate" data-sidebar-label>Reports</span>
         </a>
 
+        <!-- Settings Link -->
         <a
           href="/pages/account/settings.html"
           data-sidebar-link
@@ -249,9 +264,10 @@
     </div>
   </nav>
 
+  <!-- Footer with Logout -->
   <div class="border-t border-slate-200 p-3">
     <a
-      href="/pages/auth/login.html"
+      href="/"
       data-sidebar-roles="admin,officer,user"
       class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 hover:text-rose-700"
       aria-label="Logout"
@@ -273,6 +289,7 @@
   </div>
 </aside>
 
+<!-- Mobile Sidebar Toggle Button -->
 <button
   id="sidebarMobileToggle"
   type="button"
@@ -293,6 +310,7 @@
   </svg>
 </button>
 
+<!-- Mobile Sidebar Overlay -->
 <div
   id="sidebarOverlay"
   class="fixed inset-0 z-30 hidden bg-slate-950/45 backdrop-blur-[1px] md:hidden"

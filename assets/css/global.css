@@ -822,6 +822,16 @@ body:has(#sidebar-container) main {
   padding-left: 308px;
 }
 
+@media (min-width: 768px) {
+  body.sidebar-expanded:has(#sidebar-container) main {
+    padding-left: 308px;
+  }
+
+  body.sidebar-collapsed:has(#sidebar-container) main {
+    padding-left: 116px;
+  }
+}
+
 @media (max-width: 1024px) {
   .sidebar {
     left: 10px;
@@ -839,6 +849,11 @@ body:has(#sidebar-container) main {
   }
 
   body:has(#sidebar-container) main {
+    padding-left: 16px;
+  }
+
+  body.sidebar-expanded:has(#sidebar-container) main,
+  body.sidebar-collapsed:has(#sidebar-container) main {
     padding-left: 16px;
   }
 }
