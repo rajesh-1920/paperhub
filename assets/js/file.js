@@ -1,23 +1,36 @@
-/**
- * PaperHub - File Management Module
- * Handles file upload, preview, and management
- */
+const MAX_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
+const FILE_ICON_MAP = {
+  "application/pdf": "📄",
+  "application/msword": "📝",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "📝",
+  "application/vnd.ms-excel": "📊",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "📊",
+  "image/jpeg": "🖼️",
+  "image/png": "🖼️",
+};
+const ALLOWED_FILE_TYPES = new Set(Object.keys(FILE_ICON_MAP));
+const ALLOWED_FILE_EXTENSIONS = new Set([
+  "pdf",
+  "doc",
+  "docx",
+  "xls",
+  "xlsx",
+  "jpg",
+  "jpeg",
+  "png",
+]);
+const uploadState = new Map();
 
-/**
- * Initialize file upload page
- */
 function initFileUploadPage() {
   const dropzone = getElement(".upload-dropzone");
   const fileInput = getElement("#fileInput");
   const uploadBtn = getElement("#uploadBtn");
 
   if (dropzone) {
-    // Drag and drop events
     addEvent(dropzone, "dragover", handleDragOver);
     addEvent(dropzone, "dragleave", handleDragLeave);
     addEvent(dropzone, "drop", handleFileDrop);
 
-    // Click to upload
     addEvent(dropzone, "click", () => fileInput?.click());
   }
 
@@ -30,31 +43,22 @@ function initFileUploadPage() {
   }
 }
 
-/**
- * Handle drag over
- */
 function handleDragOver(e) {
   e.preventDefault();
   e.stopPropagation();
-  addClass(e.target, "upload-dropzone-active");
+  addClass(e.currentTarget, "upload-dropzone-active");
 }
 
-/**
- * Handle drag leave
- */
 function handleDragLeave(e) {
   e.preventDefault();
   e.stopPropagation();
-  removeClass(e.target, "upload-dropzone-active");
+  removeClass(e.currentTarget, "upload-dropzone-active");
 }
 
-/**
- * Handle file drop
- */
 function handleFileDrop(e) {
   e.preventDefault();
   e.stopPropagation();
-  removeClass(e.target, "upload-dropzone-active");
+  removeClass(e.currentTarget, "upload-dropzone-active");
 
   const files = e.dataTransfer.files;
   if (files.length > 0) {
@@ -62,59 +66,45 @@ function handleFileDrop(e) {
   }
 }
 
-/**
- * Handle file selection
- */
 function handleFileSelect(e) {
   handleFiles(e.target.files);
 }
 
-/**
- * Handle files
- */
 function handleFiles(files) {
   const fileList = getElement(".file-preview-list");
+  const uploadBtn = getElement("#uploadBtn");
   if (!fileList) return;
 
-  for (const file of files) {
-    // Validate file
+  Array.from(files).forEach((file) => {
     if (!validateFile(file)) {
       showError(`File ${file.name} is not allowed`);
-      continue;
+      return;
     }
 
-    // Add file to preview
-    addFilePreview(fileList, file);
-  }
+    if (isDuplicateFile(file)) {
+      showWarning(`File ${file.name} is already selected`);
+      return;
+    }
 
-  // Show upload button
-  if (fileList.children.length > 0) {
-    const uploadBtn = getElement("#uploadBtn");
-    if (uploadBtn) showElement(uploadBtn);
+    addFilePreview(fileList, file);
+  });
+
+  if (fileList.children.length > 0 && uploadBtn) {
+    showElement(uploadBtn);
   }
 }
 
-/**
- * Validate file
- */
 function validateFile(file) {
-  const maxSize = 50 * 1024 * 1024; // 50MB
-  const allowedTypes = [
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "image/jpeg",
-    "image/png",
-  ];
-
-  if (file.size > maxSize) {
+  if (file.size > MAX_UPLOAD_SIZE_BYTES) {
     showError(`File ${file.name} exceeds 50MB limit`);
     return false;
   }
 
-  if (!allowedTypes.includes(file.type)) {
+  const extension = getFileExtension(file.name);
+  const hasAllowedMimeType = ALLOWED_FILE_TYPES.has(file.type);
+  const hasAllowedExtension = ALLOWED_FILE_EXTENSIONS.has(extension);
+
+  if (!hasAllowedMimeType && !hasAllowedExtension) {
     showError(`File type ${file.type} not allowed`);
     return false;
   }
@@ -122,21 +112,20 @@ function validateFile(file) {
   return true;
 }
 
-/**
- * Add file preview
- */
 function addFilePreview(container, file) {
-  const fileId = "file-" + Date.now() + "-" + Math.random();
+  const fileId = createUploadId();
+  const fileKey = getFileSignature(file);
 
   const filePreview = createElement("div", "file-preview-item");
   filePreview.setAttribute("data-file-id", fileId);
+  filePreview.setAttribute("data-file-key", fileKey);
 
   filePreview.innerHTML = `
     <div class="file-icon">
       ${getFileIcon(file.type)}
     </div>
     <div class="file-info">
-      <div class="file-name">${file.name}</div>
+      <div class="file-name">${escapeHtml(file.name)}</div>
       <div class="file-size">${formatFileSize(file.size)}</div>
       <div class="file-progress">
         <div class="progress-bar" id="progress-${fileId}" style="width: 0%"></div>
@@ -153,12 +142,13 @@ function addFilePreview(container, file) {
 
   container.appendChild(filePreview);
 
-  // Store file reference
-  filePreview._file = file;
+  const statusEl = filePreview.querySelector(".file-status");
+  const progressEl = filePreview.querySelector(".progress-bar");
+  uploadState.set(fileKey, { file, filePreview, statusEl, progressEl });
 
-  // Add remove handler
   const removeBtn = filePreview.querySelector(".file-remove");
   addEvent(removeBtn, "click", () => {
+    uploadState.delete(fileKey);
     removeElement(filePreview);
     if (container.children.length === 0) {
       hideElement(getElement("#uploadBtn"));
@@ -166,73 +156,61 @@ function addFilePreview(container, file) {
   });
 }
 
-/**
- * Get file icon based on type
- */
 function getFileIcon(fileType) {
-  const iconMap = {
-    "application/pdf": "📄",
-    "application/msword": "document",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "📝",
-    "application/vnd.ms-excel": "📊",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "📊",
-    "image/jpeg": "🖼️",
-    "image/png": "🖼️",
-  };
-
-  return iconMap[fileType] || "📎";
+  return FILE_ICON_MAP[fileType] || "📎";
 }
 
-/**
- * Handle upload
- */
 async function handleUpload() {
   const fileList = getElement(".file-preview-list");
   if (!fileList) return;
 
-  const files = fileList.querySelectorAll(".file-preview-item");
-  if (files.length === 0) {
+  const fileEntries = Array.from(uploadState.values());
+  if (fileEntries.length === 0) {
     showError("No files to upload");
     return;
   }
 
   const uploadBtn = getElement("#uploadBtn");
+  if (!uploadBtn) {
+    return;
+  }
+
   uploadBtn.disabled = true;
 
   let uploadedCount = 0;
 
-  for (const filePreview of files) {
-    const file = filePreview._file;
-    const fileId = filePreview.getAttribute("data-file-id");
+  try {
+    for (const entry of fileEntries) {
+      const { file, filePreview, statusEl, progressEl } = entry;
 
-    try {
-      // Simulate file upload with progress
-      const statusEl = getElement(`#status-${fileId}`);
-      const progressEl = getElement(`#progress-${fileId}`);
-
-      statusEl.textContent = "Uploading...";
-
-      // Simulate progress
-      for (let i = 0; i <= 100; i += 10) {
-        progressEl.style.width = i + "%";
-        await new Promise((resolve) => setTimeout(resolve, 100));
+      if (!file || !filePreview) {
+        continue;
       }
 
-      statusEl.textContent = "✓ Uploaded successfully";
-      statusEl.style.color = "var(--success)";
-      addClass(filePreview, "file-preview-success");
-      uploadedCount++;
+      try {
+        if (statusEl) {
+          statusEl.textContent = "Uploading...";
+        }
 
-      // Simulate processing
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    } catch (error) {
-      showError(`Failed to upload ${file.name}`);
+        await simulateUpload(progressEl);
+
+        if (statusEl) {
+          statusEl.textContent = "Uploaded successfully";
+          statusEl.style.color = "var(--success)";
+        }
+        addClass(filePreview, "file-preview-success");
+        uploadedCount++;
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (error) {
+        showError(`Failed to upload ${file.name}`);
+      }
     }
+  } finally {
+    uploadBtn.disabled = false;
   }
 
-  uploadBtn.disabled = false;
-
-  if (uploadedCount === files.length) {
+  if (uploadedCount === fileEntries.length) {
     showSuccess("All files uploaded successfully!");
     setTimeout(() => {
       window.location.href = "/pages/file/file-details.html";
@@ -240,27 +218,67 @@ async function handleUpload() {
   }
 }
 
-/**
- * Initialize file details page
- */
+function createUploadId() {
+  if (window.crypto?.randomUUID) {
+    return `file-${window.crypto.randomUUID()}`;
+  }
+
+  return `file-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getFileExtension(fileName) {
+  return String(fileName || "")
+    .split(".")
+    .pop()
+    .toLowerCase();
+}
+
+function getFileSignature(file) {
+  return [file.name, file.size, file.lastModified].join("::");
+}
+
+function isDuplicateFile(file) {
+  return uploadState.has(getFileSignature(file));
+}
+
+async function simulateUpload(progressElement) {
+  for (let i = 0; i <= 100; i += 10) {
+    if (progressElement) {
+      progressElement.style.width = i + "%";
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+}
+
 function initFileDetailsPage() {
   loadFileList();
 }
 
-/**
- * Load file list
- */
 async function loadFileList() {
   const fileTableBody = getElement("#fileTableBody");
   if (!fileTableBody) return;
 
   try {
-    // Mock API call
-    const response = await apiCall("/api/files");
+    fileTableBody.innerHTML = "";
+    const currentFiles = typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : null;
+    const response =
+      currentFiles && currentFiles.length > 0
+        ? { success: true, data: currentFiles }
+        : await apiCall("/api/files");
 
     if (response.success && response.data) {
+      const fragment = document.createDocumentFragment();
+
       response.data.forEach((file) => {
         const row = createElement("tr");
+        const statusClass =
+          file.status === "completed"
+            ? "success"
+            : file.status === "reviewing"
+              ? "warning"
+              : "primary";
+
         row.innerHTML = `
           <td>
             <div class="file-cell">
@@ -269,7 +287,7 @@ async function loadFileList() {
             </div>
           </td>
           <td>${formatFileSize(file.size)}</td>
-          <td><span class="badge badge-${file.status === "completed" ? "success" : file.status === "reviewing" ? "warning" : "primary"}">${file.status}</span></td>
+          <td><span class="badge badge-${statusClass}">${file.status}</span></td>
           <td>${formatDate(file.uploadedAt)}</td>
           <td>
             <div class="file-actions">
@@ -278,8 +296,10 @@ async function loadFileList() {
             </div>
           </td>
         `;
-        fileTableBody.appendChild(row);
+        fragment.appendChild(row);
       });
+
+      fileTableBody.appendChild(fragment);
     }
   } catch (error) {
     console.error("Error loading files:", error);
@@ -287,22 +307,15 @@ async function loadFileList() {
   }
 }
 
-/**
- * Initialize version history page
- */
 function initVersionHistoryPage() {
   loadVersionHistory();
 }
 
-/**
- * Load version history
- */
-async function loadVersionHistory() {
+function loadVersionHistory() {
   const historyContainer = getElement("#versionHistoryContainer");
   if (!historyContainer) return;
 
   try {
-    // Mock version history data
     const versions = [
       {
         version: "v3.0",
@@ -327,6 +340,8 @@ async function loadVersionHistory() {
       },
     ];
 
+    const fragment = document.createDocumentFragment();
+
     versions.forEach((version, index) => {
       const versionItem = createElement("div", "version-item");
       versionItem.innerHTML = `
@@ -348,15 +363,16 @@ async function loadVersionHistory() {
         <p class="version-size">File size: ${version.size}</p>
         ${index < versions.length - 1 ? '<div class="version-divider"></div>' : ""}
       `;
-      historyContainer.appendChild(versionItem);
+      fragment.appendChild(versionItem);
     });
+
+    historyContainer.appendChild(fragment);
   } catch (error) {
     console.error("Error loading version history:", error);
     showError("Failed to load version history");
   }
 }
 
-// Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.classList.contains("file-upload-page")) {
     initFileUploadPage();

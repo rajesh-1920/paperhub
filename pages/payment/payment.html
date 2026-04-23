@@ -4,116 +4,85 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Payment - PaperHub</title>
+    <script src="../../assets/js/tailwind-setup.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
     <link rel="stylesheet" href="../../assets/css/global.css" />
-    <link rel="stylesheet" href="../../assets/css/pages/payment/payment.css" />
   </head>
   <body>
-    <!-- Navbar -->
     <div id="navbar-container"></div>
-
-    <!-- Sidebar -->
     <div id="sidebar-container"></div>
 
-    <!-- Main Content -->
     <main>
       <div class="page-content">
         <div class="page-header">
-          <h1>Manage Payments</h1>
+          <div>
+            <p class="eyebrow">Billing</p>
+            <h1>Manage Payments</h1>
+          </div>
         </div>
 
         <div class="payment-grid">
-          <!-- Payment Status -->
-          <div class="payment-card">
+          <section class="payment-card">
             <h2 class="section-title-reset">Payment Status</h2>
-
-            <div class="payment-status pending">
+            <div class="payment-status pending mt-3">
               <strong>Current Status</strong>
-              <div class="status-value">
-                <span class="badge badge-warning">PENDING APPROVAL</span>
-              </div>
-              <div class="status-details">
-                Your payment is awaiting approver verification. This typically takes 1-2 business
-                days.
-              </div>
+              <span class="badge badge-warning" data-payment-status>Pending Approval</span>
             </div>
-
-            <div class="alert alert-info">
-              <strong>Note:</strong> Payment cannot be made until your documents have been fully
-              reviewed and approved by the team.
+            <p class="status-details mt-3">
+              Payments unlock automatically after document approval is complete.
+            </p>
+            <div class="alert alert-info mt-3">
+              <strong>Note:</strong> Approval usually takes 1-2 business days.
             </div>
-
-            <div class="payment-meta-card">
+            <div class="payment-meta-card mt-3">
               <p class="meta-line">
-                <strong>Last Updated:</strong><br />
-                April 7, 2024 at 10:30 AM
+                <strong>Last Updated:</strong><br /><span data-payment-last-updated
+                  >Apr 18, 2026 - 10:30 AM</span
+                >
               </p>
               <p class="meta-line meta-line-last">
-                <strong>Next Review:</strong><br />
-                April 9, 2024
+                <strong>Next Review:</strong><br /><span data-payment-next-review
+                  >Apr 20, 2026</span
+                >
               </p>
             </div>
-          </div>
+          </section>
 
-          <!-- Invoice Summary -->
-          <div class="payment-card">
+          <section class="payment-card">
             <h2 class="section-title-reset">Invoice Summary</h2>
-
-            <div class="invoice-item">
-              <span>Document Processing</span>
-              <span>$500.00</span>
+            <div class="invoice-item mt-3">
+              <span>Document Processing</span><span>$500.00</span>
             </div>
-            <div class="invoice-item">
-              <span>Advanced Analytics</span>
-              <span>$150.00</span>
-            </div>
-            <div class="invoice-item">
-              <span>Premium Support</span>
-              <span>$200.00</span>
-            </div>
-            <div class="invoice-item">
-              <span>Security Audit</span>
-              <span>$300.00</span>
-            </div>
-
-            <div class="invoice-summary">
-              <div class="summary-row">
-                <span>Subtotal</span>
-                <span>$1,150.00</span>
-              </div>
-              <div class="summary-row">
-                <span>Tax (10%)</span>
-                <span>$115.00</span>
-              </div>
+            <div class="invoice-item"><span>Advanced Analytics</span><span>$150.00</span></div>
+            <div class="invoice-item"><span>Premium Support</span><span>$200.00</span></div>
+            <div class="invoice-item"><span>Security Audit</span><span>$300.00</span></div>
+            <div class="invoice-summary mt-3">
+              <div class="summary-row"><span>Subtotal</span><span>$1,150.00</span></div>
+              <div class="summary-row"><span>Tax (10%)</span><span>$115.00</span></div>
               <div class="summary-row total">
-                <span>Total Due</span>
-                <span>$1,265.00</span>
+                <strong>Total Due</strong><strong data-payment-total-due>$1,265.00</strong>
               </div>
             </div>
-          </div>
+          </section>
         </div>
 
-        <!-- Payment Methods -->
-        <div class="payment-card">
+        <section class="payment-card">
           <h2>Payment Methods</h2>
-
-          <div class="alert alert-warning">
-            <strong>⚠️ Payment Disabled:</strong> Payment processing is currently disabled until
-            document approval is complete. Your payment will be enabled once all documents have been
-            reviewed and approved.
+          <div class="alert alert-warning mt-3">
+            <strong>Payment Disabled:</strong> Document approval is required before payment can be
+            completed.
           </div>
 
-          <div class="payment-disabled-section">
-            <h3>Credit / Debit Card</h3>
-
+          <div class="payment-disabled-section mt-4">
+            <h3 class="text-lg font-semibold">Credit / Debit Card</h3>
             <form class="payment-method-form">
               <div class="form-group">
-                <label for="cardName">Cardholder Name</label>
-                <input type="text" id="cardName" name="cardName" placeholder="John Doe" disabled />
+                <label for="cardName">Cardholder Name</label
+                ><input type="text" id="cardName" name="cardName" placeholder="John Doe" disabled />
               </div>
-
               <div class="form-group">
-                <label for="cardNumber">Card Number</label>
-                <input
+                <label for="cardNumber">Card Number</label
+                ><input
                   type="text"
                   id="cardNumber"
                   name="cardNumber"
@@ -121,65 +90,65 @@
                   disabled
                 />
               </div>
-
-              <div class="card-input-row">
+              <div
+                class="card-input-row"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px"
+              >
                 <div class="form-group">
-                  <label for="expiry">Expiry Date</label>
-                  <input type="text" id="expiry" name="expiry" placeholder="MM/YY" disabled />
+                  <label for="expiry">Expiry Date</label
+                  ><input type="text" id="expiry" name="expiry" placeholder="MM/YY" disabled />
                 </div>
                 <div class="form-group">
-                  <label for="cvv">CVV</label>
-                  <input type="text" id="cvv" name="cvv" placeholder="123" disabled />
+                  <label for="cvv">CVV</label
+                  ><input type="text" id="cvv" name="cvv" placeholder="123" disabled />
                 </div>
               </div>
-
-              <div class="payment-button-group">
+              <div class="payment-button-group mt-3">
                 <button type="submit" class="btn btn-primary" disabled>Complete Payment</button>
                 <button type="button" class="btn btn-outline" disabled>Save Card</button>
               </div>
             </form>
           </div>
-        </div>
+        </section>
 
-        <!-- Payment History -->
-        <div class="payment-card">
+        <section class="payment-card">
           <h2>Payment History</h2>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Mar 28, 2024</td>
-                <td>Monthly Subscription</td>
-                <td>$99.00</td>
-                <td><span class="badge badge-success">Completed</span></td>
-              </tr>
-              <tr>
-                <td>Mar 15, 2024</td>
-                <td>One-time Processing</td>
-                <td>$500.00</td>
-                <td><span class="badge badge-success">Completed</span></td>
-              </tr>
-              <tr>
-                <td>Mar 01, 2024</td>
-                <td>Premium Support Add-on</td>
-                <td>$50.00</td>
-                <td><span class="badge badge-success">Completed</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div class="table-container mt-3">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mar 28, 2026</td>
+                  <td>Monthly Subscription</td>
+                  <td>$99.00</td>
+                  <td><span class="badge badge-success">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>Mar 15, 2026</td>
+                  <td>One-time Processing</td>
+                  <td>$500.00</td>
+                  <td><span class="badge badge-success">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>Mar 01, 2026</td>
+                  <td>Premium Support Add-on</td>
+                  <td>$50.00</td>
+                  <td><span class="badge badge-success">Completed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </main>
 
-    <!-- Footer -->
     <div id="footer-container"></div>
 
     <script src="../../assets/js/utils.js"></script>

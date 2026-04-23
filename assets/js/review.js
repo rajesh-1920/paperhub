@@ -1,105 +1,72 @@
-/**
- * PaperHub - Review Module
- * Handles document review workflow
- */
+const MOCK_REVIEWS = [
+  {
+    id: "1",
+    documentName: "Q4 Financial Report.pdf",
+    submittedBy: "Alice Johnson",
+    submittedDate: "2024-04-06",
+    priority: "high",
+    status: "pending",
+  },
+  {
+    id: "2",
+    documentName: "Annual Summary.pdf",
+    submittedBy: "Bob Smith",
+    submittedDate: "2024-04-05",
+    priority: "medium",
+    status: "in-review",
+  },
+  {
+    id: "3",
+    documentName: "Budget Analysis.pdf",
+    submittedBy: "Charlie Brown",
+    submittedDate: "2024-04-04",
+    priority: "low",
+    status: "pending",
+  },
+];
 
-/**
- * Initialize review queue page
- */
+const PRIORITY_BADGE_COLOR = {
+  high: "danger",
+  medium: "warning",
+  low: "info",
+};
+
+const STATUS_BADGE_COLOR = {
+  pending: "warning",
+  "in-review": "info",
+  completed: "success",
+};
+
 function initReviewQueuePage() {
   loadReviewQueue();
   setupReviewFilters();
 }
 
-/**
- * Load review queue
- */
-async function loadReviewQueue() {
+function loadReviewQueue() {
   const reviewTableBody = getElement("#reviewTableBody");
   if (!reviewTableBody) return;
 
   try {
-    // Mock API call
-    const mockReviews = [
-      {
-        id: "1",
-        documentName: "Q4 Financial Report.pdf",
-        submittedBy: "Alice Johnson",
-        submittedDate: "2024-04-06",
-        priority: "high",
-        status: "pending",
-      },
-      {
-        id: "2",
-        documentName: "Annual Summary.pdf",
-        submittedBy: "Bob Smith",
-        submittedDate: "2024-04-05",
-        priority: "medium",
-        status: "in-review",
-      },
-      {
-        id: "3",
-        documentName: "Budget Analysis.pdf",
-        submittedBy: "Charlie Brown",
-        submittedDate: "2024-04-04",
-        priority: "low",
-        status: "pending",
-      },
-    ];
+    reviewTableBody.innerHTML = "";
+    const currentReviews =
+      typeof getCurrentUserReviews === "function" ? getCurrentUserReviews() : null;
+    const reviews = currentReviews && currentReviews.length > 0 ? currentReviews : MOCK_REVIEWS;
 
-    mockReviews.forEach((review) => {
-      const row = createElement("tr");
-      const priorityBadgeColor = {
-        high: "danger",
-        medium: "warning",
-        low: "info",
-      };
-      const statusBadgeColor = {
-        pending: "warning",
-        "in-review": "info",
-        completed: "success",
-      };
+    const fragment = document.createDocumentFragment();
 
-      row.innerHTML = `
-        <td>
-          <input type="checkbox" class="review-checkbox" value="${review.id}">
-        </td>
-        <td>
-          <a href="/pages/review/review-details.html?id=${review.id}" class="review-link">
-            ${review.documentName}
-          </a>
-        </td>
-        <td>${review.submittedBy}</td>
-        <td>${formatDate(review.submittedDate)}</td>
-        <td>
-          <span class="badge badge-${priorityBadgeColor[review.priority]}">
-            ${review.priority.charAt(0).toUpperCase() + review.priority.slice(1)}
-          </span>
-        </td>
-        <td>
-          <span class="badge badge-${statusBadgeColor[review.status]}">
-            ${review.status === "in-review" ? "In Review" : review.status.charAt(0).toUpperCase() + review.status.slice(1)}
-          </span>
-        </td>
-        <td>
-          <div class="review-actions">
-            <a href="/pages/review/review-details.html?id=${review.id}" class="btn btn-sm btn-primary">Review</a>
-          </div>
-        </td>
-      `;
-      reviewTableBody.appendChild(row);
+    reviews.forEach((review) => {
+      fragment.appendChild(createReviewRow(review));
     });
 
-    showSuccess(`Loaded ${mockReviews.length} items for review`);
+    reviewTableBody.appendChild(fragment);
+
+    showSuccess(`Loaded ${reviews.length} items for review`);
   } catch (error) {
     console.error("Error loading review queue:", error);
     showError("Failed to load review queue");
   }
 }
 
-/**
- * Setup review filters
- */
 function setupReviewFilters() {
   const filterBtns = getElements(".filter-btn");
 
@@ -107,10 +74,8 @@ function setupReviewFilters() {
     addEvent(btn, "click", (e) => {
       e.preventDefault();
 
-      // Remove active class from all buttons
       filterBtns.forEach((b) => removeClass(b, "active"));
 
-      // Add active class to clicked button
       addClass(btn, "active");
 
       const filter = btn.getAttribute("data-filter");
@@ -119,40 +84,31 @@ function setupReviewFilters() {
   });
 }
 
-/**
- * Filter reviews
- */
 function filterReviews(filter) {
   const reviewTableBody = getElement("#reviewTableBody");
+  if (!reviewTableBody) return;
+
   const rows = reviewTableBody.querySelectorAll("tr");
 
   rows.forEach((row) => {
-    let show = true;
-
-    if (filter === "high") {
-      show = row.textContent.includes("High");
-    } else if (filter === "pending") {
-      show = row.textContent.includes("Pending");
-    } else if (filter === "in-review") {
-      show = row.textContent.includes("In Review");
-    }
+    const priority = row.dataset.priority;
+    const status = row.dataset.status;
+    const show =
+      filter === "all" ||
+      (filter === "high" && priority === "high") ||
+      (filter === "pending" && status === "pending") ||
+      (filter === "in-review" && status === "in-review");
 
     show ? showElement(row) : hideElement(row);
   });
 }
 
-/**
- * Initialize review details page
- */
 function initReviewDetailsPage() {
   loadReviewDetails();
   setupReviewActions();
 }
 
-/**
- * Load review details
- */
-async function loadReviewDetails() {
+function loadReviewDetails() {
   const params = new URLSearchParams(window.location.search);
   const reviewId = params.get("id");
 
@@ -162,7 +118,6 @@ async function loadReviewDetails() {
   }
 
   try {
-    // Mock review details
     const reviewDetails = {
       id: reviewId,
       documentName: "Q4 Financial Report.pdf",
@@ -181,15 +136,14 @@ async function loadReviewDetails() {
       ],
     };
 
-    // Populate review details
     const detailsContainer = getElement("#reviewDetailsContent");
     if (detailsContainer) {
       detailsContainer.innerHTML = `
         <div class="review-details-header">
           <div>
-            <h2>${reviewDetails.documentName}</h2>
+            <h2>${escapeHtml(reviewDetails.documentName)}</h2>
             <p class="text-muted">
-              Submitted by <strong>${reviewDetails.submittedBy}</strong> on ${formatDate(reviewDetails.submittedDate)}
+              Submitted by <strong>${escapeHtml(reviewDetails.submittedBy)}</strong> on ${formatDate(reviewDetails.submittedDate)}
             </p>
           </div>
           <div class="header-badge">
@@ -208,7 +162,7 @@ async function loadReviewDetails() {
 
         <div class="review-details-section">
           <h3>Description</h3>
-          <p>${reviewDetails.description}</p>
+          <p>${escapeHtml(reviewDetails.description)}</p>
         </div>
 
         <div class="review-details-section">
@@ -219,10 +173,10 @@ async function loadReviewDetails() {
                 (comment) => `
               <div class="comment-item">
                 <div class="comment-header">
-                  <strong>${comment.author}</strong>
+                  <strong>${escapeHtml(comment.author)}</strong>
                   <span class="comment-date">${formatDate(comment.date)}</span>
                 </div>
-                <p>${comment.text}</p>
+                <p>${escapeHtml(comment.text)}</p>
               </div>
             `,
               )
@@ -242,30 +196,16 @@ async function loadReviewDetails() {
   }
 }
 
-/**
- * Setup review action buttons
- */
 function setupReviewActions() {
   const approveBtn = getElement("#approveBtn");
   const rejectBtn = getElement("#rejectBtn");
   const forwardBtn = getElement("#forwardBtn");
 
-  if (approveBtn) {
-    addEvent(approveBtn, "click", () => handleReviewAction("approved"));
-  }
-
-  if (rejectBtn) {
-    addEvent(rejectBtn, "click", () => handleReviewAction("rejected"));
-  }
-
-  if (forwardBtn) {
-    addEvent(forwardBtn, "click", () => handleReviewAction("forwarded"));
-  }
+  addEvent(approveBtn, "click", () => handleReviewAction("approved"));
+  addEvent(rejectBtn, "click", () => handleReviewAction("rejected"));
+  addEvent(forwardBtn, "click", () => handleReviewAction("forwarded"));
 }
 
-/**
- * Handle review action
- */
 function handleReviewAction(action) {
   const comment = getElement("#reviewComment")?.value || "";
 
@@ -276,10 +216,9 @@ function handleReviewAction(action) {
 
   if (
     confirm(
-      `Are you sure you want to ${action} this document? ${comment ? `Comment: ${comment}` : ""}`,
+      `Are you sure you want to ${action} this document? ${comment ? `Comment: ${comment.trim()}` : ""}`,
     )
   ) {
-    // Mock API call
     setTimeout(() => {
       showSuccess(`Document ${action} successfully`);
       setTimeout(() => {
@@ -289,11 +228,9 @@ function handleReviewAction(action) {
   }
 }
 
-/**
- * Add comment
- */
 function addComment() {
-  const commentText = getElement("#reviewComment")?.value;
+  const commentInput = getElement("#reviewComment");
+  const commentText = commentInput?.value?.trim();
 
   if (!commentText) {
     showError("Please enter a comment");
@@ -301,21 +238,71 @@ function addComment() {
   }
 
   const commentsList = getElement(".comments-list");
+  if (!commentsList) {
+    return;
+  }
+
   const newComment = createElement("div", "comment-item animate-slide-in-up");
-  newComment.innerHTML = `
-    <div class="comment-header">
-      <strong>You</strong>
-      <span class="comment-date">Just now</span>
-    </div>
-    <p>${commentText}</p>
-  `;
+  const header = createElement("div", "comment-header");
+  const author = createElement("strong");
+  const date = createElement("span", "comment-date");
+  const body = createElement("p");
+
+  author.textContent = "You";
+  date.textContent = "Just now";
+  body.textContent = commentText;
+
+  header.appendChild(author);
+  header.appendChild(date);
+  newComment.appendChild(header);
+  newComment.appendChild(body);
 
   commentsList.appendChild(newComment);
-  getElement("#reviewComment").value = "";
+  commentInput.value = "";
   showSuccess("Comment added");
 }
 
-// Initialize on page load
+function createReviewRow(review) {
+  const row = createElement("tr");
+  row.dataset.priority = review.priority;
+  row.dataset.status = review.status;
+
+  row.innerHTML = `
+    <td>
+      <input type="checkbox" class="review-checkbox" value="${escapeHtml(review.id)}">
+    </td>
+    <td>
+      <a href="/pages/review/review-details.html?id=${encodeURIComponent(review.id)}" class="review-link">
+        ${escapeHtml(review.documentName)}
+      </a>
+    </td>
+    <td>${escapeHtml(review.submittedBy)}</td>
+    <td>${formatDate(review.submittedDate)}</td>
+    <td>
+      <span class="badge badge-${PRIORITY_BADGE_COLOR[review.priority] || "info"}">
+        ${toTitleCase(review.priority)}
+      </span>
+    </td>
+    <td>
+      <span class="badge badge-${STATUS_BADGE_COLOR[review.status] || "info"}">
+        ${review.status === "in-review" ? "In Review" : toTitleCase(review.status)}
+      </span>
+    </td>
+    <td>
+      <div class="review-actions">
+        <a href="/pages/review/review-details.html?id=${encodeURIComponent(review.id)}" class="btn btn-sm btn-primary">Review</a>
+      </div>
+    </td>
+  `;
+
+  return row;
+}
+
+function toTitleCase(value) {
+  const text = String(value || "");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.classList.contains("review-queue-page")) {
     initReviewQueuePage();

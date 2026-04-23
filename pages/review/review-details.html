@@ -4,77 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Review Details - PaperHub</title>
+    <script src="../../assets/js/tailwind-setup.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
     <link rel="stylesheet" href="../../assets/css/global.css" />
-    <link rel="stylesheet" href="../../assets/css/pages/review/review-details.css" />
   </head>
   <body class="review-details-page">
-    <!-- Navbar -->
     <div id="navbar-container"></div>
-
-    <!-- Sidebar -->
     <div id="sidebar-container"></div>
 
-    <!-- Main Content -->
     <main>
       <div class="page-content">
         <div class="page-header">
           <h1>Document Review</h1>
-          <a href="review-queue.html">← Back to Queue</a>
+          <a href="/pages/review/review-queue.html" class="btn btn-outline">Back to Queue</a>
         </div>
 
-        <div id="reviewDetailsContent">
-          <!-- Populated by JavaScript -->
-        </div>
+        <div id="reviewDetailsContent"></div>
 
         <div class="review-detailscard action-buttons">
-          <button id="approveBtn" class="btn btn-success">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            Approve
-          </button>
-          <button id="rejectBtn" class="btn btn-danger">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-            Reject
-          </button>
-          <button id="forwardBtn" class="btn btn-primary">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="22 4 12 14.01 9 11"></polyline>
-              <path
-                d="M22 4h-7.5a2 2 0 0 0-2 2v12.5M2 7h15a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-14a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"
-              ></path>
-            </svg>
-            Forward
-          </button>
+          <button id="approveBtn" class="btn btn-success">Approve</button>
+          <button id="rejectBtn" class="btn btn-danger">Reject</button>
+          <button id="forwardBtn" class="btn btn-primary">Forward</button>
         </div>
       </div>
     </main>
 
-    <!-- Footer -->
     <div id="footer-container"></div>
 
     <script src="../../assets/js/utils.js"></script>
