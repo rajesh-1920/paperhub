@@ -1,53 +1,441 @@
-# PaperHub Frontend
+# PaperHub - Modern SaaS Document Management Frontend
 
-**Production-Ready UI for Secure Digital Document Management Platform**
+<div align="center">
+
+**Production-Ready Frontend for Secure Document Management Platform**
+
+[![Built with HTML5](https://img.shields.io/badge/HTML5-E34C26?style=flat-square&logo=html5&logoColor=white)](https://html.spec.whatwg.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Vanilla JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
+
+</div>
 
 ## 🎯 Overview
 
-PaperHub Frontend is a modern, responsive, production-ready web interface for a document management system. Built with vanilla HTML5, CSS3, and JavaScript (no frameworks), it features a complete SaaS-style dashboard with file management, review workflows, and payment handling.
+PaperHub is a modern, responsive, production-ready SaaS frontend for document management. Built with **vanilla HTML5, CSS3 (Tailwind), and JavaScript** — no frameworks, no build steps required for development. Perfect for teams managing documents with role-based access control, review workflows, and payment processing.
 
-**No build steps required** – works immediately in any browser with a simple HTTP server.
+### ✨ Key Features
 
-## ✨ Key Features
-
-- ✅ **Role-Based Dashboards** – User, Officer, and Admin dashboard variants
-- ✅ **File Management** – Drag & drop upload, file listing, version history
-- ✅ **Review Workflows** – Queue management, document review, approval/rejection
-- ✅ **Payment Management** – Protected payment interface (available post-approval)
-- ✅ **Reusable Components** – Navbar, Sidebar, Footer dynamically loaded
-- ✅ **Responsive Design** – Desktop, tablet, and mobile optimized
-- ✅ **Mock Data & APIs** – Ready for immediate testing and backend integration
-- ✅ **Professional UI** – Modern SaaS design with animations and polish
+- ✅ **Modern SaaS Design** — Professional UI with Tailwind CSS
+- ✅ **Responsive Layout** — Works perfectly on desktop, tablet, and mobile
+- ✅ **Dark Mode Support** — Built-in theme switching
+- ✅ **Role-Based Access** — User, Officer, and Admin dashboards
+- ✅ **File Management** — Upload, organize, and version tracking
+- ✅ **Review Workflows** — Approval queues and workflow management
+- ✅ **Payment Ready** — Payment interface integration support
+- ✅ **Reusable Components** — Navbar, Sidebar, Footer, and more
+- ✅ **Mock Data** — Ready for immediate testing
+- ✅ **API Ready** — Easy integration with backend APIs
+- ✅ **Performance Optimized** — Fast, lightweight, and efficient
+- ✅ **Accessibility** — WCAG compliant markup
 
 ## 📁 Project Structure
 
 ```
 paperhub/
-├── index.html                    # Landing page
-├── assets/
-│   ├── css/
-│   │   └── global.css           # Complete design system (600+ lines)
-│   ├── js/
-│   │   ├── utils.js             # Shared utilities (700+ lines)
-│   │   ├── main.js              # App initialization
-│   │   ├── file.js              # File management
-│   │   └── review.js            # Review workflows
-│   └── images/                  # Image assets
-├── components/
-│   ├── navbar.html              # Top navigation bar
-│   ├── sidebar.html             # Side navigation
-│   └── footer.html              # Footer component
-└── pages/
-    ├── dashboard/
-    │   ├── user.html
-    │   ├── admin.html
-    │   └── officer.html
-    ├── file/
-    │   ├── upload.html
-    │   ├── file-details.html
-    │   └── version-history.html
-    ├── review/
-    │   ├── review-queue.html
+├── index.html                      # Landing page (public)
+├── src/
+│   ├── pages/                      # Page templates
+│   │   ├── auth/                   # Authentication pages
+│   │   │   ├── login.html
+│   │   │   └── register.html
+│   │   ├── dashboard/              # Role-based dashboards
+│   │   │   ├── user.html
+│   │   │   ├── officer.html
+│   │   │   └── admin.html
+│   │   ├── file/                   # Document management
+│   │   │   ├── upload.html
+│   │   │   ├── file-details.html
+│   │   │   └── version-history.html
+│   │   ├── review/                 # Review workflows
+│   │   │   ├── review-queue.html
+│   │   │   └── review-details.html
+│   │   ├── payment/                # Payment pages
+│   │   │   └── payment.html
+│   │   ├── account/                # User account pages
+│   │   │   ├── profile.html
+│   │   │   └── settings.html
+│   │   ├── support/                # Support pages
+│   │   │   └── contact.html
+│   │   └── errors/                 # Error pages
+│   │       └── 404.html
+│   ├── components/                 # Reusable components
+│   │   ├── navbar.html             # Navigation bar
+│   │   ├── sidebar.html            # Side navigation
+│   │   └── footer.html             # Footer
+│   └── css/
+│       └── input.css               # Tailwind input CSS
+├── public/
+│   └── assets/
+│       ├── css/
+│       │   └── tailwind.css        # Compiled Tailwind CSS
+│       ├── js/
+│       │   ├── utils.js            # Utility functions
+│       │   ├── app.js              # App initialization
+│       │   ├── auth.js             # Authentication logic
+│       │   ├── file.js             # File management
+│       │   ├── review.js           # Review workflows
+│       │   ├── navbar.js           # Navbar functionality
+│       │   ├── sidebar.js          # Sidebar functionality
+│       │   └── pages/              # Page-specific scripts
+│       └── images/                 # Image assets
+├── package.json                    # Dependencies & scripts
+├── tailwind.config.js              # Tailwind configuration
+└── README.md                       # This file
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 14+ (for Tailwind CSS processing)
+- npm or pnpm
+- A modern web browser
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd paperhub
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   pnpm install
+   ```
+
+3. **Start development:**
+   ```bash
+   npm start
+   # or
+   npm run watch:css & npm run serve
+   ```
+
+4. **Open in browser:**
+   ```
+   http://localhost:8000
+   ```
+
+### Available Scripts
+
+```bash
+# Development - Compile CSS and start dev server
+npm start
+
+# Watch CSS changes
+npm run watch:css
+
+# Build CSS for production (minified)
+npm run build:css
+
+# Serve the public directory
+npm run serve
+
+# Development server with auto-reload
+npm run dev
+```
+
+## 🎨 Design System
+
+### Color Palette
+
+- **Primary**: Sky Blue (`#0ea5e9`)
+- **Secondary**: Purple (`#8b5cf6`)
+- **Success**: Green (`#10b981`)
+- **Warning**: Amber (`#f59e0b`)
+- **Error**: Red (`#ef4444`)
+
+### Typography
+
+- **Display Font**: Sora (headings)
+- **Body Font**: Inter (content)
+
+### Components
+
+All reusable component classes are available in `src/css/input.css`:
+
+```html
+<!-- Buttons -->
+<button class="btn btn-primary">Primary</button>
+<button class="btn btn-secondary">Secondary</button>
+<button class="btn btn-ghost">Ghost</button>
+
+<!-- Cards -->
+<div class="card">Content</div>
+<div class="card-interactive">Interactive Card</div>
+
+<!-- Badges -->
+<span class="badge badge-primary">Primary</span>
+<span class="badge badge-success">Success</span>
+
+<!-- Forms -->
+<input type="text" class="input" placeholder="Enter text">
+
+<!-- Utilities -->
+<h1 class="gradient-text">Gradient Text</h1>
+<div class="container-wide">Full-width container</div>
+<div class="container-tight">Tight container</div>
+```
+
+## 🔧 Usage Examples
+
+### Authentication
+
+```javascript
+// Set user after login
+setCurrentUser({
+  id: 'user1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  role: 'user'
+});
+
+// Check if logged in
+if (isLoggedIn()) {
+  console.log('User is logged in');
+}
+
+// Get current user
+const user = getCurrentUser();
+console.log(user.name);
+
+// Logout
+logout(); // Redirects to login page
+```
+
+### Theme Management
+
+```javascript
+// Get current theme
+const isDark = getTheme();
+
+// Set theme
+setTheme(true);  // Dark
+setTheme(false); // Light
+
+// Toggle theme
+toggleTheme();
+```
+
+### Notifications
+
+```javascript
+// Show toast messages
+showSuccess('Operation successful!');
+showError('An error occurred!');
+showWarning('Warning message');
+showInfo('Info message');
+
+// With custom duration
+showSuccess('Message', 5000);
+```
+
+### Storage
+
+```javascript
+// Set data
+setStorage('user-preferences', { theme: 'dark', language: 'en' });
+
+// Get data
+const prefs = getStorage('user-preferences');
+
+// Remove data
+removeStorage('user-preferences');
+
+// Clear all
+clearStorage();
+```
+
+### API Calls
+
+```javascript
+// GET request
+const result = await apiGet('/api/documents');
+if (result.success) {
+  console.log(result.data);
+}
+
+// POST request
+const result = await apiPost('/api/documents', {
+  name: 'My Document',
+  type: 'pdf'
+});
+
+// PUT request
+const result = await apiPut('/api/documents/1', {
+  name: 'Updated Name'
+});
+
+// DELETE request
+const result = await apiDelete('/api/documents/1');
+```
+
+### Role-Based Access
+
+```javascript
+// Check if user has specific role
+if (hasRole('admin')) {
+  console.log('User is admin');
+}
+
+// Check multiple roles
+if (hasRole(['admin', 'officer'])) {
+  console.log('User is admin or officer');
+}
+
+// Require role on page load
+if (!requireRole(['admin', 'officer'])) {
+  // User doesn't have required role, redirected
+}
+```
+
+### Utilities
+
+```javascript
+// Date formatting
+formatDate(new Date()); // "Apr 25, 2024"
+formatTime(new Date()); // "14:30"
+timeAgo(new Date(Date.now() - 3600000)); // "1h ago"
+
+// File size
+formatFileSize(1048576); // "1 MB"
+
+// Currency
+formatCurrency(99.99, 'USD'); // "$99.99"
+
+// Validation
+isValidEmail('user@example.com'); // true
+isValidPassword('SecurePass123'); // true
+isValidUrl('https://example.com'); // true
+
+// Utilities
+slugify('Hello World'); // "hello-world"
+copyToClipboard('Text to copy');
+generateId('doc'); // "doc-1234567890-abc123def"
+```
+
+## 📱 Responsive Breakpoints
+
+- **Mobile**: 0px - 639px
+- **Tablet**: 640px - 1023px
+- **Desktop**: 1024px+
+
+## 🔐 Security Considerations
+
+1. **localStorage** stores user session — clear on logout
+2. **Sensitive data** should use secure HTTP-only cookies
+3. **API calls** should include authentication headers
+4. **Input validation** on client and server side
+5. **XSS Protection** - Use `textContent` instead of `innerHTML` when possible
+
+## 🌐 Browser Support
+
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+## 📦 Dependencies
+
+### Production
+- None! Pure vanilla HTML5/CSS3/JavaScript
+
+### Development
+- **tailwindcss** ^3.4.17 - CSS utility framework
+- **http-server** ^14.1.1 - Development server
+
+## 🔄 Integrating with Backend
+
+### 1. API Endpoints
+
+Update the API base URL in your scripts:
+
+```javascript
+const API_BASE = 'https://api.paperhub.com';
+
+async function login(email, password) {
+  const result = await apiPost(`${API_BASE}/auth/login`, {
+    email, password
+  });
+  
+  if (result.success) {
+    setCurrentUser(result.data.user);
+    redirect('/src/pages/dashboard/user.html');
+  }
+}
+```
+
+### 2. Authentication
+
+Replace mock authentication with real API calls in `public/assets/js/auth.js`
+
+### 3. Dynamic Content
+
+Replace mock data with API calls throughout the application
+
+## 🎓 Best Practices
+
+1. **Keep components modular** - Each component should have a single responsibility
+2. **Use utility functions** - Leverage the utilities in `utils.js`
+3. **Follow naming conventions** - Use descriptive class and ID names
+4. **Responsive first** - Mobile-first CSS approach
+5. **Accessibility** - Use semantic HTML and ARIA attributes
+6. **Performance** - Minimize DOM manipulation, use event delegation
+7. **Security** - Validate inputs, sanitize outputs, use HTTPS
+
+## 🚀 Deployment
+
+### Static Hosting (Netlify, Vercel, GitHub Pages)
+
+1. Build CSS:
+   ```bash
+   npm run build:css
+   ```
+
+2. Deploy the `public/` directory
+
+3. Set environment variables for API endpoints
+
+### Docker
+
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build:css
+EXPOSE 8000
+CMD ["npm", "run", "serve"]
+```
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📞 Support
+
+For support, email support@paperhub.com or open an issue on GitHub.
+
+## 🎉 Credits
+
+Built with ❤️ by the PaperHub team.
+
+---
+
+**Made with Vanilla HTML5, Tailwind CSS, and JavaScript** 🚀
     │   └── review-details.html
     └── payment/
         └── payment.html

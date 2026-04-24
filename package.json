@@ -1,12 +1,28 @@
 {
-  "name": "paperhub",
+  "name": "paperhub-saas",
   "version": "1.0.0",
+  "description": "Modern SaaS Frontend - Document Management System",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build:tailwind": "tailwindcss -c tailwind.config.js -i ./assets/css/tailwind.input.css -o ./assets/css/tailwind.css --minify",
-    "watch:tailwind": "tailwindcss -c tailwind.config.js -i ./assets/css/tailwind.input.css -o ./assets/css/tailwind.css --watch"
+    "dev": "http-server public -c-1 -o",
+    "build:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css",
+    "watch:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --watch",
+    "serve": "http-server public -p 8000",
+    "start": "npm run watch:css & npm run serve"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17"
-  }
+    "tailwindcss": "^3.4.17",
+    "http-server": "^14.1.1"
+  },
+  "keywords": [
+    "saas",
+    "frontend",
+    "html5",
+    "tailwindcss",
+    "vanilla-js",
+    "document-management"
+  ],
+  "author": "PaperHub Team",
+  "license": "MIT"
 }

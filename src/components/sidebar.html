@@ -1,0 +1,151 @@
+<!-- PaperHub Sidebar Navigation -->
+<aside id="paperhubSidebar" class="fixed inset-y-0 left-0 z-40 hidden md:flex w-64 flex-col pt-20 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300" aria-label="Sidebar navigation">
+  <!-- User Card -->
+  <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-semibold text-sm">
+        <span data-user-initial>U</span>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-semibold text-slate-900 dark:text-white truncate" data-sidebar-user-name>User</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 truncate" data-sidebar-user-email>user@example.com</p>
+      </div>
+    </div>
+    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-200" data-sidebar-user-role>User</span>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="flex-1 overflow-y-auto px-4 py-6 space-y-2">
+    <!-- Workspace Section -->
+    <div class="mb-6">
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Workspace</p>
+      <div class="space-y-1">
+        <a href="/src/pages/dashboard/user.html" class="sidebar-link" data-roles="user,officer,admin">
+          <span class="text-lg">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/src/pages/file/file-details.html" class="sidebar-link" data-roles="user,officer,admin">
+          <span class="text-lg">📁</span>
+          <span>My Files</span>
+        </a>
+        <a href="/src/pages/file/upload.html" class="sidebar-link" data-roles="user,officer,admin">
+          <span class="text-lg">📤</span>
+          <span>Upload</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Review Section -->
+    <div class="mb-6">
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Reviews</p>
+      <div class="space-y-1">
+        <a href="/src/pages/review/review-queue.html" class="sidebar-link" data-roles="officer,admin">
+          <span class="text-lg">✅</span>
+          <span>Queue</span>
+        </a>
+        <a href="/src/pages/review/review-details.html" class="sidebar-link" data-roles="officer,admin">
+          <span class="text-lg">📋</span>
+          <span>History</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Account Section -->
+    <div class="mb-6">
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Account</p>
+      <div class="space-y-1">
+        <a href="/src/pages/account/profile.html" class="sidebar-link">
+          <span class="text-lg">👤</span>
+          <span>Profile</span>
+        </a>
+        <a href="/src/pages/account/settings.html" class="sidebar-link">
+          <span class="text-lg">⚙️</span>
+          <span>Settings</span>
+        </a>
+        <a href="/src/pages/payment/payment.html" class="sidebar-link">
+          <span class="text-lg">💳</span>
+          <span>Billing</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Support Section -->
+    <div class="mb-6">
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Support</p>
+      <div class="space-y-1">
+        <a href="/src/pages/support/contact.html" class="sidebar-link">
+          <span class="text-lg">💬</span>
+          <span>Contact</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Footer Section -->
+  <div class="border-t border-slate-200 dark:border-slate-800 p-4 space-y-2">
+    <button class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors flex items-center gap-2" onclick="toggleTheme()">
+      <span id="themeIcon">🌙</span>
+      <span id="themeLabel">Dark Mode</span>
+    </button>
+    <button class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2" onclick="handleSignOut()">
+      <span>🚪</span>
+      <span>Sign Out</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Mobile Sidebar Overlay -->
+<div id="sidebarOverlay" class="fixed inset-0 z-30 bg-black/50 hidden md:hidden" onclick="closeMobileSidebar()"></div>
+
+<style>
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-colors;
+  }
+  
+  .sidebar-link.active {
+    @apply bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 font-semibold;
+  }
+</style>
+
+<script>
+  function closeMobileSidebar() {
+    document.getElementById('paperhubSidebar').classList.add('hidden');
+    document.getElementById('sidebarOverlay').classList.add('hidden');
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('paperhub-theme', isDark ? 'dark' : 'light');
+    
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (isDark) {
+      icon.textContent = '☀️';
+      label.textContent = 'Light Mode';
+    } else {
+      icon.textContent = '🌙';
+      label.textContent = 'Dark Mode';
+    }
+  }
+
+  function handleSignOut() {
+    localStorage.removeItem('paperhub-user');
+    window.location.href = '/src/pages/auth/login.html';
+  }
+
+  // Initialize sidebar links visibility based on user role
+  function initializeSidebarLinks() {
+    const userRole = localStorage.getItem('paperhub-user-role') || 'user';
+    const links = document.querySelectorAll('.sidebar-link[data-roles]');
+    
+    links.forEach(link => {
+      const roles = link.getAttribute('data-roles').split(',').map(r => r.trim());
+      if (!roles.includes(userRole)) {
+        link.style.display = 'none';
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initializeSidebarLinks);
+</script>
