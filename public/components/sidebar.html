@@ -20,15 +20,15 @@
     <div class="mb-6">
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Workspace</p>
       <div class="space-y-1">
-        <a href="/src/pages/dashboard/user.html" class="sidebar-link" data-roles="user,officer,admin">
+        <a href="/pages/dashboard/user.html" class="sidebar-link" data-roles="user,officer,admin">
           <span class="text-lg">📊</span>
           <span>Dashboard</span>
         </a>
-        <a href="/src/pages/file/file-details.html" class="sidebar-link" data-roles="user,officer,admin">
+        <a href="/pages/file/file-details.html" class="sidebar-link" data-roles="user,officer,admin">
           <span class="text-lg">📁</span>
           <span>My Files</span>
         </a>
-        <a href="/src/pages/file/upload.html" class="sidebar-link" data-roles="user,officer,admin">
+        <a href="/pages/file/upload.html" class="sidebar-link" data-roles="user,officer,admin">
           <span class="text-lg">📤</span>
           <span>Upload</span>
         </a>
@@ -39,11 +39,11 @@
     <div class="mb-6">
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Reviews</p>
       <div class="space-y-1">
-        <a href="/src/pages/review/review-queue.html" class="sidebar-link" data-roles="officer,admin">
+        <a href="/pages/review/review-queue.html" class="sidebar-link" data-roles="officer,admin">
           <span class="text-lg">✅</span>
           <span>Queue</span>
         </a>
-        <a href="/src/pages/review/review-details.html" class="sidebar-link" data-roles="officer,admin">
+        <a href="/pages/review/review-details.html" class="sidebar-link" data-roles="officer,admin">
           <span class="text-lg">📋</span>
           <span>History</span>
         </a>
@@ -54,15 +54,15 @@
     <div class="mb-6">
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Account</p>
       <div class="space-y-1">
-        <a href="/src/pages/account/profile.html" class="sidebar-link">
+        <a href="/pages/account/profile.html" class="sidebar-link">
           <span class="text-lg">👤</span>
           <span>Profile</span>
         </a>
-        <a href="/src/pages/account/settings.html" class="sidebar-link">
+        <a href="/pages/account/settings.html" class="sidebar-link">
           <span class="text-lg">⚙️</span>
           <span>Settings</span>
         </a>
-        <a href="/src/pages/payment/payment.html" class="sidebar-link">
+        <a href="/pages/payment/payment.html" class="sidebar-link">
           <span class="text-lg">💳</span>
           <span>Billing</span>
         </a>
@@ -73,7 +73,7 @@
     <div class="mb-6">
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Support</p>
       <div class="space-y-1">
-        <a href="/src/pages/support/contact.html" class="sidebar-link">
+        <a href="/pages/support/contact.html" class="sidebar-link">
           <span class="text-lg">💬</span>
           <span>Contact</span>
         </a>
@@ -99,11 +99,35 @@
 
 <style>
   .sidebar-link {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-colors;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(51 65 85);
+    transition: color 150ms ease, background-color 150ms ease;
   }
-  
+
+  .sidebar-link:hover {
+    color: rgb(2 132 199);
+    background: rgb(240 249 255);
+  }
+
+  .dark .sidebar-link {
+    color: rgb(203 213 225);
+  }
+
+  .dark .sidebar-link:hover {
+    color: rgb(125 211 252);
+    background: rgba(14, 116, 144, 0.2);
+  }
+
   .sidebar-link.active {
-    @apply bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 font-semibold;
+    color: rgb(2 132 199);
+    background: rgb(224 242 254);
+    font-weight: 600;
   }
 </style>
 
@@ -131,7 +155,7 @@
 
   function handleSignOut() {
     localStorage.removeItem('paperhub-user');
-    window.location.href = '/src/pages/auth/login.html';
+    window.location.href = '/pages/auth/login.html';
   }
 
   // Initialize sidebar links visibility based on user role

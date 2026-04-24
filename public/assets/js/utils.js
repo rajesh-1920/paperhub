@@ -195,7 +195,7 @@ function hasRole(role) {
 function logout() {
   removeStorage(StorageKey.USER);
   removeStorage(StorageKey.USER_ROLE);
-  window.location.href = "/src/pages/auth/login.html";
+  window.location.href = "/pages/auth/login.html";
 }
 
 // ---------- THEME MANAGEMENT ----------

@@ -62,10 +62,10 @@ async function loadComponents() {
   try {
     // Check if we should load authenticated components
     if (isLoggedIn()) {
-      await loadComponent('navbar', '/src/components/navbar.html');
-      await loadComponent('sidebar', '/src/components/sidebar.html');
+      await loadComponent('navbar', '/components/navbar.html');
+      await loadComponent('sidebar', '/components/sidebar.html');
     }
-    await loadComponent('footer', '/src/components/footer.html');
+    await loadComponent('footer', '/components/footer.html');
   } catch (error) {
     console.error('Error loading components:', error);
   }
@@ -101,7 +101,7 @@ async function loadComponent(id, url) {
 // Check authentication and redirect if needed
 function requireAuth() {
   if (!isLoggedIn()) {
-    redirect('/src/pages/auth/login.html');
+    redirect('/pages/auth/login.html');
     return false;
   }
   return true;
@@ -110,13 +110,13 @@ function requireAuth() {
 // Check role-based access
 function requireRole(allowedRoles) {
   if (!isLoggedIn()) {
-    redirect('/src/pages/auth/login.html');
+    redirect('/pages/auth/login.html');
     return false;
   }
 
   const userRole = getCurrentUserRole();
   if (!allowedRoles.includes(userRole)) {
-    redirect('/src/pages/errors/404.html');
+    redirect('/pages/errors/404.html');
     return false;
   }
 

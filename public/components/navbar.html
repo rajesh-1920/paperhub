@@ -1,0 +1,57 @@
+<!-- PaperHub Navigation Bar -->
+<nav id="paperhubNavbar" class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors" aria-label="Main navigation">
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between py-4">
+    <a href="/" class="flex items-center gap-2 hover:opacity-75 transition-opacity" aria-label="PaperHub Home">
+      <span class="text-2xl">PH</span>
+      <div>
+        <div class="font-semibold text-slate-900 dark:text-white">PaperHub</div>
+        <div class="text-xs text-slate-600 dark:text-slate-400">Document Management</div>
+      </div>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-8" role="menubar">
+      <li><a href="/" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Home</a></li>
+      <li><a href="/pages/dashboard/user.html" data-user-dashboard-link data-roles="user,officer,admin" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Dashboard</a></li>
+      <li><a href="/pages/file/file-details.html" data-roles="user,officer,admin" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Files</a></li>
+      <li><a href="/pages/review/review-queue.html" data-roles="officer,admin" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Reviews</a></li>
+      <li><a href="/pages/support/contact.html" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Support</a></li>
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <div class="hidden md:flex items-center gap-3" data-user-info>
+        <div class="text-right">
+          <div class="text-sm font-semibold text-slate-900 dark:text-white" data-user-name>User</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400" data-user-role>User</div>
+        </div>
+      </div>
+      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Toggle menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+      <button class="hidden md:inline-flex px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20" onclick="handleSignOut()">Sign Out</button>
+    </div>
+  </div>
+
+  <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-4">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8 space-y-3">
+      <a href="/" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Home</a>
+      <a href="/pages/dashboard/user.html" data-roles="user,officer,admin" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Dashboard</a>
+      <a href="/pages/file/file-details.html" data-roles="user,officer,admin" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Files</a>
+      <a href="/pages/review/review-queue.html" data-roles="officer,admin" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Reviews</a>
+      <a href="/pages/support/contact.html" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Support</a>
+      <button class="w-full px-4 py-2 rounded-lg text-left hover:bg-slate-100 dark:hover:bg-slate-800" onclick="handleSignOut()">Sign Out</button>
+    </div>
+  </div>
+</nav>
+
+<script>
+  document.getElementById('mobileMenuBtn')?.addEventListener('click', function () {
+    document.getElementById('mobileMenu')?.classList.toggle('hidden');
+  });
+
+  function handleSignOut() {
+    localStorage.removeItem('paperhub-user');
+    window.location.href = '/pages/auth/login.html';
+  }
+</script>
