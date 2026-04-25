@@ -45,16 +45,13 @@ paperhub/
 │       │   ├── file.png
 │       │   └── logo.svg
 │       └── js/
-│           ├── app.js
 │           ├── auth.js
 │           ├── file.js
 │           ├── main.js
 │           ├── navbar.js
 │           ├── review.js
-│           ├── sidebar.js
 │           ├── tailwind-setup.js
-│           ├── utils.js
-│           └── pages/
+│           └── utils.js
 ├── src/
 │   └── css/
 │       └── input.css
@@ -123,12 +120,12 @@ http://127.0.0.1:8000
 
 ### JavaScript Responsibilities
 
-- `public/assets/js/app.js` : App bootstrap and shared startup flow
+- `public/assets/js/main.js` : App bootstrap and shared startup flow
 - `public/assets/js/utils.js` : Reusable helper utilities
 - `public/assets/js/auth.js` : Authentication behavior
 - `public/assets/js/file.js` : File feature interactions
 - `public/assets/js/review.js` : Review flow interactions
-- `public/assets/js/navbar.js` and `public/assets/js/sidebar.js` : Layout interactions
+- `public/assets/js/navbar.js` : Navigation interactions
 
 ## Deployment
 

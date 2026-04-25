@@ -3,6 +3,122 @@
  * Handles login, registration, and session management
  */
 
+const STATIC_LOGIN_CREDENTIALS = {
+  "user@gmail.com": {
+    password: "user",
+    id: "demo-user",
+    name: "Demo User",
+    role: "user",
+    title: "User",
+  },
+  "officer@gmail.com": {
+    password: "officer",
+    id: "demo-officer",
+    name: "Demo Officer",
+    role: "officer",
+    title: "Review Officer",
+  },
+  "admin@gmail.com": {
+    password: "admin",
+    id: "demo-admin",
+    name: "Demo Admin",
+    role: "admin",
+    title: "Administrator",
+  },
+};
+
+function getFormDataSafe(form) {
+  const data = {};
+  const formData = new FormData(form);
+  formData.forEach((value, key) => {
+    data[key] = typeof value === "string" ? value.trim() : value;
+  });
+  return data;
+}
+
+function validateLoginData(formData) {
+  const errors = {};
+
+  if (!formData.email) {
+    errors.email = "Email is required";
+  } else if (!isValidEmail(formData.email)) {
+    errors.email = "Please enter a valid email";
+  }
+
+  if (!formData.password) {
+    errors.password = "Password is required";
+  }
+
+  return errors;
+}
+
+function validateRegisterData(formData) {
+  const errors = {};
+
+  if (!formData.name || formData.name.length < 3) {
+    errors.name = "Full Name must be at least 3 characters";
+  }
+
+  if (!formData.email) {
+    errors.email = "Email is required";
+  } else if (!isValidEmail(formData.email)) {
+    errors.email = "Please enter a valid email";
+  }
+
+  if (!formData.password) {
+    errors.password = "Password is required";
+  } else if (!isValidPassword(formData.password)) {
+    errors.password = "Password must be at least 8 characters";
+  }
+
+  if (!formData.confirmPassword) {
+    errors.confirmPassword = "Please confirm your password";
+  } else if (formData.confirmPassword !== formData.password) {
+    errors.confirmPassword = "Passwords do not match";
+  }
+
+  return errors;
+}
+
+function getStaticLoginUser(email, password) {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  const account = STATIC_LOGIN_CREDENTIALS[normalizedEmail];
+
+  if (!account || account.password !== password) {
+    return null;
+  }
+
+  return {
+    id: account.id,
+    name: account.name,
+    email: normalizedEmail,
+    role: account.role,
+    title: account.title,
+    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(account.name)}`,
+  };
+}
+
+function getDashboardPathByRole(role) {
+  const roleRoutes = {
+    user: "/pages/dashboard/user.html",
+    officer: "/pages/dashboard/officer.html",
+    admin: "/pages/dashboard/admin.html",
+  };
+
+  return roleRoutes[role] || roleRoutes.user;
+}
+
+function persistAuthSession(user) {
+  const token = `mock-token-${Date.now()}`;
+  setCurrentUser(user);
+  setStorage("paperhub-auth-token", token);
+}
+
+function enforceAuthLightTheme() {
+  document.documentElement.classList.remove("dark");
+  setStorage("paperhub-theme", "light");
+}
+
 /**
  * Initialize login page
  */
@@ -19,20 +135,10 @@ function initLoginPage() {
 async function handleLogin(e) {
   e.preventDefault();
 
-  const formData = getFormData(e.target);
+  const formData = getFormDataSafe(e.target);
 
   // Validate
-  const errors = validateForm(formData, {
-    email: {
-      label: "Email",
-      required: true,
-      type: "email",
-    },
-    password: {
-      label: "Password",
-      required: true,
-    },
-  });
+  const errors = validateLoginData(formData);
 
   if (Object.keys(errors).length > 0) {
     displayFormErrors(e.target, errors);
@@ -46,30 +152,22 @@ async function handleLogin(e) {
   submitBtn.innerHTML = '<span class="spinner"></span> Logging in...';
 
   try {
-    // Mock API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await delay(500);
 
-    // Create session
-    const session = {
-      token: "mock-token-" + Date.now(),
-      user: {
-        id: "1",
-        name: "John Doe",
-        email: formData.email,
-        role: "user",
-        avatar: `https://ui-avatars.com/api/?name=${formData.email.split("@")[0]}`,
-      },
-    };
+    const user = getStaticLoginUser(formData.email, formData.password);
+    if (!user) {
+      throw new Error("Invalid email or password.");
+    }
 
-    setSession(session);
+    persistAuthSession(user);
     showSuccess("Login successful!");
 
     // Redirect to dashboard
     setTimeout(() => {
-      window.location.href = "/pages/dashboard/user.html";
+      window.location.href = getDashboardPathByRole(user.role);
     }, 500);
   } catch (error) {
-    showError("Login failed: " + error.message);
+    showError(error.message || "Login failed");
     submitBtn.disabled = false;
     submitBtn.textContent = originalText;
   }
@@ -151,31 +249,10 @@ function updatePasswordStrength(e) {
 async function handleRegister(e) {
   e.preventDefault();
 
-  const formData = getFormData(e.target);
+  const formData = getFormDataSafe(e.target);
 
   // Validate
-  const errors = validateForm(formData, {
-    name: {
-      label: "Full Name",
-      required: true,
-      minLength: 3,
-    },
-    email: {
-      label: "Email",
-      required: true,
-      type: "email",
-    },
-    password: {
-      label: "Password",
-      required: true,
-      type: "password",
-    },
-    confirmPassword: {
-      label: "Confirm Password",
-      required: true,
-      match: "password",
-    },
-  });
+  const errors = validateRegisterData(formData);
 
   if (Object.keys(errors).length > 0) {
     displayFormErrors(e.target, errors);
@@ -189,22 +266,19 @@ async function handleRegister(e) {
   submitBtn.innerHTML = '<span class="spinner"></span> Creating account...';
 
   try {
-    // Mock API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await delay(700);
 
     // Create session
-    const session = {
-      token: "mock-token-" + Date.now(),
-      user: {
-        id: Math.random().toString(36).substr(2, 9),
-        name: formData.name,
-        email: formData.email,
-        role: "user",
-        avatar: `https://ui-avatars.com/api/?name=${formData.name}`,
-      },
+    const user = {
+      id: Math.random().toString(36).slice(2, 11),
+      name: formData.name,
+      email: String(formData.email || "").toLowerCase(),
+      role: "user",
+      title: "User",
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}`,
     };
 
-    setSession(session);
+    persistAuthSession(user);
     showSuccess("Account created successfully!");
 
     // Redirect to dashboard
@@ -250,12 +324,19 @@ function isAuthenticated() {
  * Get auth token
  */
 function getAuthToken() {
-  const session = getSession();
-  return session ? session.token : null;
+  return getStorage("paperhub-auth-token");
 }
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
+  const isAuthPage =
+    document.body.classList.contains("login-page") ||
+    document.body.classList.contains("register-page");
+
+  if (isAuthPage) {
+    enforceAuthLightTheme();
+  }
+
   if (document.body.classList.contains("login-page")) {
     initLoginPage();
   } else if (document.body.classList.contains("register-page")) {

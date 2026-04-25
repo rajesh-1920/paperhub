@@ -24,13 +24,6 @@ async function initApp() {
       datasetKey: "paperhubNavbar",
       errorMessage: "Unable to load navbar module.",
     }),
-    ensureScript({
-      globalKey: "initPaperHubSidebar",
-      selector: 'script[data-paperhub-sidebar="true"]',
-      src: "/assets/js/sidebar.js",
-      datasetKey: "paperhubSidebar",
-      errorMessage: "Unable to load sidebar module.",
-    }),
     loadComponents(),
   ]);
 
@@ -42,7 +35,6 @@ async function initApp() {
   }
 
   initNavbar();
-  initSidebar();
   applyCurrentUserPageData();
   initPageSpecificForms();
 }
@@ -222,12 +214,6 @@ async function loadComponents() {
 function initNavbar() {
   if (typeof window.initPaperHubNavbar === "function") {
     window.initPaperHubNavbar();
-  }
-}
-
-function initSidebar() {
-  if (typeof window.initPaperHubSidebar === "function") {
-    window.initPaperHubSidebar();
   }
 }
 

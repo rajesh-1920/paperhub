@@ -348,61 +348,6 @@ function generateId(prefix = "id") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
-// ---------- API HELPERS ----------
-async function apiCall(url, options = {}) {
-  const defaultOptions = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  const config = { ...defaultOptions, ...options };
-
-  try {
-    const response = await fetch(url, config);
-    
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-
-    return {
-      success: true,
-      data: await response.json(),
-      status: response.status,
-    };
-  } catch (error) {
-    console.error("API Call Error:", error);
-    return {
-      success: false,
-      error: error.message,
-      status: null,
-    };
-  }
-}
-
-function apiGet(url) {
-  return apiCall(url, { method: "GET" });
-}
-
-function apiPost(url, data) {
-  return apiCall(url, {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-}
-
-function apiPut(url, data) {
-  return apiCall(url, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
-}
-
-function apiDelete(url) {
-  return apiCall(url, { method: "DELETE" });
-}
-
 // ---------- PAGE HELPERS ----------
 function redirect(url, delay = 0) {
   if (delay > 0) {
@@ -496,10 +441,6 @@ if (typeof module !== "undefined" && module.exports) {
     copyToClipboard,
     generateId,
     apiCall,
-    apiGet,
-    apiPost,
-    apiPut,
-    apiDelete,
     redirect,
     reloadPage,
     goBack,
@@ -507,17 +448,6 @@ if (typeof module !== "undefined" && module.exports) {
     getQueryParam,
     getAllQueryParams,
   };
-}
-
-  return `${month}/${day}/${year}`;
-}
-
-function formatFileSize(bytes) {
-  if (bytes === 0) return "0 Bytes";
-  const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
 
 async function apiCall(endpoint) {
@@ -571,12 +501,12 @@ function escapeHtml(value) {
 }
 
 function normalizeRole(role) {
-  const VALID_ROLES = ["student", "teacher", "admin"];
-  const safeRole = String(role || "student").toLowerCase();
-  if (VALID_ROLES.includes(safeRole)) {
-    return safeRole;
-  }
-  return "student";
+  const safeRole = String(role || "user").toLowerCase();
+
+  if (safeRole === "admin") return "admin";
+  if (safeRole === "teacher" || safeRole === "officer") return "officer";
+  if (safeRole === "student" || safeRole === "user") return "user";
+  return "user";
 }
 
 const PAPERHUB_ROLE_STORAGE_KEY = "paperhub-role";
@@ -587,7 +517,7 @@ const MOCK_USERS = [
     id: "student-rajesh",
     name: "Rajesh Biswas",
     email: "rajesh18@cse.pstu.ac.bd",
-    role: "student",
+    role: "user",
     title: "Final Year Student",
     department: "CSE",
     lastLogin: "Today, 09:12 AM",
@@ -629,7 +559,7 @@ const MOCK_USERS = [
     id: "teacher-mahmud",
     name: "Mahmud Hasan",
     email: "mahmud.hasan@paperhub.edu",
-    role: "teacher",
+    role: "officer",
     title: "Document Review Officer",
     department: "Academic Review",
     lastLogin: "Today, 08:45 AM",
@@ -736,10 +666,7 @@ function getAllMockUsers() {
 }
 
 function getDashboardRole(role) {
-  const normalized = String(role || "student").toLowerCase();
-  if (normalized === "admin") return "admin";
-  if (normalized === "teacher" || normalized === "officer") return "officer";
-  return "user";
+  return normalizeRole(role);
 }
 
 function getDashboardRouteForRole(role) {
@@ -748,7 +675,7 @@ function getDashboardRouteForRole(role) {
 }
 
 function getDashboardRouteForUser(user) {
-  return getDashboardRouteForRole(user?.role || "student");
+  return getDashboardRouteForRole(user?.role || "user");
 }
 
 function getMockUserById(userId) {
@@ -773,9 +700,14 @@ function setStoredRole(role) {
 
 function getStoredRole() {
   try {
-    return normalizeRole(localStorage.getItem(PAPERHUB_ROLE_STORAGE_KEY));
+    const storedRole = localStorage.getItem(PAPERHUB_ROLE_STORAGE_KEY);
+    if (storedRole) {
+      return normalizeRole(storedRole);
+    }
+
+    return normalizeRole(localStorage.getItem(StorageKey.USER_ROLE));
   } catch (error) {
-    return "student";
+    return "user";
   }
 }
 
@@ -794,6 +726,15 @@ function setCurrentUserById(userId) {
 }
 
 function getCurrentUserData() {
+  const authUser = getCurrentUser();
+  if (authUser && authUser.name && authUser.email) {
+    return {
+      ...getDefaultUserForRole(authUser.role),
+      ...authUser,
+      role: normalizeRole(authUser.role),
+    };
+  }
+
   try {
     const savedUserId = localStorage.getItem(PAPERHUB_CURRENT_USER_STORAGE_KEY);
     const selectedUser = getMockUserById(savedUserId);
@@ -831,23 +772,23 @@ function canAccessPathByRole(pathname, role) {
   }
 
   if (path.includes("/pages/dashboard/officer.html")) {
-    return normalizedRole === "teacher" || normalizedRole === "admin";
+    return normalizedRole === "officer" || normalizedRole === "admin";
   }
 
   if (path.includes("/pages/dashboard/user.html")) {
-    return normalizedRole === "student" || normalizedRole === "admin";
+    return normalizedRole === "user" || normalizedRole === "admin";
   }
 
   if (path.includes("/pages/review/")) {
-    return normalizedRole === "teacher" || normalizedRole === "admin";
+    return normalizedRole === "officer" || normalizedRole === "admin";
   }
 
   if (path.includes("/pages/payment/")) {
-    return normalizedRole === "student" || normalizedRole === "admin";
+    return normalizedRole === "user" || normalizedRole === "admin";
   }
 
   if (path.includes("/pages/file/upload.html")) {
-    return normalizedRole === "student";
+    return normalizedRole === "user";
   }
 
   return true;
