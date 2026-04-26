@@ -1,5 +1,22 @@
 const COMPONENT_CACHE_KEY = "paperhub-component-cache";
 
+const PAPERHUB_MAIN_APP_BASE_URL = (() => {
+  const currentScript =
+    document.currentScript ||
+    Array.from(document.scripts || []).find((script) => script.src && script.src.includes("/assets/js/main.js"));
+
+  if (currentScript && currentScript.src) {
+    return new URL("../../", currentScript.src).href;
+  }
+
+  return new URL("./", window.location.href).href;
+})();
+
+function resolveMainAppUrl(path) {
+  const normalizedPath = String(path || "").replace(/^\/+/, "");
+  return new URL(normalizedPath, PAPERHUB_MAIN_APP_BASE_URL).href;
+}
+
 (function applyInitialThemePreference() {
   const root = document.documentElement;
 
@@ -20,7 +37,7 @@ async function initApp() {
     ensureScript({
       globalKey: "initPaperHubNavbar",
       selector: 'script[data-paperhub-navbar="true"]',
-      src: "/assets/js/navbar.js",
+      src: "assets/js/navbar.js",
       datasetKey: "paperhubNavbar",
       errorMessage: "Unable to load navbar module.",
     }),
@@ -117,7 +134,7 @@ async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage
   if (!document.querySelector(selector)) {
     await new Promise((resolve) => {
       const script = document.createElement("script");
-      script.src = src;
+      script.src = resolveMainAppUrl(src);
       script.dataset[datasetKey] = "true";
       script.onload = resolve;
       script.onerror = () => {
@@ -131,9 +148,9 @@ async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage
 
 async function loadComponents() {
   const componentsToLoad = [
-    { id: "navbar-container", file: "/components/navbar.html" },
-    { id: "sidebar-container", file: "/components/sidebar.html" },
-    { id: "footer-container", file: "/components/footer.html" },
+    { id: "navbar-container", file: "components/navbar.html" },
+    { id: "sidebar-container", file: "components/sidebar.html" },
+    { id: "footer-container", file: "components/footer.html" },
   ];
 
   const getComponentCache = () => {
@@ -160,8 +177,8 @@ async function loadComponents() {
   );
 
   // Invalidate cached navigation shells to force fresh fetch
-  delete cache["/components/navbar.html"];
-  delete cache["/components/sidebar.html"];
+  delete cache["components/navbar.html"];
+  delete cache["components/sidebar.html"];
 
   componentsToLoad.forEach((component) => {
     const container = containers.get(component.file);
@@ -183,7 +200,7 @@ async function loadComponents() {
       const container = containers.get(component.file);
 
       try {
-        const response = await fetch(component.file, { cache: "no-cache" });
+        const response = await fetch(resolveMainAppUrl(component.file), { cache: "no-cache" });
         if (!response.ok) {
           throw new Error(`Failed with status ${response.status}`);
         }

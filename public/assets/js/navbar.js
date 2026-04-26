@@ -1,5 +1,25 @@
 (function () {
-  const ACTIVE_CLASSES = ["text-cyan-700", "bg-cyan-50", "dark:text-cyan-400", "dark:bg-slate-800"];
+  const ACTIVE_CLASSES = ["is-active"];
+
+  function resolveLink(path) {
+    if (typeof resolveAppPath === "function") {
+      return resolveAppPath(path);
+    }
+
+    const normalizedPath = String(path || "").replace(/^\/+/, "");
+    return new URL(normalizedPath, window.location.href).href;
+  }
+
+  function applyAppLinks() {
+    document.querySelectorAll("[data-app-href]").forEach((link) => {
+      const path = link.dataset.appHref;
+      if (!path) {
+        return;
+      }
+
+      link.setAttribute("href", resolveLink(path));
+    });
+  }
 
   function applyRoleVisibility(role) {
     const roleElements = document.querySelectorAll("[data-roles]");
@@ -23,7 +43,7 @@
 
       if (role === "admin") {
         roleBadge.classList.add("border-red-300", "bg-red-50", "text-red-700");
-      } else if (role === "teacher") {
+      } else if (role === "officer") {
         roleBadge.classList.add("border-purple-300", "bg-purple-50", "text-purple-700");
       } else {
         roleBadge.classList.add("text-slate-600");
@@ -53,17 +73,40 @@
     document.querySelectorAll("[data-user-title]").forEach((element) => {
       element.textContent = user.title;
     });
+
+    document.querySelectorAll("[data-user-initials]").forEach((element) => {
+      const initials = String(user.name || "U")
+        .split(" ")
+        .map((part) => part.charAt(0))
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+      element.textContent = initials || "U";
+    });
   }
 
   function markActiveLink(navLinks) {
-    const currentPath = window.location.pathname;
+    const normalizedCurrentPath = window.location.pathname.replace(/\/index\.html$/i, "/");
+    const homePath = new URL(resolveLink("index.html"), window.location.href).pathname.replace(
+      /\/index\.html$/i,
+      "/",
+    );
 
     navLinks.forEach((link) => {
-      const href = link.getAttribute("href") || "";
-      const isHome = href === "/";
-      const isMatch = isHome
-        ? currentPath === "/" || currentPath.endsWith("index.html")
-        : currentPath.includes(href);
+      const href = link.getAttribute("href");
+      if (!href) {
+        return;
+      }
+
+      const linkPath = new URL(href, window.location.href).pathname.replace(/\/index\.html$/i, "/");
+      const isHome = linkPath === homePath;
+
+      let isMatch = false;
+      if (isHome) {
+        isMatch = normalizedCurrentPath === homePath;
+      } else {
+        isMatch = normalizedCurrentPath.startsWith(linkPath);
+      }
 
       link.removeAttribute("aria-current");
       ACTIVE_CLASSES.forEach((className) => link.classList.remove(className));
@@ -71,6 +114,28 @@
       if (isMatch) {
         link.setAttribute("aria-current", "page");
         ACTIVE_CLASSES.forEach((className) => link.classList.add(className));
+      }
+    });
+  }
+
+  function markActiveSidebarLink(sidebarLinks) {
+    const normalizedCurrentPath = window.location.pathname.replace(/\/index\.html$/i, "/");
+
+    sidebarLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+      if (!href) {
+        return;
+      }
+
+      const linkPath = new URL(href, window.location.href).pathname.replace(/\/index\.html$/i, "/");
+      const isMatch = normalizedCurrentPath.startsWith(linkPath);
+
+      link.removeAttribute("aria-current");
+      link.classList.remove("is-active");
+
+      if (isMatch) {
+        link.setAttribute("aria-current", "page");
+        link.classList.add("is-active");
       }
     });
   }
@@ -126,9 +191,36 @@
         const nextRoute =
           typeof getDashboardRouteForUser === "function"
             ? getDashboardRouteForUser(nextUser)
-            : "/pages/dashboard/user.html";
+            : resolveLink("pages/dashboard/user.html");
         window.location.assign(nextRoute);
       });
+    });
+  }
+
+  function setupSignOut() {
+    document.querySelectorAll("[data-sign-out]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (typeof logout === "function") {
+          logout();
+          return;
+        }
+
+        try {
+          localStorage.removeItem("paperhub-user");
+          localStorage.removeItem("paperhub-user-role");
+        } catch (error) {
+          console.warn("Unable to clear auth storage", error);
+        }
+
+        window.location.href = resolveLink("pages/auth/login.html");
+      });
+    });
+  }
+
+  function applyDynamicMeta() {
+    const currentYear = String(new Date().getFullYear());
+    document.querySelectorAll("[data-current-year]").forEach((element) => {
+      element.textContent = currentYear;
     });
   }
 
@@ -220,6 +312,7 @@
   function setupThemeToggle() {
     const themeToggle = document.getElementById("themeToggle");
     const mobileThemeToggle = document.getElementById("mobileThemeToggle");
+    const sharedThemeToggles = Array.from(document.querySelectorAll("[data-theme-toggle]"));
     const root = document.documentElement;
 
     const getStoredTheme = () => {
@@ -239,10 +332,27 @@
       }
     };
 
+    const syncThemeLabels = (isDark) => {
+      const nextIcon = isDark ? "◑" : "◐";
+      const nextLabel = isDark ? "Light Mode" : "Dark Mode";
+
+      document.querySelectorAll("[data-theme-icon]").forEach((element) => {
+        element.textContent = nextIcon;
+      });
+
+      document.querySelectorAll("[data-theme-label]").forEach((element) => {
+        element.textContent = nextLabel;
+      });
+    };
+
     const applyTheme = (isDark, persist = false) => {
       root.classList.toggle("dark", isDark);
       themeToggle?.setAttribute("aria-pressed", String(isDark));
       mobileThemeToggle?.setAttribute("aria-pressed", String(isDark));
+      sharedThemeToggles.forEach((toggle) => {
+        toggle.setAttribute("aria-pressed", String(isDark));
+      });
+      syncThemeLabels(isDark);
 
       if (persist) {
         setStoredTheme(isDark ? "dark" : "light");
@@ -256,7 +366,7 @@
 
     applyTheme(shouldUseDark, false);
 
-    if (!themeToggle && !mobileThemeToggle) {
+    if (!themeToggle && !mobileThemeToggle && sharedThemeToggles.length === 0) {
       return;
     }
 
@@ -268,6 +378,13 @@
     mobileThemeToggle?.addEventListener("click", () => {
       const isDark = !root.classList.contains("dark");
       applyTheme(isDark, true);
+    });
+
+    sharedThemeToggles.forEach((toggle) => {
+      toggle.addEventListener("click", () => {
+        const isDark = !root.classList.contains("dark");
+        applyTheme(isDark, true);
+      });
     });
 
     if (!storedTheme && window.matchMedia) {
@@ -287,14 +404,19 @@
     const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
     const role = normalizeRole(user?.role || "student");
     const navLinks = document.querySelectorAll("[data-nav-link]");
+    const sidebarLinks = document.querySelectorAll("[data-sidebar-link]");
 
+    applyAppLinks();
     applyRoleVisibility(role);
     applyUserIdentity(user);
     markActiveLink(navLinks);
+    markActiveSidebarLink(sidebarLinks);
     setupMobileMenu(navLinks);
     setupUserDropdown();
     setupThemeToggle();
     setupUserSwitcher();
+    setupSignOut();
+    applyDynamicMeta();
   }
 
   window.initPaperHubNavbar = initPaperHubNavbar;

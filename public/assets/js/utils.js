@@ -54,6 +54,23 @@ function removeEvent(element, event, handler) {
   if (element) element.removeEventListener(event, handler);
 }
 
+const PAPERHUB_APP_BASE_URL = (() => {
+  const currentScript =
+    document.currentScript ||
+    Array.from(document.scripts || []).find((script) => script.src && script.src.includes("/assets/js/utils.js"));
+
+  if (currentScript && currentScript.src) {
+    return new URL("../../", currentScript.src).href;
+  }
+
+  return new URL("./", window.location.href).href;
+})();
+
+function resolveAppPath(path) {
+  const normalizedPath = String(path || "").replace(/^\/+/, "");
+  return new URL(normalizedPath, PAPERHUB_APP_BASE_URL).href;
+}
+
 // ---------- NOTIFICATIONS/TOAST ----------
 function showToast(message, type = "info", duration = 3000) {
   const container = getOrCreateToastContainer();
@@ -195,7 +212,7 @@ function hasRole(role) {
 function logout() {
   removeStorage(StorageKey.USER);
   removeStorage(StorageKey.USER_ROLE);
-  window.location.href = "/pages/auth/login.html";
+  window.location.href = resolveAppPath("pages/auth/login.html");
 }
 
 // ---------- THEME MANAGEMENT ----------
@@ -671,7 +688,7 @@ function getDashboardRole(role) {
 
 function getDashboardRouteForRole(role) {
   const dashboardRole = getDashboardRole(role);
-  return `/pages/dashboard/${dashboardRole}.html`;
+  return resolveAppPath(`pages/dashboard/${dashboardRole}.html`);
 }
 
 function getDashboardRouteForUser(user) {

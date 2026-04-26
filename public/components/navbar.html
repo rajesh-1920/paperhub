@@ -1,57 +1,298 @@
-<!-- PaperHub Navigation Bar -->
-<nav id="paperhubNavbar" class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors" aria-label="Main navigation">
-  <div class="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between py-4">
-    <a href="/" class="flex items-center gap-2 hover:opacity-75 transition-opacity" aria-label="PaperHub Home">
-      <span class="text-2xl">PH</span>
-      <div>
-        <div class="font-semibold text-slate-900 dark:text-white">PaperHub</div>
-        <div class="text-xs text-slate-600 dark:text-slate-400">Document Management</div>
-      </div>
+<style>
+  .ph-nav {
+    backdrop-filter: blur(12px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.9));
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    position: sticky;
+    top: 0;
+    z-index: 60;
+  }
+
+  .ph-nav-inner {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    margin: 0 auto;
+    max-width: 88rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .ph-brand {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.65rem;
+    text-decoration: none;
+  }
+
+  .ph-brand-mark {
+    align-items: center;
+    background: linear-gradient(140deg, #0369a1, #14b8a6);
+    border-radius: 0.7rem;
+    color: #f8fafc;
+    display: inline-flex;
+    font-size: 0.85rem;
+    font-weight: 800;
+    height: 2.1rem;
+    justify-content: center;
+    width: 2.1rem;
+  }
+
+  .ph-brand-title {
+    color: #0f172a;
+    font-size: 0.94rem;
+    font-weight: 700;
+  }
+
+  .ph-brand-subtitle {
+    color: #64748b;
+    font-size: 0.72rem;
+    margin-top: 0.1rem;
+  }
+
+  .ph-nav-links {
+    align-items: center;
+    display: none;
+    gap: 0.35rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ph-nav-link {
+    border-radius: 0.65rem;
+    color: #334155;
+    display: inline-flex;
+    font-size: 0.84rem;
+    font-weight: 600;
+    padding: 0.55rem 0.75rem;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .ph-nav-link:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .ph-nav-link.is-active {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .ph-nav-actions {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .ph-icon-btn {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 0.65rem;
+    color: #334155;
+    display: inline-flex;
+    height: 2.1rem;
+    justify-content: center;
+    width: 2.1rem;
+  }
+
+  .ph-role-badge {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    color: #475569;
+    display: none;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.35rem 0.65rem;
+    text-transform: uppercase;
+  }
+
+  .ph-user-btn {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 0.75rem;
+    display: none;
+    gap: 0.55rem;
+    padding: 0.35rem 0.55rem;
+  }
+
+  .ph-user-avatar {
+    align-items: center;
+    background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+    border-radius: 999px;
+    color: #f8fafc;
+    display: inline-flex;
+    font-size: 0.75rem;
+    font-weight: 700;
+    height: 1.75rem;
+    justify-content: center;
+    width: 1.75rem;
+  }
+
+  .ph-user-text {
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .ph-user-name {
+    color: #0f172a;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .ph-user-title {
+    color: #64748b;
+    font-size: 0.7rem;
+  }
+
+  .ph-menu {
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 0.9rem;
+    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12);
+    min-width: 16rem;
+    padding: 0.6rem;
+  }
+
+  .ph-menu-link,
+  .ph-menu-btn {
+    border-radius: 0.6rem;
+    color: #334155;
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.55rem 0.6rem;
+    text-decoration: none;
+    width: 100%;
+  }
+
+  .ph-menu-link:hover,
+  .ph-menu-btn:hover {
+    background: #f1f5f9;
+  }
+
+  .ph-menu-btn {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .ph-mobile-menu {
+    border-top: 1px solid rgba(148, 163, 184, 0.22);
+    padding: 0.8rem 1rem;
+  }
+
+  .ph-mobile-link {
+    border-radius: 0.65rem;
+    color: #334155;
+    display: block;
+    font-size: 0.84rem;
+    font-weight: 600;
+    padding: 0.6rem 0.7rem;
+    text-decoration: none;
+  }
+
+  .ph-mobile-link:hover {
+    background: #f1f5f9;
+  }
+
+  @media (min-width: 900px) {
+    .ph-nav-inner {
+      padding: 0.85rem 1.2rem;
+    }
+
+    .ph-nav-links {
+      display: inline-flex;
+    }
+
+    .ph-role-badge {
+      display: inline-flex;
+    }
+
+    .ph-user-btn {
+      display: inline-flex;
+    }
+
+    .ph-mobile-toggle {
+      display: none;
+    }
+  }
+</style>
+
+<nav id="paperhubNavbar" class="ph-nav" aria-label="Main navigation">
+  <div class="ph-nav-inner">
+    <a data-app-href="index.html" class="ph-brand" aria-label="PaperHub Home">
+      <span class="ph-brand-mark">PH</span>
+      <span>
+        <span class="ph-brand-title">PaperHub</span>
+        <span class="ph-brand-subtitle">SaaS Document Operations</span>
+      </span>
     </a>
 
-    <ul class="hidden md:flex items-center gap-8" role="menubar">
-      <li><a href="/" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Home</a></li>
-      <li><a href="/pages/dashboard/user.html" data-user-dashboard-link data-roles="user,officer,admin" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Dashboard</a></li>
-      <li><a href="/pages/file/file-details.html" data-roles="user,officer,admin" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Files</a></li>
-      <li><a href="/pages/review/review-queue.html" data-roles="officer,admin" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Reviews</a></li>
-      <li><a href="/pages/support/contact.html" class="text-slate-700 dark:text-slate-300 hover:text-sky-500 transition-colors">Support</a></li>
+    <ul class="ph-nav-links" role="menubar">
+      <li><a data-nav-link data-app-href="index.html" class="ph-nav-link">Home</a></li>
+      <li><a data-nav-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-nav-link">Dashboard</a></li>
+      <li><a data-nav-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-nav-link">Files</a></li>
+      <li><a data-nav-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-nav-link">Reviews</a></li>
+      <li><a data-nav-link data-app-href="pages/support/contact.html" class="ph-nav-link">Support</a></li>
     </ul>
 
-    <div class="flex items-center gap-3">
-      <div class="hidden md:flex items-center gap-3" data-user-info>
-        <div class="text-right">
-          <div class="text-sm font-semibold text-slate-900 dark:text-white" data-user-name>User</div>
-          <div class="text-xs text-slate-500 dark:text-slate-400" data-user-role>User</div>
-        </div>
-      </div>
-      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Toggle menu">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
+    <div class="ph-nav-actions">
+      <button id="themeToggle" type="button" class="ph-icon-btn" aria-label="Toggle theme" aria-pressed="false">
+        <span>◐</span>
       </button>
-      <button class="hidden md:inline-flex px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20" onclick="handleSignOut()">Sign Out</button>
+
+      <span class="ph-role-badge" data-role-badge>User</span>
+
+      <button id="userMenuBtn" type="button" class="ph-user-btn" aria-expanded="false" aria-haspopup="true">
+        <span class="ph-user-avatar" data-user-initials>DU</span>
+        <span class="ph-user-text">
+          <span class="ph-user-name" data-user-name>Demo User</span>
+          <span class="ph-user-title" data-user-title>User</span>
+        </span>
+      </button>
+
+      <button id="navbarHamburger" type="button" class="ph-icon-btn ph-mobile-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+        <span>☰</span>
+      </button>
     </div>
   </div>
 
-  <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-4">
-    <div class="max-w-7xl mx-auto px-4 lg:px-8 space-y-3">
-      <a href="/" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Home</a>
-      <a href="/pages/dashboard/user.html" data-roles="user,officer,admin" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Dashboard</a>
-      <a href="/pages/file/file-details.html" data-roles="user,officer,admin" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Files</a>
-      <a href="/pages/review/review-queue.html" data-roles="officer,admin" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Reviews</a>
-      <a href="/pages/support/contact.html" class="block px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Support</a>
-      <button class="w-full px-4 py-2 rounded-lg text-left hover:bg-slate-100 dark:hover:bg-slate-800" onclick="handleSignOut()">Sign Out</button>
+  <div id="userDropdown" class="ph-menu hidden" role="menu" aria-label="User menu">
+    <div class="ph-user-text" style="padding: 0.45rem 0.55rem 0.6rem;">
+      <div class="ph-user-name" data-user-name>Demo User</div>
+      <div class="ph-user-title" data-user-email>user@example.com</div>
+    </div>
+
+    <a data-app-href="pages/account/profile.html" class="ph-menu-link">Profile</a>
+    <a data-app-href="pages/account/settings.html" class="ph-menu-link">Settings</a>
+    <a data-user-dashboard-link data-app-href="pages/dashboard/user.html" class="ph-menu-link">Go To Dashboard</a>
+
+    <div style="border-top: 1px solid #e2e8f0; margin: 0.45rem 0;"></div>
+
+    <div style="font-size: 0.72rem; color: #64748b; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.55rem 0.45rem;">Quick switch</div>
+    <div data-user-switcher-list></div>
+
+    <div style="border-top: 1px solid #e2e8f0; margin: 0.45rem 0;"></div>
+    <button type="button" class="ph-menu-btn" data-sign-out>Sign Out</button>
+  </div>
+
+  <div id="mobileMenu" class="ph-mobile-menu hidden">
+    <div style="display: grid; gap: 0.35rem;">
+      <div class="ph-role-badge" data-role-badge-mobile style="display: inline-flex; width: fit-content; margin-bottom: 0.35rem;">User</div>
+      <a data-nav-link data-app-href="index.html" class="ph-mobile-link">Home</a>
+      <a data-nav-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-mobile-link">Dashboard</a>
+      <a data-nav-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-mobile-link">Files</a>
+      <a data-nav-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-mobile-link">Reviews</a>
+      <a data-nav-link data-app-href="pages/support/contact.html" class="ph-mobile-link">Support</a>
+      <button id="mobileThemeToggle" type="button" class="ph-menu-btn">Toggle Theme</button>
+      <button type="button" class="ph-menu-btn" data-sign-out>Sign Out</button>
     </div>
   </div>
 </nav>
-
-<script>
-  document.getElementById('mobileMenuBtn')?.addEventListener('click', function () {
-    document.getElementById('mobileMenu')?.classList.toggle('hidden');
-  });
-
-  function handleSignOut() {
-    localStorage.removeItem('paperhub-user');
-    window.location.href = '/pages/auth/login.html';
-  }
-</script>

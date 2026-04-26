@@ -1,175 +1,191 @@
-<!-- PaperHub Sidebar Navigation -->
-<aside id="paperhubSidebar" class="fixed inset-y-0 left-0 z-40 hidden md:flex w-64 flex-col pt-20 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300" aria-label="Sidebar navigation">
-  <!-- User Card -->
-  <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800">
-    <div class="flex items-center gap-3 mb-4">
-      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-semibold text-sm">
-        <span data-user-initial>U</span>
-      </div>
-      <div class="min-w-0 flex-1">
-        <p class="text-sm font-semibold text-slate-900 dark:text-white truncate" data-sidebar-user-name>User</p>
-        <p class="text-xs text-slate-500 dark:text-slate-400 truncate" data-sidebar-user-email>user@example.com</p>
-      </div>
+<style>
+  .ph-sidebar {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 250, 252, 0.94));
+    border-right: 1px solid rgba(148, 163, 184, 0.25);
+    bottom: 0;
+    display: none;
+    left: 0;
+    overflow-y: auto;
+    padding: 0.9rem 0.75rem 0.95rem;
+    position: fixed;
+    top: 4.2rem;
+    width: 16.5rem;
+    z-index: 45;
+  }
+
+  .ph-sidebar-profile {
+    background: linear-gradient(150deg, #0f172a, #1e293b 60%, #0f766e);
+    border-radius: 0.95rem;
+    color: #e2e8f0;
+    padding: 0.9rem;
+  }
+
+  .ph-sidebar-avatar {
+    align-items: center;
+    background: linear-gradient(140deg, #0ea5e9, #14b8a6);
+    border-radius: 999px;
+    color: #f8fafc;
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 700;
+    height: 2rem;
+    justify-content: center;
+    width: 2rem;
+  }
+
+  .ph-sidebar-name {
+    color: #f8fafc;
+    font-size: 0.83rem;
+    font-weight: 700;
+  }
+
+  .ph-sidebar-mail {
+    color: #cbd5e1;
+    font-size: 0.72rem;
+  }
+
+  .ph-sidebar-role {
+    background: rgba(248, 250, 252, 0.18);
+    border: 1px solid rgba(248, 250, 252, 0.3);
+    border-radius: 999px;
+    color: #f8fafc;
+    display: inline-flex;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-top: 0.55rem;
+    padding: 0.3rem 0.6rem;
+    text-transform: uppercase;
+  }
+
+  .ph-sidebar-group {
+    margin-top: 0.85rem;
+  }
+
+  .ph-sidebar-group-title {
+    color: #64748b;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    margin: 0 0 0.45rem;
+    padding: 0 0.45rem;
+    text-transform: uppercase;
+  }
+
+  .ph-sidebar-link {
+    align-items: center;
+    border-radius: 0.7rem;
+    color: #334155;
+    display: flex;
+    font-size: 0.82rem;
+    font-weight: 600;
+    gap: 0.6rem;
+    padding: 0.54rem 0.62rem;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .ph-sidebar-link:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    transform: translateX(1px);
+  }
+
+  .ph-sidebar-link.is-active {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .ph-sidebar-foot {
+    border-top: 1px solid rgba(148, 163, 184, 0.25);
+    margin-top: 0.9rem;
+    padding-top: 0.75rem;
+  }
+
+  .ph-sidebar-btn {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 0.65rem;
+    color: #334155;
+    cursor: pointer;
+    display: flex;
+    font-size: 0.82rem;
+    font-weight: 600;
+    gap: 0.5rem;
+    margin-bottom: 0.45rem;
+    padding: 0.52rem 0.6rem;
+    width: 100%;
+  }
+
+  .ph-sidebar-btn:hover {
+    background: #f1f5f9;
+  }
+
+  .ph-sidebar-btn.signout {
+    color: #b91c1c;
+  }
+
+  .ph-sidebar-btn.signout:hover {
+    background: #fee2e2;
+  }
+
+  @media (min-width: 900px) {
+    .ph-sidebar {
+      display: block;
+    }
+
+    body main {
+      padding-left: 16.5rem;
+    }
+  }
+</style>
+
+<aside id="paperhubSidebar" class="ph-sidebar" aria-label="Sidebar navigation">
+  <div class="ph-sidebar-profile">
+    <div style="display: flex; gap: 0.6rem; align-items: center;">
+      <span class="ph-sidebar-avatar" data-user-initials>DU</span>
+      <span>
+        <span class="ph-sidebar-name" data-user-name>Demo User</span>
+        <span class="ph-sidebar-mail" data-user-email>user@example.com</span>
+      </span>
     </div>
-    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-200" data-sidebar-user-role>User</span>
+    <span class="ph-sidebar-role" data-user-role>User</span>
   </div>
 
-  <!-- Navigation Menu -->
-  <nav class="flex-1 overflow-y-auto px-4 py-6 space-y-2">
-    <!-- Workspace Section -->
-    <div class="mb-6">
-      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Workspace</p>
-      <div class="space-y-1">
-        <a href="/pages/dashboard/user.html" class="sidebar-link" data-roles="user,officer,admin">
-          <span class="text-lg">📊</span>
-          <span>Dashboard</span>
-        </a>
-        <a href="/pages/file/file-details.html" class="sidebar-link" data-roles="user,officer,admin">
-          <span class="text-lg">📁</span>
-          <span>My Files</span>
-        </a>
-        <a href="/pages/file/upload.html" class="sidebar-link" data-roles="user,officer,admin">
-          <span class="text-lg">📤</span>
-          <span>Upload</span>
-        </a>
-      </div>
-    </div>
+  <div class="ph-sidebar-group">
+    <p class="ph-sidebar-group-title">Workspace</p>
+    <a data-sidebar-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-sidebar-link">▣ Dashboard</a>
+    <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-sidebar-link">◫ My Files</a>
+    <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/upload.html" class="ph-sidebar-link">↥ Upload</a>
+  </div>
 
-    <!-- Review Section -->
-    <div class="mb-6">
-      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Reviews</p>
-      <div class="space-y-1">
-        <a href="/pages/review/review-queue.html" class="sidebar-link" data-roles="officer,admin">
-          <span class="text-lg">✅</span>
-          <span>Queue</span>
-        </a>
-        <a href="/pages/review/review-details.html" class="sidebar-link" data-roles="officer,admin">
-          <span class="text-lg">📋</span>
-          <span>History</span>
-        </a>
-      </div>
-    </div>
+  <div class="ph-sidebar-group">
+    <p class="ph-sidebar-group-title">Review</p>
+    <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-sidebar-link">✓ Queue</a>
+    <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-details.html" class="ph-sidebar-link">☰ History</a>
+  </div>
 
-    <!-- Account Section -->
-    <div class="mb-6">
-      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Account</p>
-      <div class="space-y-1">
-        <a href="/pages/account/profile.html" class="sidebar-link">
-          <span class="text-lg">👤</span>
-          <span>Profile</span>
-        </a>
-        <a href="/pages/account/settings.html" class="sidebar-link">
-          <span class="text-lg">⚙️</span>
-          <span>Settings</span>
-        </a>
-        <a href="/pages/payment/payment.html" class="sidebar-link">
-          <span class="text-lg">💳</span>
-          <span>Billing</span>
-        </a>
-      </div>
-    </div>
+  <div class="ph-sidebar-group">
+    <p class="ph-sidebar-group-title">Account</p>
+    <a data-sidebar-link data-app-href="pages/account/profile.html" class="ph-sidebar-link">◉ Profile</a>
+    <a data-sidebar-link data-app-href="pages/account/settings.html" class="ph-sidebar-link">⚙ Settings</a>
+    <a data-sidebar-link data-app-href="pages/payment/payment.html" class="ph-sidebar-link">◈ Billing</a>
+  </div>
 
-    <!-- Support Section -->
-    <div class="mb-6">
-      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3">Support</p>
-      <div class="space-y-1">
-        <a href="/pages/support/contact.html" class="sidebar-link">
-          <span class="text-lg">💬</span>
-          <span>Contact</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+  <div class="ph-sidebar-group">
+    <p class="ph-sidebar-group-title">Support</p>
+    <a data-sidebar-link data-app-href="pages/support/contact.html" class="ph-sidebar-link">✉ Contact</a>
+  </div>
 
-  <!-- Footer Section -->
-  <div class="border-t border-slate-200 dark:border-slate-800 p-4 space-y-2">
-    <button class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors flex items-center gap-2" onclick="toggleTheme()">
-      <span id="themeIcon">🌙</span>
-      <span id="themeLabel">Dark Mode</span>
+  <div class="ph-sidebar-foot">
+    <button type="button" class="ph-sidebar-btn" data-theme-toggle>
+      <span data-theme-icon>◐</span>
+      <span data-theme-label>Toggle Theme</span>
     </button>
-    <button class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2" onclick="handleSignOut()">
-      <span>🚪</span>
+    <button type="button" class="ph-sidebar-btn signout" data-sign-out>
+      <span>↦</span>
       <span>Sign Out</span>
     </button>
   </div>
 </aside>
-
-<!-- Mobile Sidebar Overlay -->
-<div id="sidebarOverlay" class="fixed inset-0 z-30 bg-black/50 hidden md:hidden" onclick="closeMobileSidebar()"></div>
-
-<style>
-  .sidebar-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.625rem 0.75rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: rgb(51 65 85);
-    transition: color 150ms ease, background-color 150ms ease;
-  }
-
-  .sidebar-link:hover {
-    color: rgb(2 132 199);
-    background: rgb(240 249 255);
-  }
-
-  .dark .sidebar-link {
-    color: rgb(203 213 225);
-  }
-
-  .dark .sidebar-link:hover {
-    color: rgb(125 211 252);
-    background: rgba(14, 116, 144, 0.2);
-  }
-
-  .sidebar-link.active {
-    color: rgb(2 132 199);
-    background: rgb(224 242 254);
-    font-weight: 600;
-  }
-</style>
-
-<script>
-  function closeMobileSidebar() {
-    document.getElementById('paperhubSidebar').classList.add('hidden');
-    document.getElementById('sidebarOverlay').classList.add('hidden');
-  }
-
-  function toggleTheme() {
-    const html = document.documentElement;
-    const isDark = html.classList.toggle('dark');
-    localStorage.setItem('paperhub-theme', isDark ? 'dark' : 'light');
-    
-    const icon = document.getElementById('themeIcon');
-    const label = document.getElementById('themeLabel');
-    if (isDark) {
-      icon.textContent = '☀️';
-      label.textContent = 'Light Mode';
-    } else {
-      icon.textContent = '🌙';
-      label.textContent = 'Dark Mode';
-    }
-  }
-
-  function handleSignOut() {
-    localStorage.removeItem('paperhub-user');
-    window.location.href = '/pages/auth/login.html';
-  }
-
-  // Initialize sidebar links visibility based on user role
-  function initializeSidebarLinks() {
-    const userRole = localStorage.getItem('paperhub-user-role') || 'user';
-    const links = document.querySelectorAll('.sidebar-link[data-roles]');
-    
-    links.forEach(link => {
-      const roles = link.getAttribute('data-roles').split(',').map(r => r.trim());
-      if (!roles.includes(userRole)) {
-        link.style.display = 'none';
-      }
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', initializeSidebarLinks);
-</script>

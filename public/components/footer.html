@@ -1,96 +1,134 @@
-<!-- PaperHub Footer -->
-<footer class="bg-slate-900 dark:bg-black text-slate-300 border-t border-slate-800">
-  <div class="container-wide py-16">
-    <!-- Main Footer Grid -->
-    <div class="grid md:grid-cols-5 gap-8 mb-12">
-      <!-- Brand Column -->
-      <div class="col-span-1">
-        <div class="flex items-center gap-2 mb-4">
-          <span class="text-3xl">📄</span>
-          <div>
-            <div class="font-display font-bold text-white">PaperHub</div>
-            <div class="text-xs text-slate-400">Document Platform</div>
-          </div>
+<style>
+  .ph-footer {
+    background: linear-gradient(160deg, #0f172a, #1e293b 58%, #0f766e);
+    border-top: 1px solid rgba(148, 163, 184, 0.28);
+    color: #cbd5e1;
+    margin-top: 2rem;
+  }
+
+  .ph-footer-shell {
+    margin: 0 auto;
+    max-width: 88rem;
+    padding: 1.5rem 1rem 1.2rem;
+  }
+
+  .ph-footer-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+
+  .ph-footer-brand {
+    align-items: flex-start;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .ph-footer-logo {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.55rem;
+  }
+
+  .ph-footer-mark {
+    align-items: center;
+    background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+    border-radius: 0.7rem;
+    color: #f8fafc;
+    display: inline-flex;
+    font-size: 0.82rem;
+    font-weight: 800;
+    height: 2rem;
+    justify-content: center;
+    width: 2rem;
+  }
+
+  .ph-footer-title {
+    color: #f8fafc;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .ph-footer-sub {
+    color: #94a3b8;
+    font-size: 0.75rem;
+  }
+
+  .ph-footer-note {
+    color: #94a3b8;
+    font-size: 0.82rem;
+    margin: 0;
+  }
+
+  .ph-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .ph-footer-links a {
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 0.65rem;
+    color: #e2e8f0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.42rem 0.65rem;
+    text-decoration: none;
+  }
+
+  .ph-footer-links a:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .ph-footer-bottom {
+    border-top: 1px solid rgba(148, 163, 184, 0.25);
+    color: #94a3b8;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.76rem;
+    gap: 0.55rem;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+  }
+
+  @media (min-width: 900px) {
+    .ph-footer-shell {
+      padding: 1.8rem 1.2rem 1.3rem;
+    }
+
+    .ph-footer-grid {
+      align-items: center;
+      grid-template-columns: minmax(0, 1.3fr) auto;
+    }
+  }
+</style>
+
+<footer class="ph-footer">
+  <div class="ph-footer-shell">
+    <div class="ph-footer-grid">
+      <div class="ph-footer-brand">
+        <div class="ph-footer-logo">
+          <span class="ph-footer-mark">PH</span>
+          <span>
+            <span class="ph-footer-title">PaperHub</span>
+            <span class="ph-footer-sub">Professional Document Platform</span>
+          </span>
         </div>
-        <p class="text-sm text-slate-400 mt-4">Secure, efficient document management for modern teams.</p>
+        <p class="ph-footer-note">Built for secure workflows, audit visibility, and high-trust collaboration.</p>
       </div>
 
-      <!-- Product Column -->
-      <div>
-        <h4 class="font-semibold text-white mb-4">Product</h4>
-        <ul class="space-y-2 text-sm">
-          <li><a href="#features" class="text-slate-400 hover:text-white transition-colors">Features</a></li>
-          <li><a href="#pricing" class="text-slate-400 hover:text-white transition-colors">Pricing</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Security</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Roadmap</a></li>
-        </ul>
-      </div>
-
-      <!-- Company Column -->
-      <div>
-        <h4 class="font-semibold text-white mb-4">Company</h4>
-        <ul class="space-y-2 text-sm">
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">About</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Blog</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Careers</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Press</a></li>
-        </ul>
-      </div>
-
-      <!-- Resources Column -->
-      <div>
-        <h4 class="font-semibold text-white mb-4">Resources</h4>
-        <ul class="space-y-2 text-sm">
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Documentation</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">API Reference</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Support</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Community</a></li>
-        </ul>
-      </div>
-
-      <!-- Legal Column -->
-      <div>
-        <h4 class="font-semibold text-white mb-4">Legal</h4>
-        <ul class="space-y-2 text-sm">
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Privacy Policy</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Terms of Service</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Cookie Policy</a></li>
-          <li><a href="#" class="text-slate-400 hover:text-white transition-colors">GDPR</a></li>
-        </ul>
+      <div class="ph-footer-links">
+        <a data-app-href="pages/dashboard/user.html">Dashboard</a>
+        <a data-app-href="pages/file/file-details.html">Files</a>
+        <a data-app-href="pages/review/review-queue.html">Reviews</a>
+        <a data-app-href="pages/support/contact.html">Support</a>
       </div>
     </div>
 
-    <!-- Divider -->
-    <div class="border-t border-slate-800 py-8">
-      <!-- Bottom Section -->
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-        <p class="text-sm text-slate-400">&copy; 2024 PaperHub Inc. All rights reserved.</p>
-        
-        <!-- Social Links -->
-        <div class="flex items-center gap-6">
-          <a href="#" class="text-slate-400 hover:text-white transition-colors" title="Twitter">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2s9 5 20 5a9.5 9.5 0 00-9-5.5c4.75 2.25 7-7 7-7a10.6 10.6 0 01-9.56 5.12A9.5 9.5 0 0023 3z"></path></svg>
-          </a>
-          <a href="#" class="text-slate-400 hover:text-white transition-colors" title="GitHub">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
-          </a>
-          <a href="#" class="text-slate-400 hover:text-white transition-colors" title="LinkedIn">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.722-2.006 1.419-.103.25-.129.599-.129.949v5.437h-3.554s.047-8.812 0-9.728h3.554v1.375c.421-.65 1.175-1.574 2.857-1.574 2.086 0 3.648 1.36 3.648 4.286v5.641zM5.337 8.855c-1.144 0-1.915-.762-1.915-1.715 0-.955.768-1.715 1.959-1.715 1.188 0 1.914.759 1.939 1.715 0 .953-.751 1.715-1.983 1.715zm1.946 11.597H3.392V9.724h3.891v10.728zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"></path></svg>
-          </a>
-        </div>
-
-        <!-- Trust Badges -->
-        <div class="flex items-center gap-4 text-xs text-slate-400">
-          <span class="flex items-center gap-1">
-            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 3.062v6.218c0 1.102-.585 2.172-1.536 2.743a13.84 13.84 0 01-1.862 1.47c-.993.57-1.88 1.077-2.959 1.077s-1.966-.507-2.959-1.077c-.607-.349-1.266-.754-1.862-1.47C3.95 15.859 3.366 14.787 3.366 13.685V6.517a3.066 3.066 0 012.901-3.062zM9.865 15.859c.403-.263.879-.556 1.335-.901a1.034 1.034 0 001.8-1.318l-1.414-1.414a.5.5 0 00-.707.707l1.414 1.414a.034.034 0 01-.024.059c-.246.2-.487.455-.667.668-.18-.213-.42-.468-.667-.668a.034.034 0 01-.025-.059l1.414-1.414a.5.5 0 00-.707-.707l-1.414 1.414a1.034 1.034 0 001.8 1.318c.456.345.932.638 1.335.901z" clip-rule="evenodd"></path></svg>
-            SOC 2 Type II
-          </span>
-          <span class="flex items-center gap-1">
-            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 3.062v6.218c0 1.102-.585 2.172-1.536 2.743a13.84 13.84 0 01-1.862 1.47c-.993.57-1.88 1.077-2.959 1.077s-1.966-.507-2.959-1.077c-.607-.349-1.266-.754-1.862-1.47C3.95 15.859 3.366 14.787 3.366 13.685V6.517a3.066 3.066 0 012.901-3.062zM9.865 15.859c.403-.263.879-.556 1.335-.901a1.034 1.034 0 001.8-1.318l-1.414-1.414a.5.5 0 00-.707.707l1.414 1.414a.034.034 0 01-.024.059c-.246.2-.487.455-.667.668-.18-.213-.42-.468-.667-.668a.034.034 0 01-.025-.059l1.414-1.414a.5.5 0 00-.707-.707l-1.414 1.414a1.034 1.034 0 001.8 1.318c.456.345.932.638 1.335.901z" clip-rule="evenodd"></path></svg>
-            GDPR Compliant
-          </span>
-        </div>
-      </div>
+    <div class="ph-footer-bottom">
+      <span>Copyright <span data-current-year></span> PaperHub. All rights reserved.</span>
+      <span>SOC 2 aligned | GDPR aware | Enterprise-ready</span>
     </div>
   </div>
 </footer>
