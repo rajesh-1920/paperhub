@@ -6,11 +6,67 @@
     display: none;
     left: 0;
     overflow-y: auto;
-    padding: 0.9rem 0.75rem 0.95rem;
+    padding: 0.9rem 0.7rem 0.95rem;
     position: fixed;
     top: 4.2rem;
     width: 16.5rem;
     z-index: 45;
+  }
+
+  body.ph-sidebar-expanded .ph-sidebar {
+    width: 16.5rem;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar {
+    width: 4.9rem;
+  }
+
+  body.ph-sidebar-collapsed main {
+    padding-left: 4.9rem;
+  }
+
+  body:not(.ph-sidebar-collapsed) main {
+    padding-left: 16.5rem;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar-profile,
+  body.ph-sidebar-collapsed .ph-sidebar-group-title,
+  body.ph-sidebar-collapsed .ph-sidebar-link-label,
+  body.ph-sidebar-collapsed .ph-sidebar-footer-label,
+  body.ph-sidebar-collapsed [data-sidebar-role-text],
+  body.ph-sidebar-collapsed [data-sidebar-user-copy] {
+    display: none;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar-profile {
+    align-items: center;
+    justify-content: center;
+    padding: 0.7rem 0.55rem;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar-profile-inner {
+    justify-content: center;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar-group {
+    margin-top: 0.7rem;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar-link {
+    justify-content: center;
+    padding: 0.62rem 0;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar-link-icon {
+    margin: 0;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar-footer-button {
+    justify-content: center;
+  }
+
+  body.ph-sidebar-collapsed .ph-sidebar-toggle {
+    justify-content: center;
   }
 
   .ph-sidebar-profile {
@@ -18,6 +74,12 @@
     border-radius: 0.95rem;
     color: #e2e8f0;
     padding: 0.9rem;
+  }
+
+  .ph-sidebar-profile-inner {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
   }
 
   .ph-sidebar-avatar {
@@ -62,6 +124,13 @@
     margin-top: 0.85rem;
   }
 
+  .ph-sidebar-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    justify-content: space-between;
+  }
+
   .ph-sidebar-group-title {
     color: #64748b;
     font-size: 0.68rem;
@@ -85,6 +154,17 @@
     transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
   }
 
+  .ph-sidebar-link-icon {
+    font-size: 0.95rem;
+    width: 1.25rem;
+    flex: 0 0 auto;
+    text-align: center;
+  }
+
+  .ph-sidebar-link-label {
+    white-space: nowrap;
+  }
+
   .ph-sidebar-link:hover {
     background: #e2e8f0;
     color: #0f172a;
@@ -100,6 +180,23 @@
     border-top: 1px solid rgba(148, 163, 184, 0.25);
     margin-top: 0.9rem;
     padding-top: 0.75rem;
+  }
+
+  .ph-sidebar-toggle {
+    align-items: center;
+    background: rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 0.7rem;
+    color: #334155;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 0.4rem;
+    justify-content: center;
+    padding: 0.45rem 0.55rem;
+  }
+
+  .ph-sidebar-toggle:hover {
+    background: rgba(15, 23, 42, 0.12);
   }
 
   .ph-sidebar-btn {
@@ -130,62 +227,75 @@
     background: #fee2e2;
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 768px) {
     .ph-sidebar {
       display: block;
     }
 
     body main {
-      padding-left: 16.5rem;
+      transition: padding-left 0.25s ease;
+    }
+  }
+
+  @media (max-width: 767px) {
+    body main {
+      padding-left: 0 !important;
     }
   }
 </style>
 
 <aside id="paperhubSidebar" class="ph-sidebar" aria-label="Sidebar navigation">
-  <div class="ph-sidebar-profile">
-    <div style="display: flex; gap: 0.6rem; align-items: center;">
-      <span class="ph-sidebar-avatar" data-user-initials>DU</span>
-      <span>
-        <span class="ph-sidebar-name" data-user-name>Demo User</span>
-        <span class="ph-sidebar-mail" data-user-email>user@example.com</span>
-      </span>
+  <div class="ph-sidebar-top">
+    <div class="ph-sidebar-profile">
+      <div class="ph-sidebar-profile-inner">
+        <span class="ph-sidebar-avatar" data-user-initials>DU</span>
+        <span data-sidebar-user-copy>
+          <span class="ph-sidebar-name" data-user-name>Demo User</span>
+          <span class="ph-sidebar-mail" data-user-email>user@example.com</span>
+        </span>
+      </div>
+      <span class="ph-sidebar-role" data-user-role data-sidebar-role-text>User</span>
     </div>
-    <span class="ph-sidebar-role" data-user-role>User</span>
+
+    <button type="button" class="ph-sidebar-toggle" data-sidebar-toggle aria-label="Toggle compact sidebar" aria-pressed="false">
+      <span data-sidebar-toggle-icon>⟷</span>
+      <span class="ph-sidebar-footer-label" data-sidebar-toggle-label>Collapse</span>
+    </button>
   </div>
 
   <div class="ph-sidebar-group">
     <p class="ph-sidebar-group-title">Workspace</p>
-    <a data-sidebar-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-sidebar-link">▣ Dashboard</a>
-    <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-sidebar-link">◫ My Files</a>
-    <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/upload.html" class="ph-sidebar-link">↥ Upload</a>
+    <a data-sidebar-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-sidebar-link" aria-label="Dashboard"><span class="ph-sidebar-link-icon">▣</span><span class="ph-sidebar-link-label">Dashboard</span></a>
+    <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-sidebar-link" aria-label="My Files"><span class="ph-sidebar-link-icon">◫</span><span class="ph-sidebar-link-label">My Files</span></a>
+    <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/upload.html" class="ph-sidebar-link" aria-label="Upload"><span class="ph-sidebar-link-icon">↥</span><span class="ph-sidebar-link-label">Upload</span></a>
   </div>
 
   <div class="ph-sidebar-group">
     <p class="ph-sidebar-group-title">Review</p>
-    <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-sidebar-link">✓ Queue</a>
-    <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-details.html" class="ph-sidebar-link">☰ History</a>
+    <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-sidebar-link" aria-label="Queue"><span class="ph-sidebar-link-icon">✓</span><span class="ph-sidebar-link-label">Queue</span></a>
+    <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-details.html" class="ph-sidebar-link" aria-label="History"><span class="ph-sidebar-link-icon">☰</span><span class="ph-sidebar-link-label">History</span></a>
   </div>
 
   <div class="ph-sidebar-group">
     <p class="ph-sidebar-group-title">Account</p>
-    <a data-sidebar-link data-app-href="pages/account/profile.html" class="ph-sidebar-link">◉ Profile</a>
-    <a data-sidebar-link data-app-href="pages/account/settings.html" class="ph-sidebar-link">⚙ Settings</a>
-    <a data-sidebar-link data-app-href="pages/payment/payment.html" class="ph-sidebar-link">◈ Billing</a>
+    <a data-sidebar-link data-app-href="pages/account/profile.html" class="ph-sidebar-link" aria-label="Profile"><span class="ph-sidebar-link-icon">◉</span><span class="ph-sidebar-link-label">Profile</span></a>
+    <a data-sidebar-link data-app-href="pages/account/settings.html" class="ph-sidebar-link" aria-label="Settings"><span class="ph-sidebar-link-icon">⚙</span><span class="ph-sidebar-link-label">Settings</span></a>
+    <a data-sidebar-link data-app-href="pages/payment/payment.html" class="ph-sidebar-link" aria-label="Billing"><span class="ph-sidebar-link-icon">◈</span><span class="ph-sidebar-link-label">Billing</span></a>
   </div>
 
   <div class="ph-sidebar-group">
     <p class="ph-sidebar-group-title">Support</p>
-    <a data-sidebar-link data-app-href="pages/support/contact.html" class="ph-sidebar-link">✉ Contact</a>
+    <a data-sidebar-link data-app-href="pages/support/contact.html" class="ph-sidebar-link" aria-label="Contact"><span class="ph-sidebar-link-icon">✉</span><span class="ph-sidebar-link-label">Contact</span></a>
   </div>
 
   <div class="ph-sidebar-foot">
-    <button type="button" class="ph-sidebar-btn" data-theme-toggle>
+    <button type="button" class="ph-sidebar-btn" data-theme-toggle aria-label="Toggle theme">
       <span data-theme-icon>◐</span>
-      <span data-theme-label>Toggle Theme</span>
+      <span class="ph-sidebar-footer-label" data-theme-label>Toggle Theme</span>
     </button>
-    <button type="button" class="ph-sidebar-btn signout" data-sign-out>
+    <button type="button" class="ph-sidebar-btn signout" data-sign-out aria-label="Sign out">
       <span>↦</span>
-      <span>Sign Out</span>
+      <span class="ph-sidebar-footer-label">Sign Out</span>
     </button>
   </div>
 </aside>

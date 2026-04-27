@@ -1,5 +1,8 @@
 (function () {
   const ACTIVE_CLASSES = ["is-active"];
+  const SIDEBAR_STATE_STORAGE_KEY = "paperhub-sidebar-state";
+  const SIDEBAR_COLLAPSED_BREAKPOINT = 768;
+  const SIDEBAR_EXPANDED_BREAKPOINT = 1200;
 
   function resolveLink(path) {
     if (typeof resolveAppPath === "function") {
@@ -224,6 +227,109 @@
     });
   }
 
+  function getStoredSidebarState() {
+    try {
+      const storedState = localStorage.getItem(SIDEBAR_STATE_STORAGE_KEY);
+      if (storedState === "expanded" || storedState === "collapsed") {
+        return storedState;
+      }
+    } catch (error) {
+      console.warn("Unable to read sidebar preference", error);
+    }
+
+    return null;
+  }
+
+  function setStoredSidebarState(state) {
+    try {
+      localStorage.setItem(SIDEBAR_STATE_STORAGE_KEY, state);
+    } catch (error) {
+      console.warn("Unable to persist sidebar preference", error);
+    }
+  }
+
+  function getAutoSidebarState() {
+    if (window.innerWidth >= SIDEBAR_EXPANDED_BREAKPOINT) {
+      return "expanded";
+    }
+
+    if (window.innerWidth >= SIDEBAR_COLLAPSED_BREAKPOINT) {
+      return "collapsed";
+    }
+
+    return "collapsed";
+  }
+
+  function applySidebarState(state, persist = false) {
+    const isExpanded = state === "expanded";
+    const body = document.body;
+    const sidebar = document.getElementById("paperhubSidebar");
+    const toggleButtons = Array.from(document.querySelectorAll("[data-sidebar-toggle]"));
+    const toggleLabels = document.querySelectorAll("[data-sidebar-toggle-label]");
+    const toggleIcons = document.querySelectorAll("[data-sidebar-toggle-icon]");
+
+    body.classList.toggle("ph-sidebar-expanded", isExpanded);
+    body.classList.toggle("ph-sidebar-collapsed", !isExpanded);
+    body.dataset.sidebarState = state;
+
+    if (sidebar) {
+      sidebar.setAttribute("data-sidebar-state", state);
+    }
+
+    toggleButtons.forEach((button) => {
+      button.setAttribute("aria-pressed", String(isExpanded));
+      button.setAttribute("aria-label", isExpanded ? "Collapse sidebar" : "Expand sidebar");
+    });
+
+    toggleLabels.forEach((element) => {
+      element.textContent = isExpanded ? "Collapse" : "Expand";
+    });
+
+    toggleIcons.forEach((element) => {
+      element.textContent = isExpanded ? "⟨⟨" : "⟩⟩";
+    });
+
+    if (persist) {
+      setStoredSidebarState(state);
+    }
+  }
+
+  function setupSidebarToggle() {
+    const toggleButtons = Array.from(document.querySelectorAll("[data-sidebar-toggle]"));
+    if (toggleButtons.length === 0) {
+      return;
+    }
+
+    let hasManualPreference = getStoredSidebarState() !== null;
+    const applyCurrentSidebarState = () => {
+      const storedState = getStoredSidebarState();
+      const nextState = storedState || getAutoSidebarState();
+      applySidebarState(nextState, false);
+    };
+
+    applyCurrentSidebarState();
+
+    toggleButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const isExpanded = document.body.classList.contains("ph-sidebar-expanded");
+        const nextState = isExpanded ? "collapsed" : "expanded";
+
+        hasManualPreference = true;
+        applySidebarState(nextState, true);
+      });
+    });
+
+    if (!hasManualPreference) {
+      window.addEventListener("resize", () => {
+        if (getStoredSidebarState()) {
+          return;
+        }
+
+        applyCurrentSidebarState();
+      });
+    }
+  }
+
   function setupMobileMenu(navLinks) {
     const toggleButton = document.getElementById("navbarHamburger");
     const mobileMenu = document.getElementById("mobileMenu");
@@ -414,6 +520,7 @@
     setupMobileMenu(navLinks);
     setupUserDropdown();
     setupThemeToggle();
+    setupSidebarToggle();
     setupUserSwitcher();
     setupSignOut();
     applyDynamicMeta();
