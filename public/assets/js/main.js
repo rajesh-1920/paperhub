@@ -33,6 +33,12 @@ function resolveMainAppUrl(path) {
 })();
 
 async function initApp() {
+  ensureStyles([
+    "assets/css/components/navbar.css",
+    "assets/css/components/sidebar.css",
+    "assets/css/components/footer.css",
+  ]);
+
   await Promise.all([
     ensureScript({
       globalKey: "initPaperHubNavbar",
@@ -54,6 +60,25 @@ async function initApp() {
   initNavbar();
   applyCurrentUserPageData();
   initPageSpecificForms();
+}
+
+function ensureStyles(styles) {
+  styles.forEach((href) => {
+    const resolvedHref = resolveMainAppUrl(href);
+    const alreadyLoaded = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some(
+      (link) => link.href === resolvedHref,
+    );
+
+    if (alreadyLoaded) {
+      return;
+    }
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = resolvedHref;
+    link.dataset.paperhubStyle = "true";
+    document.head.appendChild(link);
+  });
 }
 
 function applyCurrentUserPageData() {

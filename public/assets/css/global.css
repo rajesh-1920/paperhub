@@ -1,0 +1,11 @@
+.card-input-row-split {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 640px) {
+  .card-input-row-split {
+    grid-template-columns: 1fr;
+  }
+}

@@ -16,6 +16,7 @@
     
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="assets/css/tailwind.css">
+    <link rel="stylesheet" href="assets/css/pages/index.css" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
@@ -44,10 +45,10 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="pt-32 pb-20 md:pt-40 md:pb-32 section-hero">
-        <div class="container-wide">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6 animate-fade-in">
+    <section class="landing-hero section-hero">
+        <div class="container-wide landing-hero-inner">
+            <div class="landing-hero-grid">
+                <div class="hero-copy animate-fade-in">
                     <div class="inline-block">
                         <span class="badge badge-primary">
                             <span class="inline-block w-2 h-2 rounded-full bg-primary-500 animate-pulse-soft"></span>
@@ -55,15 +56,15 @@
                         </span>
                     </div>
                     
-                    <h1 class="text-5xl md:text-6xl font-display font-bold text-balance">
+                    <h1 class="hero-title font-display font-bold">
                         <span class="gradient-text">Secure Document</span> Management Made Simple
                     </h1>
                     
-                    <p class="text-xl text-slate-600 dark:text-slate-400 text-balance max-w-lg">
+                    <p class="hero-subtitle text-slate-600 dark:text-slate-400">
                         Streamline your workflow with intelligent document management, advanced review capabilities, and role-based access control.
                     </p>
                     
-                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <div class="hero-actions">
                         <button class="btn btn-primary btn-lg" onclick="navigateToAuth('register')">
                             Start Free Trial
                             <span>→</span>
@@ -76,18 +77,46 @@
                     <p class="text-sm text-slate-500 dark:text-slate-400">No credit card required • Free forever tier available</p>
                 </div>
                 
-                <div class="relative h-96 md:h-full hidden md:block animate-slide-in-right">
-                    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-3xl blur-3xl"></div>
-                    <div class="relative bg-gradient-to-br from-primary-50 dark:from-primary-900/30 to-secondary-50 dark:to-secondary-900/30 rounded-2xl p-8 border border-primary-100 dark:border-primary-800">
-                        <div class="space-y-4">
-                            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded-full w-1/2"></div>
-                            <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded-full w-3/4"></div>
-                            <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded-full w-2/3"></div>
-                            <div class="mt-6 space-y-3">
-                                <div class="h-20 bg-slate-100 dark:bg-slate-800 rounded-lg"></div>
-                                <div class="h-20 bg-slate-100 dark:bg-slate-800 rounded-lg"></div>
-                                <div class="h-20 bg-slate-100 dark:bg-slate-800 rounded-lg"></div>
+                <div class="hero-visual animate-slide-in-right" aria-label="PaperHub dashboard preview">
+                    <div class="hero-visual-glow" aria-hidden="true"></div>
+                    <div class="hero-visual-card">
+                        <div class="hero-visual-top">
+                            <div>
+                                <p class="hero-eyebrow">PaperHub Control Center</p>
+                                <h3 class="hero-panel-title font-display">Live Workflow Pulse</h3>
                             </div>
+                            <span class="hero-health"><span class="hero-health-dot"></span>System healthy</span>
+                        </div>
+
+                        <div class="hero-visual-body">
+                            <div class="hero-metric-row">
+                                <article class="hero-metric">
+                                    <p class="hero-metric-label">Active Requests</p>
+                                    <p class="hero-metric-value">148</p>
+                                    <p class="hero-metric-trend good">+12.4% today</p>
+                                </article>
+
+                                <article class="hero-metric">
+                                    <p class="hero-metric-label">Avg. Review Time</p>
+                                    <p class="hero-metric-value">6.2h</p>
+                                    <p class="hero-metric-trend info">-18m this week</p>
+                                </article>
+                            </div>
+
+                            <section class="hero-queue" aria-label="Priority queue overview">
+                                <div class="hero-queue-head">
+                                    <h4 class="hero-queue-title">Priority Queue</h4>
+                                    <p class="hero-queue-time">Updated 2m ago</p>
+                                </div>
+
+                                <article class="hero-ticket">
+                                    <div>
+                                        <h4>Scholarship Verification Packet</h4>
+                                        <p>Due in 34 minutes</p>
+                                    </div>
+                                    <span class="hero-chip">Urgent</span>
+                                </article>
+                            </section>
                         </div>
                     </div>
                 </div>
@@ -398,35 +427,6 @@
 
     <!-- Scripts -->
     <script src="assets/js/utils.js"></script>
-    <script>
-        // Navigation helpers
-        function navigateToAuth(page) {
-            window.location.href = `pages/auth/${page}.html`;
-        }
-
-        function scrollToSection(id) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        // Contact form handler
-        function handleContactForm(event) {
-            event.preventDefault();
-            showToast('Thank you! We will contact you soon.', 'success');
-            event.target.reset();
-        }
-
-        // Theme initialization
-        document.addEventListener('DOMContentLoaded', () => {
-            // Apply theme from localStorage or system preference
-            const root = document.documentElement;
-            const storedTheme = localStorage.getItem('paperhub-theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const useDark = storedTheme ? storedTheme === 'dark' : prefersDark;
-            root.classList.toggle('dark', useDark);
-        });
-    </script>
+    <script src="assets/js/pages/index.js"></script>
 </body>
 </html>

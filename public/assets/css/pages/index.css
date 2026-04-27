@@ -1,0 +1,363 @@
+.landing-hero {
+  align-items: center;
+  display: flex;
+  min-height: 100vh;
+  padding: 5.35rem 0 1.1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-hero::before {
+  background:
+    radial-gradient(circle at 12% 24%, rgba(14, 165, 233, 0.14), transparent 46%),
+    radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.12), transparent 42%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+
+.landing-hero-inner {
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.landing-hero-grid {
+  align-items: center;
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: 1fr;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.hero-title {
+  font-size: clamp(2.2rem, 5.2vw, 3.9rem);
+  line-height: 1.08;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 36rem;
+  text-wrap: pretty;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  padding-top: 0.3rem;
+}
+
+.hero-visual {
+  display: none;
+  position: relative;
+}
+
+.hero-visual-glow {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.26), rgba(16, 185, 129, 0.18));
+  border-radius: 1.75rem;
+  inset: -1rem;
+  position: absolute;
+  filter: blur(34px);
+  opacity: 0.95;
+}
+
+.hero-visual-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 60px -34px rgba(15, 23, 42, 0.5);
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-visual-top {
+  border-bottom: 1px solid rgba(203, 213, 225, 0.72);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.hero-eyebrow {
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.hero-panel-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0.35rem 0 0;
+}
+
+.hero-health {
+  align-items: center;
+  background: #ecfdf5;
+  border-radius: 999px;
+  color: #047857;
+  display: inline-flex;
+  font-size: 0.73rem;
+  font-weight: 700;
+  gap: 0.45rem;
+  padding: 0.4rem 0.72rem;
+  white-space: nowrap;
+}
+
+.hero-health-dot {
+  animation: heroPulse 1.4s ease-in-out infinite;
+  background: #10b981;
+  border-radius: 999px;
+  height: 0.45rem;
+  width: 0.45rem;
+}
+
+@keyframes heroPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.45;
+    transform: scale(0.84);
+  }
+}
+
+.hero-visual-body {
+  display: grid;
+  gap: 0.78rem;
+  padding: 1rem;
+}
+
+.hero-metric-row {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.hero-metric {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  padding: 0.75rem;
+}
+
+.hero-metric-label {
+  color: #64748b;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.hero-metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0.16rem 0 0;
+}
+
+.hero-metric-trend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin: 0.1rem 0 0;
+}
+
+.hero-metric-trend.good {
+  color: #059669;
+}
+
+.hero-metric-trend.info {
+  color: #0284c7;
+}
+
+.hero-queue {
+  background: rgba(248, 250, 252, 0.82);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  padding: 0.78rem;
+}
+
+.hero-queue-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.56rem;
+}
+
+.hero-queue-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.hero-queue-time {
+  color: #64748b;
+  font-size: 0.72rem;
+  margin: 0;
+}
+
+.hero-ticket {
+  align-items: flex-start;
+  border: 1px solid #fcd34d;
+  border-radius: 0.75rem;
+  background: #fffbeb;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.62rem 0.7rem;
+}
+
+.hero-ticket h4 {
+  font-size: 0.86rem;
+  margin: 0;
+}
+
+.hero-ticket p {
+  color: #64748b;
+  font-size: 0.74rem;
+  margin: 0.15rem 0 0;
+}
+
+.hero-chip {
+  background: #fef3c7;
+  border-radius: 999px;
+  color: #92400e;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  white-space: nowrap;
+}
+
+.dark .hero-visual-card {
+  background: rgba(15, 23, 42, 0.84);
+  border-color: rgba(71, 85, 105, 0.86);
+}
+
+.dark .hero-visual-top {
+  border-color: rgba(71, 85, 105, 0.82);
+}
+
+.dark .hero-eyebrow,
+.dark .hero-metric-label,
+.dark .hero-queue-time,
+.dark .hero-ticket p {
+  color: #94a3b8;
+}
+
+.dark .hero-health {
+  background: rgba(6, 78, 59, 0.45);
+  color: #6ee7b7;
+}
+
+.dark .hero-metric {
+  background: rgba(15, 23, 42, 0.62);
+  border-color: rgba(71, 85, 105, 0.72);
+}
+
+.dark .hero-queue {
+  background: rgba(15, 23, 42, 0.55);
+  border-color: rgba(71, 85, 105, 0.72);
+}
+
+.dark .hero-ticket {
+  background: rgba(120, 53, 15, 0.28);
+  border-color: rgba(180, 83, 9, 0.66);
+}
+
+.dark .hero-chip {
+  background: rgba(180, 83, 9, 0.32);
+  color: #fcd34d;
+}
+
+@media (min-width: 768px) {
+  .landing-hero {
+    padding-top: 5.5rem;
+    padding-bottom: 1.2rem;
+  }
+
+  .landing-hero-grid {
+    gap: 3.4rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  }
+
+  .hero-visual {
+    display: block;
+  }
+}
+
+@media (min-width: 1440px) {
+  .landing-hero {
+    padding-top: 5.35rem;
+    padding-bottom: 1rem;
+  }
+
+  .landing-hero-inner {
+    max-width: 92rem;
+    padding-left: 2.75rem;
+    padding-right: 2.75rem;
+  }
+
+  .landing-hero-grid {
+    gap: 4.6rem;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  }
+
+  .hero-copy {
+    gap: 1.35rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.8rem, 3.2vw, 4.25rem);
+    max-width: 13.5ch;
+  }
+
+  .hero-subtitle {
+    font-size: 1.15rem;
+    max-width: 38rem;
+  }
+
+  .hero-actions {
+    gap: 1rem;
+    padding-top: 0.45rem;
+  }
+
+  .hero-visual-card {
+    border-radius: 1.65rem;
+  }
+
+  .hero-visual-top {
+    padding: 1.1rem 1.2rem;
+  }
+
+  .hero-visual-body {
+    gap: 0.95rem;
+    padding: 1.15rem 1.2rem 1.2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-hero {
+    min-height: 100svh;
+    padding-top: 5rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .landing-hero-grid {
+    gap: 1.8rem;
+  }
+}
