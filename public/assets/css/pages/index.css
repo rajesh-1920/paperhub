@@ -2,7 +2,7 @@
   align-items: center;
   display: flex;
   min-height: 100vh;
-  padding: 5.35rem 0 1.1rem;
+  padding: 4.7rem 0 0.55rem;
   position: relative;
   overflow: hidden;
 }
@@ -27,13 +27,13 @@
 .landing-hero-grid {
   align-items: center;
   display: grid;
-  gap: 2.5rem;
+  gap: 2.85rem;
   grid-template-columns: 1fr;
 }
 
 .hero-copy {
   display: grid;
-  gap: 1.1rem;
+  gap: 1.28rem;
 }
 
 .hero-title {
@@ -184,6 +184,63 @@
   color: #0284c7;
 }
 
+.hero-role-lanes {
+  background: rgba(248, 250, 252, 0.82);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.72rem;
+}
+
+.hero-role-row {
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  display: flex;
+  gap: 0.65rem;
+  justify-content: space-between;
+  padding: 0.48rem 0.58rem;
+}
+
+.hero-role-name {
+  color: #0f172a;
+  font-size: 0.76rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.hero-role-note {
+  color: #64748b;
+  font-size: 0.69rem;
+  margin: 0.12rem 0 0;
+}
+
+.hero-role-badge {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.24rem 0.55rem;
+  white-space: nowrap;
+}
+
+.hero-role-badge.user {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.hero-role-badge.officer {
+  background: #ffedd5;
+  color: #b45309;
+}
+
+.hero-role-badge.admin {
+  background: #dcfce7;
+  color: #166534;
+}
+
 .hero-queue {
   background: rgba(248, 250, 252, 0.82);
   border: 1px solid #e2e8f0;
@@ -269,6 +326,57 @@
   border-color: rgba(71, 85, 105, 0.72);
 }
 
+.dark .hero-role-lanes {
+  background: rgba(15, 23, 42, 0.52);
+  border-color: rgba(71, 85, 105, 0.72);
+}
+
+.dark .hero-role-row {
+  border-color: rgba(71, 85, 105, 0.72);
+}
+
+.dark .hero-role-name {
+  color: #e2e8f0;
+}
+
+.dark .hero-role-note {
+  color: #94a3b8;
+}
+
+.dark .hero-role-badge.user {
+  background: rgba(29, 78, 216, 0.25);
+  color: #93c5fd;
+}
+
+.dark .hero-role-badge.officer {
+  background: rgba(180, 83, 9, 0.3);
+  color: #fdba74;
+}
+
+.dark .hero-role-badge.admin {
+  background: rgba(22, 101, 52, 0.34);
+  color: #86efac;
+}
+
+.dark .hero-context {
+  background: rgba(15, 23, 42, 0.55);
+  border-color: rgba(71, 85, 105, 0.72);
+}
+
+.dark .hero-context-title,
+.dark .hero-context-list strong {
+  color: #f1f5f9;
+}
+
+.dark .hero-context-list {
+  color: #94a3b8;
+}
+
+.dark .hero-proof-pill {
+  background: rgba(51, 65, 85, 0.9);
+  color: #e2e8f0;
+}
+
 .dark .hero-queue {
   background: rgba(15, 23, 42, 0.55);
   border-color: rgba(71, 85, 105, 0.72);
@@ -286,12 +394,12 @@
 
 @media (min-width: 768px) {
   .landing-hero {
-    padding-top: 5.5rem;
-    padding-bottom: 1.2rem;
+    padding-top: 4.85rem;
+    padding-bottom: 0.65rem;
   }
 
   .landing-hero-grid {
-    gap: 3.4rem;
+    gap: 4.15rem;
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
   }
 
@@ -302,8 +410,8 @@
 
 @media (min-width: 1440px) {
   .landing-hero {
-    padding-top: 5.35rem;
-    padding-bottom: 1rem;
+    padding-top: 4.7rem;
+    padding-bottom: 0.45rem;
   }
 
   .landing-hero-inner {
@@ -313,12 +421,12 @@
   }
 
   .landing-hero-grid {
-    gap: 4.6rem;
+    gap: 5.15rem;
     grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
   }
 
   .hero-copy {
-    gap: 1.35rem;
+    gap: 1.5rem;
   }
 
   .hero-title {
@@ -353,8 +461,8 @@
 @media (max-width: 767px) {
   .landing-hero {
     min-height: 100svh;
-    padding-top: 5rem;
-    padding-bottom: 0.9rem;
+    padding-top: 4.45rem;
+    padding-bottom: 0.5rem;
   }
 
   .landing-hero-grid {
