@@ -66,12 +66,28 @@
   font-weight: 600;
   padding: 0.55rem 0.75rem;
   text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.ph-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #0284c7, #06b6d4);
+  transition: width 0.3s ease;
 }
 
 .ph-nav-link:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: transparent;
+  color: #0284c7;
+}
+
+.ph-nav-link:hover::after {
+  width: 100%;
 }
 
 .ph-nav-link.is-active {
@@ -95,13 +111,22 @@
   height: 2.1rem;
   justify-content: center;
   width: 2.1rem;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.ph-icon-btn:hover {
+  border-color: rgba(2, 132, 199, 0.4);
+  background: rgba(2, 132, 199, 0.08);
+  color: #0284c7;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
 }
 
 .ph-role-badge {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
+  background: linear-gradient(135deg, #f0f9fe, #e0f2fe);
+  border: 1px solid rgba(2, 132, 199, 0.3);
   border-radius: 999px;
-  color: #475569;
+  color: #0c4a6e;
   display: none;
   font-size: 0.7rem;
   font-weight: 700;
@@ -112,12 +137,19 @@
 
 .ph-user-btn {
   align-items: center;
-  background: #ffffff;
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border: 1px solid rgba(203, 213, 225, 0.6);
   border-radius: 0.75rem;
   display: none;
   gap: 0.55rem;
   padding: 0.35rem 0.55rem;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.ph-user-btn:hover {
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
 }
 
 .ph-user-avatar {

@@ -73,10 +73,30 @@
   font-weight: 600;
   padding: 0.42rem 0.65rem;
   text-decoration: none;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ph-footer-links a::before {
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0.2), transparent);
+  content: '';
+  height: 100%;
+  left: -100%;
+  position: absolute;
+  top: 0;
+  transition: left 0.3s ease;
+  width: 100%;
+  z-index: -1;
 }
 
 .ph-footer-links a:hover {
-  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(2, 132, 199, 0.5);
+  color: #06b6d4;
+}
+
+.ph-footer-links a:hover::before {
+  left: 0;
 }
 
 .ph-footer-bottom {
