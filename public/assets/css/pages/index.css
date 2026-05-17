@@ -541,7 +541,6 @@
   }
 }
 
-/* Professional Card Styling */
 .card-interactive {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid rgba(203, 213, 225, 0.6);
@@ -590,7 +589,6 @@
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
-/* Section Styling */
 .section {
   padding: 5rem 0;
   position: relative;
@@ -601,7 +599,6 @@
   letter-spacing: -0.02em;
 }
 
-/* Button Enhancements */
 .btn {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 700;
@@ -655,7 +652,6 @@
   border-color: rgba(2, 132, 199, 0.3);
 }
 
-/* Badge Styling */
 .badge {
   background: linear-gradient(135deg, #f0f9fe, #e0f2fe);
   border: 1px solid rgba(2, 132, 199, 0.3);
@@ -675,7 +671,6 @@
   color: #0c4a6e;
 }
 
-/* Input Styling */
 .input {
   background: linear-gradient(135deg, #ffffff, #f8fafc);
   border: 1px solid rgba(203, 213, 225, 0.6);
@@ -691,7 +686,6 @@
   outline: none;
 }
 
-/* Text Styling */
 .gradient-text {
   background: linear-gradient(135deg, #0284c7, #0f766e);
   -webkit-background-clip: text;
@@ -699,7 +693,6 @@
   background-clip: text;
 }
 
-/* Dark Mode Enhancements */
 .dark .card-interactive {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.6));
   border-color: rgba(71, 85, 105, 0.4);

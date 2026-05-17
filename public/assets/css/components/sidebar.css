@@ -13,7 +13,6 @@
   transition: width 200ms ease, transform 200ms ease;
 }
 
-/* collapsed state */
 body.ph-sidebar-collapsed .ph-sidebar {
   width: 72px;
 }
@@ -58,7 +57,6 @@ body.ph-sidebar-collapsed main {
 .ph-sidebar-controls { margin-left:auto; }
 .ph-sidebar-toggle { background:transparent; border:0; cursor:pointer; color:#64748b; }
 
-/* expanded: keep toggle at right side of profile */
 body:not(.ph-sidebar-collapsed) .ph-sidebar-profile {
   display: flex;
   align-items: center;
@@ -66,7 +64,6 @@ body:not(.ph-sidebar-collapsed) .ph-sidebar-profile {
   width: 100%;
 }
 
-/* collapsed: keep compact/current placement */
 body.ph-sidebar-collapsed .ph-sidebar-profile {
   display: block;
 }
@@ -86,7 +83,6 @@ body.ph-sidebar-collapsed .ph-sidebar-controls {
 .ph-sidebar-link-icon { width:28px; text-align:center; }
 .ph-sidebar-link-label { white-space:nowrap; }
 
-/* hide labels when collapsed */
 body.ph-sidebar-collapsed .ph-sidebar-link-label,
 body.ph-sidebar-collapsed .ph-sidebar-usercopy,
 body.ph-sidebar-collapsed .ph-sidebar-section-title { display:none; }

@@ -60,8 +60,6 @@ async function initApp() {
   initNavbar();
   applyCurrentUserPageData();
   initPageSpecificForms();
-
-  // No fallback injection — rely on shared component being loaded
 }
 
 function ensureStyles(styles) {
@@ -203,7 +201,6 @@ async function loadComponents() {
     componentsToLoad.map((component) => [component.file, getElement("#" + component.id)]),
   );
 
-  // Invalidate cached navigation shells to force fresh fetch
   delete cache["components/navbar.html"];
   delete cache["components/sidebar.html"];
 
@@ -271,8 +268,6 @@ function initNavbar() {
 
     if (attemptsLeft > 0) {
       setTimeout(() => tryInit(attemptsLeft - 1), 120);
-    } else {
-      // Give up silently; component not available.
     }
     return false;
   };

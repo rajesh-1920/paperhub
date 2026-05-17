@@ -1,8 +1,3 @@
-// ============================================================================
-// PaperHub Utilities - DOM, Storage, API, and Helper Functions
-// ============================================================================
-
-// ---------- DOM MANIPULATION ----------
 function getElement(selector) {
   return document.querySelector(selector);
 }
@@ -71,7 +66,6 @@ function resolveAppPath(path) {
   return new URL(normalizedPath, PAPERHUB_APP_BASE_URL).href;
 }
 
-// ---------- NOTIFICATIONS/TOAST ----------
 function showToast(message, type = "info", duration = 3000) {
   const container = getOrCreateToastContainer();
   const toastId = "toast-" + Date.now();
@@ -120,7 +114,6 @@ function showInfo(message, duration = 3000) {
   return showToast(message, "info", duration);
 }
 
-// ---------- ANIMATIONS ----------
 function fadeIn(element, duration = 300) {
   element.style.opacity = "0";
   element.style.transition = `opacity ${duration}ms ease-in`;
@@ -138,7 +131,6 @@ function fadeOut(element, callback, duration = 300) {
   }, duration);
 }
 
-// ---------- LOCAL STORAGE ----------
 const StorageKey = {
   USER: "paperhub-user",
   USER_ROLE: "paperhub-user-role",
@@ -186,7 +178,6 @@ function clearStorage() {
   }
 }
 
-// ---------- USER MANAGEMENT ----------
 function setCurrentUser(user) {
   setStorage(StorageKey.USER, user);
   setStorage(StorageKey.USER_ROLE, user.role);
@@ -215,7 +206,6 @@ function logout() {
   window.location.href = resolveAppPath("pages/auth/login.html");
 }
 
-// ---------- THEME MANAGEMENT ----------
 function setTheme(isDark) {
   const html = document.documentElement;
   if (isDark) {
@@ -243,7 +233,6 @@ function initializeTheme() {
   setTheme(isDark);
 }
 
-// ---------- DATE/TIME ----------
 function formatDate(date, format = "MMM DD, YYYY") {
   const d = new Date(date);
   if (isNaN(d.getTime())) return "Invalid date";
@@ -285,7 +274,6 @@ function timeAgo(date) {
   return formatDate(date);
 }
 
-// ---------- VALIDATION ----------
 function isValidEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
@@ -304,7 +292,6 @@ function isValidUrl(url) {
   }
 }
 
-// ---------- FORMATTING ----------
 function formatFileSize(bytes) {
   if (bytes === 0) return "0 Bytes";
   const k = 1024;
@@ -329,7 +316,6 @@ function slugify(text) {
     .replace(/^-+|-+$/g, "");
 }
 
-// ---------- UTILITIES ----------
 function debounce(func, delay) {
   let timeoutId;
   return function (...args) {
@@ -365,7 +351,6 @@ function generateId(prefix = "id") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
-// ---------- PAGE HELPERS ----------
 function redirect(url, delay = 0) {
   if (delay > 0) {
     setTimeout(() => {
@@ -402,12 +387,10 @@ function getAllQueryParams() {
   return params;
 }
 
-// ---------- INITIALIZATION ----------
 document.addEventListener("DOMContentLoaded", () => {
   initializeTheme();
 });
 
-// Export for module usage if needed
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     getElement,

@@ -3,6 +3,7 @@
   const SIDEBAR_STATE_STORAGE_KEY = "paperhub-sidebar-state";
   const SIDEBAR_COLLAPSED_BREAKPOINT = 768;
   const SIDEBAR_EXPANDED_BREAKPOINT = 1200;
+  let hasPartialRoutingSetup = false;
 
   function resolveLink(path) {
     if (typeof resolveAppPath === "function") {
@@ -299,110 +300,113 @@
     });
   }
 
-  // ---------- Partial navigation (SPA-like) ----------
   async function loadMainContentFromUrl(url, { replaceState = false } = {}) {
     try {
-      const res = await fetch(url, { credentials: 'same-origin' });
+      const res = await fetch(url, { credentials: "same-origin" });
       if (!res.ok) {
-        window.location.href = url; // fallback to full navigation on error
+        window.location.href = url;
         return;
       }
 
       const text = await res.text();
       const parser = new DOMParser();
-      const doc = parser.parseFromString(text, 'text/html');
+      const doc = parser.parseFromString(text, "text/html");
 
-      const newMain = doc.querySelector('main');
-      const targetMain = document.querySelector('main');
+      const newMain = doc.querySelector("main");
+      const targetMain = document.querySelector("main");
 
       if (newMain && targetMain) {
-        // Replace main content
         targetMain.innerHTML = newMain.innerHTML;
 
-        // Update title
-        if (doc.title) document.title = doc.title;
+        if (doc.title) {
+          document.title = doc.title;
+        }
 
-        // Execute scripts found in the fetched document's body (only if not already present)
-        const scripts = Array.from(doc.querySelectorAll('script'));
+        const scripts = Array.from(doc.querySelectorAll("script"));
         scripts.forEach((s) => {
           try {
             if (s.src) {
               const absSrc = s.src;
-              const already = Array.from(document.scripts).some(existing => existing.src === absSrc);
+              const already = Array.from(document.scripts).some(
+                (existing) => existing.src === absSrc,
+              );
               if (!already) {
-                const scriptEl = document.createElement('script');
+                const scriptEl = document.createElement("script");
                 scriptEl.src = absSrc;
                 scriptEl.async = false;
                 document.body.appendChild(scriptEl);
               }
             } else if (s.textContent && s.textContent.trim()) {
-              const inline = document.createElement('script');
+              const inline = document.createElement("script");
               inline.textContent = s.textContent;
               document.body.appendChild(inline);
             }
           } catch (err) {
-            console.warn('Failed to inject script from fetched page', err);
+            console.warn("Failed to inject script from fetched page", err);
           }
         });
 
-        // Update active link states
-        const navLinks = document.querySelectorAll('[data-nav-link]');
-        const sidebarLinks = document.querySelectorAll('[data-sidebar-link]');
+        const navLinks = document.querySelectorAll("[data-nav-link]");
+        const sidebarLinks = document.querySelectorAll("[data-sidebar-link]");
         markActiveLink(navLinks);
         markActiveSidebarLink(sidebarLinks);
 
-        // Re-run lightweight content-related initializers
         applyDynamicMeta();
 
-        // Update history
         if (replaceState) {
-          history.replaceState({ url }, '', url);
+          history.replaceState({ url }, "", url);
         } else {
-          history.pushState({ url }, '', url);
+          history.pushState({ url }, "", url);
         }
 
-        // Scroll to top of content
-        window.scrollTo({ top: 0, behavior: 'auto' });
+        window.scrollTo({ top: 0, behavior: "auto" });
         return;
       }
 
-      // Fallback to full navigation if main not found
       window.location.href = url;
     } catch (err) {
-      console.warn('Partial navigation failed, falling back to full reload', err);
+      console.warn("Partial navigation failed, falling back to full reload", err);
       window.location.href = url;
     }
   }
 
   function enablePartialRouting() {
-    const appLinks = Array.from(document.querySelectorAll('[data-app-href], [data-nav-link], [data-sidebar-link]'));
+    if (!hasPartialRoutingSetup) {
+      window.addEventListener("popstate", () => {
+        loadMainContentFromUrl(location.href, { replaceState: true });
+      });
+      hasPartialRoutingSetup = true;
+    }
+
+    const appLinks = Array.from(
+      document.querySelectorAll("[data-app-href], [data-nav-link], [data-sidebar-link]"),
+    );
 
     appLinks.forEach((link) => {
-      // ensure href is set
-      const href = link.getAttribute('href');
-      if (!href) return;
+      if (link.dataset.partialRoutingBound === "true") {
+        return;
+      }
 
-      // Only intercept same-origin navigations
+      const href = link.getAttribute("href");
+      if (!href) {
+        return;
+      }
+
       const url = new URL(href, window.location.href);
-      if (url.origin !== window.location.origin) return;
+      if (url.origin !== window.location.origin) {
+        return;
+      }
 
       const handler = (e) => {
-        // allow ctrl/cmd clicks and modifier keys to open in new tab
-        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+          return;
+        }
         e.preventDefault();
-        const dest = url.href;
-        loadMainContentFromUrl(dest);
+        loadMainContentFromUrl(url.href);
       };
 
-      // avoid duplicate handlers
-      link.removeEventListener('click', handler);
-      link.addEventListener('click', handler);
-    });
-
-    // handle back/forward
-    window.addEventListener('popstate', (event) => {
-      const href = location.href;
-      loadMainContentFromUrl(href, { replaceState: true });
+      link.addEventListener("click", handler);
+      link.dataset.partialRoutingBound = "true";
     });
   }
 
@@ -416,7 +420,6 @@
         const spacing = 8;
         const viewportPadding = 12;
 
-        // If the menu is hidden, make it visible off-screen to measure its natural width
         const wasHidden = menu.classList.contains("hidden");
         if (wasHidden) {
           menu.classList.remove("hidden");
@@ -589,7 +592,6 @@
     setupMobileMenu(navLinks);
     setupUserDropdown();
     setupThemeToggle();
-    // Notifications badge and actions
     try {
       const notifyBtn = document.getElementById("notifyBtn");
       const notifyCount = document.getElementById("notifyCount");
@@ -606,7 +608,6 @@
 
       if (notifyBtn) {
         notifyBtn.addEventListener("click", (e) => {
-          // Navigate to notifications view
           e.preventDefault();
           window.location.assign(resolveLink("pages/notifications/notifications.html"));
         });
@@ -617,7 +618,6 @@
     setupSidebarToggle();
     setupSignOut();
     applyDynamicMeta();
-    // Enable SPA-style partial routing for app links
     enablePartialRouting();
   }
 

@@ -264,7 +264,6 @@
   margin-top: 1rem;
 }
 
-/* Fallback grid spans for environments where Tailwind did not generate col-span utilities */
 .col-span-12 {
   grid-column: span 12 / span 12;
 }
@@ -533,7 +532,6 @@
   width: 84%;
 }
 
-/* Button Styling */
 button {
   font-family: "Manrope", "Segoe UI", sans-serif;
 }

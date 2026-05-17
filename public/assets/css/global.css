@@ -10,7 +10,6 @@
   }
 }
 
-/* Navigation Enhancement */
 nav {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.92)) !important;
   backdrop-filter: blur(12px) !important;
@@ -27,7 +26,6 @@ nav a:hover {
   text-decoration: none;
 }
 
-/* Container Styles */
 .container-wide {
   max-width: 88rem;
   margin: 0 auto;
@@ -40,7 +38,6 @@ nav a:hover {
   padding: 0 1.5rem;
 }
 
-/* Footer Enhancement */
 footer {
   background: linear-gradient(135deg, #0f172a, #1e293b) !important;
   border-top: 1px solid rgba(203, 213, 225, 0.1);
@@ -66,7 +63,6 @@ footer a:hover::after {
   width: 100%;
 }
 
-/* General Improvements */
 body {
   font-family: 'Inter', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -79,12 +75,10 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 800;
 }
 
-/* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Selection Styling */
 ::selection {
   background: linear-gradient(135deg, #0284c7, #06b6d4);
   color: white;
