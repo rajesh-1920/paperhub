@@ -4,12 +4,10 @@
       <span class="ph-brand-mark">PH</span>
       <span>
         <span class="ph-brand-title">PaperHub</span>
-        <span class="ph-brand-subtitle">SaaS Document Operations</span>
       </span>
     </a>
 
     <ul class="ph-nav-links" role="menubar">
-      <li><a data-nav-link data-app-href="index.html" class="ph-nav-link">Home</a></li>
       <li><a data-nav-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-nav-link">Dashboard</a></li>
       <li><a data-nav-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-nav-link">Files</a></li>
       <li><a data-nav-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-nav-link">Reviews</a></li>
@@ -17,18 +15,21 @@
     </ul>
 
     <div class="ph-nav-actions">
-      <button id="themeToggle" type="button" class="ph-icon-btn" aria-label="Toggle theme" aria-pressed="false">
-        <span>◐</span>
+      <a data-app-href="pages/file/upload.html" class="ph-cta-btn" aria-label="Upload document">Upload</a>
+
+      <button id="notifyBtn" type="button" class="ph-icon-btn ph-notify-btn" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+        <span aria-hidden="true">🔔</span>
+        <span class="ph-badge ph-badge-count hidden" id="notifyCount" aria-hidden="false">0</span>
       </button>
 
-      <span class="ph-role-badge" data-role-badge>User</span>
+      <button id="themeToggle" type="button" class="ph-icon-btn" aria-label="Toggle theme" aria-pressed="false">
+        <span data-theme-icon>◐</span>
+      </button>
 
-      <button id="userMenuBtn" type="button" class="ph-user-btn" aria-expanded="false" aria-haspopup="true">
+      <span class="ph-role-badge" data-role-badge>USER</span>
+
+      <button id="userMenuBtn" type="button" class="ph-user-btn" aria-expanded="false" aria-haspopup="true" aria-label="Open user menu">
         <span class="ph-user-avatar" data-user-initials>DU</span>
-        <span class="ph-user-text">
-          <span class="ph-user-name" data-user-name>Demo User</span>
-          <span class="ph-user-title" data-user-title>User</span>
-        </span>
       </button>
 
       <button id="navbarHamburger" type="button" class="ph-icon-btn ph-mobile-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
@@ -48,23 +49,18 @@
     <a data-user-dashboard-link data-app-href="pages/dashboard/user.html" class="ph-menu-link">Go To Dashboard</a>
 
     <div class="ph-menu-divider"></div>
-
-    <div class="ph-menu-section-label">Quick switch</div>
-    <div data-user-switcher-list></div>
-
-    <div class="ph-menu-divider"></div>
     <button type="button" class="ph-menu-btn" data-sign-out>Sign Out</button>
   </div>
 
   <div id="mobileMenu" class="ph-mobile-menu hidden">
     <div class="ph-mobile-menu-grid">
-      <div class="ph-role-badge ph-role-badge-mobile" data-role-badge-mobile>User</div>
-      <a data-nav-link data-app-href="index.html" class="ph-mobile-link">Home</a>
+      <div class="ph-role-badge ph-role-badge-mobile" data-role-badge-mobile>USER</div>
       <a data-nav-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-mobile-link">Dashboard</a>
       <a data-nav-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-mobile-link">Files</a>
       <a data-nav-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-mobile-link">Reviews</a>
       <a data-nav-link data-app-href="pages/support/contact.html" class="ph-mobile-link">Support</a>
-      <button id="mobileThemeToggle" type="button" class="ph-menu-btn">Toggle Theme</button>
+      <a data-app-href="pages/file/upload.html" class="ph-mobile-link">Upload</a>
+      <button id="mobileThemeToggle" type="button" class="ph-menu-btn" data-theme-toggle>Toggle Theme</button>
       <button type="button" class="ph-menu-btn" data-sign-out>Sign Out</button>
     </div>
   </div>

@@ -60,6 +60,8 @@ async function initApp() {
   initNavbar();
   applyCurrentUserPageData();
   initPageSpecificForms();
+
+  // No fallback injection — rely on shared component being loaded
 }
 
 function ensureStyles(styles) {
@@ -254,9 +256,28 @@ async function loadComponents() {
 }
 
 function initNavbar() {
-  if (typeof window.initPaperHubNavbar === "function") {
-    window.initPaperHubNavbar();
-  }
+  const tryInit = (attemptsLeft) => {
+    try {
+      if (typeof window.initPaperHubNavbar === "function") {
+        const navbar = document.getElementById("paperhubNavbar");
+        if (navbar) {
+          window.initPaperHubNavbar();
+          return true;
+        }
+      }
+    } catch (err) {
+      console.warn("initNavbar attempt failed:", err);
+    }
+
+    if (attemptsLeft > 0) {
+      setTimeout(() => tryInit(attemptsLeft - 1), 120);
+    } else {
+      // Give up silently; component not available.
+    }
+    return false;
+  };
+
+  tryInit(5);
 }
 
 function initPageSpecificForms() {

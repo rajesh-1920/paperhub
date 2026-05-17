@@ -143,62 +143,7 @@
     });
   }
 
-  function setupUserSwitcher() {
-    const switcherContainer = document.querySelector("[data-user-switcher-list]");
-    if (!switcherContainer || typeof getAllMockUsers !== "function") {
-      return;
-    }
-
-    const users = getAllMockUsers();
-    const currentUser =
-      typeof getCurrentUserData === "function" ? getCurrentUserData() : users[0] || null;
-
-    if (!currentUser) {
-      return;
-    }
-
-    switcherContainer.innerHTML = users
-      .map((user) => {
-        const roleLabel = user.role === "student" ? "Student" : String(user.role || "user");
-        const checked = user.id === currentUser.id ? "checked" : "";
-        return `
-          <label
-            class="flex items-start gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors"
-          >
-            <input
-              type="radio"
-              name="paperhub-user"
-              value="${escapeHtml(user.id)}"
-              data-user-option
-              class="w-4 h-4 cursor-pointer mt-0.5"
-              ${checked}
-            />
-            <span>
-              <span class="block text-sm font-medium text-slate-700">${escapeHtml(roleLabel)}</span>
-            </span>
-          </label>
-        `;
-      })
-      .join("");
-
-    switcherContainer.querySelectorAll("[data-user-option]").forEach((option) => {
-      option.addEventListener("change", () => {
-        if (!option.checked || typeof setCurrentUserById !== "function") {
-          return;
-        }
-
-        const nextUser = setCurrentUserById(option.value);
-        applyUserIdentity(nextUser);
-        applyRoleVisibility(normalizeRole(nextUser.role));
-
-        const nextRoute =
-          typeof getDashboardRouteForUser === "function"
-            ? getDashboardRouteForUser(nextUser)
-            : resolveLink("pages/dashboard/user.html");
-        window.location.assign(nextRoute);
-      });
-    });
-  }
+  
 
   function setupSignOut() {
     document.querySelectorAll("[data-sign-out]").forEach((button) => {
@@ -363,18 +308,35 @@
         const buttonRect = menuButton.getBoundingClientRect();
         const spacing = 8;
         const viewportPadding = 12;
-        const menuWidth = menu.offsetWidth || 256;
 
-        let left = buttonRect.right - menuWidth;
-        left = Math.max(viewportPadding, left);
+        // If the menu is hidden, make it visible off-screen to measure its natural width
+        const wasHidden = menu.classList.contains("hidden");
+        if (wasHidden) {
+          menu.classList.remove("hidden");
+          menu.style.visibility = "hidden";
+          menu.style.left = "-9999px";
+        }
+
+        let menuWidth = menu.offsetWidth || 220;
+        menuWidth = Math.min(menuWidth, window.innerWidth - viewportPadding * 2);
+
+        const buttonCenter = buttonRect.left + buttonRect.width / 2;
+        let left = Math.round(buttonCenter - menuWidth / 2);
 
         const maxLeft = window.innerWidth - menuWidth - viewportPadding;
-        left = Math.min(left, Math.max(viewportPadding, maxLeft));
+        left = Math.max(viewportPadding, Math.min(left, maxLeft));
 
         menu.style.position = "fixed";
-        menu.style.top = `${buttonRect.bottom + spacing}px`;
+        menu.style.top = `${Math.round(buttonRect.bottom + spacing)}px`;
         menu.style.left = `${left}px`;
         menu.style.right = "auto";
+        menu.style.transformOrigin = "top center";
+
+        if (wasHidden) {
+          menu.style.visibility = "";
+          menu.classList.add("hidden");
+          menu.style.left = "";
+        }
       };
 
       const closeMenu = () => {
@@ -520,8 +482,32 @@
     setupMobileMenu(navLinks);
     setupUserDropdown();
     setupThemeToggle();
+    // Notifications badge and actions
+    try {
+      const notifyBtn = document.getElementById("notifyBtn");
+      const notifyCount = document.getElementById("notifyCount");
+      const unread = (user && Array.isArray(user.notifications)) ? user.notifications.filter(n => !n.read).length : (user && user.unreadNotifications) || 0;
+
+      if (notifyCount) {
+        if (unread > 0) {
+          notifyCount.textContent = String(unread > 99 ? "99+" : unread);
+          notifyCount.classList.remove("hidden");
+        } else {
+          notifyCount.classList.add("hidden");
+        }
+      }
+
+      if (notifyBtn) {
+        notifyBtn.addEventListener("click", (e) => {
+          // Navigate to notifications view
+          e.preventDefault();
+          window.location.assign(resolveLink("pages/notifications/notifications.html"));
+        });
+      }
+    } catch (err) {
+      console.warn("Notifications init failed", err);
+    }
     setupSidebarToggle();
-    setupUserSwitcher();
     setupSignOut();
     applyDynamicMeta();
   }
