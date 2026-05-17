@@ -299,6 +299,113 @@
     });
   }
 
+  // ---------- Partial navigation (SPA-like) ----------
+  async function loadMainContentFromUrl(url, { replaceState = false } = {}) {
+    try {
+      const res = await fetch(url, { credentials: 'same-origin' });
+      if (!res.ok) {
+        window.location.href = url; // fallback to full navigation on error
+        return;
+      }
+
+      const text = await res.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+
+      const newMain = doc.querySelector('main');
+      const targetMain = document.querySelector('main');
+
+      if (newMain && targetMain) {
+        // Replace main content
+        targetMain.innerHTML = newMain.innerHTML;
+
+        // Update title
+        if (doc.title) document.title = doc.title;
+
+        // Execute scripts found in the fetched document's body (only if not already present)
+        const scripts = Array.from(doc.querySelectorAll('script'));
+        scripts.forEach((s) => {
+          try {
+            if (s.src) {
+              const absSrc = s.src;
+              const already = Array.from(document.scripts).some(existing => existing.src === absSrc);
+              if (!already) {
+                const scriptEl = document.createElement('script');
+                scriptEl.src = absSrc;
+                scriptEl.async = false;
+                document.body.appendChild(scriptEl);
+              }
+            } else if (s.textContent && s.textContent.trim()) {
+              const inline = document.createElement('script');
+              inline.textContent = s.textContent;
+              document.body.appendChild(inline);
+            }
+          } catch (err) {
+            console.warn('Failed to inject script from fetched page', err);
+          }
+        });
+
+        // Update active link states
+        const navLinks = document.querySelectorAll('[data-nav-link]');
+        const sidebarLinks = document.querySelectorAll('[data-sidebar-link]');
+        markActiveLink(navLinks);
+        markActiveSidebarLink(sidebarLinks);
+
+        // Re-run lightweight content-related initializers
+        applyDynamicMeta();
+
+        // Update history
+        if (replaceState) {
+          history.replaceState({ url }, '', url);
+        } else {
+          history.pushState({ url }, '', url);
+        }
+
+        // Scroll to top of content
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        return;
+      }
+
+      // Fallback to full navigation if main not found
+      window.location.href = url;
+    } catch (err) {
+      console.warn('Partial navigation failed, falling back to full reload', err);
+      window.location.href = url;
+    }
+  }
+
+  function enablePartialRouting() {
+    const appLinks = Array.from(document.querySelectorAll('[data-app-href], [data-nav-link], [data-sidebar-link]'));
+
+    appLinks.forEach((link) => {
+      // ensure href is set
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      // Only intercept same-origin navigations
+      const url = new URL(href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+
+      const handler = (e) => {
+        // allow ctrl/cmd clicks and modifier keys to open in new tab
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        const dest = url.href;
+        loadMainContentFromUrl(dest);
+      };
+
+      // avoid duplicate handlers
+      link.removeEventListener('click', handler);
+      link.addEventListener('click', handler);
+    });
+
+    // handle back/forward
+    window.addEventListener('popstate', (event) => {
+      const href = location.href;
+      loadMainContentFromUrl(href, { replaceState: true });
+    });
+  }
+
   function setupUserDropdown() {
     const menuButton = document.getElementById("userMenuBtn");
     const menu = document.getElementById("userDropdown");
@@ -510,6 +617,8 @@
     setupSidebarToggle();
     setupSignOut();
     applyDynamicMeta();
+    // Enable SPA-style partial routing for app links
+    enablePartialRouting();
   }
 
   window.initPaperHubNavbar = initPaperHubNavbar;

@@ -3,53 +3,79 @@
     <div class="ph-sidebar-profile">
       <div class="ph-sidebar-profile-inner">
         <span class="ph-sidebar-avatar" data-user-initials>DU</span>
-        <span data-sidebar-user-copy>
-          <span class="ph-sidebar-name" data-user-name>Demo User</span>
-          <span class="ph-sidebar-mail" data-user-email>user@example.com</span>
-        </span>
+        <div class="ph-sidebar-usercopy">
+          <div class="ph-sidebar-name" data-user-name>Demo User</div>
+          <div class="ph-sidebar-mail" data-user-email>user@example.com</div>
+        </div>
       </div>
-      <span class="ph-sidebar-role" data-user-role data-sidebar-role-text>User</span>
+      <div class="ph-sidebar-controls">
+        <button type="button" class="ph-sidebar-toggle" data-sidebar-toggle aria-label="Toggle sidebar" aria-pressed="false">
+          <span data-sidebar-toggle-icon>⟨⟩</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="ph-sidebar-nav" aria-label="Primary">
+    <div class="ph-sidebar-section">
+      <div class="ph-sidebar-section-title">Workspace</div>
+      <a data-sidebar-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-sidebar-link" aria-label="Dashboard">
+        <span class="ph-sidebar-link-icon">🏠</span>
+        <span class="ph-sidebar-link-label">Dashboard</span>
+      </a>
+      <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-sidebar-link" aria-label="Files">
+        <span class="ph-sidebar-link-icon">📁</span>
+        <span class="ph-sidebar-link-label">Files</span>
+      </a>
+      <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/upload.html" class="ph-sidebar-link" aria-label="Upload">
+        <span class="ph-sidebar-link-icon">⬆️</span>
+        <span class="ph-sidebar-link-label">Upload</span>
+      </a>
     </div>
 
-    <button type="button" class="ph-sidebar-toggle" data-sidebar-toggle aria-label="Toggle compact sidebar" aria-pressed="false">
-      <span data-sidebar-toggle-icon>⟷</span>
-      <span class="ph-sidebar-footer-label" data-sidebar-toggle-label>Collapse</span>
-    </button>
-  </div>
+    <div class="ph-sidebar-section">
+      <div class="ph-sidebar-section-title">Review</div>
+      <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-sidebar-link" aria-label="Queue">
+        <span class="ph-sidebar-link-icon">🗂️</span>
+        <span class="ph-sidebar-link-label">Queue</span>
+      </a>
+      <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-details.html" class="ph-sidebar-link" aria-label="History">
+        <span class="ph-sidebar-link-icon">📜</span>
+        <span class="ph-sidebar-link-label">History</span>
+      </a>
+    </div>
 
-  <div class="ph-sidebar-group">
-    <p class="ph-sidebar-group-title">Workspace</p>
-    <a data-sidebar-link data-user-dashboard-link data-roles="user,officer,admin" data-app-href="pages/dashboard/user.html" class="ph-sidebar-link" aria-label="Dashboard"><span class="ph-sidebar-link-icon">▣</span><span class="ph-sidebar-link-label">Dashboard</span></a>
-    <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html" class="ph-sidebar-link" aria-label="My Files"><span class="ph-sidebar-link-icon">◫</span><span class="ph-sidebar-link-label">My Files</span></a>
-    <a data-sidebar-link data-roles="user,officer,admin" data-app-href="pages/file/upload.html" class="ph-sidebar-link" aria-label="Upload"><span class="ph-sidebar-link-icon">↥</span><span class="ph-sidebar-link-label">Upload</span></a>
-  </div>
+    <div class="ph-sidebar-section">
+      <div class="ph-sidebar-section-title">Account</div>
+      <a data-sidebar-link data-app-href="pages/account/profile.html" class="ph-sidebar-link" aria-label="Profile">
+        <span class="ph-sidebar-link-icon">👤</span>
+        <span class="ph-sidebar-link-label">Profile</span>
+      </a>
+      <a data-sidebar-link data-app-href="pages/account/settings.html" class="ph-sidebar-link" aria-label="Settings">
+        <span class="ph-sidebar-link-icon">⚙️</span>
+        <span class="ph-sidebar-link-label">Settings</span>
+      </a>
+      <a data-sidebar-link data-app-href="pages/payment/payment.html" class="ph-sidebar-link" aria-label="Billing">
+        <span class="ph-sidebar-link-icon">💳</span>
+        <span class="ph-sidebar-link-label">Billing</span>
+      </a>
+    </div>
 
-  <div class="ph-sidebar-group">
-    <p class="ph-sidebar-group-title">Review</p>
-    <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html" class="ph-sidebar-link" aria-label="Queue"><span class="ph-sidebar-link-icon">✓</span><span class="ph-sidebar-link-label">Queue</span></a>
-    <a data-sidebar-link data-roles="officer,admin" data-app-href="pages/review/review-details.html" class="ph-sidebar-link" aria-label="History"><span class="ph-sidebar-link-icon">☰</span><span class="ph-sidebar-link-label">History</span></a>
-  </div>
-
-  <div class="ph-sidebar-group">
-    <p class="ph-sidebar-group-title">Account</p>
-    <a data-sidebar-link data-app-href="pages/account/profile.html" class="ph-sidebar-link" aria-label="Profile"><span class="ph-sidebar-link-icon">◉</span><span class="ph-sidebar-link-label">Profile</span></a>
-    <a data-sidebar-link data-app-href="pages/account/settings.html" class="ph-sidebar-link" aria-label="Settings"><span class="ph-sidebar-link-icon">⚙</span><span class="ph-sidebar-link-label">Settings</span></a>
-    <a data-sidebar-link data-app-href="pages/payment/payment.html" class="ph-sidebar-link" aria-label="Billing"><span class="ph-sidebar-link-icon">◈</span><span class="ph-sidebar-link-label">Billing</span></a>
-  </div>
-
-  <div class="ph-sidebar-group">
-    <p class="ph-sidebar-group-title">Support</p>
-    <a data-sidebar-link data-app-href="pages/support/contact.html" class="ph-sidebar-link" aria-label="Contact"><span class="ph-sidebar-link-icon">✉</span><span class="ph-sidebar-link-label">Contact</span></a>
-  </div>
+    <div class="ph-sidebar-section">
+      <div class="ph-sidebar-section-title">Support</div>
+      <a data-sidebar-link data-app-href="pages/support/contact.html" class="ph-sidebar-link" aria-label="Contact">
+        <span class="ph-sidebar-link-icon">✉️</span>
+        <span class="ph-sidebar-link-label">Contact</span>
+      </a>
+    </div>
+  </nav>
 
   <div class="ph-sidebar-foot">
-    <button type="button" class="ph-sidebar-btn" data-theme-toggle aria-label="Toggle theme">
+    <button type="button" class="ph-sidebar-iconbtn" data-theme-toggle aria-label="Toggle theme">
       <span data-theme-icon>◐</span>
-      <span class="ph-sidebar-footer-label" data-theme-label>Toggle Theme</span>
     </button>
-    <button type="button" class="ph-sidebar-btn signout" data-sign-out aria-label="Sign out">
+    <button type="button" class="ph-sidebar-iconbtn signout" data-sign-out aria-label="Sign out">
       <span>↦</span>
-      <span class="ph-sidebar-footer-label">Sign Out</span>
     </button>
   </div>
 </aside>
