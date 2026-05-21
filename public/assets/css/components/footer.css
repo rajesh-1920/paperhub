@@ -2,13 +2,18 @@
   background: linear-gradient(160deg, #0f172a, #1e293b 58%, #0f766e);
   border-top: 1px solid rgba(148, 163, 184, 0.28);
   color: #cbd5e1;
+  margin-left: var(--paperhub-sidebar-offset, 0px);
   margin-top: 2rem;
+  transition: margin-left 200ms ease, width 200ms ease;
+  width: calc(100% - var(--paperhub-sidebar-offset, 0px));
 }
 
 .ph-footer-shell {
+  box-sizing: border-box;
   margin: 0 auto;
   max-width: 88rem;
   padding: 1.5rem 1rem 1.2rem;
+  width: 100%;
 }
 
 .ph-footer-grid {
@@ -120,4 +125,9 @@
     align-items: center;
     grid-template-columns: minmax(0, 1.3fr) auto;
   }
+}
+
+body.ph-sidebar-expanded .ph-footer,
+body.ph-sidebar-collapsed .ph-footer {
+  width: calc(100% - (var(--paperhub-sidebar-offset, 0px) + 0rem));
 }

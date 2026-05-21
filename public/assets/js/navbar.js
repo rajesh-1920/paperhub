@@ -48,7 +48,11 @@
       if (role === "admin") {
         roleBadge.classList.add("border-red-300", "bg-red-50", "text-red-700");
       } else if (role === "officer") {
-        roleBadge.classList.add("border-purple-300", "bg-purple-50", "text-purple-700");
+        roleBadge.classList.add(
+          "border-purple-300",
+          "bg-purple-50",
+          "text-purple-700",
+        );
       } else {
         roleBadge.classList.add("text-slate-600");
       }
@@ -90,11 +94,14 @@
   }
 
   function markActiveLink(navLinks) {
-    const normalizedCurrentPath = window.location.pathname.replace(/\/index\.html$/i, "/");
-    const homePath = new URL(resolveLink("index.html"), window.location.href).pathname.replace(
+    const normalizedCurrentPath = window.location.pathname.replace(
       /\/index\.html$/i,
       "/",
     );
+    const homePath = new URL(
+      resolveLink("index.html"),
+      window.location.href,
+    ).pathname.replace(/\/index\.html$/i, "/");
 
     navLinks.forEach((link) => {
       const href = link.getAttribute("href");
@@ -102,7 +109,10 @@
         return;
       }
 
-      const linkPath = new URL(href, window.location.href).pathname.replace(/\/index\.html$/i, "/");
+      const linkPath = new URL(href, window.location.href).pathname.replace(
+        /\/index\.html$/i,
+        "/",
+      );
       const isHome = linkPath === homePath;
 
       let isMatch = false;
@@ -123,7 +133,10 @@
   }
 
   function markActiveSidebarLink(sidebarLinks) {
-    const normalizedCurrentPath = window.location.pathname.replace(/\/index\.html$/i, "/");
+    const normalizedCurrentPath = window.location.pathname.replace(
+      /\/index\.html$/i,
+      "/",
+    );
 
     sidebarLinks.forEach((link) => {
       const href = link.getAttribute("href");
@@ -131,7 +144,10 @@
         return;
       }
 
-      const linkPath = new URL(href, window.location.href).pathname.replace(/\/index\.html$/i, "/");
+      const linkPath = new URL(href, window.location.href).pathname.replace(
+        /\/index\.html$/i,
+        "/",
+      );
       const isMatch = normalizedCurrentPath.startsWith(linkPath);
 
       link.removeAttribute("aria-current");
@@ -143,8 +159,6 @@
       }
     });
   }
-
-  
 
   function setupSignOut() {
     document.querySelectorAll("[data-sign-out]").forEach((button) => {
@@ -210,8 +224,12 @@
     const isExpanded = state === "expanded";
     const body = document.body;
     const sidebar = document.getElementById("paperhubSidebar");
-    const toggleButtons = Array.from(document.querySelectorAll("[data-sidebar-toggle]"));
-    const toggleLabels = document.querySelectorAll("[data-sidebar-toggle-label]");
+    const toggleButtons = Array.from(
+      document.querySelectorAll("[data-sidebar-toggle]"),
+    );
+    const toggleLabels = document.querySelectorAll(
+      "[data-sidebar-toggle-label]",
+    );
     const toggleIcons = document.querySelectorAll("[data-sidebar-toggle-icon]");
 
     body.classList.toggle("ph-sidebar-expanded", isExpanded);
@@ -224,7 +242,10 @@
 
     toggleButtons.forEach((button) => {
       button.setAttribute("aria-pressed", String(isExpanded));
-      button.setAttribute("aria-label", isExpanded ? "Collapse sidebar" : "Expand sidebar");
+      button.setAttribute(
+        "aria-label",
+        isExpanded ? "Collapse sidebar" : "Expand sidebar",
+      );
     });
 
     toggleLabels.forEach((element) => {
@@ -241,7 +262,9 @@
   }
 
   function setupSidebarToggle() {
-    const toggleButtons = Array.from(document.querySelectorAll("[data-sidebar-toggle]"));
+    const toggleButtons = Array.from(
+      document.querySelectorAll("[data-sidebar-toggle]"),
+    );
     if (toggleButtons.length === 0) {
       return;
     }
@@ -257,7 +280,9 @@
 
     toggleButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        const isExpanded = document.body.classList.contains("ph-sidebar-expanded");
+        const isExpanded = document.body.classList.contains(
+          "ph-sidebar-expanded",
+        );
         const nextState = isExpanded ? "collapsed" : "expanded";
 
         hasManualPreference = true;
@@ -365,7 +390,10 @@
 
       window.location.href = url;
     } catch (err) {
-      console.warn("Partial navigation failed, falling back to full reload", err);
+      console.warn(
+        "Partial navigation failed, falling back to full reload",
+        err,
+      );
       window.location.href = url;
     }
   }
@@ -379,7 +407,9 @@
     }
 
     const appLinks = Array.from(
-      document.querySelectorAll("[data-app-href], [data-nav-link], [data-sidebar-link]"),
+      document.querySelectorAll(
+        "[data-app-href], [data-nav-link], [data-sidebar-link]",
+      ),
     );
 
     appLinks.forEach((link) => {
@@ -398,7 +428,14 @@
       }
 
       const handler = (e) => {
-        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+        if (
+          e.defaultPrevented ||
+          e.button !== 0 ||
+          e.metaKey ||
+          e.ctrlKey ||
+          e.shiftKey ||
+          e.altKey
+        ) {
           return;
         }
         e.preventDefault();
@@ -428,7 +465,10 @@
         }
 
         let menuWidth = menu.offsetWidth || 220;
-        menuWidth = Math.min(menuWidth, window.innerWidth - viewportPadding * 2);
+        menuWidth = Math.min(
+          menuWidth,
+          window.innerWidth - viewportPadding * 2,
+        );
 
         const buttonCenter = buttonRect.left + buttonRect.width / 2;
         let left = Math.round(buttonCenter - menuWidth / 2);
@@ -480,7 +520,10 @@
       });
 
       document.addEventListener("click", (event) => {
-        if (!menuButton.contains(event.target) && !menu.contains(event.target)) {
+        if (
+          !menuButton.contains(event.target) &&
+          !menu.contains(event.target)
+        ) {
           closeMenu();
         }
       });
@@ -490,7 +533,9 @@
   function setupThemeToggle() {
     const themeToggle = document.getElementById("themeToggle");
     const mobileThemeToggle = document.getElementById("mobileThemeToggle");
-    const sharedThemeToggles = Array.from(document.querySelectorAll("[data-theme-toggle]"));
+    const sharedThemeToggles = Array.from(
+      document.querySelectorAll("[data-theme-toggle]"),
+    );
     const root = document.documentElement;
 
     const getStoredTheme = () => {
@@ -539,7 +584,8 @@
 
     const storedTheme = getStoredTheme();
     const prefersDark =
-      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
     const shouldUseDark = storedTheme ? storedTheme === "dark" : prefersDark;
 
     applyTheme(shouldUseDark, false);
@@ -579,7 +625,8 @@
       return;
     }
 
-    const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+    const user =
+      typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
     const role = normalizeRole(user?.role || "student");
     const navLinks = document.querySelectorAll("[data-nav-link]");
     const sidebarLinks = document.querySelectorAll("[data-sidebar-link]");
@@ -595,7 +642,10 @@
     try {
       const notifyBtn = document.getElementById("notifyBtn");
       const notifyCount = document.getElementById("notifyCount");
-      const unread = (user && Array.isArray(user.notifications)) ? user.notifications.filter(n => !n.read).length : (user && user.unreadNotifications) || 0;
+      const unread =
+        user && Array.isArray(user.notifications)
+          ? user.notifications.filter((n) => !n.read).length
+          : (user && user.unreadNotifications) || 0;
 
       if (notifyCount) {
         if (unread > 0) {
@@ -609,7 +659,9 @@
       if (notifyBtn) {
         notifyBtn.addEventListener("click", (e) => {
           e.preventDefault();
-          window.location.assign(resolveLink("pages/notifications/notifications.html"));
+          window.location.assign(
+            resolveLink("pages/notifications/notifications.html"),
+          );
         });
       }
     } catch (err) {

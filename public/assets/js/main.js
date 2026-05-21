@@ -50,6 +50,10 @@ async function initApp() {
     loadComponents(),
   ]);
 
+  if (document.getElementById("paperhubNavbar")) {
+    document.body.classList.add("paperhub-has-navbar");
+  }
+
   if (typeof enforcePageAccess === "function") {
     const canRender = enforcePageAccess();
     if (!canRender) {

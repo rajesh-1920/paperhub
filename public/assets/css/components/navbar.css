@@ -1,10 +1,17 @@
 .ph-nav {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 60;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+body.paperhub-has-navbar {
+  padding-top: 4.75rem;
 }
 
 .ph-nav-inner {
@@ -24,7 +31,7 @@
   gap: 0.6rem;
   align-items: center;
   text-decoration: none;
-  margin-left: 2rem;
+  margin-left: 0.1rem;
 }
 
 .ph-brand-mark {
@@ -71,7 +78,9 @@
   padding: 0.45rem 0.6rem;
   border-radius: 6px;
   font-weight: 600;
-  transition: color 150ms ease, background 150ms ease;
+  transition:
+    color 150ms ease,
+    background 150ms ease;
   display: inline-flex;
   align-items: center;
   height: 38px;
@@ -243,6 +252,10 @@
 }
 
 @media (max-width: 899px) {
+  body.paperhub-has-navbar {
+    padding-top: 4.1rem;
+  }
+
   .ph-nav-inner {
     padding: 0.6rem 0.8rem;
   }
