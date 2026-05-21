@@ -180,6 +180,41 @@
     });
   }
 
+  function setDropdownRoleState(role) {
+    const normalizedRole = normalizeRole(role);
+
+    document.querySelectorAll("[data-switch-role]").forEach((button) => {
+      const isActive = button.getAttribute("data-switch-role") === normalizedRole;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    document.querySelectorAll("[data-user-role]").forEach((element) => {
+      element.textContent = normalizedRole.toUpperCase();
+    });
+  }
+
+  function switchUserRole(role) {
+    const normalizedRole = normalizeRole(role);
+
+    if (typeof getDefaultUserForRole !== "function" || typeof setCurrentUserById !== "function") {
+      return;
+    }
+
+    const nextUser = getDefaultUserForRole(normalizedRole);
+    if (!nextUser) {
+      return;
+    }
+
+    setCurrentUserById(nextUser.id);
+    const nextDashboard =
+      typeof getDashboardRouteForRole === "function"
+        ? getDashboardRouteForRole(normalizedRole)
+        : resolveLink(`pages/dashboard/${normalizedRole}.html`);
+
+    window.location.href = nextDashboard;
+  }
+
   function applyDynamicMeta() {
     const currentYear = String(new Date().getFullYear());
     document.querySelectorAll("[data-current-year]").forEach((element) => {
@@ -461,7 +496,7 @@
         if (wasHidden) {
           menu.classList.remove("hidden");
           menu.style.visibility = "hidden";
-          menu.style.left = "-9999px";
+          menu.style.left = "0px";
         }
 
         let menuWidth = menu.offsetWidth || 220;
@@ -470,14 +505,14 @@
           window.innerWidth - viewportPadding * 2,
         );
 
-        const buttonCenter = buttonRect.left + buttonRect.width / 2;
-        let left = Math.round(buttonCenter - menuWidth / 2);
-
+        const idealLeft = Math.round(buttonRect.right - menuWidth);
         const maxLeft = window.innerWidth - menuWidth - viewportPadding;
-        left = Math.max(viewportPadding, Math.min(left, maxLeft));
+        const minLeft = viewportPadding;
+        const left = Math.max(minLeft, Math.min(idealLeft, maxLeft));
+        const top = Math.round(buttonRect.bottom + spacing);
 
         menu.style.position = "fixed";
-        menu.style.top = `${Math.round(buttonRect.bottom + spacing)}px`;
+        menu.style.top = `${top}px`;
         menu.style.left = `${left}px`;
         menu.style.right = "auto";
         menu.style.transformOrigin = "top center";
@@ -494,6 +529,42 @@
         menuButton.setAttribute("aria-expanded", "false");
       };
 
+      const currentRole =
+        typeof getCurrentUserData === "function" ? normalizeRole(getCurrentUserData()?.role || "user") : "user";
+
+      setDropdownRoleState(currentRole);
+
+      menu.querySelectorAll("[data-switch-role]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const nextRole = button.getAttribute("data-switch-role");
+          if (!nextRole) {
+            return;
+          }
+
+          closeMenu();
+          switchUserRole(nextRole);
+        });
+      });
+
+      menu.querySelectorAll("[data-app-href], [data-sign-out]").forEach((item) => {
+        item.addEventListener("click", () => {
+          closeMenu();
+        });
+      });
+
+      menu.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target && target.closest("[data-app-href], [data-sign-out], [data-switch-role]")) {
+          return;
+        }
+
+        if (target && target.closest(".ph-menu-link, .ph-menu-btn")) {
+          closeMenu();
+        }
+      });
+
       menuButton.addEventListener("click", (event) => {
         event.stopPropagation();
         const isOpen = !menu.classList.contains("hidden");
@@ -503,6 +574,11 @@
         } else {
           menu.classList.remove("hidden");
           menuButton.setAttribute("aria-expanded", "true");
+          setDropdownRoleState(
+            typeof getCurrentUserData === "function"
+              ? normalizeRole(getCurrentUserData()?.role || "user")
+              : "user",
+          );
           requestAnimationFrame(positionMenu);
         }
       });

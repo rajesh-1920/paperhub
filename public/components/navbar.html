@@ -45,17 +45,32 @@
   </div>
 
   <div id="userDropdown" class="ph-menu hidden" role="menu" aria-label="User menu">
-    <div class="ph-user-text ph-menu-user">
-      <div class="ph-user-name" data-user-name>Demo User</div>
-      <div class="ph-user-title" data-user-email>user@example.com</div>
+    <div class="ph-menu-header">
+      <div class="ph-menu-avatar" data-user-initials>DU</div>
+      <div class="ph-menu-meta">
+        <div class="ph-menu-name" data-user-name>Demo User</div>
+        <div class="ph-menu-email" data-user-email>user@example.com</div>
+        <div class="ph-menu-role" data-user-role>USER</div>
+      </div>
     </div>
 
-    <a data-app-href="pages/account/profile.html" class="ph-menu-link">Profile</a>
-    <a data-app-href="pages/account/settings.html" class="ph-menu-link">Settings</a>
-    <a data-user-dashboard-link data-app-href="pages/dashboard/user.html" class="ph-menu-link">Go To Dashboard</a>
+    <div class="ph-menu-section">
+      <div class="ph-menu-section-label">Switch role</div>
+      <div class="ph-role-switches" role="group" aria-label="Role toggles">
+        <button type="button" class="ph-role-switch" data-switch-role="user">User</button>
+        <button type="button" class="ph-role-switch" data-switch-role="officer">Officer</button>
+        <button type="button" class="ph-role-switch" data-switch-role="admin">Admin</button>
+      </div>
+    </div>
+
+    <div class="ph-menu-section">
+      <a data-app-href="pages/account/profile.html" class="ph-menu-link">Profile</a>
+      <a data-app-href="pages/account/settings.html" class="ph-menu-link">Settings</a>
+      <a data-user-dashboard-link data-app-href="pages/dashboard/user.html" class="ph-menu-link">Go To Dashboard</a>
+    </div>
 
     <div class="ph-menu-divider"></div>
-    <button type="button" class="ph-menu-btn" data-sign-out>Sign Out</button>
+    <button type="button" class="ph-menu-btn ph-menu-logout" data-sign-out>Sign Out</button>
   </div>
 
   <div id="mobileMenu" class="ph-mobile-menu hidden">

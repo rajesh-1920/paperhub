@@ -69,7 +69,7 @@ function resolveAppPath(path) {
 function showToast(message, type = "info", duration = 3000) {
   const container = getOrCreateToastContainer();
   const toastId = "toast-" + Date.now();
-  
+
   const toastClasses = {
     success: "bg-green-500",
     error: "bg-red-500",
@@ -719,6 +719,10 @@ function setCurrentUserById(userId) {
     localStorage.setItem(PAPERHUB_CURRENT_USER_STORAGE_KEY, nextUser.id);
   } catch (error) {
     console.warn("Unable to persist current user", error);
+  }
+
+  if (typeof setCurrentUser === "function") {
+    setCurrentUser(nextUser);
   }
 
   setStoredRole(nextUser.role);
