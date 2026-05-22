@@ -1,0 +1,78 @@
+.document-preview iframe {
+  border: 0;
+  border-radius: 1rem;
+  min-height: 28rem;
+}
+
+.comments-list {
+  margin-top: 0.5rem;
+}
+
+.comment-item,
+.version-item,
+.settings-item,
+.timeline-item {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.92));
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 1rem;
+  padding: 0.95rem 1rem;
+}
+
+.comment-header,
+.version-meta,
+.summary-row,
+.meta-line {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.version-divider {
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.1), rgba(14, 165, 233, 0.2), rgba(148, 163, 184, 0.1));
+  border-radius: 999px;
+  height: 1px;
+}
+
+.review-details-section,
+.settings-stack,
+.timeline-list,
+.comments-list,
+.version-item,
+.payment-meta-card,
+.invoice-summary {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.review-details-section+.review-details-section,
+.settings-stack+.settings-stack,
+.version-item+.version-item,
+#reviewDetailsContent>div+.review-details-section {
+  margin-top: 1rem;
+}
+
+.review-details-header,
+.version-header,
+.settings-item,
+.timeline-item,
+.payment-status,
+.invoice-item,
+.summary-row,
+.support-layout .card,
+.account-grid .card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.review-details-header h2,
+.version-title,
+.settings-item h3,
+.timeline-item h3,
+.support-layout h2,
+.account-grid h2,
+.payment-card h2,
+.upload-title {
+  color: #0f172a;
+}

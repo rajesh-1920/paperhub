@@ -37,6 +37,11 @@ async function initApp() {
     "assets/css/components/navbar.css",
     "assets/css/components/sidebar.css",
     "assets/css/components/footer.css",
+    "assets/css/components/breadcrumbs.css",
+    "assets/css/components/table.css",
+    "assets/css/components/file.css",
+    "assets/css/components/upload.css",
+    "assets/css/components/timeline.css",
   ]);
 
   await Promise.all([

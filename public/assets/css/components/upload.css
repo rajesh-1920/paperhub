@@ -1,0 +1,39 @@
+.upload-card {
+  margin-top: 1rem;
+}
+
+.upload-dropzone {
+  align-items: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border: 1px dashed rgba(14, 165, 233, 0.35);
+  border-radius: 1.3rem;
+  display: grid;
+  gap: 0.35rem;
+  justify-items: center;
+  min-height: 14rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.upload-dropzone-active {
+  background: rgba(240, 249, 255, 0.95);
+  border-color: rgba(14, 165, 233, 0.55);
+  box-shadow: 0 14px 30px rgba(14, 165, 233, 0.12);
+}
+
+.upload-icon,
+.upload-text {
+  color: #0284c7;
+}
+
+.upload-hint,
+.upload-checklist-item {
+  color: #64748b;
+}
+
+.upload-checklist,
+.support-list {
+  display: grid;
+  gap: 0.65rem;
+  padding-left: 1.1rem;
+}

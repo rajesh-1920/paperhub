@@ -112,53 +112,7 @@ body.account-page,
 body.review-queue-page,
 body.review-details-page,
 body.file-upload-page,
-body.file-details-page,
-body.version-history-page,
-body.payment-page {
-  background:
-    radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 30%),
-    radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent 28%),
-    linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
-  color: #0f172a;
-  min-height: 100vh;
-}
-
-body.support-page::before,
-body.account-page::before,
-body.review-queue-page::before,
-body.review-details-page::before,
-body.file-upload-page::before,
-body.file-details-page::before,
-body.version-history-page::before,
-body.payment-page::before {
-  content: "";
-  position: fixed;
-  inset: auto;
-  pointer-events: none;
-  z-index: 0;
-}
-
-body.support-page::before,
-body.account-page::before,
-body.review-queue-page::before,
-body.review-details-page::before,
-body.file-upload-page::before,
-body.file-details-page::before,
-body.version-history-page::before,
-body.payment-page::before {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.78), transparent 66%);
-  filter: blur(22px);
-  height: 22rem;
-  left: -7rem;
-  opacity: 0.8;
-  top: 7rem;
-  width: 22rem;
-}
-
-body.support-page::after,
-body.account-page::after,
-body.review-queue-page::after,
-body.review-details-page::after,
+/* Timeline, comments and versioning styles moved to components/timeline.css */
 body.file-upload-page::after,
 body.file-details-page::after,
 body.version-history-page::after,
@@ -218,41 +172,8 @@ body.payment-page main {
   padding: 1.75rem 1rem 0;
 }
 
-.page-header {
-  align-items: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92));
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 1.75rem;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-between;
-  margin-bottom: 1.2rem;
-  padding: 1.35rem 1.4rem;
-}
-
-.page-header h1 {
-  color: #0f172a;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  margin: 0.2rem 0 0;
-}
-
-.page-header .page-subtitle,
-.page-header p,
-.file-subtitle {
-  color: #64748b;
-  margin: 0.35rem 0 0;
-  max-width: 62ch;
-}
-
-.eyebrow {
-  color: #0284c7;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  margin: 0;
-  text-transform: uppercase;
+/* File list and version item styles moved to components/file.css and components/timeline.css */
+text-transform: uppercase;
 }
 
 .card,
@@ -338,63 +259,7 @@ body.payment-page main {
   margin-top: 1rem;
 }
 
-.table-container {
-  overflow: hidden;
-}
-
-.table-container .table-header {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: space-between;
-  margin-bottom: 0.9rem;
-}
-
-.table-container table {
-  border-collapse: separate;
-  border-spacing: 0;
-  width: 100%;
-}
-
-.table-container thead th,
-.soft-table thead th {
-  background: rgba(248, 250, 252, 0.96);
-  color: #475569;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.table-container tbody td,
-.soft-table tbody td {
-  color: #1e293b;
-}
-
-.table-container tbody tr:hover,
-.soft-table tbody tr:hover {
-  background: linear-gradient(135deg, rgba(224, 242, 254, 0.56), rgba(240, 253, 250, 0.46));
-}
-
-.filter-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin: 0.9rem 0 1rem;
-}
-
-.filter-btn,
-.btn,
-.topbar-chip,
-.action-link,
-.ph-menu-link,
-.ph-menu-btn,
-.ph-role-switch,
-.payment-button-group .btn,
-.form-actions .btn {
-  border-radius: 0.95rem;
-  transition: all 0.2s ease;
-}
+/* Table and list styles moved to components/table.css */
 
 .filter-btn,
 .btn-outline,
@@ -477,56 +342,6 @@ body.payment-page main {
   border-color: rgba(14, 165, 233, 0.45);
   box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.08);
   outline: none;
-}
-
-.upload-card {
-  margin-top: 1rem;
-}
-
-.upload-dropzone {
-  align-items: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
-  border: 1px dashed rgba(14, 165, 233, 0.35);
-  border-radius: 1.3rem;
-  display: grid;
-  gap: 0.35rem;
-  justify-items: center;
-  min-height: 14rem;
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.upload-dropzone-active {
-  background: rgba(240, 249, 255, 0.95);
-  border-color: rgba(14, 165, 233, 0.55);
-  box-shadow: 0 14px 30px rgba(14, 165, 233, 0.12);
-}
-
-.upload-icon,
-.upload-text {
-  color: #0284c7;
-}
-
-.upload-hint,
-.upload-checklist-item,
-.support-list li,
-.status-details,
-.meta-line,
-.timeline-item p,
-.version-meta,
-.version-changes,
-.comment-item p,
-.settings-item p,
-.review-details-section p,
-.file-subtitle {
-  color: #64748b;
-}
-
-.upload-checklist,
-.support-list {
-  display: grid;
-  gap: 0.65rem;
-  padding-left: 1.1rem;
 }
 
 .payment-grid {
@@ -842,55 +657,4 @@ body.payment-page main {
   }
 }
 
-/* Breadcrumbs and page meta */
-.ph-breadcrumbs {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  color: #64748b;
-  font-size: 0.9rem;
-}
-
-.ph-breadcrumbs a {
-  color: #64748b;
-  text-decoration: none;
-}
-
-.ph-breadcrumbs .sep {
-  color: #cbd5e1;
-}
-
-.page-meta-card {
-  min-width: 16rem;
-  max-width: 22rem;
-  padding: 1rem;
-  display: grid;
-  gap: 0.6rem;
-}
-
-.page-meta-card .meta-line {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  color: #64748b;
-}
-
-.page-layout-two-col {
-  display: grid;
-  grid-template-columns: 1fr 22rem;
-  gap: 1rem;
-}
-
-@media (max-width: 900px) {
-  .page-layout-two-col {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 2.2rem 1.25rem;
-  border-radius: 1rem;
-  color: #475569;
-}
+/* Breadcrumbs, page-meta and layout moved to components/breadcrumbs.css */
