@@ -376,25 +376,86 @@
       const targetMain = document.querySelector("main");
 
       if (newMain && targetMain) {
+        // Ensure page-specific styles from fetched document are loaded into the main document.
+        try {
+          const headLinks = Array.from(doc.querySelectorAll('link[rel="stylesheet"]'));
+          headLinks.forEach((link) => {
+            const href = link.getAttribute("href") || link.href || "";
+            if (!href) return;
+            const absHref = new URL(href, url).href;
+            const already = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some(
+              (existing) => existing.href === absHref,
+            );
+            if (!already) {
+              const linkEl = document.createElement("link");
+              linkEl.rel = "stylesheet";
+              linkEl.href = absHref;
+              document.head.appendChild(linkEl);
+            }
+          });
+
+          // Copy inline <style> blocks if present and not already included.
+          const styleEls = Array.from(doc.querySelectorAll("style"));
+          styleEls.forEach((s) => {
+            const txt = s.textContent && s.textContent.trim();
+            if (!txt) return;
+            const exists = Array.from(document.querySelectorAll("style")).some(
+              (existing) => existing.textContent && existing.textContent.trim() === txt,
+            );
+            if (!exists) {
+              const styleNode = document.createElement("style");
+              styleNode.textContent = txt;
+              document.head.appendChild(styleNode);
+            }
+          });
+        } catch (err) {
+          console.warn("Failed to import styles from fetched page", err);
+        }
+
+        // Merge body classes: preserve app-level classes (paperhub, ph- prefixes, dark)
+        try {
+          const preserve = Array.from(document.body.classList).filter((c) =>
+            c && (c.startsWith("paperhub") || c.startsWith("ph-") || c === "dark" || c === "light"),
+          );
+          const incoming = Array.from(doc.body.classList || []);
+          const merged = Array.from(new Set([...preserve, ...incoming]));
+          document.body.className = merged.join(" ");
+        } catch (err) {
+          console.warn("Failed to merge body classes from fetched page", err);
+        }
+
         targetMain.innerHTML = newMain.innerHTML;
 
         if (doc.title) {
           document.title = doc.title;
         }
 
+        // Inject scripts from fetched page after styles and body classes applied.
         const scripts = Array.from(doc.querySelectorAll("script"));
+        const scriptPromises = [];
+
         scripts.forEach((s) => {
           try {
             if (s.src) {
-              const absSrc = s.src;
+              const hrefAttr = s.getAttribute("src") || s.src;
+              const absSrc = new URL(hrefAttr, url).href;
               const already = Array.from(document.scripts).some(
                 (existing) => existing.src === absSrc,
               );
               if (!already) {
-                const scriptEl = document.createElement("script");
-                scriptEl.src = absSrc;
-                scriptEl.async = false;
-                document.body.appendChild(scriptEl);
+                scriptPromises.push(
+                  new Promise((resolve) => {
+                    const scriptEl = document.createElement("script");
+                    scriptEl.src = absSrc;
+                    scriptEl.async = false;
+                    scriptEl.onload = () => resolve();
+                    scriptEl.onerror = () => {
+                      console.warn("Failed to inject script from fetched page", absSrc);
+                      resolve();
+                    };
+                    document.body.appendChild(scriptEl);
+                  }),
+                );
               }
             } else if (s.textContent && s.textContent.trim()) {
               const inline = document.createElement("script");
@@ -405,6 +466,40 @@
             console.warn("Failed to inject script from fetched page", err);
           }
         });
+
+        if (scriptPromises.length > 0) {
+          await Promise.all(scriptPromises);
+        }
+
+        const runPageInitializer = () => {
+          const body = document.body;
+
+          if (body.classList.contains("support-page") && typeof initPageSpecificForms === "function") {
+            initPageSpecificForms();
+          }
+
+          if (body.classList.contains("review-queue-page") && typeof initReviewQueuePage === "function") {
+            initReviewQueuePage();
+          }
+
+          if (body.classList.contains("review-details-page") && typeof initReviewDetailsPage === "function") {
+            initReviewDetailsPage();
+          }
+
+          if (body.classList.contains("file-upload-page") && typeof initFileUploadPage === "function") {
+            initFileUploadPage();
+          }
+
+          if (body.classList.contains("file-details-page") && typeof initFileDetailsPage === "function") {
+            initFileDetailsPage();
+          }
+
+          if (body.classList.contains("version-history-page") && typeof initVersionHistoryPage === "function") {
+            initVersionHistoryPage();
+          }
+        };
+
+        runPageInitializer();
 
         const navLinks = document.querySelectorAll("[data-nav-link]");
         const sidebarLinks = document.querySelectorAll("[data-sidebar-link]");

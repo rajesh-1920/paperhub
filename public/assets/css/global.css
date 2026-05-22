@@ -112,7 +112,43 @@ body.account-page,
 body.review-queue-page,
 body.review-details-page,
 body.file-upload-page,
-/* Timeline, comments and versioning styles moved to components/timeline.css */
+body.file-details-page,
+body.version-history-page,
+body.payment-page {
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 30%),
+    radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent 28%),
+    linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+  color: #0f172a;
+  min-height: 100vh;
+}
+
+body.support-page::before,
+body.account-page::before,
+body.review-queue-page::before,
+body.review-details-page::before,
+body.file-upload-page::before,
+body.file-details-page::before,
+body.version-history-page::before,
+body.payment-page::before {
+  content: "";
+  position: fixed;
+  inset: auto;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.78), transparent 66%);
+  filter: blur(22px);
+  height: 22rem;
+  left: -7rem;
+  opacity: 0.8;
+  top: 7rem;
+  width: 22rem;
+}
+
+body.support-page::after,
+body.account-page::after,
+body.review-queue-page::after,
+body.review-details-page::after,
 body.file-upload-page::after,
 body.file-details-page::after,
 body.version-history-page::after,
@@ -170,10 +206,6 @@ body.payment-page main {
   max-width: 92rem;
   margin: 0 auto;
   padding: 1.75rem 1rem 0;
-}
-
-/* File list and version item styles moved to components/file.css and components/timeline.css */
-text-transform: uppercase;
 }
 
 .card,
