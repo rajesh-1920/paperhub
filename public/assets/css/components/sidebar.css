@@ -42,6 +42,7 @@ body.ph-sidebar-collapsed main {
   align-items: center;
   justify-content: space-between;
   padding-bottom: 0.5rem;
+  position: relative;
 }
 
 .ph-sidebar-profile-inner {
@@ -79,13 +80,37 @@ body.ph-sidebar-collapsed main {
 
 .ph-sidebar-controls {
   margin-left: auto;
+  position: absolute;
+  right: -0.5rem;
+  top: -0.5rem;
+  z-index: 2;
 }
 
 .ph-sidebar-toggle {
-  background: transparent;
-  border: 0;
+  align-items: center;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  display: inline-flex;
   cursor: pointer;
   color: #64748b;
+  height: 2.25rem;
+  justify-content: center;
+  width: 2.25rem;
+  border-radius: 999px;
+  transition: transform 150ms ease, box-shadow 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.ph-sidebar-toggle:hover {
+  color: #0f172a;
+  border-color: rgba(3, 105, 161, 0.2);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
+}
+
+.ph-sidebar-toggle:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
 }
 
 body:not(.ph-sidebar-collapsed) .ph-sidebar-profile {
@@ -97,10 +122,13 @@ body:not(.ph-sidebar-collapsed) .ph-sidebar-profile {
 
 body.ph-sidebar-collapsed .ph-sidebar-profile {
   display: block;
+  padding-right: 2.75rem;
 }
 
 body.ph-sidebar-collapsed .ph-sidebar-controls {
   margin-left: 0;
+  right: -0.5rem;
+  top: -0.5rem;
 }
 
 .ph-sidebar-nav {
@@ -183,6 +211,11 @@ body.ph-sidebar-collapsed .ph-sidebar-section-title {
 
   .ph-sidebar {
     transform: translateX(-100%);
+  }
+
+  .ph-sidebar-controls {
+    right: 0.3rem;
+    top: 0.3rem;
   }
 
   body.ph-sidebar-open .ph-sidebar {
