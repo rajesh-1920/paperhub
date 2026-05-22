@@ -1,60 +1,98 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Upload Document - PaperHub</title>
-    <script src="../../assets/js/tailwind-setup.js"></script>
-    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
-    <link rel="stylesheet" href="../../assets/css/global.css" />
-  </head>
-  <body class="file-upload-page">
-    <div id="navbar-container"></div>
-    <div id="sidebar-container"></div>
 
-    <main>
-      <div class="page-content">
-        <div class="page-header">
-          <div>
-            <p class="eyebrow">File Intake</p>
-            <h1>Upload Document</h1>
-            <p class="page-subtitle">Drop one or more files and track status instantly.</p>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Document - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+</head>
+
+<body class="file-upload-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content">
+      <nav class="ph-breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">/</span>
+        <a href="/pages/file/file-details.html">Files</a>
+        <span class="sep">/</span>
+        <span>Upload</span>
+      </nav>
+
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">File Intake</p>
+          <h1>Upload Document</h1>
+          <p class="page-subtitle">Drop one or more files and track status instantly.</p>
         </div>
-
-        <section class="upload-card">
-          <h2 class="upload-title text-xl font-semibold">Select or drag files to upload</h2>
-          <div class="upload-dropzone">
-            <div class="upload-icon text-4xl">Upload</div>
-            <input type="file" id="fileInput" class="hidden-input" multiple />
-            <div class="upload-text text-lg font-semibold">Drag and drop files here</div>
-            <div class="upload-hint">or click to browse from your computer</div>
-            <div class="upload-hint upload-hint-meta">Supported formats: PDF, DOCX, XLSX, PNG, JPG. Max 50MB each.</div>
-          </div>
-          <div class="file-preview-list"></div>
-          <button type="button" id="uploadBtn" class="btn btn-primary hidden mt-3"><span class="spinner"></span> Upload Files</button>
-        </section>
-
-        <section class="upload-card">
-          <h3 class="text-lg font-semibold">Before uploading</h3>
-          <ul class="upload-checklist">
-            <li class="upload-checklist-item">Ensure files are final and in approved format.</li>
-            <li class="upload-checklist-item">Use descriptive naming for faster team review.</li>
-            <li class="upload-checklist-item">Sensitive files are encrypted automatically at upload.</li>
-            <li>Large files may take longer depending on network speed.</li>
-          </ul>
-        </section>
-
-        <div class="alert alert-info">
-          <strong>Security Notice:</strong> All uploaded documents are encrypted in transit and at rest with policy-based access controls.
+        <div>
+          <a href="/pages/file/file-details.html" class="btn btn-outline">Back to Files</a>
         </div>
       </div>
-    </main>
 
-    <div id="footer-container"></div>
+      <div class="page-layout-two-col">
+        <div>
+          <section class="upload-card">
+            <h2 class="upload-title text-xl font-semibold">Select or drag files to upload</h2>
+            <div class="upload-dropzone" id="uploadDropzone">
+              <div class="upload-icon text-4xl">📁</div>
+              <input type="file" id="fileInput" class="hidden-input" multiple />
+              <div class="upload-text text-lg font-semibold">Drag and drop files here</div>
+              <div class="upload-hint">or click to browse from your computer</div>
+              <div class="upload-hint upload-hint-meta">Supported formats: PDF, DOCX, XLSX, PNG, JPG. Max 50MB each.
+              </div>
+            </div>
+            <div class="file-preview-list" id="filePreviewList"></div>
+            <div class="form-actions" style="margin-top:1rem;">
+              <button type="button" id="uploadBtn" class="btn btn-primary">Upload Files</button>
+              <button type="button" id="clearQueue" class="btn btn-outline">Clear</button>
+            </div>
+          </section>
 
-    <script src="../../assets/js/utils.js"></script>
-    <script src="../../assets/js/main.js"></script>
-    <script src="../../assets/js/file.js"></script>
-  </body>
+          <section class="upload-card" style="margin-top:1rem;">
+            <h3 class="text-lg font-semibold">Before uploading</h3>
+            <ul class="upload-checklist">
+              <li class="upload-checklist-item">Ensure files are final and in approved format.</li>
+              <li class="upload-checklist-item">Use descriptive naming for faster team review.</li>
+              <li class="upload-checklist-item">Sensitive files are encrypted automatically at upload.</li>
+              <li>Large files may take longer depending on network speed.</li>
+            </ul>
+          </section>
+        </div>
+
+        <aside>
+          <div class="page-meta-card card">
+            <h4 style="margin:0 0 0.25rem;">Upload Summary</h4>
+            <div class="meta-line"><span>Files queued</span><strong id="metaQueued">0</strong></div>
+            <div class="meta-line"><span>Total size</span><span id="metaTotalSize">0 MB</span></div>
+            <div style="margin-top:0.6rem;"><button id="metaStartAll" class="btn btn-primary">Start All</button></div>
+          </div>
+          <div class="card" style="margin-top:1rem;">
+            <h4 style="margin:0 0 0.5rem;">Best Practices</h4>
+            <ul style="color:#64748b;margin:0;padding-left:1rem;">
+              <li>Compress images to reduce upload time.</li>
+              <li>Split very large datasets into multiple files.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+      <div class="alert alert-info" style="margin-top:1rem;">
+        <strong>Security Notice:</strong> All uploaded documents are encrypted in transit and at rest with policy-based
+        access controls.
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/file.js"></script>
+</body>
+
 </html>

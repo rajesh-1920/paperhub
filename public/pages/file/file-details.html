@@ -1,58 +1,102 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Files - PaperHub</title>
-    <script src="../../assets/js/tailwind-setup.js"></script>
-    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
-    <link rel="stylesheet" href="../../assets/css/global.css" />
-  </head>
-  <body class="file-details-page">
-    <div id="navbar-container"></div>
-    <div id="sidebar-container"></div>
 
-    <main>
-      <div class="page-content">
-        <div class="page-header">
-          <div>
-            <p class="eyebrow">Repository</p>
-            <h1>My Files</h1>
-          </div>
-          <a href="/pages/file/upload.html" class="btn btn-primary">Upload New</a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Files - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+</head>
+
+<body class="file-details-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content">
+      <nav class="ph-breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">/</span>
+        <a href="/pages/file/file-details.html">Files</a>
+      </nav>
+
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">Repository</p>
+          <h1>My Files</h1>
+          <p class="file-subtitle">Manage your documents, view versions and track review status.</p>
         </div>
-
-        <div class="table-container">
-          <div class="table-header">
-            <input type="text" placeholder="Search documents..." class="file-search-input" />
-            <select class="file-status-filter">
-              <option value="">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="reviewing">Reviewing</option>
-              <option value="pending">Pending</option>
-            </select>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Document Name</th>
-                <th>Size</th>
-                <th>Status</th>
-                <th>Uploaded</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="fileTableBody"></tbody>
-          </table>
+        <div style="display:flex;gap:0.6rem;align-items:center;">
+          <a href="/pages/file/upload.html" class="btn btn-primary">Upload New</a>
+          <a href="#" class="btn btn-outline">Import CSV</a>
         </div>
       </div>
-    </main>
 
-    <div id="footer-container"></div>
+      <div class="page-layout-two-col">
+        <div>
+          <div class="table-container">
+            <div class="table-header">
+              <input type="text" placeholder="Search documents..." class="file-search-input" />
+              <select class="file-status-filter">
+                <option value="">All Status</option>
+                <option value="completed">Completed</option>
+                <option value="reviewing">Reviewing</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
 
-    <script src="../../assets/js/utils.js"></script>
-    <script src="../../assets/js/main.js"></script>
-    <script src="../../assets/js/file.js"></script>
-  </body>
+            <table>
+              <thead>
+                <tr>
+                  <th>Document Name</th>
+                  <th>Size</th>
+                  <th>Status</th>
+                  <th>Uploaded</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fileTableBody">
+                <!-- Rows populated by file.js -->
+              </tbody>
+            </table>
+
+            <div id="filesEmptyState" class="card empty-state" style="display:none; margin-top:1rem;">
+              <h3>No documents yet</h3>
+              <p class="file-subtitle">Upload your first document to start versioning and review workflows.</p>
+              <div style="margin-top:1rem;"><a href="/pages/file/upload.html" class="btn btn-primary">Upload a
+                  Document</a></div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="page-meta-card card">
+            <h4 style="margin:0 0 0.25rem;">Quick Actions</h4>
+            <div class="meta-line"><span>Selected</span><strong id="metaSelected">—</strong></div>
+            <div class="meta-line"><span>Owner</span><span id="metaOwner">—</span></div>
+            <div class="meta-line"><span>Last updated</span><span id="metaUpdated">—</span></div>
+            <div style="margin-top:0.6rem;"><button id="metaPreviewBtn" class="btn btn-outline">Preview</button></div>
+            <div style="margin-top:0.6rem;"><button id="metaDownloadBtn" class="btn btn-primary">Download</button></div>
+          </div>
+          <div class="card" style="margin-top:1rem;">
+            <h4 style="margin:0 0 0.5rem;">Tips</h4>
+            <ul style="color:#64748b;margin:0;padding-left:1rem;">
+              <li>Use meaningful file names for easier search.</li>
+              <li>Keep sensitive documents in encrypted folders.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/file.js"></script>
+</body>
+
 </html>

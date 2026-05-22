@@ -1,34 +1,74 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Version History - PaperHub</title>
-    <script src="../../assets/js/tailwind-setup.js"></script>
-    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
-    <link rel="stylesheet" href="../../assets/css/global.css" />
-  </head>
-  <body class="version-history-page">
-    <div id="navbar-container"></div>
-    <div id="sidebar-container"></div>
 
-    <main>
-      <div class="page-content">
-        <div class="page-header">
-          <div>
-            <h1>Version History</h1>
-            <p class="file-subtitle">Q4 Financial Report.pdf</p>
-          </div>
-          <a href="/pages/file/file-details.html" class="btn btn-outline">Back to Files</a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version History - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+</head>
+
+<body class="version-history-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content">
+      <nav class="ph-breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">/</span>
+        <a href="/pages/file/file-details.html">Files</a>
+        <span class="sep">/</span>
+        <span>Version History</span>
+      </nav>
+
+      <div class="page-header">
+        <div>
+          <h1>Version History</h1>
+          <p class="file-subtitle">Q4 Financial Report.pdf</p>
         </div>
-        <div id="versionHistoryContainer"></div>
+        <a href="/pages/file/file-details.html" class="btn btn-outline">Back to Files</a>
       </div>
-    </main>
 
-    <div id="footer-container"></div>
+      <div class="page-layout-two-col">
+        <div>
+          <div id="versionHistoryContainer" class="timeline-list card">
+            <!-- Version items injected by file.js -->
+            <div class="version-item">
+              <div class="version-header">
+                <div>
+                  <div class="version-title">v1.2 — Minor corrections</div>
+                  <div class="version-meta">Uploaded by Jane Doe • <span class="version-date">2026-05-20</span></div>
+                </div>
+                <div class="version-actions">
+                  <button class="btn btn-outline">View</button>
+                  <button class="btn btn-primary">Restore</button>
+                </div>
+              </div>
+              <div class="version-changes">Updated table of contents and fixed formatting.</div>
+            </div>
+          </div>
+        </div>
 
-    <script src="../../assets/js/utils.js"></script>
-    <script src="../../assets/js/main.js"></script>
-    <script src="../../assets/js/file.js"></script>
-  </body>
+        <aside>
+          <div class="page-meta-card card">
+            <h4 style="margin:0 0 0.25rem;">File</h4>
+            <div class="meta-line"><span>Name</span><strong>Q4 Financial Report.pdf</strong></div>
+            <div class="meta-line"><span>Current version</span><span>v1.2</span></div>
+            <div style="margin-top:0.6rem;"><button class="btn btn-primary">Download Current</button></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/file.js"></script>
+</body>
+
 </html>
