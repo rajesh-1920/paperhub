@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/notifications.css" />
+</head>
+
+<body class="notifications-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">Inbox</p>
+          <h1>Notifications</h1>
+          <p class="page-subtitle">Monitor review updates, billing notices, and platform alerts in one place.</p>
+        </div>
+        <div class="notifications-toolbar">
+          <button id="markAllReadBtn" type="button" class="btn btn-outline">Mark all read</button>
+          <a href="/pages/dashboard/user.html" class="btn btn-primary">Open Dashboard</a>
+        </div>
+      </div>
+
+      <div class="page-layout-two-col notifications-layout">
+        <section class="card">
+          <div class="notifications-toolbar">
+            <div>
+              <h2 class="text-xl font-semibold">Activity stream</h2>
+              <p class="notification-summary">You have <strong id="notificationUnreadCount">0</strong> unread of <strong
+                  id="notificationTotalCount">0</strong> notifications.</p>
+            </div>
+            <input id="notificationSearch" type="search" class="review-search-input"
+              placeholder="Search notifications..." />
+          </div>
+
+          <div class="notification-filters mt-4">
+            <button class="btn btn-outline btn-sm notification-filter is-active"
+              data-notification-filter="all">All</button>
+            <button class="btn btn-outline btn-sm notification-filter" data-notification-filter="unread">Unread</button>
+            <button class="btn btn-outline btn-sm notification-filter" data-notification-filter="review">Review</button>
+            <button class="btn btn-outline btn-sm notification-filter"
+              data-notification-filter="billing">Billing</button>
+            <button class="btn btn-outline btn-sm notification-filter" data-notification-filter="system">System</button>
+            <button class="btn btn-outline btn-sm notification-filter"
+              data-notification-filter="security">Security</button>
+          </div>
+
+          <div id="notificationList" class="timeline-list mt-4"></div>
+        </section>
+
+        <aside class="notifications-sidebar">
+          <section class="card">
+            <h2>Summary</h2>
+            <div class="settings-stack mt-3">
+              <div class="settings-item">
+                <div>
+                  <h3>Unread</h3>
+                  <p>Important items needing attention.</p>
+                </div>
+                <strong id="notificationUnreadBadge">0</strong>
+              </div>
+              <div class="settings-item">
+                <div>
+                  <h3>Total</h3>
+                  <p>All recent activity for this account.</p>
+                </div>
+                <strong id="notificationTotalBadge">0</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>What this page covers</h2>
+            <ul class="support-list mt-3">
+              <li>Review queue changes</li>
+              <li>Billing and payment notices</li>
+              <li>Security and system alerts</li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/notifications.js"></script>
+</body>
+
+</html>

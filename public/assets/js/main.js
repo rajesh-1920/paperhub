@@ -42,6 +42,11 @@ async function initApp() {
     "assets/css/components/file.css",
     "assets/css/components/upload.css",
     "assets/css/components/timeline.css",
+    "assets/css/components/notifications.css",
+    "assets/css/components/review.css",
+    "assets/css/components/support.css",
+    "assets/css/components/account.css",
+    "assets/css/components/payment.css",
   ]);
 
   await Promise.all([

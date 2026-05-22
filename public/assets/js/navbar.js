@@ -497,6 +497,10 @@
           if (body.classList.contains("version-history-page") && typeof initVersionHistoryPage === "function") {
             initVersionHistoryPage();
           }
+
+          if (body.classList.contains("notifications-page") && typeof initNotificationsPage === "function") {
+            initNotificationsPage();
+          }
         };
 
         runPageInitializer();

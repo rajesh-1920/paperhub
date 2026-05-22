@@ -1,38 +1,42 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Review Details - PaperHub</title>
-    <script src="../../assets/js/tailwind-setup.js"></script>
-    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
-    <link rel="stylesheet" href="../../assets/css/global.css" />
-  </head>
-  <body class="review-details-page">
-    <div id="navbar-container"></div>
-    <div id="sidebar-container"></div>
 
-    <main>
-      <div class="page-content">
-        <div class="page-header">
-          <h1>Document Review</h1>
-          <a href="/pages/review/review-queue.html" class="btn btn-outline">Back to Queue</a>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Review Details - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/review.css" />
+</head>
 
-        <div id="reviewDetailsContent"></div>
+<body class="review-details-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
 
-        <div class="review-detailscard action-buttons">
-          <button id="approveBtn" class="btn btn-success">Approve</button>
-          <button id="rejectBtn" class="btn btn-danger">Reject</button>
-          <button id="forwardBtn" class="btn btn-primary">Forward</button>
-        </div>
+  <main>
+    <div class="page-content">
+      <div class="page-header">
+        <h1>Document Review</h1>
+        <a href="/pages/review/review-queue.html" class="btn btn-outline">Back to Queue</a>
       </div>
-    </main>
 
-    <div id="footer-container"></div>
+      <div id="reviewDetailsContent"></div>
 
-    <script src="../../assets/js/utils.js"></script>
-    <script src="../../assets/js/main.js"></script>
-    <script src="../../assets/js/review.js"></script>
-  </body>
+      <div class="review-detailscard action-buttons">
+        <button id="approveBtn" class="btn btn-success">Approve</button>
+        <button id="rejectBtn" class="btn btn-danger">Reject</button>
+        <button id="forwardBtn" class="btn btn-primary">Forward</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/review.js"></script>
+</body>
+
 </html>

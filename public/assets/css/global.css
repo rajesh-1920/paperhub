@@ -114,6 +114,7 @@ body.review-details-page,
 body.file-upload-page,
 body.file-details-page,
 body.version-history-page,
+body.notifications-page,
 body.payment-page {
   background:
     radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 30%),
@@ -130,6 +131,7 @@ body.review-details-page::before,
 body.file-upload-page::before,
 body.file-details-page::before,
 body.version-history-page::before,
+body.notifications-page::before,
 body.payment-page::before {
   content: "";
   position: fixed;
@@ -152,6 +154,7 @@ body.review-details-page::after,
 body.file-upload-page::after,
 body.file-details-page::after,
 body.version-history-page::after,
+body.notifications-page::after,
 body.payment-page::after {
   content: "";
   position: fixed;
@@ -174,6 +177,7 @@ body.review-details-page>main,
 body.file-upload-page>main,
 body.file-details-page>main,
 body.version-history-page>main,
+body.notifications-page>main,
 body.payment-page>main,
 body.support-page>#footer-container,
 body.account-page>#footer-container,
@@ -182,6 +186,7 @@ body.review-details-page>#footer-container,
 body.file-upload-page>#footer-container,
 body.file-details-page>#footer-container,
 body.version-history-page>#footer-container,
+body.notifications-page>#footer-container,
 body.payment-page>#footer-container {
   position: relative;
   z-index: 1;
@@ -194,104 +199,27 @@ body.review-details-page main,
 body.file-upload-page main,
 body.file-details-page main,
 body.version-history-page main,
+body.notifications-page main,
 body.payment-page main {
   padding-bottom: 3rem;
 }
 
-.page-content,
-.support-layout,
-.account-shell,
-.page-content.support-layout,
-.payment-grid {
+.page-content {
   max-width: 92rem;
   margin: 0 auto;
   padding: 1.75rem 1rem 0;
 }
 
-.card,
-.upload-card,
-.payment-card,
-.table-container,
-.review-detailscard,
-.settings-item,
-.timeline-item,
-.version-item,
-.support-sidebar .card,
-.support-layout .card,
-.account-grid .card,
-.review-details-section,
-.review-details-header,
-.payment-meta-card,
-.invoice-summary,
-.payment-disabled-section,
-.support-hero,
-#reviewDetailsContent>div {
+.card {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.93));
   border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 1.45rem;
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
 }
 
-.card,
-.upload-card,
-.payment-card,
-.table-container,
-.review-detailscard,
-.review-details-section,
-.payment-meta-card,
-.invoice-summary,
-.payment-disabled-section,
-.support-hero,
-.support-layout .card,
-.account-grid .card,
-#reviewDetailsContent>div {
+.card {
   padding: 1.25rem;
 }
-
-.support-hero {
-  margin: 1.2rem auto 1rem;
-  max-width: 92rem;
-  overflow: hidden;
-  position: relative;
-}
-
-.support-hero::after {
-  background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.12), transparent 35%);
-  content: "";
-  inset: 0;
-  position: absolute;
-  pointer-events: none;
-}
-
-.support-hero-content h1 {
-  font-size: clamp(2rem, 4vw, 2.7rem);
-}
-
-.support-layout,
-.account-grid,
-.payment-grid {
-  display: grid;
-  gap: 1rem;
-}
-
-.support-layout {
-  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.85fr);
-}
-
-.account-grid,
-.payment-grid {
-  grid-template-columns: 1fr;
-}
-
-.page-content>.table-container,
-.page-content>.payment-card,
-.page-content>.upload-card,
-.page-content>.review-detailscard,
-.page-content>.card {
-  margin-top: 1rem;
-}
-
-/* Table and list styles moved to components/table.css */
 
 .filter-btn,
 .btn-outline,
@@ -352,10 +280,7 @@ body.payment-page main {
 
 .form-group input,
 .form-group select,
-.form-group textarea,
-.review-search-input,
-.file-search-input,
-.file-status-filter {
+.form-group textarea {
   background: linear-gradient(135deg, #ffffff, #f8fafc);
   border: 1px solid rgba(148, 163, 184, 0.26);
   border-radius: 0.95rem;
@@ -367,326 +292,10 @@ body.payment-page main {
 
 .form-group input:focus,
 .form-group select:focus,
-.form-group textarea:focus,
-.review-search-input:focus,
-.file-search-input:focus,
-.file-status-filter:focus {
+.form-group textarea:focus {
   border-color: rgba(14, 165, 233, 0.45);
   box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.08);
   outline: none;
 }
 
-.payment-grid {
-  gap: 1rem;
-}
-
-.payment-status,
-.payment-meta-card,
-.invoice-summary {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.payment-status strong,
-.summary-row strong,
-.summary-row span,
-.invoice-item,
-.meta-line strong {
-  color: #0f172a;
-}
-
-.review-details-header,
-.version-header,
-.hero-panel,
-.dashboard-topbar {
-  align-items: start;
-}
-
-.review-details-header,
-.version-header,
-.settings-item,
-.timeline-item,
-.payment-status,
-.invoice-item,
-.summary-row,
-.support-layout .card,
-.account-grid .card {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.review-details-header h2,
-.version-title,
-.settings-item h3,
-.timeline-item h3,
-.support-layout h2,
-.account-grid h2,
-.payment-card h2,
-.upload-title {
-  color: #0f172a;
-}
-
-.review-details-section,
-.settings-stack,
-.timeline-list,
-.comments-list,
-.version-item,
-.payment-meta-card,
-.invoice-summary {
-  display: grid;
-  gap: 0.9rem;
-}
-
-.review-details-section+.review-details-section,
-.settings-stack+.settings-stack,
-.version-item+.version-item,
-#reviewDetailsContent>div+.review-details-section {
-  margin-top: 1rem;
-}
-
-.document-preview iframe {
-  border: 0;
-  border-radius: 1rem;
-  min-height: 28rem;
-}
-
-.comments-list {
-  margin-top: 0.5rem;
-}
-
-.comment-item,
-.version-item,
-.settings-item,
-.timeline-item {
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.92));
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 1rem;
-  padding: 0.95rem 1rem;
-}
-
-.comment-header,
-.version-meta,
-.summary-row,
-.meta-line {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.comment-date,
-.version-author,
-.version-date {
-  color: #94a3b8;
-  font-size: 0.82rem;
-}
-
-.comment-form {
-  display: grid;
-  gap: 0.75rem;
-  margin-top: 0.9rem;
-}
-
-.action-buttons,
-.payment-button-group,
-.form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.action-buttons {
-  margin-top: 1rem;
-}
-
-.profile-hero,
-.profile-metadata {
-  display: grid;
-  gap: 0.9rem;
-}
-
-.profile-hero {
-  align-items: center;
-  grid-template-columns: auto 1fr;
-}
-
-.profile-avatar {
-  background: linear-gradient(135deg, #0284c7, #06b6d4);
-  border-radius: 1.25rem;
-  color: #fff;
-  height: 4rem;
-  padding: 0.85rem;
-  width: 4rem;
-}
-
-.profile-metadata dt {
-  color: #64748b;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.profile-metadata dd {
-  color: #0f172a;
-  margin: 0.2rem 0 0;
-}
-
-.toggle-list,
-.settings-stack,
-.timeline-list {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.toggle-row {
-  align-items: center;
-  background: rgba(248, 250, 252, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  border-radius: 0.95rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 0.95rem;
-}
-
-.review-detailscard.action-buttons {
-  justify-content: flex-start;
-}
-
-.version-divider {
-  background: linear-gradient(90deg, rgba(148, 163, 184, 0.1), rgba(14, 165, 233, 0.2), rgba(148, 163, 184, 0.1));
-  border-radius: 999px;
-  height: 1px;
-}
-
-.file-cell,
-.file-actions {
-  align-items: center;
-  display: flex;
-  gap: 0.65rem;
-}
-
-.file-type-icon {
-  align-items: center;
-  background: rgba(14, 165, 233, 0.08);
-  border-radius: 0.85rem;
-  display: inline-flex;
-  height: 2rem;
-  justify-content: center;
-  width: 2rem;
-}
-
-.file-name-cell,
-.version-title {
-  font-weight: 700;
-}
-
-.support-sidebar,
-.account-grid,
-.payment-grid,
-.support-layout {
-  align-items: start;
-}
-
-.support-sidebar .card+.card,
-.account-grid .card+.card,
-.payment-card+.payment-card {
-  margin-top: 0;
-}
-
-.support-layout .card,
-.account-grid .card,
-.payment-card,
-.upload-card,
-.table-container,
-.review-detailscard,
-.support-hero {
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-
-  .page-content,
-  .support-layout,
-  .account-shell,
-  .page-content.support-layout,
-  .payment-grid {
-    padding: 2rem 1.35rem 0;
-  }
-
-  .account-grid,
-  .payment-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .account-grid>.card:first-child,
-  .payment-grid>.payment-card:first-child {
-    grid-column: 1 / -1;
-  }
-
-  .support-layout {
-    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.9fr);
-  }
-
-  .page-header,
-  .support-hero {
-    padding: 1.45rem 1.6rem;
-  }
-
-  .review-detailscard.action-buttons,
-  .payment-button-group,
-  .form-actions {
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 767px) {
-
-  .page-content,
-  .support-layout,
-  .account-shell,
-  .page-content.support-layout,
-  .payment-grid {
-    padding: 1rem 0.85rem 0;
-  }
-
-  .page-header,
-  .support-hero,
-  .card,
-  .upload-card,
-  .payment-card,
-  .table-container,
-  .review-detailscard,
-  .review-details-section,
-  .payment-meta-card,
-  .invoice-summary,
-  .payment-disabled-section,
-  .support-layout .card,
-  .account-grid .card,
-  #reviewDetailsContent>div {
-    border-radius: 1.15rem;
-  }
-
-  .review-details-header,
-  .version-header,
-  .settings-item,
-  .timeline-item,
-  .payment-status,
-  .invoice-item,
-  .summary-row,
-  .support-layout .card,
-  .account-grid .card {
-    flex-direction: column;
-  }
-
-  .action-buttons,
-  .payment-button-group,
-  .form-actions,
-  .filter-buttons {
-    gap: 0.55rem;
-  }
-}
-
-/* Breadcrumbs, page-meta and layout moved to components/breadcrumbs.css */
+/* Route-specific styles moved to component CSS files. */

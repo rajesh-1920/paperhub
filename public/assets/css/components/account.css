@@ -1,0 +1,95 @@
+.account-shell {
+  max-width: 92rem;
+  margin: 0 auto;
+  padding: 1.75rem 1rem 0;
+}
+
+.account-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+.account-grid .card {
+  overflow: hidden;
+}
+
+.account-grid h2 {
+  color: #0f172a;
+}
+
+.profile-hero,
+.profile-metadata {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.profile-hero {
+  align-items: center;
+  grid-template-columns: auto 1fr;
+}
+
+.profile-avatar {
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  border-radius: 1.25rem;
+  color: #fff;
+  height: 4rem;
+  padding: 0.85rem;
+  width: 4rem;
+}
+
+.profile-metadata dt {
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-metadata dd {
+  color: #0f172a;
+  margin: 0.2rem 0 0;
+}
+
+.toggle-list,
+.settings-stack {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.toggle-row {
+  align-items: center;
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0.95rem;
+}
+
+.settings-item {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.92));
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 1rem;
+  padding: 0.95rem 1rem;
+}
+
+.settings-item h3 {
+  color: #0f172a;
+}
+
+.settings-item p {
+  color: #64748b;
+}
+
+@media (min-width: 768px) {
+  .account-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .account-grid>.card:first-child {
+    grid-column: 1 / -1;
+  }
+}

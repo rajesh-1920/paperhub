@@ -447,6 +447,7 @@ if (typeof module !== "undefined" && module.exports) {
     getCurrentPage,
     getQueryParam,
     getAllQueryParams,
+    getCurrentUserNotifications,
   };
 }
 
@@ -554,6 +555,24 @@ const MOCK_USERS = [
       lastUpdated: "Apr 18, 2026 - 10:30 AM",
       nextReview: "Apr 20, 2026",
     },
+    notifications: [
+      {
+        id: "n1",
+        title: "Your admission form needs one more attachment",
+        description: "The officer requested a clearer copy of the student ID.",
+        category: "review",
+        read: false,
+        createdAt: "2026-05-23T08:15:00.000Z",
+      },
+      {
+        id: "n2",
+        title: "Payment status updated",
+        description: "Your invoice is ready once the document is approved.",
+        category: "billing",
+        read: true,
+        createdAt: "2026-05-22T16:40:00.000Z",
+      },
+    ],
   },
   {
     id: "teacher-mahmud",
@@ -606,6 +625,24 @@ const MOCK_USERS = [
       lastUpdated: "Not Applicable",
       nextReview: "Not Applicable",
     },
+    notifications: [
+      {
+        id: "n3",
+        title: "Queue pressure is above target",
+        description: "Three submissions are due for review this morning.",
+        category: "review",
+        read: false,
+        createdAt: "2026-05-23T07:50:00.000Z",
+      },
+      {
+        id: "n4",
+        title: "Quality score is stable",
+        description: "Your average approval quality remains above 95%.",
+        category: "system",
+        read: true,
+        createdAt: "2026-05-22T12:30:00.000Z",
+      },
+    ],
   },
   {
     id: "admin-sadia",
@@ -658,6 +695,24 @@ const MOCK_USERS = [
       lastUpdated: "Apr 19, 2026 - 09:05 AM",
       nextReview: "Completed",
     },
+    notifications: [
+      {
+        id: "n5",
+        title: "Platform uptime remains healthy",
+        description: "All monitoring checks are green across core services.",
+        category: "system",
+        read: false,
+        createdAt: "2026-05-23T06:20:00.000Z",
+      },
+      {
+        id: "n6",
+        title: "Security settings reviewed",
+        description: "A login alert rule was updated in the admin console.",
+        category: "security",
+        read: true,
+        createdAt: "2026-05-21T14:15:00.000Z",
+      },
+    ],
   },
 ];
 
@@ -765,6 +820,11 @@ function getCurrentUserReviews() {
 
 function getCurrentUserPayment() {
   return getCurrentUserData().payment || null;
+}
+
+function getCurrentUserNotifications() {
+  const notifications = getCurrentUserData().notifications || [];
+  return Array.isArray(notifications) ? notifications : [];
 }
 
 function canAccessPathByRole(pathname, role) {
