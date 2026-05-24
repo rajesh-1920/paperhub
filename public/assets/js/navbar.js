@@ -5,6 +5,42 @@
   const SIDEBAR_EXPANDED_BREAKPOINT = 1200;
   let hasPartialRoutingSetup = false;
 
+  const TOP_NAV_ROUTE_GROUPS = {
+    dashboard: [
+      "/pages/dashboard/user.html",
+      "/pages/dashboard/officer.html",
+      "/pages/dashboard/admin.html",
+    ],
+    files: [
+      "/pages/file/file-details.html",
+      "/pages/file/upload.html",
+      "/pages/file/version-history.html",
+    ],
+    reviews: [
+      "/pages/review/review-queue.html",
+      "/pages/review/review-details.html",
+    ],
+    support: ["/pages/support/contact.html"],
+  };
+
+  const SIDEBAR_ROUTE_GROUPS = {
+    dashboard: TOP_NAV_ROUTE_GROUPS.dashboard,
+    fileDetails: ["/pages/file/file-details.html"],
+    fileUpload: ["/pages/file/upload.html"],
+    fileHistory: ["/pages/file/version-history.html"],
+    reviewQueue: ["/pages/review/review-queue.html"],
+    reviewDetails: ["/pages/review/review-details.html"],
+    profile: ["/pages/account/profile.html"],
+    settings: ["/pages/account/settings.html"],
+    billing: ["/pages/payment/payment.html"],
+    support: TOP_NAV_ROUTE_GROUPS.support,
+  };
+
+  const NAV_STATE_SELECTORS = {
+    topNav: "[data-top-nav]",
+    sidebar: "[data-sidebar-route]",
+  };
+
   function resolveLink(path) {
     if (typeof resolveAppPath === "function") {
       return resolveAppPath(path);
@@ -22,6 +58,75 @@
       }
 
       link.setAttribute("href", resolveLink(path));
+    });
+  }
+
+  function normalizeRoutePath(pathname) {
+    const rawPath = String(pathname || "")
+      .split("?")[0]
+      .split("#")[0]
+      .toLowerCase();
+
+    const appPathIndex = rawPath.lastIndexOf("/pages/");
+    let normalizedPath = appPathIndex >= 0 ? rawPath.slice(appPathIndex) : rawPath;
+
+    if (normalizedPath.endsWith("/index.html")) {
+      normalizedPath = normalizedPath.slice(0, -"/index.html".length) || "/";
+    }
+
+    if (normalizedPath.endsWith("index.html") && !normalizedPath.endsWith("/index.html")) {
+      normalizedPath = "/";
+    }
+
+    normalizedPath = normalizedPath.replace(/\/{2,}/g, "/");
+
+    if (normalizedPath.length > 1) {
+      normalizedPath = normalizedPath.replace(/\/+$/g, "");
+    }
+
+    return normalizedPath || "/";
+  }
+
+  function pathMatchesRoute(currentPath, candidatePath) {
+    const normalizedCurrent = normalizeRoutePath(currentPath);
+    const normalizedCandidate = normalizeRoutePath(candidatePath);
+
+    if (!normalizedCandidate) {
+      return false;
+    }
+
+    if (normalizedCurrent === normalizedCandidate) {
+      return true;
+    }
+    return normalizedCurrent.startsWith(`${normalizedCandidate}/`);
+  }
+
+  function getRouteKeyForPath(routeGroups, pathname) {
+    const currentPath = normalizeRoutePath(pathname);
+
+    return (
+      Object.entries(routeGroups).find(([, routes]) =>
+        routes.some((routePath) => pathMatchesRoute(currentPath, routePath)),
+      )?.[0] || null
+    );
+  }
+
+  function getTopNavKeyForCurrentRoute(pathname = window.location.pathname) {
+    return getRouteKeyForPath(TOP_NAV_ROUTE_GROUPS, pathname);
+  }
+
+  function syncTopNavState(pathname = window.location.pathname) {
+    const activeKey = getTopNavKeyForCurrentRoute(pathname);
+
+    document.querySelectorAll(NAV_STATE_SELECTORS.topNav).forEach((link) => {
+      const isActive = link.dataset.topNav === activeKey;
+      link.classList.toggle("is-active", isActive);
+
+      if (isActive) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
     });
   }
 
@@ -65,6 +170,26 @@
     }
   }
 
+  function syncSidebarState(pathname = window.location.pathname) {
+    const activeKey = getRouteKeyForPath(SIDEBAR_ROUTE_GROUPS, pathname);
+
+    document.querySelectorAll(NAV_STATE_SELECTORS.sidebar).forEach((link) => {
+      const isActive = link.dataset.sidebarRoute === activeKey;
+      link.classList.toggle("is-active", isActive);
+
+      if (isActive) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  function syncNavigationState(pathname = window.location.pathname) {
+    syncTopNavState(pathname);
+    syncSidebarState(pathname);
+  }
+
   function applyUserIdentity(user) {
     if (!user) {
       return;
@@ -90,73 +215,6 @@
         .slice(0, 2)
         .toUpperCase();
       element.textContent = initials || "U";
-    });
-  }
-
-  function markActiveLink(navLinks) {
-    const normalizedCurrentPath = window.location.pathname.replace(
-      /\/index\.html$/i,
-      "/",
-    );
-    const homePath = new URL(
-      resolveLink("index.html"),
-      window.location.href,
-    ).pathname.replace(/\/index\.html$/i, "/");
-
-    navLinks.forEach((link) => {
-      const href = link.getAttribute("href");
-      if (!href) {
-        return;
-      }
-
-      const linkPath = new URL(href, window.location.href).pathname.replace(
-        /\/index\.html$/i,
-        "/",
-      );
-      const isHome = linkPath === homePath;
-
-      let isMatch = false;
-      if (isHome) {
-        isMatch = normalizedCurrentPath === homePath;
-      } else {
-        isMatch = normalizedCurrentPath.startsWith(linkPath);
-      }
-
-      link.removeAttribute("aria-current");
-      ACTIVE_CLASSES.forEach((className) => link.classList.remove(className));
-
-      if (isMatch) {
-        link.setAttribute("aria-current", "page");
-        ACTIVE_CLASSES.forEach((className) => link.classList.add(className));
-      }
-    });
-  }
-
-  function markActiveSidebarLink(sidebarLinks) {
-    const normalizedCurrentPath = window.location.pathname.replace(
-      /\/index\.html$/i,
-      "/",
-    );
-
-    sidebarLinks.forEach((link) => {
-      const href = link.getAttribute("href");
-      if (!href) {
-        return;
-      }
-
-      const linkPath = new URL(href, window.location.href).pathname.replace(
-        /\/index\.html$/i,
-        "/",
-      );
-      const isMatch = normalizedCurrentPath.startsWith(linkPath);
-
-      link.removeAttribute("aria-current");
-      link.classList.remove("is-active");
-
-      if (isMatch) {
-        link.setAttribute("aria-current", "page");
-        link.classList.add("is-active");
-      }
     });
   }
 
@@ -505,18 +563,18 @@
 
         runPageInitializer();
 
-        const navLinks = document.querySelectorAll("[data-nav-link]");
         const sidebarLinks = document.querySelectorAll("[data-sidebar-link]");
-        markActiveLink(navLinks);
-        markActiveSidebarLink(sidebarLinks);
-
-        applyDynamicMeta();
+        const nextPathname = new URL(url, window.location.href).pathname;
 
         if (replaceState) {
           history.replaceState({ url }, "", url);
         } else {
           history.pushState({ url }, "", url);
         }
+
+        syncNavigationState(nextPathname);
+
+        applyDynamicMeta();
 
         window.scrollTo({ top: 0, behavior: "auto" });
         return;
@@ -809,8 +867,7 @@
     applyAppLinks();
     applyRoleVisibility(role);
     applyUserIdentity(user);
-    markActiveLink(navLinks);
-    markActiveSidebarLink(sidebarLinks);
+    syncNavigationState();
     setupMobileMenu(navLinks);
     setupUserDropdown();
     setupThemeToggle();

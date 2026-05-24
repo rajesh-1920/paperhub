@@ -8,13 +8,14 @@
     </a>
 
     <ul class="ph-nav-links" role="menubar">
-      <li><a data-nav-link data-user-dashboard-link data-roles="user,officer,admin"
+      <li><a data-nav-link data-top-nav="dashboard" data-user-dashboard-link data-roles="user,officer,admin"
           data-app-href="pages/dashboard/user.html" class="ph-nav-link">Dashboard</a></li>
-      <li><a data-nav-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html"
-          class="ph-nav-link">Files</a></li>
-      <li><a data-nav-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html"
-          class="ph-nav-link">Reviews</a></li>
-      <li><a data-nav-link data-app-href="pages/support/contact.html" class="ph-nav-link">Support</a></li>
+      <li><a data-nav-link data-top-nav="files" data-roles="user,officer,admin"
+          data-app-href="pages/file/file-details.html" class="ph-nav-link">Files</a></li>
+      <li><a data-nav-link data-top-nav="reviews" data-roles="officer,admin"
+          data-app-href="pages/review/review-queue.html" class="ph-nav-link">Reviews</a></li>
+      <li><a data-nav-link data-top-nav="support" data-app-href="pages/support/contact.html"
+          class="ph-nav-link">Support</a></li>
     </ul>
 
     <div class="ph-nav-actions">
@@ -77,13 +78,14 @@
   <div id="mobileMenu" class="ph-mobile-menu hidden">
     <div class="ph-mobile-menu-grid">
       <div class="ph-role-badge ph-role-badge-mobile" data-role-badge-mobile>USER</div>
-      <a data-nav-link data-user-dashboard-link data-roles="user,officer,admin"
+      <a data-nav-link data-top-nav="dashboard" data-user-dashboard-link data-roles="user,officer,admin"
         data-app-href="pages/dashboard/user.html" class="ph-mobile-link">Dashboard</a>
-      <a data-nav-link data-roles="user,officer,admin" data-app-href="pages/file/file-details.html"
+      <a data-nav-link data-top-nav="files" data-roles="user,officer,admin" data-app-href="pages/file/file-details.html"
         class="ph-mobile-link">Files</a>
-      <a data-nav-link data-roles="officer,admin" data-app-href="pages/review/review-queue.html"
+      <a data-nav-link data-top-nav="reviews" data-roles="officer,admin" data-app-href="pages/review/review-queue.html"
         class="ph-mobile-link">Reviews</a>
-      <a data-nav-link data-app-href="pages/support/contact.html" class="ph-mobile-link">Support</a>
+      <a data-nav-link data-top-nav="support" data-app-href="pages/support/contact.html"
+        class="ph-mobile-link">Support</a>
       <a data-app-href="pages/file/upload.html" class="ph-mobile-link">Upload</a>
       <a data-app-href="pages/notifications/notifications.html" class="ph-mobile-link">Notifications</a>
       <button id="mobileThemeToggle" type="button" class="ph-menu-btn" data-theme-toggle>Toggle Theme</button>
