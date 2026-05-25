@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Profile - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/account.css" />
+</head>
+
+<body class="account-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content account-shell">
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">Account</p>
+          <h1>Edit profile</h1>
+          <p class="page-subtitle">Update your profile, security settings, and password in one place.</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="/pages/profile/profile.html" data-app-href="pages/profile/profile.html" class="btn btn-outline">Back
+            to profile</a>
+          <a href="/pages/dashboard/user.html" data-user-dashboard-link class="btn btn-primary">Dashboard</a>
+        </div>
+      </div>
+
+      <div class="account-grid profile-edit-grid">
+        <section class="card profile-form-card col-left">
+          <h2>Update profile</h2>
+          <form id="profileForm" class="profile-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="fullName">Full name</label>
+                <input id="fullName" type="text" data-user-name />
+              </div>
+              <div class="form-group">
+                <label for="jobTitle">Job title</label>
+                <input id="jobTitle" type="text" data-user-title />
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="emailAddress">Email address</label>
+                <input id="emailAddress" type="email" data-user-email />
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone</label>
+                <input id="phone" type="tel" data-user-phone placeholder="+1 555 555 5555" />
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="company">Company</label>
+                <input id="company" type="text" data-user-company placeholder="Company name" />
+              </div>
+              <div class="form-group">
+                <label for="department">Department</label>
+                <select id="department" data-user-department>
+                  <option>Document Review</option>
+                  <option>Operations</option>
+                  <option>Compliance</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="timezone">Timezone</label>
+                <select id="timezone" data-user-timezone>
+                  <option>UTC +06:00</option>
+                  <option>UTC +05:30</option>
+                  <option>UTC</option>
+                  <option>America/New_York</option>
+                  <option>Europe/London</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="language">Language</label>
+                <select id="language" data-user-language>
+                  <option>English</option>
+                  <option>Spanish</option>
+                  <option>French</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bio">Bio</label>
+              <textarea id="bio" rows="4" data-user-bio placeholder="A short bio or role description"></textarea>
+            </div>
+
+            <div class="form-group twofactor-row">
+              <label for="twofactor">Two-factor authentication</label>
+              <div>
+                <input id="twofactor" type="checkbox" data-user-twofactor />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button type="reset" class="btn btn-outline">Reset</button>
+            </div>
+          </form>
+
+          <form id="passwordForm" class="profile-password-form">
+            <h3>Change password</h3>
+            <div class="form-group">
+              <label for="currentPassword">Current password</label>
+              <input id="currentPassword" type="password" />
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="newPassword">New password</label>
+                <input id="newPassword" type="password" />
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Confirm new password</label>
+                <input id="confirmPassword" type="password" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-secondary">Change password</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card profile-side-card col-right">
+          <h2>Profile snapshot</h2>
+          <div class="settings-stack">
+            <div class="settings-item">
+              <div>
+                <h3 data-user-name>John Doe</h3>
+                <p data-user-title>Senior Document Analyst</p>
+              </div>
+              <span class="badge badge-success" data-user-plan-status>Active</span>
+            </div>
+            <div class="settings-item">
+              <div>
+                <h3>Security</h3>
+                <p>Two-factor authentication and password updates are managed here.</p>
+              </div>
+              <span class="badge badge-info" data-user-twofactor-label>Enabled</span>
+            </div>
+            <div class="settings-item">
+              <div>
+                <h3>Current plan</h3>
+                <p><span data-user-plan-name>Starter</span> • <span data-user-plan-cycle>Billed yearly</span></p>
+              </div>
+              <span class="badge badge-primary" data-user-plan-renewal>2026-06-10</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+</body>
+
+</html>

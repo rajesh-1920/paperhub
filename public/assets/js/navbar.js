@@ -30,7 +30,10 @@
     fileHistory: ["/pages/file/version-history.html"],
     reviewQueue: ["/pages/review/review-queue.html"],
     reviewDetails: ["/pages/review/review-details.html"],
-    profile: ["/pages/account/profile.html"],
+    profile: [
+      "/pages/profile/profile.html",
+      "/pages/profile/profile-edit.html",
+    ],
     settings: ["/pages/account/settings.html"],
     billing: ["/pages/payment/payment.html"],
     support: TOP_NAV_ROUTE_GROUPS.support,

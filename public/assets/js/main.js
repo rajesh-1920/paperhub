@@ -122,12 +122,70 @@ function applyCurrentUserPageData() {
     });
   };
 
+  const applyCheckbox = (selector, value) => {
+    document.querySelectorAll(selector).forEach((element) => {
+      if (element instanceof HTMLInputElement) {
+        element.checked = Boolean(value);
+      }
+    });
+  };
+
+  const applyRoleBadge = (selector, role) => {
+    const normalizedRole = String(role || "user").toLowerCase();
+    const roleStyles = {
+      admin: ["bg-rose-50", "text-rose-700", "border-rose-200"],
+      officer: ["bg-cyan-50", "text-cyan-700", "border-cyan-200"],
+      user: ["bg-emerald-50", "text-emerald-700", "border-emerald-200"],
+    };
+
+    const classes = roleStyles[normalizedRole] || roleStyles.user;
+
+    document.querySelectorAll(selector).forEach((element) => {
+      element.textContent = normalizedRole.toUpperCase();
+      element.classList.remove(
+        "bg-rose-50",
+        "text-rose-700",
+        "border-rose-200",
+        "bg-cyan-50",
+        "text-cyan-700",
+        "border-cyan-200",
+        "bg-emerald-50",
+        "text-emerald-700",
+        "border-emerald-200",
+      );
+      element.classList.add(...classes);
+    });
+  };
+
+  const toTitleCase = (value) =>
+    String(value || "")
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/[_-]+/g, " ")
+      .trim()
+      .replace(/\b\w/g, (character) => character.toUpperCase());
+
   applyText("[data-user-name]", user.name);
   applyText("[data-user-email]", user.email);
   applyText("[data-user-role]", roleLabel);
   applyText("[data-user-title]", user.title);
   applyText("[data-user-department]", user.department);
   applyText("[data-user-last-login]", user.lastLogin);
+  applyText("[data-user-company]", user.company);
+  applyText("[data-user-phone]", user.phone);
+  applyText("[data-user-address]", user.address);
+  applyText("[data-user-timezone]", user.timezone);
+  applyText("[data-user-language]", user.language);
+  applyText("[data-user-bio]", user.bio);
+  applyCheckbox("[data-user-twofactor]", user.twoFactorEnabled);
+  applyText("[data-user-twofactor-label]", user.twoFactorEnabled ? "Enabled" : "Disabled");
+  applyText("[data-user-account-status]", user.accountStatus || "Active");
+  applyText("[data-user-joined-date]", user.joinedDate);
+  applyText("[data-user-plan-name]", user.plan?.name);
+  applyText("[data-user-plan-cycle]", user.plan?.cycle);
+  applyText("[data-user-plan-renewal]", user.plan?.renewal);
+  applyText("[data-user-plan-seats]", user.plan?.seats);
+  applyText("[data-user-plan-status]", user.plan?.status);
+  applyRoleBadge("[data-profile-role-badge]", user.role);
   applyText("[data-dashboard-description]", user.dashboard?.description);
 
   document.querySelectorAll("[data-user-dashboard-link]").forEach((element) => {
@@ -144,6 +202,43 @@ function applyCurrentUserPageData() {
     }
   });
 
+  document.querySelectorAll("[data-user-dashboard-stats]").forEach((container) => {
+    const entries = Object.entries(stats);
+    const labelMap = {
+      totalSubmissions: "Uploaded Files",
+      totalUsers: "Total Users",
+      documents: "Uploaded Files",
+      pendingReview: "Pending Reviews",
+      pendingReviews: "Pending Reviews",
+      approved: "Approved Files",
+      rejected: "Rejected Files",
+      alerts: "Alerts",
+    };
+
+    container.innerHTML = entries
+      .map(
+        ([key, value]) => `
+          <div class="profile-stat-card">
+            <span class="profile-stat-label">${escapeHtml(labelMap[key] || toTitleCase(key))}</span>
+            <strong>${escapeHtml(String(value))}</strong>
+          </div>
+        `,
+      )
+      .join("");
+  });
+
+  const files = Array.isArray(user.files) ? user.files : [];
+  const approvedFiles = files.filter((file) => file.status === "completed").length;
+  const rejectedFiles = files.filter((file) => file.status === "rejected").length;
+  const pendingFiles =
+    Number(user.dashboard?.stats?.pendingReview ?? user.dashboard?.stats?.pendingReviews ?? 0) ||
+    (Array.isArray(user.reviews) ? user.reviews.filter((review) => review.status === "pending" || review.status === "in-review").length : 0);
+
+  applyText("[data-user-file-count]", files.length);
+  applyText("[data-user-file-approved]", approvedFiles);
+  applyText("[data-user-file-rejected]", rejectedFiles);
+  applyText("[data-user-file-pending]", pendingFiles);
+
   document.querySelectorAll("[data-user-permissions]").forEach((container) => {
     const permissions = Array.isArray(user.permissions) ? user.permissions : [];
     container.innerHTML = permissions
@@ -152,6 +247,62 @@ function applyCurrentUserPageData() {
           `<span class="inline-flex items-center rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">${escapeHtml(permission)}</span>`,
       )
       .join(" ");
+  });
+
+  document.querySelectorAll("[data-user-connected-apps]").forEach((container) => {
+    const apps = Array.isArray(user.connectedApps) ? user.connectedApps : [];
+
+    container.innerHTML = apps
+      .map(
+        (app) => `
+          <li>
+            <div>
+              <strong>${escapeHtml(app.name)}</strong>
+              <span>${escapeHtml(app.provider || "Connected app")}</span>
+            </div>
+            <span class="badge badge-info">${escapeHtml(app.status || "Connected")}</span>
+          </li>
+        `,
+      )
+      .join("");
+  });
+
+  document.querySelectorAll("[data-user-files]").forEach((container) => {
+    container.innerHTML = files
+      .slice(0, 5)
+      .map((file) => {
+        const uploadedAt = file.uploadedAt ? new Date(file.uploadedAt).toLocaleDateString() : "Recently";
+        const statusLabel = String(file.status || "pending");
+
+        return `
+          <li class="profile-file-row">
+            <div>
+              <strong>${escapeHtml(file.name)}</strong>
+              <span>${escapeHtml(uploadedAt)} • ${escapeHtml(formatFileSize(file.size || 0))}</span>
+            </div>
+            <span class="badge badge-info">${escapeHtml(statusLabel)}</span>
+          </li>
+        `;
+      })
+      .join("");
+  });
+
+  document.querySelectorAll("[data-user-activity]").forEach((container) => {
+    const items = Array.isArray(user.notifications) ? user.notifications.slice(0, 4) : [];
+
+    container.innerHTML = items
+      .map(
+        (item) => `
+          <article class="timeline-item timeline-item-card">
+            <span class="timeline-dot"></span>
+            <div>
+              <h3>${escapeHtml(item.title)}</h3>
+              <p class="muted">${escapeHtml(item.description)}</p>
+            </div>
+          </article>
+        `,
+      )
+      .join("");
   });
 
   if (typeof getCurrentUserPayment === "function") {

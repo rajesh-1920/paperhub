@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - PaperHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/profile.css" />
+</head>
+
+<body class="profile-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="profile-shell">
+      <div class="profile-grid">
+        <aside class="profile-card profile-summary-panel p-6 lg:sticky lg:top-6">
+          <div class="profile-card-header">
+            <div class="flex items-start gap-4">
+              <div class="relative">
+                <span class="profile-avatar" data-user-initials>DU</span>
+                <img class="profile-avatar profile-avatar-image profile-hidden" data-profile-avatar-preview
+                  alt="Profile preview" />
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h2 class="text-2xl font-bold text-slate-900" data-user-name>Demo User</h2>
+                  <span class="profile-role-badge" data-profile-role-badge>USER</span>
+                </div>
+                <p class="mt-1 text-sm font-medium text-slate-500" data-user-title>Document Analyst</p>
+                <p class="mt-2 text-sm text-slate-700" data-user-email>user@example.com</p>
+                <p class="mt-1 text-sm text-slate-500" data-user-phone>+1 555 000 0000</p>
+              </div>
+            </div>
+            <span class="profile-status">Active</span>
+          </div>
+          <div class="page-header mb-6">
+            <div class="page-header-actions">
+              <button type="button" class="btn btn-primary" data-profile-edit-open>Edit profile</button>
+              <a href="/pages/profile/profile-edit.html" data-app-href="pages/profile/profile-edit.html"
+                class="btn btn-outline">Open editor</a>
+            </div>
+          </div>
+
+          <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            <div class="profile-mini-card">
+              <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Company</span>
+              <strong class="mt-2 block text-slate-900" data-user-company>PaperHub Student Program</strong>
+            </div>
+            <div class="profile-mini-card">
+              <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Joined</span>
+              <strong class="mt-2 block text-slate-900" data-user-joined-date>2024-08-12</strong>
+            </div>
+            <div class="profile-mini-card">
+              <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Role</span>
+              <strong class="mt-2 block text-slate-900" data-user-role>USER</strong>
+            </div>
+            <div class="profile-mini-card">
+              <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Last login</span>
+              <strong class="mt-2 block text-slate-900" data-user-last-login>Today, 08:45 AM</strong>
+            </div>
+          </div>
+
+          <div class="profile-metrics mt-6" data-user-dashboard-stats></div>
+
+          <div class="mt-6 flex flex-wrap gap-2">
+            <span class="profile-chip">Status: <strong data-user-account-status>Active</strong></span>
+            <span class="profile-chip">2FA: <strong data-user-twofactor-label>Enabled</strong></span>
+            <span class="profile-chip">Timezone: <strong data-user-timezone>UTC +06:00</strong></span>
+          </div>
+        </aside>
+
+        <div class="space-y-4">
+          <section class="profile-card profile-section p-6">
+            <div class="profile-section-head">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Personal information</h2>
+                <p class="mt-1 text-sm text-slate-500">Your account and contact details.</p>
+              </div>
+              <button type="button" class="profile-section-toggle" data-section-toggle="personalBody"
+                aria-expanded="true">Collapse</button>
+            </div>
+            <div class="profile-section-body" id="personalBody">
+              <dl class="profile-grid mt-6">
+                <div>
+                  <dt>Full name</dt>
+                  <dd data-user-name>Demo User</dd>
+                </div>
+                <div>
+                  <dt>Email</dt>
+                  <dd data-user-email>user@example.com</dd>
+                </div>
+                <div>
+                  <dt>Phone</dt>
+                  <dd data-user-phone>+1 555 000 0000</dd>
+                </div>
+                <div>
+                  <dt>Address</dt>
+                  <dd data-user-address>Address</dd>
+                </div>
+                <div>
+                  <dt>Department</dt>
+                  <dd data-user-department>Operations</dd>
+                </div>
+                <div>
+                  <dt>Language</dt>
+                  <dd data-user-language>English</dd>
+                </div>
+                <div>
+                  <dt>Timezone</dt>
+                  <dd data-user-timezone>UTC +06:00</dd>
+                </div>
+                <div>
+                  <dt>Joined date</dt>
+                  <dd data-user-joined-date>2024-08-12</dd>
+                </div>
+                <div class="col-span-full profile-detail-wide">
+                  <dt>Bio</dt>
+                  <dd data-user-bio>Final year student focused on document workflows and digital records.</dd>
+                </div>
+                <div class="col-span-full profile-detail-wide">
+                  <dt>Privileges</dt>
+                  <dd data-user-permissions class="profile-chip-list"></dd>
+                </div>
+              </dl>
+            </div>
+          </section>
+
+          <section class="profile-card profile-section p-6">
+            <div class="profile-section-head">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Security</h2>
+                <p class="mt-1 text-sm text-slate-500">Security status and last access information.</p>
+              </div>
+              <button type="button" class="profile-section-toggle" data-section-toggle="securityBody"
+                aria-expanded="true">Collapse</button>
+            </div>
+            <div class="profile-section-body" id="securityBody">
+              <div class="mt-6 grid gap-4 md:grid-cols-3">
+                <div class="rounded-2xl border border-slate-200 bg-white/80 p-4">
+                  <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Two-factor</span>
+                  <strong class="mt-2 block text-slate-900" data-user-twofactor-label>Enabled</strong>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white/80 p-4">
+                  <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Last login</span>
+                  <strong class="mt-2 block text-slate-900" data-user-last-login>Today, 08:45 AM</strong>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white/80 p-4">
+                  <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Account status</span>
+                  <strong class="mt-2 block text-slate-900" data-user-account-status>Active</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="profile-card profile-section p-6">
+            <div class="profile-section-head">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Uploaded documents</h2>
+                <p class="mt-1 text-sm text-slate-500">Track the latest files in your workspace.</p>
+              </div>
+              <button type="button" class="profile-section-toggle" data-section-toggle="documentsBody"
+                aria-expanded="true">Collapse</button>
+            </div>
+            <div class="profile-section-body" id="documentsBody">
+              <ul class="profile-document-list mt-6" data-user-files></ul>
+            </div>
+          </section>
+
+          <section class="profile-card profile-section p-6">
+            <div class="profile-section-head">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Recent activity</h2>
+                <p class="mt-1 text-sm text-slate-500">A concise audit trail of your latest actions.</p>
+              </div>
+              <button type="button" class="profile-section-toggle" data-section-toggle="activityBody"
+                aria-expanded="true">Collapse</button>
+            </div>
+            <div class="profile-section-body" id="activityBody">
+              <ol class="profile-activity-list mt-6" data-user-activity></ol>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <div class="fixed inset-0 z-50 profile-modal-backdrop profile-hidden" data-profile-modal aria-hidden="true">
+    <div class="flex min-h-full items-center justify-center p-4">
+      <div class="profile-card profile-modal-panel w-full max-w-4xl p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="eyebrow">Profile</p>
+            <h2 class="mt-2 text-2xl font-bold text-slate-900">Edit profile</h2>
+            <p class="mt-2 text-sm text-slate-500">Update your account details, security preferences, and avatar.</p>
+          </div>
+          <button type="button" class="profile-section-toggle" data-profile-modal-close
+            aria-label="Close modal">Close</button>
+        </div>
+
+        <form id="profileEditForm" class="mt-6 space-y-5">
+          <div class="grid gap-5 md:grid-cols-[220px_minmax(0,1fr)]">
+            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <div class="flex flex-col items-center gap-4 text-center">
+                <div class="relative">
+                  <span class="profile-avatar" data-user-initials>DU</span>
+                  <img class="profile-avatar profile-avatar-image profile-hidden" data-profile-avatar-preview
+                    alt="Avatar preview" />
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Profile picture</p>
+                  <p class="mt-1 text-sm text-slate-500">PNG, JPG or WEBP. Square images work best.</p>
+                </div>
+                <label class="btn btn-outline w-full cursor-pointer">
+                  Upload photo
+                  <input id="profileAvatarUpload" type="file" accept="image/*" class="hidden" />
+                </label>
+              </div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="form-group">
+                <label for="profileName">Full name</label>
+                <input id="profileName" type="text" data-user-name />
+              </div>
+              <div class="form-group">
+                <label for="profileTitle">Job title</label>
+                <input id="profileTitle" type="text" data-user-title />
+              </div>
+              <div class="form-group">
+                <label for="profileEmail">Email</label>
+                <input id="profileEmail" type="email" data-user-email />
+              </div>
+              <div class="form-group">
+                <label for="profilePhone">Phone</label>
+                <input id="profilePhone" type="tel" data-user-phone />
+              </div>
+              <div class="form-group">
+                <label for="profileCompany">Company</label>
+                <input id="profileCompany" type="text" data-user-company />
+              </div>
+              <div class="form-group">
+                <label for="profileAddress">Address</label>
+                <input id="profileAddress" type="text" data-user-address />
+              </div>
+              <div class="form-group">
+                <label for="profileDepartment">Department</label>
+                <select id="profileDepartment" data-user-department>
+                  <option>Document Review</option>
+                  <option>Operations</option>
+                  <option>Compliance</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="profileTimezone">Timezone</label>
+                <select id="profileTimezone" data-user-timezone>
+                  <option>UTC +06:00</option>
+                  <option>UTC +05:30</option>
+                  <option>UTC</option>
+                  <option>America/New_York</option>
+                  <option>Europe/London</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="profileLanguage">Language</label>
+                <select id="profileLanguage" data-user-language>
+                  <option>English</option>
+                  <option>Spanish</option>
+                  <option>French</option>
+                </select>
+              </div>
+              <div class="form-group md:col-span-2">
+                <label for="profileBio">Bio</label>
+                <textarea id="profileBio" rows="4" data-user-bio></textarea>
+              </div>
+              <label
+                class="md:col-span-2 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                <span>
+                  <span class="block text-sm font-semibold text-slate-900">Two-factor authentication</span>
+                  <span class="block text-sm text-slate-500">Keep this enabled for stronger account protection.</span>
+                </span>
+                <input id="profileTwoFactor" type="checkbox" data-user-twofactor />
+              </label>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap justify-end gap-3">
+            <button type="button" class="btn btn-outline" data-profile-modal-close>Cancel</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/profile.js"></script>
+</body>
+
+</html>
