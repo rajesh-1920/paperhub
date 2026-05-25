@@ -44,7 +44,7 @@ async function initApp() {
     "assets/css/components/timeline.css",
     "assets/css/components/notifications.css",
     "assets/css/components/review.css",
-    "assets/css/components/support.css",
+    "assets/css/components/contact.css",
     "assets/css/components/account.css",
     "assets/css/components/payment.css",
   ]);
