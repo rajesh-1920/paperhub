@@ -258,7 +258,7 @@ function applyCurrentUserPageData() {
           <li>
             <div>
               <strong>${escapeHtml(app.name)}</strong>
-              <span>${escapeHtml(app.provider || "Connected app")}</span>
+              <div class="muted">${escapeHtml(app.provider || "Connected app")}</div>
             </div>
             <span class="badge badge-info">${escapeHtml(app.status || "Connected")}</span>
           </li>
@@ -288,20 +288,45 @@ function applyCurrentUserPageData() {
   });
 
   document.querySelectorAll("[data-user-activity]").forEach((container) => {
-    const items = Array.isArray(user.notifications) ? user.notifications.slice(0, 4) : [];
+    const items = Array.isArray(user.notifications) ? user.notifications.slice(0, 6) : [];
+
+    function timeAgo(iso) {
+      if (!iso) return "";
+      const then = new Date(iso).getTime();
+      const diff = Date.now() - then;
+      const minutes = Math.floor(diff / 60000);
+      if (minutes < 1) return "just now";
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
 
     container.innerHTML = items
-      .map(
-        (item) => `
-          <article class="timeline-item timeline-item-card">
-            <span class="timeline-dot"></span>
-            <div>
-              <h3>${escapeHtml(item.title)}</h3>
-              <p class="muted">${escapeHtml(item.description)}</p>
+      .map((item) => {
+        const when = item.createdAt ? timeAgo(item.createdAt) : "";
+        const ts = item.createdAt ? new Date(item.createdAt).toISOString() : "";
+        const icon =
+          item.category === "review"
+            ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 20l9-5-9-11-9 11 9 5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+            : item.category === "billing"
+              ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 10V7a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+              : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.2"/></svg>';
+
+        return `
+          <li class="activity-item">
+            <div class="activity-icon" aria-hidden="true">${icon}</div>
+            <div class="activity-body">
+              <div class="activity-head">
+                <strong class="activity-title">${escapeHtml(item.title)}</strong>
+                <time class="activity-time muted" datetime="${escapeHtml(ts)}">${escapeHtml(when)}</time>
+              </div>
+              <p class="activity-desc muted">${escapeHtml(item.description)}</p>
             </div>
-          </article>
-        `,
-      )
+          </li>
+        `;
+      })
       .join("");
   });
 

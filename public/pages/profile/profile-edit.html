@@ -166,6 +166,35 @@
 
   <script src="../../assets/js/utils.js"></script>
   <script src="../../assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('profileForm');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const user = getCurrentUser() || {};
+
+        user.name = document.getElementById('fullName')?.value || user.name;
+        user.title = document.getElementById('jobTitle')?.value || user.title;
+        user.email = document.getElementById('emailAddress')?.value || user.email;
+        user.phone = document.getElementById('phone')?.value || user.phone;
+        user.company = document.getElementById('company')?.value || user.company;
+        user.department = document.getElementById('department')?.value || user.department;
+        user.timezone = document.getElementById('timezone')?.value || user.timezone;
+        user.language = document.getElementById('language')?.value || user.language;
+        user.bio = document.getElementById('bio')?.value || user.bio;
+        user.twofactor = !!document.getElementById('twofactor')?.checked;
+
+        setCurrentUser(user);
+        showSuccess('Profile saved');
+        setTimeout(() => {
+          window.location.href = '/pages/profile/profile.html';
+        }, 450);
+      });
+    });
+  </script>
 </body>
 
 </html>

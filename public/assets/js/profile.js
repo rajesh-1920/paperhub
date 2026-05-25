@@ -100,56 +100,39 @@
   }
 
   function initCollapsibleSections() {
+    // Initialize button labels to match current state and keep per-button listeners
     getElements("[data-section-toggle]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const targetId = button.getAttribute("data-section-toggle");
-        const target = targetId ? document.getElementById(targetId) : null;
-        if (!target) return;
-        target.classList.toggle("hidden");
-        const expanded = !target.classList.contains("hidden");
-        button.setAttribute("aria-expanded", expanded ? "true" : "false");
-        button.textContent = expanded ? "Collapse" : "Expand";
-      });
+      const targetId = button.getAttribute("data-section-toggle");
+      const target = targetId ? document.getElementById(targetId) : null;
+      const expanded = target ? !target.classList.contains("hidden") : false;
+      button.setAttribute("aria-expanded", expanded ? "true" : "false");
+      button.innerHTML = getToggleInnerHtml(expanded, targetId);
     });
   }
 
-  function initModal() {
-    const modal = getElement("[data-profile-modal]");
-    const openButtons = getElements("[data-profile-edit-open]");
-    const closeButtons = getElements("[data-profile-modal-close]");
-    const form = getElement("#profileEditForm");
-    const fileInput = getElement("#profileAvatarUpload");
-    const previewImage = fileInput?.closest("form")?.querySelector("[data-profile-avatar-preview]");
-    const initials = fileInput?.closest("form")?.querySelector("[data-user-initials]");
-
-    openButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        if (form) {
-          syncFormFromView(form);
-        }
-
-        openModal(modal);
-      });
-    });
-
-    closeButtons.forEach((button) => {
-      button.addEventListener("click", () => closeModal(modal));
-    });
-
-    modal?.addEventListener("click", (event) => {
-      if (event.target === modal) {
-        closeModal(modal);
-      }
-    });
-
-    fileInput?.addEventListener("change", () => setAvatarPreview(fileInput, previewImage, initials));
-
-    form?.addEventListener("submit", (event) => {
-      event.preventDefault();
-      syncVisibleFields(form);
-      closeModal(modal);
-    });
+  // Delegated handler so toggles work even if sections are injected later (SPA partial loads)
+  function handleSectionToggleClick(event) {
+    const button = event.target.closest("[data-section-toggle]");
+    if (!button) return;
+    event.preventDefault();
+    const targetId = button.getAttribute("data-section-toggle");
+    const target = targetId ? document.getElementById(targetId) : null;
+    if (!target) return;
+    target.classList.toggle("hidden");
+    const expanded = !target.classList.contains("hidden");
+    button.setAttribute("aria-expanded", expanded ? "true" : "false");
+    button.innerHTML = getToggleInnerHtml(expanded, targetId);
   }
+
+  function getToggleInnerHtml(expanded, targetId) {
+    const label = expanded ? "Collapse" : "Expand";
+    const svg = expanded
+      ? '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    return `${svg}<span class="sr-only">${label} section</span>`;
+  }
+
 
   function initSidebarFallback() {
     const sidebarToggle = getElement("[data-sidebar-toggle]");
@@ -164,7 +147,9 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     initCollapsibleSections();
-    initModal();
     initSidebarFallback();
   });
+
+  // Global delegated listener (works even on dynamically-inserted content)
+  document.addEventListener("click", handleSectionToggleClick);
 })();
