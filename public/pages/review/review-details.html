@@ -8,7 +8,7 @@
   <script src="../../assets/js/tailwind-setup.js"></script>
   <link rel="stylesheet" href="../../assets/css/tailwind.css" />
   <link rel="stylesheet" href="../../assets/css/global.css" />
-  <link rel="stylesheet" href="../../assets/css/components/review.css" />
+  <link rel="stylesheet" href="../../assets/css/components/review-details.css" />
 </head>
 
 <body class="review-details-page">
@@ -16,18 +16,35 @@
   <div id="sidebar-container"></div>
 
   <main>
-    <div class="page-content">
-      <div class="page-header">
-        <h1>Document Review</h1>
-        <a href="/pages/review/review-queue.html" class="btn btn-outline">Back to Queue</a>
-      </div>
+    <div class="page-content review-shell">
+      <section class="review-hero card review-detail-hero">
+        <div class="review-hero-copy">
+          <p class="eyebrow">Review Flow</p>
+          <h1>Document review</h1>
+          <p class="review-hero-text">A focused workspace for reading, commenting, and making a confident decision.</p>
 
-      <div id="reviewDetailsContent"></div>
+          <div id="reviewDetailsHeroMeta" class="review-detail-hero-meta"></div>
+        </div>
 
-      <div class="review-detailscard action-buttons">
-        <button id="approveBtn" class="btn btn-success">Approve</button>
-        <button id="rejectBtn" class="btn btn-danger">Reject</button>
-        <button id="forwardBtn" class="btn btn-primary">Forward</button>
+        <div class="review-hero-actions review-detail-actions-top">
+          <a href="review-queue.html" data-app-href="pages/review/review-queue.html" class="btn btn-outline">Back to
+            queue</a>
+          <div class="review-detail-actions-note">
+            <span data-review-access-note>Document ready for decision</span>
+            <strong data-review-status-label>Pending</strong>
+          </div>
+        </div>
+
+      </section>
+
+      <div class="review-detail-main review-detail-main-full">
+        <div id="reviewDetailsContent"></div>
+
+        <div class="review-detailscard review-action-bar action-buttons hidden" data-review-action-bar>
+          <button id="approveBtn" class="btn btn-success" type="button">Approve</button>
+          <button id="rejectBtn" class="btn btn-danger" type="button">Reject</button>
+          <button id="forwardBtn" class="btn btn-primary" type="button">Forward</button>
+        </div>
       </div>
     </div>
   </main>

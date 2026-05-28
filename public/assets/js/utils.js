@@ -905,8 +905,12 @@ function canAccessPathByRole(pathname, role) {
     return normalizedRole === "user" || normalizedRole === "admin";
   }
 
-  if (path.includes("/pages/review/")) {
+  if (path.includes("/pages/review/review-queue.html")) {
     return normalizedRole === "officer" || normalizedRole === "admin";
+  }
+
+  if (path.includes("/pages/review/review-details.html")) {
+    return true;
   }
 
   if (path.includes("/pages/payment/")) {

@@ -1,199 +1,678 @@
-const MOCK_REVIEWS = [
+const REVIEW_DATA = [
   {
-    id: "1",
-    documentName: "Q4 Financial Report.pdf",
-    submittedBy: "Alice Johnson",
-    submittedDate: "2024-04-06",
+    id: "r-1001",
+    documentName: "Q1 Compliance Audit Report.pdf",
+    submittedBy: "Alyssa Chen",
+    submittedDate: "2026-05-27",
     priority: "high",
     status: "pending",
+    department: "Compliance",
+    reviewer: "Jordan Lee",
+    dueDate: "Today",
+    pageCount: 24,
+    tags: ["Audit", "Urgent"],
+    summary: "Quarterly audit evidence pack awaiting signature verification and finance sign-off.",
+    checklist: [
+      { label: "Signature present on cover sheet", done: false },
+      { label: "Budget references verified", done: true },
+      { label: "Supporting files attached", done: true },
+    ],
+    comments: [
+      {
+        author: "Mina Patel",
+        role: "Lead Reviewer",
+        date: "2026-05-28",
+        text: "Please confirm the reconciliation summary on page 8 before approval.",
+      },
+    ],
+    highlights: [
+      "Requires two final approvals",
+      "Contains cross-department evidence",
+      "Priority escalation due today",
+    ],
   },
   {
-    id: "2",
-    documentName: "Annual Summary.pdf",
-    submittedBy: "Bob Smith",
-    submittedDate: "2024-04-05",
+    id: "r-1002",
+    documentName: "Vendor Contract Addendum.pdf",
+    submittedBy: "Marcus Reed",
+    submittedDate: "2026-05-27",
     priority: "medium",
     status: "in-review",
+    department: "Legal",
+    reviewer: "Dana Fox",
+    dueDate: "Tomorrow",
+    pageCount: 14,
+    tags: ["Contract", "Legal"],
+    summary: "Addendum review for scope updates, service-level changes, and updated payment terms.",
+    checklist: [
+      { label: "Clauses aligned with base contract", done: true },
+      { label: "Escalation path confirmed", done: true },
+      { label: "Redlines resolved", done: false },
+    ],
+    comments: [
+      {
+        author: "Dana Fox",
+        role: "Legal Reviewer",
+        date: "2026-05-28",
+        text: "Awaiting one last clause clarification from procurement.",
+      },
+      {
+        author: "Marcus Reed",
+        role: "Submitted by",
+        date: "2026-05-28",
+        text: "I’ve attached the updated pricing sheet in the appendix.",
+      },
+    ],
+    highlights: [
+      "Legal review in progress",
+      "Two redlines still open",
+      "Procurement feedback pending",
+    ],
   },
   {
-    id: "3",
-    documentName: "Budget Analysis.pdf",
-    submittedBy: "Charlie Brown",
-    submittedDate: "2024-04-04",
+    id: "r-1003",
+    documentName: "Budget Reforecast FY2026.xlsx",
+    submittedBy: "Grace Park",
+    submittedDate: "2026-05-26",
     priority: "low",
+    status: "completed",
+    department: "Finance",
+    reviewer: "Ethan Cole",
+    dueDate: "Completed",
+    pageCount: 11,
+    tags: ["Finance", "Completed"],
+    summary: "Reforecast workbook approved after variance analysis and executive review.",
+    checklist: [
+      { label: "Variance notes attached", done: true },
+      { label: "Executive approval logged", done: true },
+      { label: "Archive copy created", done: true },
+    ],
+    comments: [
+      {
+        author: "Ethan Cole",
+        role: "Finance Reviewer",
+        date: "2026-05-26",
+        text: "Looks clear. Archive copy has been stored in the finance vault.",
+      },
+    ],
+    highlights: [
+      "Archived after approval",
+      "No open blockers",
+      "Use as template for next cycle",
+    ],
+  },
+  {
+    id: "r-1004",
+    documentName: "Student Records Verification.pdf",
+    submittedBy: "Nadia Rahman",
+    submittedDate: "2026-05-25",
+    priority: "high",
     status: "pending",
+    department: "Records",
+    reviewer: "Olivia King",
+    dueDate: "Today",
+    pageCount: 31,
+    tags: ["Records", "Sensitive"],
+    summary: "Identity verification packet for a batch of student records requiring strict validation.",
+    checklist: [
+      { label: "Identity fields validated", done: true },
+      { label: "Reference match confirmed", done: false },
+      { label: "Sensitive data redaction reviewed", done: false },
+    ],
+    comments: [
+      {
+        author: "Olivia King",
+        role: "Records Reviewer",
+        date: "2026-05-26",
+        text: "Please verify the reference number against the source form.",
+      },
+    ],
+    highlights: [
+      "Sensitive review path",
+      "Needs reference confirmation",
+      "Escalation if mismatch appears",
+    ],
+  },
+  {
+    id: "r-1005",
+    documentName: "HR Policy Update.pdf",
+    submittedBy: "Thomas Nguyen",
+    submittedDate: "2026-05-24",
+    priority: "medium",
+    status: "pending",
+    department: "Human Resources",
+    reviewer: "Sophia Miller",
+    dueDate: "Friday",
+    pageCount: 19,
+    tags: ["Policy", "HR"],
+    summary: "Updated policy language covering flexible working, leave handling, and approval flow changes.",
+    checklist: [
+      { label: "Policy wording aligned with legal guidance", done: true },
+      { label: "FAQ section updated", done: true },
+      { label: "Manager communication drafted", done: false },
+    ],
+    comments: [
+      {
+        author: "Sophia Miller",
+        role: "HR Reviewer",
+        date: "2026-05-25",
+        text: "The policy is clear, but the communication note still needs a final review.",
+      },
+    ],
+    highlights: [
+      "Pending communications review",
+      "No policy conflicts detected",
+      "Schedule rollout after approval",
+    ],
+  },
+  {
+    id: "r-1006",
+    documentName: "Procurement Exception Notice.pdf",
+    submittedBy: "Daniel Brooks",
+    submittedDate: "2026-05-23",
+    priority: "high",
+    status: "in-review",
+    department: "Procurement",
+    reviewer: "Maya Johnson",
+    dueDate: "Tomorrow",
+    pageCount: 9,
+    tags: ["Exception", "Supplier"],
+    summary: "Exception notice requesting approval to move forward with an alternate supplier.",
+    checklist: [
+      { label: "Supplier alternative documented", done: true },
+      { label: "Risk review complete", done: false },
+      { label: "Approver assigned", done: true },
+    ],
+    comments: [
+      {
+        author: "Maya Johnson",
+        role: "Procurement Reviewer",
+        date: "2026-05-24",
+        text: "Risk note needs to include expected delivery impact.",
+      },
+      {
+        author: "Daniel Brooks",
+        role: "Submitted by",
+        date: "2026-05-24",
+        text: "I’ve added the alternate supplier timeline to the appendix.",
+      },
+    ],
+    highlights: [
+      "High priority approval required",
+      "Supplier risk still open",
+      "Alternative path documented",
+    ],
   },
 ];
 
-const PRIORITY_BADGE_COLOR = {
-  high: "danger",
-  medium: "warning",
-  low: "info",
-};
+let activeReview = null;
+let activeQueueItems = [];
+let activeQueueFilter = "all";
+let activeQueueSearch = "";
 
-const STATUS_BADGE_COLOR = {
-  pending: "warning",
-  "in-review": "info",
-  completed: "success",
-};
+function canManageReview() {
+  return typeof hasRole === "function" ? hasRole(["officer", "admin"]) : false;
+}
 
 function initReviewQueuePage() {
-  loadReviewQueue();
-  setupReviewFilters();
-}
-
-function loadReviewQueue() {
-  const reviewTableBody = getElement("#reviewTableBody");
-  if (!reviewTableBody) return;
-
-  try {
-    reviewTableBody.innerHTML = "";
-    const currentReviews =
-      typeof getCurrentUserReviews === "function" ? getCurrentUserReviews() : null;
-    const reviews = currentReviews && currentReviews.length > 0 ? currentReviews : MOCK_REVIEWS;
-
-    const fragment = document.createDocumentFragment();
-
-    reviews.forEach((review) => {
-      fragment.appendChild(createReviewRow(review));
-    });
-
-    reviewTableBody.appendChild(fragment);
-
-    showSuccess(`Loaded ${reviews.length} items for review`);
-  } catch (error) {
-    console.error("Error loading review queue:", error);
-    showError("Failed to load review queue");
-  }
-}
-
-function setupReviewFilters() {
-  const filterBtns = getElements(".filter-btn");
-
-  filterBtns.forEach((btn) => {
-    addEvent(btn, "click", (e) => {
-      e.preventDefault();
-
-      filterBtns.forEach((b) => removeClass(b, "active"));
-
-      addClass(btn, "active");
-
-      const filter = btn.getAttribute("data-filter");
-      filterReviews(filter);
-    });
-  });
-}
-
-function filterReviews(filter) {
-  const reviewTableBody = getElement("#reviewTableBody");
-  if (!reviewTableBody) return;
-
-  const rows = reviewTableBody.querySelectorAll("tr");
-
-  rows.forEach((row) => {
-    const priority = row.dataset.priority;
-    const status = row.dataset.status;
-    const show =
-      filter === "all" ||
-      (filter === "high" && priority === "high") ||
-      (filter === "pending" && status === "pending") ||
-      (filter === "in-review" && status === "in-review");
-
-    show ? showElement(row) : hideElement(row);
-  });
+  activeQueueItems = getReviewData();
+  setupReviewQueueInteractions();
+  renderReviewQueue();
 }
 
 function initReviewDetailsPage() {
-  loadReviewDetails();
-  setupReviewActions();
+  const reviewId = new URLSearchParams(window.location.search).get("id");
+  activeReview = getReviewById(reviewId);
+  renderReviewDetails(activeReview);
+  if (canManageReview()) {
+    setupReviewActions();
+    setupReviewCommentAction();
+  }
 }
 
-function loadReviewDetails() {
-  const params = new URLSearchParams(window.location.search);
-  const reviewId = params.get("id");
+function getReviewData() {
+  return REVIEW_DATA.slice();
+}
 
-  if (!reviewId) {
-    showError("Review ID not provided");
+function getReviewById(reviewId) {
+  const reviews = getReviewData();
+  return reviews.find((review) => review.id === reviewId) || reviews[0];
+}
+
+function setupReviewQueueInteractions() {
+  const searchInput = getElement("#reviewSearchInput");
+  addEvent(searchInput, "input", () => {
+    activeQueueSearch = String(searchInput?.value || "").trim().toLowerCase();
+    renderReviewQueue();
+  });
+
+  // clear button behavior moved from inline HTML to JS
+  const clearBtn = getElement('.search-clear');
+  if (clearBtn && searchInput) {
+    addEvent(clearBtn, 'click', (e) => {
+      e.preventDefault();
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+      searchInput.focus();
+    });
+  }
+
+  getElements(".filter-btn").forEach((button) => {
+    addEvent(button, "click", (event) => {
+      event.preventDefault();
+      getElements(".filter-btn").forEach((item) => removeClass(item, "active"));
+      addClass(button, "active");
+      activeQueueFilter = String(button.getAttribute("data-filter") || "all");
+      renderReviewQueue();
+    });
+  });
+}
+
+function renderReviewQueue() {
+  const reviewTableBody = getElement("#reviewTableBody");
+  if (!reviewTableBody) {
     return;
   }
 
-  try {
-    const reviewDetails = {
-      id: reviewId,
-      documentName: "Q4 Financial Report.pdf",
-      documentUrl: "#",
-      submittedBy: "Alice Johnson",
-      submittedDate: "2024-04-06",
-      priority: "high",
-      status: "pending",
-      description: "Financial report for Q4 2024 including revenue, expenses, and profit analysis.",
-      comments: [
-        {
-          author: "John Reviewer",
-          text: "Please check the calculations on page 3.",
-          date: "2024-04-07",
-        },
-      ],
-    };
+  const filteredReviews = activeQueueItems.filter((review) => {
+    const matchesFilter =
+      activeQueueFilter === "all" ||
+      (activeQueueFilter === "high" && review.priority === "high") ||
+      (activeQueueFilter === "pending" && review.status === "pending") ||
+      (activeQueueFilter === "in-review" && review.status === "in-review") ||
+      (activeQueueFilter === "completed" && review.status === "completed");
 
-    const detailsContainer = getElement("#reviewDetailsContent");
-    if (detailsContainer) {
-      detailsContainer.innerHTML = `
-        <div class="review-details-header">
-          <div>
-            <h2>${escapeHtml(reviewDetails.documentName)}</h2>
-            <p class="text-muted">
-              Submitted by <strong>${escapeHtml(reviewDetails.submittedBy)}</strong> on ${formatDate(reviewDetails.submittedDate)}
-            </p>
-          </div>
-          <div class="header-badge">
-            <span class="badge badge-${reviewDetails.priority === "high" ? "danger" : "warning"}">
-              ${reviewDetails.priority.toUpperCase()}
-            </span>
-          </div>
-        </div>
+    const searchIndex = [
+      review.documentName,
+      review.submittedBy,
+      review.department,
+      review.reviewer,
+      review.priority,
+      review.status,
+      review.tags.join(" "),
+    ]
+      .join(" ")
+      .toLowerCase();
 
-        <div class="review-details-section">
-          <h3>Document Preview</h3>
-          <div class="document-preview">
-            <iframe src="${reviewDetails.documentUrl}" style="width: 100%; height: 500px;"></iframe>
-          </div>
-        </div>
+    const matchesSearch = !activeQueueSearch || searchIndex.includes(activeQueueSearch);
 
-        <div class="review-details-section">
-          <h3>Description</h3>
-          <p>${escapeHtml(reviewDetails.description)}</p>
-        </div>
+    return matchesFilter && matchesSearch;
+  });
 
-        <div class="review-details-section">
-          <h3>Comments</h3>
-          <div class="comments-list">
-            ${reviewDetails.comments
-              .map(
-                (comment) => `
-              <div class="comment-item">
-                <div class="comment-header">
-                  <strong>${escapeHtml(comment.author)}</strong>
-                  <span class="comment-date">${formatDate(comment.date)}</span>
-                </div>
-                <p>${escapeHtml(comment.text)}</p>
-              </div>
-            `,
-              )
-              .join("")}
-          </div>
+  reviewTableBody.innerHTML = "";
 
-          <div class="comment-form">
-            <textarea id="reviewComment" placeholder="Add your comment..." class="form-control"></textarea>
-            <button class="btn btn-primary btn-sm mt-md" onclick="addComment()">Add Comment</button>
-          </div>
-        </div>
-      `;
-    }
-  } catch (error) {
-    console.error("Error loading review details:", error);
-    showError("Failed to load review details");
+  if (!filteredReviews.length) {
+    reviewTableBody.appendChild(createEmptyQueueRow());
+  } else {
+    const fragment = document.createDocumentFragment();
+    filteredReviews.forEach((review) => {
+      fragment.appendChild(createReviewRow(review));
+    });
+    reviewTableBody.appendChild(fragment);
   }
+
+  updateQueueStats(filteredReviews);
+  renderQueueInsights(filteredReviews);
+  updateVisibleCount(filteredReviews.length);
+}
+
+function updateQueueStats(visibleReviews) {
+  const reviews = activeQueueItems;
+  const pendingCount = reviews.filter((review) => review.status === "pending").length;
+  const inReviewCount = reviews.filter((review) => review.status === "in-review").length;
+  const highCount = reviews.filter((review) => review.priority === "high").length;
+  const completedCount = reviews.filter((review) => review.status === "completed").length;
+
+  updateStatValue("pending", pendingCount);
+  updateStatValue("in-review", inReviewCount);
+  updateStatValue("high", highCount);
+  updateStatValue("completed", completedCount);
+  updateVisibleCount(visibleReviews.length);
+}
+
+function renderQueueInsights(visibleReviews) {
+  const insightGrid = getElement("[data-review-insight-grid]");
+  const focusList = getElement("[data-review-focus-list]");
+
+  if (insightGrid) {
+    const pendingCount = activeQueueItems.filter((review) => review.status === "pending").length;
+    const inReviewCount = activeQueueItems.filter((review) => review.status === "in-review").length;
+    const highCount = activeQueueItems.filter((review) => review.priority === "high").length;
+    const completedCount = activeQueueItems.filter((review) => review.status === "completed").length;
+
+    insightGrid.innerHTML = `
+      <div class="review-insight-card">
+        <span>Total items</span>
+        <strong>${activeQueueItems.length}</strong>
+      </div>
+      <div class="review-insight-card">
+        <span>Pending</span>
+        <strong>${pendingCount}</strong>
+      </div>
+      <div class="review-insight-card">
+        <span>In review</span>
+        <strong>${inReviewCount}</strong>
+      </div>
+      <div class="review-insight-card">
+        <span>High priority</span>
+        <strong>${highCount}</strong>
+      </div>
+      <div class="review-insight-card">
+        <span>Completed</span>
+        <strong>${completedCount}</strong>
+      </div>
+      <div class="review-insight-card">
+        <span>Visible now</span>
+        <strong>${visibleReviews.length}</strong>
+      </div>
+    `;
+  }
+
+  if (focusList) {
+    const focusItems = getQueueFocusItems(visibleReviews);
+    focusList.innerHTML = focusItems
+      .map(
+        (item) => `
+          <li>
+            <strong>${escapeHtml(item.title)}</strong>
+            <span>${escapeHtml(item.detail)}</span>
+          </li>
+        `,
+      )
+      .join("");
+  }
+}
+
+function getQueueFocusItems(visibleReviews) {
+  const source = visibleReviews.length > 0 ? visibleReviews : activeQueueItems;
+  const sorted = source
+    .slice()
+    .sort((left, right) => {
+      const priorityOrder = getPrioritySortWeight(right.priority) - getPrioritySortWeight(left.priority);
+      if (priorityOrder !== 0) {
+        return priorityOrder;
+      }
+
+      return new Date(left.submittedDate).getTime() - new Date(right.submittedDate).getTime();
+    });
+
+  const nextItem = sorted[0];
+  const pendingHigh = activeQueueItems.filter(
+    (review) => review.priority === "high" && review.status === "pending",
+  ).length;
+  const inReviewCount = activeQueueItems.filter((review) => review.status === "in-review").length;
+
+  return [
+    {
+      title: nextItem ? `Prioritize ${nextItem.documentName}` : "No items visible",
+      detail: nextItem
+        ? `${formatStatusLabel(nextItem.status)} • due ${nextItem.dueDate}`
+        : "Clear search or filters to continue reviewing items.",
+    },
+    {
+      title: `${pendingHigh} high-priority pending`,
+      detail: "These items should be handled before medium and low priority submissions.",
+    },
+    {
+      title: `${inReviewCount} items in progress`,
+      detail: "Follow up on active reviews to keep the queue moving.",
+    },
+  ];
+}
+
+function updateVisibleCount(count) {
+  getElements("[data-review-visible-count]").forEach((element) => {
+    element.textContent = String(count);
+  });
+}
+
+function updateStatValue(statKey, value) {
+  getElements(`[data-review-stat="${statKey}"]`).forEach((element) => {
+    element.textContent = String(value);
+  });
+}
+
+function createEmptyQueueRow() {
+  const row = createElement("tr", "review-empty-row");
+  row.innerHTML = `
+    <td colspan="7">
+      <div class="review-empty-state">
+        <strong>No review items match your search</strong>
+        <span>Try another keyword or switch to a different filter.</span>
+      </div>
+    </td>
+  `;
+  return row;
+}
+
+function createReviewRow(review) {
+  const row = createElement("tr");
+  row.dataset.priority = review.priority;
+  row.dataset.status = review.status;
+
+  row.innerHTML = `
+    <td>
+      <div class="review-doc-cell">
+        <span class="review-doc-avatar">${escapeHtml(getInitials(review.submittedBy))}</span>
+        <div>
+          <a href="review-details.html?id=${encodeURIComponent(review.id)}" data-app-href="pages/review/review-details.html?id=${encodeURIComponent(review.id)}" class="review-link">
+            ${escapeHtml(review.documentName)}
+          </a>
+          <span class="review-doc-subtext">${escapeHtml(review.department)}</span>
+        </div>
+      </div>
+    </td>
+    <td>
+      <strong>${escapeHtml(review.submittedBy)}</strong>
+      <span>${escapeHtml(review.reviewer)}</span>
+    </td>
+    <td>${formatDate(review.submittedDate)}</td>
+    <td><span class="review-pill priority-${review.priority}">${formatPriorityLabel(review.priority)}</span></td>
+    <td><span class="review-pill status-${review.status}">${formatStatusLabel(review.status)}</span></td>
+    <td>${escapeHtml(review.dueDate)}</td>
+    <td>
+      <div class="review-actions">
+        <a href="review-details.html?id=${encodeURIComponent(review.id)}" data-app-href="pages/review/review-details.html?id=${encodeURIComponent(review.id)}" class="btn btn-sm btn-primary">Review</a>
+      </div>
+    </td>
+  `;
+
+  return row;
+}
+
+function renderReviewDetails(review) {
+  if (!review) {
+    return;
+  }
+
+  const privilegedReview = canManageReview();
+  document.title = `${review.documentName} - PaperHub Review`;
+
+  const detailsContainer = getElement("#reviewDetailsContent");
+  const heroMetaContainer = getElement("#reviewDetailsHeroMeta");
+  const statusLabel = getElement("[data-review-status-label]");
+  const accessNote = getElement("[data-review-access-note]");
+  const actionBar = getElement("[data-review-action-bar]");
+
+  if (statusLabel) {
+    statusLabel.textContent = privilegedReview ? formatStatusLabel(review.status) : "View only";
+  }
+
+  if (accessNote) {
+    accessNote.textContent = privilegedReview
+      ? "Document ready for decision"
+      : "View-only access. Review privileges are restricted to officer and admin.";
+  }
+
+  if (actionBar) {
+    actionBar.classList.toggle("hidden", !privilegedReview);
+  }
+
+  if (heroMetaContainer) {
+    heroMetaContainer.innerHTML = `
+      <div class="review-hero-summary-grid">
+        <div class="review-hero-summary-card">
+          <span>Reviewer</span>
+          <strong>${escapeHtml(review.reviewer)}</strong>
+        </div>
+        <div class="review-hero-summary-card">
+          <span>Due</span>
+          <strong>${escapeHtml(review.dueDate)}</strong>
+        </div>
+        <div class="review-hero-summary-card">
+          <span>Priority</span>
+          <strong>${formatPriorityLabel(review.priority)}</strong>
+        </div>
+        <div class="review-hero-summary-card">
+          <span>Pages</span>
+          <strong>${escapeHtml(String(review.pageCount))}</strong>
+        </div>
+      </div>
+      <div class="review-hero-summary-strip">
+        <span class="review-pill priority-${review.priority}">${formatPriorityLabel(review.priority)}</span>
+        <span class="review-pill status-${review.status}">${formatStatusLabel(review.status)}</span>
+        <span class="review-hero-summary-note">${escapeHtml(review.department)} submission · ${escapeHtml(String(review.comments.length))} comments</span>
+      </div>
+    `;
+  }
+
+  if (detailsContainer) {
+    const notesSection = privilegedReview
+      ? `
+      <section class="review-detail-panel card">
+        <div class="review-section-head">
+          <div>
+            <h3>Review notes</h3>
+            <p>Highlights and comments from the current review cycle.</p>
+          </div>
+        </div>
+        <div class="review-tag-list">
+          ${review.tags
+        .map((tag) => `<span class="review-tag">${escapeHtml(tag)}</span>`)
+        .join("")}
+        </div>
+        <div class="review-highlight-list">
+          ${review.highlights
+        .map(
+          (item) => `
+                <div class="review-highlight-item">
+                  <span class="review-highlight-dot"></span>
+                  <span>${escapeHtml(item)}</span>
+                </div>
+              `,
+        )
+        .join("")}
+        </div>
+
+        <div class="comments-list review-comment-list">
+          ${review.comments
+        .map(
+          (comment) => `
+                <div class="comment-item review-comment-item">
+                  <div class="comment-header">
+                    <div>
+                      <strong>${escapeHtml(comment.author)}</strong>
+                      <span>${escapeHtml(comment.role)}</span>
+                    </div>
+                    <span class="comment-date">${formatDate(comment.date)}</span>
+                  </div>
+                  <p>${escapeHtml(comment.text)}</p>
+                </div>
+              `,
+        )
+        .join("")}
+        </div>
+
+        <div class="comment-form">
+          <label class="sr-only" for="reviewComment">Add a review comment</label>
+          <textarea id="reviewComment" placeholder="Add your comment..." class="form-control" rows="4"></textarea>
+          <button id="addReviewCommentBtn" type="button" class="btn btn-primary btn-sm">Add Comment</button>
+        </div>
+      </section>
+    `
+      : `
+      <section class="review-detail-panel card review-readonly-panel">
+        <div class="review-section-head">
+          <div>
+            <h3>Read-only overview</h3>
+            <p>You can view the document and its summary, but you cannot submit a review.</p>
+          </div>
+        </div>
+        <div class="review-readonly-card">
+          <strong>Review access restricted</strong>
+          <p>Only officer and admin accounts can approve, reject, or forward documents.</p>
+        </div>
+        <div class="review-tag-list">
+          ${review.tags
+        .map((tag) => `<span class="review-tag">${escapeHtml(tag)}</span>`)
+        .join("")}
+        </div>
+      </section>
+    `;
+
+    detailsContainer.innerHTML = `
+      <section class="review-detail-panel card">
+        <div class="review-detail-panel-head">
+          <div class="review-doc-cell review-doc-cell-large">
+            <span class="review-doc-avatar">${escapeHtml(getInitials(review.submittedBy))}</span>
+            <div>
+              <span class="review-doc-kicker">${escapeHtml(review.department)}</span>
+              <h2>${escapeHtml(review.documentName)}</h2>
+              <p>Submitted by <strong>${escapeHtml(review.submittedBy)}</strong> on ${formatDate(review.submittedDate)}</p>
+            </div>
+          </div>
+          <div class="review-status-stack">
+            <span class="review-pill priority-${review.priority}">${formatPriorityLabel(review.priority)}</span>
+            <span class="review-pill status-${review.status}">${formatStatusLabel(review.status)}</span>
+          </div>
+        </div>
+
+        <div class="review-summary-grid">
+          <div class="review-summary-card">
+            <span>Reviewer</span>
+            <strong>${escapeHtml(review.reviewer)}</strong>
+          </div>
+          <div class="review-summary-card">
+            <span>Due</span>
+            <strong>${escapeHtml(review.dueDate)}</strong>
+          </div>
+          <div class="review-summary-card">
+            <span>Pages</span>
+            <strong>${escapeHtml(String(review.pageCount))}</strong>
+          </div>
+          <div class="review-summary-card">
+            <span>Comments</span>
+            <strong>${escapeHtml(String(review.comments.length))}</strong>
+          </div>
+        </div>
+
+        <div class="review-document-preview">
+          <div class="review-document-frame">
+            <div class="review-document-frame-top">
+              <span>Document snapshot</span>
+              <strong>${escapeHtml(review.pageCount)} pages</strong>
+            </div>
+            <div class="review-document-page">
+              <div class="review-document-heading">${escapeHtml(review.documentName)}</div>
+              <div class="review-document-lines">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="review-document-callout">
+                <strong>Summary</strong>
+                <p>${escapeHtml(review.summary)}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      ${notesSection}
+    `;
+  }
+
 }
 
 function setupReviewActions() {
@@ -206,6 +685,11 @@ function setupReviewActions() {
   addEvent(forwardBtn, "click", () => handleReviewAction("forwarded"));
 }
 
+function setupReviewCommentAction() {
+  const commentButton = getElement("#addReviewCommentBtn");
+  addEvent(commentButton, "click", addComment);
+}
+
 function handleReviewAction(action) {
   const comment = getElement("#reviewComment")?.value || "";
 
@@ -214,18 +698,20 @@ function handleReviewAction(action) {
     return;
   }
 
-  if (
-    confirm(
-      `Are you sure you want to ${action} this document? ${comment ? `Comment: ${comment.trim()}` : ""}`,
-    )
-  ) {
-    setTimeout(() => {
-      showSuccess(`Document ${action} successfully`);
-      setTimeout(() => {
-        window.history.back();
-      }, 1000);
-    }, 500);
+  const reviewName = activeReview ? activeReview.documentName : "this document";
+  const confirmationMessage = `Are you sure you want to ${action} ${reviewName}?${comment ? ` Comment: ${comment.trim()}` : ""}`;
+
+  if (!confirm(confirmationMessage)) {
+    return;
   }
+
+  showSuccess(`Document ${action} successfully`);
+
+  setTimeout(() => {
+    window.location.href = typeof resolveAppPath === "function"
+      ? resolveAppPath("pages/review/review-queue.html")
+      : "review-queue.html";
+  }, 900);
 }
 
 function addComment() {
@@ -237,70 +723,71 @@ function addComment() {
     return;
   }
 
-  const commentsList = getElement(".comments-list");
+  const commentsList = getElement(".review-comment-list");
   if (!commentsList) {
     return;
   }
 
-  const newComment = createElement("div", "comment-item animate-slide-in-up");
-  const header = createElement("div", "comment-header");
-  const author = createElement("strong");
-  const date = createElement("span", "comment-date");
-  const body = createElement("p");
+  const comment = {
+    author: "You",
+    role: "Current reviewer",
+    date: new Date().toISOString(),
+    text: commentText,
+  };
 
-  author.textContent = "You";
-  date.textContent = "Just now";
-  body.textContent = commentText;
+  if (activeReview) {
+    activeReview.comments.push(comment);
+  }
 
-  header.appendChild(author);
-  header.appendChild(date);
-  newComment.appendChild(header);
-  newComment.appendChild(body);
+  const commentCard = createElement("div", "comment-item review-comment-item animate-slide-in-up");
+  commentCard.innerHTML = `
+    <div class="comment-header">
+      <div>
+        <strong>${escapeHtml(comment.author)}</strong>
+        <span>${escapeHtml(comment.role)}</span>
+      </div>
+      <span class="comment-date">Just now</span>
+    </div>
+    <p>${escapeHtml(comment.text)}</p>
+  `;
 
-  commentsList.appendChild(newComment);
+  commentsList.appendChild(commentCard);
   commentInput.value = "";
   showSuccess("Comment added");
 }
 
-function createReviewRow(review) {
-  const row = createElement("tr");
-  row.dataset.priority = review.priority;
-  row.dataset.status = review.status;
-
-  row.innerHTML = `
-    <td>
-      <input type="checkbox" class="review-checkbox" value="${escapeHtml(review.id)}">
-    </td>
-    <td>
-      <a href="/pages/review/review-details.html?id=${encodeURIComponent(review.id)}" class="review-link">
-        ${escapeHtml(review.documentName)}
-      </a>
-    </td>
-    <td>${escapeHtml(review.submittedBy)}</td>
-    <td>${formatDate(review.submittedDate)}</td>
-    <td>
-      <span class="badge badge-${PRIORITY_BADGE_COLOR[review.priority] || "info"}">
-        ${toTitleCase(review.priority)}
-      </span>
-    </td>
-    <td>
-      <span class="badge badge-${STATUS_BADGE_COLOR[review.status] || "info"}">
-        ${review.status === "in-review" ? "In Review" : toTitleCase(review.status)}
-      </span>
-    </td>
-    <td>
-      <div class="review-actions">
-        <a href="/pages/review/review-details.html?id=${encodeURIComponent(review.id)}" class="btn btn-sm btn-primary">Review</a>
-      </div>
-    </td>
-  `;
-
-  return row;
+function getInitials(name) {
+  return String(name || "U")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0))
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "U";
 }
 
-function toTitleCase(value) {
-  const text = String(value || "");
-  return text.charAt(0).toUpperCase() + text.slice(1);
+function formatPriorityLabel(priority) {
+  return String(priority || "").charAt(0).toUpperCase() + String(priority || "").slice(1);
+}
+
+function formatStatusLabel(status) {
+  if (status === "in-review") {
+    return "In Review";
+  }
+
+  return String(status || "").charAt(0).toUpperCase() + String(status || "").slice(1);
+}
+
+function getPrioritySortWeight(priority) {
+  if (priority === "high") {
+    return 3;
+  }
+
+  if (priority === "medium") {
+    return 2;
+  }
+
+  return 1;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
