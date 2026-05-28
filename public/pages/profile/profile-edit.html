@@ -179,7 +179,6 @@
       const initialsEls = document.querySelectorAll('[data-user-initials]');
       let avatarDataUrl = null;
 
-      // populate preview if user already has an avatar
       const current = getCurrentUser() || {};
       if (current.avatar) {
         previewImgs.forEach((img) => {

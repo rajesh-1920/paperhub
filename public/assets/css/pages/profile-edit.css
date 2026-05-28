@@ -6,30 +6,6 @@ body.profile-edit-page .profile-edit-shell {
   display: none !important;
 }
 
-.profile-edit-hero {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding: 1.25rem 1.35rem;
-}
-
-.profile-edit-hero h1 {
-  margin: 0;
-  color: #0f172a;
-}
-
-.profile-edit-hero .page-subtitle {
-  margin: 0.45rem 0 0;
-}
-
-.profile-edit-hero-actions {
-  display: flex;
-  gap: 0.65rem;
-  flex-wrap: wrap;
-}
-
 .profile-edit-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -226,11 +202,6 @@ body.profile-edit-page .profile-edit-shell {
 }
 
 @media (max-width: 900px) {
-  .profile-edit-hero {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .profile-edit-aside {
     position: static;
   }
