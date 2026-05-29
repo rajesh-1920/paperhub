@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Review Details - PaperHub</title>
+  <title>File Review Details - PaperHub</title>
   <script src="../../assets/js/tailwind-setup.js"></script>
   <link rel="stylesheet" href="../../assets/css/tailwind.css" />
   <link rel="stylesheet" href="../../assets/css/global.css" />
@@ -20,8 +20,9 @@
       <section class="review-hero card review-detail-hero">
         <div class="review-hero-copy">
           <p class="eyebrow">Review Flow</p>
-          <h1>Document review</h1>
-          <p class="review-hero-text">A focused workspace for reading, commenting, and making a confident decision.</p>
+          <h1>File review details</h1>
+          <p class="review-hero-text">See the file, the current review status, the reason it was routed here, and the
+            discussion history in one place.</p>
 
           <div id="reviewDetailsHeroMeta" class="review-detail-hero-meta"></div>
         </div>
@@ -34,12 +35,10 @@
             <strong data-review-status-label>Pending</strong>
           </div>
         </div>
-
       </section>
 
       <div class="review-detail-main review-detail-main-full">
         <div id="reviewDetailsContent"></div>
-
         <div class="review-detailscard review-action-bar action-buttons hidden" data-review-action-bar>
           <button id="approveBtn" class="btn btn-success" type="button">Approve</button>
           <button id="rejectBtn" class="btn btn-danger" type="button">Reject</button>

@@ -527,6 +527,8 @@
 .review-detail-actions-top {
   align-items: flex-start;
   justify-content: flex-end;
+  max-width: 17rem;
+  width: 100%;
 }
 
 .review-detail-hero {
@@ -589,6 +591,8 @@
   display: grid;
   gap: 0.2rem;
   text-align: right;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .review-detail-actions-note span {
@@ -969,6 +973,29 @@
   display: block;
   font-size: 1.05rem;
   margin-top: 0.3rem;
+}
+
+.review-status-banner {
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.95), rgba(248, 250, 252, 0.97));
+  border: 1px solid rgba(147, 197, 253, 0.16);
+  border-radius: 1rem;
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.95rem 1rem;
+}
+
+.review-status-banner p {
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.review-embedded-panel {
+  margin-top: 0.25rem;
+}
+
+.review-embedded-panel .review-checklist {
+  margin-top: 0.1rem;
 }
 
 .review-document-preview {

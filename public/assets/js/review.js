@@ -486,6 +486,9 @@ function renderReviewDetails(review) {
   }
 
   const privilegedReview = canManageReview();
+  const reviewReason = review.reviewReason || review.summary;
+  const openChecklistCount = review.checklist.filter((item) => !item.done).length;
+  const reviewTrailItems = buildReviewTrailItems(review, openChecklistCount);
   document.title = `${review.documentName} - PaperHub Review`;
 
   const detailsContainer = getElement("#reviewDetailsContent");
@@ -501,7 +504,7 @@ function renderReviewDetails(review) {
   if (accessNote) {
     accessNote.textContent = privilegedReview
       ? "Document ready for decision"
-      : "View-only access. Review privileges are restricted to officer and admin.";
+      : "View-only access for this file.";
   }
 
   if (actionBar) {
@@ -512,16 +515,16 @@ function renderReviewDetails(review) {
     heroMetaContainer.innerHTML = `
       <div class="review-hero-summary-grid">
         <div class="review-hero-summary-card">
+          <span>File type</span>
+          <strong>${escapeHtml(getDocumentType(review.documentName))}</strong>
+        </div>
+        <div class="review-hero-summary-card">
           <span>Reviewer</span>
           <strong>${escapeHtml(review.reviewer)}</strong>
         </div>
         <div class="review-hero-summary-card">
           <span>Due</span>
           <strong>${escapeHtml(review.dueDate)}</strong>
-        </div>
-        <div class="review-hero-summary-card">
-          <span>Priority</span>
-          <strong>${formatPriorityLabel(review.priority)}</strong>
         </div>
         <div class="review-hero-summary-card">
           <span>Pages</span>
@@ -531,7 +534,7 @@ function renderReviewDetails(review) {
       <div class="review-hero-summary-strip">
         <span class="review-pill priority-${review.priority}">${formatPriorityLabel(review.priority)}</span>
         <span class="review-pill status-${review.status}">${formatStatusLabel(review.status)}</span>
-        <span class="review-hero-summary-note">${escapeHtml(review.department)} submission · ${escapeHtml(String(review.comments.length))} comments</span>
+        <span class="review-hero-summary-note">${escapeHtml(review.department)} submission · ${escapeHtml(String(review.comments.length))} comments · ${escapeHtml(String(openChecklistCount))} open checks</span>
       </div>
     `;
   }
@@ -539,31 +542,13 @@ function renderReviewDetails(review) {
   if (detailsContainer) {
     const notesSection = privilegedReview
       ? `
-      <section class="review-detail-panel card">
+      <section class="review-side-panel card">
         <div class="review-section-head">
           <div>
-            <h3>Review notes</h3>
-            <p>Highlights and comments from the current review cycle.</p>
+            <h3>Discussion</h3>
+            <p>Comment history and follow-up notes for the reviewer.</p>
           </div>
         </div>
-        <div class="review-tag-list">
-          ${review.tags
-        .map((tag) => `<span class="review-tag">${escapeHtml(tag)}</span>`)
-        .join("")}
-        </div>
-        <div class="review-highlight-list">
-          ${review.highlights
-        .map(
-          (item) => `
-                <div class="review-highlight-item">
-                  <span class="review-highlight-dot"></span>
-                  <span>${escapeHtml(item)}</span>
-                </div>
-              `,
-        )
-        .join("")}
-        </div>
-
         <div class="comments-list review-comment-list">
           ${review.comments
         .map(
@@ -591,88 +576,220 @@ function renderReviewDetails(review) {
       </section>
     `
       : `
-      <section class="review-detail-panel card review-readonly-panel">
+      <section class="review-side-panel card review-readonly-panel">
         <div class="review-section-head">
           <div>
             <h3>Read-only overview</h3>
-            <p>You can view the document and its summary, but you cannot submit a review.</p>
+            <p>This page shows the file, the review state, and the reason it is being checked.</p>
           </div>
         </div>
         <div class="review-readonly-card">
           <strong>Review access restricted</strong>
           <p>Only officer and admin accounts can approve, reject, or forward documents.</p>
         </div>
-        <div class="review-tag-list">
-          ${review.tags
-        .map((tag) => `<span class="review-tag">${escapeHtml(tag)}</span>`)
-        .join("")}
-        </div>
       </section>
     `;
 
     detailsContainer.innerHTML = `
-      <section class="review-detail-panel card">
-        <div class="review-detail-panel-head">
-          <div class="review-doc-cell review-doc-cell-large">
-            <span class="review-doc-avatar">${escapeHtml(getInitials(review.submittedBy))}</span>
-            <div>
-              <span class="review-doc-kicker">${escapeHtml(review.department)}</span>
-              <h2>${escapeHtml(review.documentName)}</h2>
-              <p>Submitted by <strong>${escapeHtml(review.submittedBy)}</strong> on ${formatDate(review.submittedDate)}</p>
-            </div>
-          </div>
-          <div class="review-status-stack">
-            <span class="review-pill priority-${review.priority}">${formatPriorityLabel(review.priority)}</span>
-            <span class="review-pill status-${review.status}">${formatStatusLabel(review.status)}</span>
-          </div>
-        </div>
-
-        <div class="review-summary-grid">
-          <div class="review-summary-card">
-            <span>Reviewer</span>
-            <strong>${escapeHtml(review.reviewer)}</strong>
-          </div>
-          <div class="review-summary-card">
-            <span>Due</span>
-            <strong>${escapeHtml(review.dueDate)}</strong>
-          </div>
-          <div class="review-summary-card">
-            <span>Pages</span>
-            <strong>${escapeHtml(String(review.pageCount))}</strong>
-          </div>
-          <div class="review-summary-card">
-            <span>Comments</span>
-            <strong>${escapeHtml(String(review.comments.length))}</strong>
-          </div>
-        </div>
-
-        <div class="review-document-preview">
-          <div class="review-document-frame">
-            <div class="review-document-frame-top">
-              <span>Document snapshot</span>
-              <strong>${escapeHtml(review.pageCount)} pages</strong>
-            </div>
-            <div class="review-document-page">
-              <div class="review-document-heading">${escapeHtml(review.documentName)}</div>
-              <div class="review-document-lines">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-              <div class="review-document-callout">
-                <strong>Summary</strong>
-                <p>${escapeHtml(review.summary)}</p>
+      <div class="review-detail-layout">
+        <section class="review-detail-panel card">
+          <div class="review-detail-panel-head">
+            <div class="review-doc-cell review-doc-cell-large">
+              <span class="review-doc-avatar">${escapeHtml(getInitials(review.submittedBy))}</span>
+              <div>
+                <span class="review-doc-kicker">${escapeHtml(review.department)} · ${escapeHtml(getDocumentType(review.documentName))}</span>
+                <h2>${escapeHtml(review.documentName)}</h2>
+                <p>Submitted by <strong>${escapeHtml(review.submittedBy)}</strong> on ${formatDate(review.submittedDate)}</p>
               </div>
             </div>
+            <div class="review-status-stack">
+              <span class="review-pill priority-${review.priority}">${formatPriorityLabel(review.priority)}</span>
+              <span class="review-pill status-${review.status}">${formatStatusLabel(review.status)}</span>
+            </div>
           </div>
-        </div>
-      </section>
-      ${notesSection}
+
+          <div class="review-summary-grid">
+            <div class="review-summary-card">
+              <span>Reviewer</span>
+              <strong>${escapeHtml(review.reviewer)}</strong>
+            </div>
+            <div class="review-summary-card">
+              <span>Due</span>
+              <strong>${escapeHtml(review.dueDate)}</strong>
+            </div>
+            <div class="review-summary-card">
+              <span>Pages</span>
+              <strong>${escapeHtml(String(review.pageCount))}</strong>
+            </div>
+            <div class="review-summary-card">
+              <span>Comments</span>
+              <strong>${escapeHtml(String(review.comments.length))}</strong>
+            </div>
+          </div>
+
+          <div class="review-document-preview">
+            <div class="review-document-frame">
+              <div class="review-document-frame-top">
+                <span>File snapshot</span>
+                <strong>${escapeHtml(review.pageCount)} pages</strong>
+              </div>
+              <div class="review-document-page">
+                <div class="review-document-heading">${escapeHtml(review.documentName)}</div>
+                <div class="review-document-lines">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div class="review-document-callout">
+                  <strong>Why this is under review</strong>
+                  <p>${escapeHtml(reviewReason)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <section class="review-side-panel card review-embedded-panel">
+            <div class="review-section-head">
+              <div>
+                <h3>What is being checked</h3>
+                <p>Open items, evidence, and the points that drove the review.</p>
+              </div>
+            </div>
+            <div class="review-tag-list">
+              ${review.tags
+        .map((tag) => `<span class="review-tag">${escapeHtml(tag)}</span>`)
+        .join("")}
+            </div>
+            <div class="review-highlight-list">
+              ${review.highlights
+        .map(
+          (item) => `
+                <div class="review-highlight-item">
+                  <span class="review-highlight-dot"></span>
+                  <span>${escapeHtml(item)}</span>
+                </div>
+              `,
+        )
+        .join("")}
+            </div>
+            <ul class="review-checklist">
+              ${review.checklist
+        .map(
+          (item) => `
+                <li class="${item.done ? "is-done" : "is-open"}">
+                  <span></span>
+                  <div>
+                    <strong>${escapeHtml(item.label)}</strong>
+                    <p>${item.done ? "Verified" : "Needs attention"}</p>
+                  </div>
+                </li>
+              `,
+        )
+        .join("")}
+            </ul>
+          </section>
+        </section>
+
+        <aside class="review-detail-sidebar">
+          <section class="review-side-panel card">
+            <div class="review-section-head">
+              <div>
+                <h3>Review status</h3>
+                <p>Assignment, urgency, and the current file state.</p>
+              </div>
+            </div>
+            <div class="review-status-banner">
+              <span class="review-pill priority-${review.priority}">${formatPriorityLabel(review.priority)}</span>
+              <span class="review-pill status-${review.status}">${formatStatusLabel(review.status)}</span>
+              <p>${escapeHtml(reviewReason)}</p>
+            </div>
+            <div class="review-insight-grid">
+              <div class="review-insight-card">
+                <span>Reviewer</span>
+                <strong>${escapeHtml(review.reviewer)}</strong>
+              </div>
+              <div class="review-insight-card">
+                <span>Priority</span>
+                <strong>${formatPriorityLabel(review.priority)}</strong>
+              </div>
+              <div class="review-insight-card">
+                <span>Due</span>
+                <strong>${escapeHtml(review.dueDate)}</strong>
+              </div>
+              <div class="review-insight-card">
+                <span>Open checks</span>
+                <strong>${escapeHtml(String(openChecklistCount))}</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="review-side-panel card">
+            <div class="review-section-head">
+              <div>
+                <h3>Review trail</h3>
+                <p>How the file moved into this state.</p>
+              </div>
+            </div>
+            <div class="review-trail">
+              ${reviewTrailItems
+        .map(
+          (item, index) => `
+                <div class="review-trail-item">
+                  <span>${escapeHtml(String(index + 1))}</span>
+                  <div>
+                    <strong>${escapeHtml(item.title)}</strong>
+                    <p>${escapeHtml(item.detail)}</p>
+                  </div>
+                </div>
+              `,
+        )
+        .join("")}
+            </div>
+          </section>
+
+          ${notesSection}
+        </aside>
+      </div>
     `;
   }
 
+}
+
+function buildReviewTrailItems(review, openChecklistCount) {
+  const commentsCount = review.comments.length;
+  const latestComment = review.comments[review.comments.length - 1];
+
+  return [
+    {
+      title: "Submitted",
+      detail: `${review.submittedBy} uploaded the file on ${formatDate(review.submittedDate)} for ${review.department.toLowerCase()} review.`,
+    },
+    {
+      title: "Reason for review",
+      detail: review.summary,
+    },
+    {
+      title: "Assigned reviewer",
+      detail: `${review.reviewer} is currently responsible for the ${formatStatusLabel(review.status).toLowerCase()} decision.`,
+    },
+    {
+      title: "Open follow-up",
+      detail: `${openChecklistCount} checklist item${openChecklistCount === 1 ? "" : "s"} remain open and ${commentsCount} comment${commentsCount === 1 ? "" : "s"} have been added.${latestComment ? ` Latest note from ${latestComment.author}.` : ""}`,
+    },
+  ];
+}
+
+function getDocumentType(documentName) {
+  const name = String(documentName || "");
+  const extension = name.includes(".") ? name.split(".").pop() : "";
+
+  if (!extension) {
+    return "File";
+  }
+
+  return extension.toUpperCase();
 }
 
 function setupReviewActions() {
