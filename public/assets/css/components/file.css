@@ -14,6 +14,10 @@
   grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
 }
 
+.file-upload-page .file-hero {
+  margin-bottom: 1.25rem;
+}
+
 .file-hero-copy {
   display: grid;
   gap: 1rem;
@@ -255,6 +259,75 @@
   height: 100%;
   transition: width 0.3s ease;
   width: 0;
+}
+
+.upload-card {
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.upload-dropzone {
+  border: 2px dashed rgba(148, 163, 184, 0.22);
+  border-radius: 0.75rem;
+  padding: 2.2rem;
+  display: grid;
+  gap: 0.6rem;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(250, 250, 250, 0.7));
+}
+
+.upload-dropzone .upload-icon {
+  font-size: 2.2rem;
+}
+
+.upload-dropzone.upload-dropzone-active {
+  border-color: rgba(14, 165, 233, 0.45);
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.06);
+}
+
+.file-preview-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.file-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: #fff;
+}
+
+.file-preview-item .file-icon {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 165, 233, 0.08);
+  border-radius: 0.5rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-start;
+}
+
+.upload-tips {
+  color: #64748b;
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.meta-start {
+  margin-top: 1rem;
 }
 
 @media (max-width: 1100px) {

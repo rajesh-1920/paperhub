@@ -31,6 +31,8 @@ function initFileUploadPage() {
   const dropzone = getElement(".upload-dropzone");
   const fileInput = getElement("#fileInput");
   const uploadBtn = getElement("#uploadBtn");
+  const clearBtn = getElement("#clearQueue");
+  const startAllBtn = getElement("#metaStartAll");
 
   if (dropzone) {
     addEvent(dropzone, "dragover", handleDragOver);
@@ -46,6 +48,14 @@ function initFileUploadPage() {
 
   if (uploadBtn) {
     addEvent(uploadBtn, "click", handleUpload);
+  }
+
+  if (clearBtn) {
+    addEvent(clearBtn, "click", handleClearQueue);
+  }
+
+  if (startAllBtn) {
+    addEvent(startAllBtn, "click", handleUpload);
   }
 }
 
@@ -159,7 +169,30 @@ function addFilePreview(container, file) {
     if (container.children.length === 0) {
       hideElement(getElement("#uploadBtn"));
     }
+    updateUploadSummary();
   });
+  updateUploadSummary();
+}
+
+function updateUploadSummary() {
+  let count = 0;
+  let total = 0;
+  for (const entry of uploadState.values()) {
+    count++;
+    total += Number(entry.file.size || 0);
+  }
+  setText("#metaQueued", String(count));
+  setText("#metaTotalSize", formatFileSize(total));
+}
+
+function handleClearQueue() {
+  uploadState.clear();
+  const list = getElement(".file-preview-list");
+  if (list) {
+    list.innerHTML = "";
+  }
+  hideElement(getElement("#uploadBtn"));
+  updateUploadSummary();
 }
 
 function getFileIcon(fileType) {
