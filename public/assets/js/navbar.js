@@ -12,7 +12,7 @@
       "/pages/dashboard/admin.html",
     ],
     files: [
-      "/pages/file/file-details.html",
+      "/pages/file/files.html",
       "/pages/file/upload.html",
       "/pages/file/version-history.html",
     ],
@@ -25,7 +25,7 @@
 
   const SIDEBAR_ROUTE_GROUPS = {
     dashboard: TOP_NAV_ROUTE_GROUPS.dashboard,
-    fileDetails: ["/pages/file/file-details.html"],
+    fileDetails: ["/pages/file/files.html"],
     fileUpload: ["/pages/file/upload.html"],
     fileHistory: ["/pages/file/version-history.html"],
     reviews: TOP_NAV_ROUTE_GROUPS.reviews,

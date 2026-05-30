@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Files - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/file.css" />
+</head>
+
+<body class="file-details-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content file-page-shell">
+      <section class="file-hero card">
+        <div class="file-hero-copy">
+          <div>
+            <h1>My Files</h1>
+            <p class="file-subtitle">Manage documents, monitor review progress, and keep every version organized.</p>
+          </div>
+
+          <div class="file-hero-insights" id="fileStatusChips">
+            <button type="button" class="file-chip active" data-status-chip="all">All files</button>
+            <button type="button" class="file-chip" data-status-chip="completed">Completed</button>
+            <button type="button" class="file-chip" data-status-chip="reviewing">Reviewing</button>
+            <button type="button" class="file-chip" data-status-chip="pending">Pending</button>
+          </div>
+
+          <div class="file-hero-search-wrap">
+            <input id="fileSearchInput" type="text" placeholder="Search by file name or status..."
+              class="file-search-input" />
+          </div>
+        </div>
+
+        <div class="file-hero-panel">
+          <div class="file-hero-actions">
+            <a href="/pages/file/upload.html" data-app-href="pages/file/upload.html" class="btn btn-primary">Upload
+              New</a>
+            <button type="button" class="btn btn-outline" id="importCsvBtn">Import CSV</button>
+          </div>
+          <div class="file-kpi-grid">
+            <div class="file-kpi-card">
+              <span>Total files</span>
+              <strong id="filesStatTotal">0</strong>
+            </div>
+            <div class="file-kpi-card">
+              <span>In review</span>
+              <strong id="filesStatReviewing">0</strong>
+            </div>
+            <div class="file-kpi-card">
+              <span>Pending</span>
+              <strong id="filesStatPending">0</strong>
+            </div>
+            <div class="file-kpi-card">
+              <span>Total size</span>
+              <strong id="filesStatTotalSize">0 MB</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="file-layout">
+        <section class="file-table-panel card">
+          <div class="table-header file-table-header">
+            <select id="fileStatusFilter" class="file-status-filter" aria-label="Filter files by status">
+              <option value="all">All status</option>
+              <option value="reviewing">Reviewing</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+            <select id="fileSortSelect" class="file-status-filter" aria-label="Sort files">
+              <option value="recent">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="name-asc">Name A-Z</option>
+              <option value="name-desc">Name Z-A</option>
+              <option value="size-desc">Largest size</option>
+            </select>
+          </div>
+
+          <div class="file-table-meta">
+            <span id="filesVisibleCount">0 files visible</span>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Document Name</th>
+                  <th>Size</th>
+                  <th>Status</th>
+                  <th>Uploaded</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fileTableBody"></tbody>
+            </table>
+          </div>
+
+          <div id="filesEmptyState" class="card empty-state">
+            <h3>No matching files</h3>
+            <p class="file-subtitle">Try changing the search term or status filter to see more documents.</p>
+            <div style="margin-top:1rem;"><a href="/pages/file/upload.html" data-app-href="pages/file/upload.html"
+                class="btn btn-primary">Upload a Document</a></div>
+          </div>
+        </section>
+
+        <aside class="file-sidebar">
+          <div class="page-meta-card card">
+            <h4>Selected File</h4>
+            <div class="meta-line"><span>Selected</span><strong id="metaSelected">—</strong></div>
+            <div class="meta-line"><span>Owner</span><span id="metaOwner">—</span></div>
+            <div class="meta-line"><span>Last updated</span><span id="metaUpdated">—</span></div>
+            <div class="file-meta-actions">
+              <button id="metaPreviewBtn" class="btn btn-outline" type="button">Preview</button>
+              <button id="metaDownloadBtn" class="btn btn-primary" type="button">Download</button>
+            </div>
+          </div>
+
+          <div class="card file-storage-card">
+            <h4>Storage health</h4>
+            <div class="file-storage-progress">
+              <span id="storageLabel">0% used</span>
+              <div class="file-progress-track">
+                <div class="file-progress-fill" id="storageFill"></div>
+              </div>
+            </div>
+            <p class="file-subtitle">Monitor your workspace capacity to keep uploads and reviews running smoothly.</p>
+          </div>
+
+          <div class="card">
+            <h4>Best practices</h4>
+            <ul style="color:#64748b;margin:0;padding-left:1rem;">
+              <li>Use meaningful file names for easier search.</li>
+              <li>Keep sensitive documents in encrypted folders.</li>
+              <li>Archive completed files regularly to reduce clutter.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/file.js"></script>
+</body>
+
+</html>

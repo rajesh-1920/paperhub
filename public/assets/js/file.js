@@ -20,6 +20,12 @@ const ALLOWED_FILE_EXTENSIONS = new Set([
   "png",
 ]);
 const uploadState = new Map();
+let filePageItems = [];
+let filePageFilteredItems = [];
+let filePageSearch = "";
+let filePageStatusFilter = "all";
+let filePageSortBy = "recent";
+let selectedFileId = null;
 
 function initFileUploadPage() {
   const dropzone = getElement(".upload-dropzone");
@@ -213,7 +219,7 @@ async function handleUpload() {
   if (uploadedCount === fileEntries.length) {
     showSuccess("All files uploaded successfully!");
     setTimeout(() => {
-      window.location.href = "/pages/file/file-details.html";
+      window.location.href = "/pages/file/files.html";
     }, 1000);
   }
 }
@@ -252,7 +258,65 @@ async function simulateUpload(progressElement) {
 }
 
 function initFileDetailsPage() {
+  setupFileDetailsInteractions();
   loadFileList();
+}
+
+function setupFileDetailsInteractions() {
+  const searchInput = getElement("#fileSearchInput");
+  const statusFilter = getElement("#fileStatusFilter");
+  const sortSelect = getElement("#fileSortSelect");
+  const importBtn = getElement("#importCsvBtn");
+
+  addEvent(searchInput, "input", () => {
+    filePageSearch = String(searchInput?.value || "").trim().toLowerCase();
+    renderFileTable();
+  });
+
+  addEvent(statusFilter, "change", () => {
+    filePageStatusFilter = String(statusFilter?.value || "all").toLowerCase();
+    syncStatusChip(filePageStatusFilter);
+    renderFileTable();
+  });
+
+  addEvent(sortSelect, "change", () => {
+    filePageSortBy = String(sortSelect?.value || "recent").toLowerCase();
+    renderFileTable();
+  });
+
+  getElements("[data-status-chip]").forEach((chip) => {
+    addEvent(chip, "click", () => {
+      const nextFilter = String(chip.getAttribute("data-status-chip") || "all").toLowerCase();
+      filePageStatusFilter = nextFilter;
+      if (statusFilter) {
+        statusFilter.value = nextFilter;
+      }
+      syncStatusChip(nextFilter);
+      renderFileTable();
+    });
+  });
+
+  addEvent(importBtn, "click", () => {
+    showInfo("CSV import is coming soon.");
+  });
+
+  addEvent(getElement("#metaPreviewBtn"), "click", () => {
+    const file = getSelectedFile();
+    if (!file) {
+      showWarning("Select a file first");
+      return;
+    }
+    showInfo(`Previewing ${file.name}`);
+  });
+
+  addEvent(getElement("#metaDownloadBtn"), "click", () => {
+    const file = getSelectedFile();
+    if (!file) {
+      showWarning("Select a file first");
+      return;
+    }
+    showSuccess(`Downloading ${file.name}`);
+  });
 }
 
 async function loadFileList() {
@@ -260,7 +324,6 @@ async function loadFileList() {
   if (!fileTableBody) return;
 
   try {
-    fileTableBody.innerHTML = "";
     const currentFiles = typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : null;
     const response =
       currentFiles && currentFiles.length > 0
@@ -268,42 +331,239 @@ async function loadFileList() {
         : await apiCall("/api/files");
 
     if (response.success && response.data) {
-      const fragment = document.createDocumentFragment();
+      filePageItems = response.data.map((file, index) => ({
+        ...file,
+        _id: `${file.name || "file"}-${index}`,
+      }));
 
-      response.data.forEach((file) => {
-        const row = createElement("tr");
-        const statusClass =
-          file.status === "completed"
-            ? "success"
-            : file.status === "reviewing"
-              ? "warning"
-              : "primary";
+      if (!selectedFileId && filePageItems.length) {
+        selectedFileId = filePageItems[0]._id;
+      }
 
-        row.innerHTML = `
-          <td>
-            <div class="file-cell">
-              <span class="file-type-icon">${getFileIcon("application/pdf")}</span>
-              <span class="file-name-cell">${file.name}</span>
-            </div>
-          </td>
-          <td>${formatFileSize(file.size)}</td>
-          <td><span class="badge badge-${statusClass}">${file.status}</span></td>
-          <td>${formatDate(file.uploadedAt)}</td>
-          <td>
-            <div class="file-actions">
-              <button class="btn btn-sm btn-outline">View</button>
-              <button class="btn btn-sm btn-outline">Download</button>
-            </div>
-          </td>
-        `;
-        fragment.appendChild(row);
-      });
-
-      fileTableBody.appendChild(fragment);
+      syncStatusChip(filePageStatusFilter);
+      renderFileTable();
+      updateFileStats(filePageItems);
+      updateStorageHealth(filePageItems);
+      updateMetaPanel(getSelectedFile());
     }
   } catch (error) {
-    console.error("Error loading files:", error);
     showError("Failed to load files");
+  }
+}
+
+function renderFileTable() {
+  const fileTableBody = getElement("#fileTableBody");
+  const emptyState = getElement("#filesEmptyState");
+  if (!fileTableBody) {
+    return;
+  }
+
+  filePageFilteredItems = getFilteredAndSortedFiles(filePageItems);
+  fileTableBody.innerHTML = "";
+
+  if (!filePageFilteredItems.length) {
+    if (emptyState) {
+      emptyState.style.display = "block";
+    }
+    updateVisibleFilesCount(0);
+    return;
+  }
+
+  if (emptyState) {
+    emptyState.style.display = "none";
+  }
+
+  const fragment = document.createDocumentFragment();
+  filePageFilteredItems.forEach((file) => {
+    fragment.appendChild(createFileRow(file));
+  });
+
+  fileTableBody.appendChild(fragment);
+  updateVisibleFilesCount(filePageFilteredItems.length);
+
+  if (!filePageFilteredItems.some((file) => file._id === selectedFileId)) {
+    selectedFileId = filePageFilteredItems[0]?._id || null;
+  }
+
+  updateMetaPanel(getSelectedFile());
+  syncSelectedRowState();
+}
+
+function getFilteredAndSortedFiles(files) {
+  const filtered = files.filter((file) => {
+    const normalizedStatus = String(file.status || "").toLowerCase();
+    const matchesStatus = filePageStatusFilter === "all" || normalizedStatus === filePageStatusFilter;
+    const searchIndex = `${file.name || ""} ${normalizedStatus}`.toLowerCase();
+    const matchesSearch = !filePageSearch || searchIndex.includes(filePageSearch);
+    return matchesStatus && matchesSearch;
+  });
+
+  return filtered.sort((left, right) => {
+    if (filePageSortBy === "oldest") {
+      return new Date(left.uploadedAt).getTime() - new Date(right.uploadedAt).getTime();
+    }
+
+    if (filePageSortBy === "name-asc") {
+      return String(left.name || "").localeCompare(String(right.name || ""));
+    }
+
+    if (filePageSortBy === "name-desc") {
+      return String(right.name || "").localeCompare(String(left.name || ""));
+    }
+
+    if (filePageSortBy === "size-desc") {
+      return Number(right.size || 0) - Number(left.size || 0);
+    }
+
+    return new Date(right.uploadedAt).getTime() - new Date(left.uploadedAt).getTime();
+  });
+}
+
+function createFileRow(file) {
+  const row = createElement("tr", "file-row");
+  row.setAttribute("data-file-id", file._id);
+
+  row.innerHTML = `
+    <td>
+      <div class="file-cell">
+        <span class="file-type-icon">${escapeHtml(getFileIconByName(file.name))}</span>
+        <div>
+          <span class="file-name-cell">${escapeHtml(file.name || "Untitled")}</span>
+          <span class="file-name-meta">${escapeHtml(getFileExtension(file.name || "file").toUpperCase())} document</span>
+        </div>
+      </div>
+    </td>
+    <td>${formatFileSize(Number(file.size || 0))}</td>
+    <td><span class="file-status-pill status-${escapeHtml(normalizeFileStatus(file.status))}">${escapeHtml(formatFileStatusLabel(file.status))}</span></td>
+    <td>${formatDate(file.uploadedAt)}</td>
+    <td>
+      <div class="file-actions">
+        <button class="btn btn-sm btn-outline" type="button" data-action="view">View</button>
+        <button class="btn btn-sm btn-outline" type="button" data-action="download">Download</button>
+      </div>
+    </td>
+  `;
+
+  addEvent(row, "click", (event) => {
+    const actionButton = event.target.closest("button[data-action]");
+    selectedFileId = file._id;
+    updateMetaPanel(file);
+    syncSelectedRowState();
+
+    if (!actionButton) {
+      return;
+    }
+
+    const action = actionButton.getAttribute("data-action");
+    if (action === "view") {
+      showInfo(`Opening ${file.name}`);
+      return;
+    }
+
+    if (action === "download") {
+      showSuccess(`Downloading ${file.name}`);
+    }
+  });
+
+  return row;
+}
+
+function syncSelectedRowState() {
+  getElements(".file-row").forEach((row) => {
+    const rowId = row.getAttribute("data-file-id");
+    row.classList.toggle("is-selected", rowId === selectedFileId);
+  });
+}
+
+function updateVisibleFilesCount(count) {
+  const visibleCount = getElement("#filesVisibleCount");
+  if (visibleCount) {
+    visibleCount.textContent = `${count} file${count === 1 ? "" : "s"} visible`;
+  }
+}
+
+function updateFileStats(files) {
+  const total = files.length;
+  const reviewing = files.filter((file) => normalizeFileStatus(file.status) === "reviewing").length;
+  const pending = files.filter((file) => normalizeFileStatus(file.status) === "pending").length;
+  const totalSize = files.reduce((sum, file) => sum + Number(file.size || 0), 0);
+
+  setText("#filesStatTotal", String(total));
+  setText("#filesStatReviewing", String(reviewing));
+  setText("#filesStatPending", String(pending));
+  setText("#filesStatTotalSize", formatFileSize(totalSize));
+}
+
+function updateStorageHealth(files) {
+  const capacityBytes = 1024 * 1024 * 1024;
+  const usedBytes = files.reduce((sum, file) => sum + Number(file.size || 0), 0);
+  const usagePercentage = Math.min(100, Math.round((usedBytes / capacityBytes) * 100));
+
+  const fill = getElement("#storageFill");
+  if (fill) {
+    fill.style.width = `${usagePercentage}%`;
+  }
+
+  setText("#storageLabel", `${usagePercentage}% used`);
+}
+
+function updateMetaPanel(file) {
+  const currentUser = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+  setText("#metaSelected", file ? file.name : "—");
+  setText("#metaOwner", currentUser?.name || "PaperHub User");
+  setText("#metaUpdated", file ? formatDate(file.uploadedAt) : "—");
+}
+
+function syncStatusChip(status) {
+  getElements("[data-status-chip]").forEach((chip) => {
+    const chipStatus = String(chip.getAttribute("data-status-chip") || "all").toLowerCase();
+    chip.classList.toggle("active", chipStatus === status);
+  });
+}
+
+function normalizeFileStatus(status) {
+  const normalized = String(status || "pending").toLowerCase();
+  if (normalized === "in-review") {
+    return "reviewing";
+  }
+  return normalized;
+}
+
+function formatFileStatusLabel(status) {
+  const normalized = normalizeFileStatus(status);
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function getFileIconByName(fileName) {
+  const extension = getFileExtension(fileName);
+
+  if (extension === "pdf") {
+    return "📄";
+  }
+
+  if (extension === "doc" || extension === "docx") {
+    return "📝";
+  }
+
+  if (extension === "xls" || extension === "xlsx") {
+    return "📊";
+  }
+
+  if (extension === "jpg" || extension === "jpeg" || extension === "png") {
+    return "🖼️";
+  }
+
+  return "📎";
+}
+
+function getSelectedFile() {
+  return filePageItems.find((file) => file._id === selectedFileId) || null;
+}
+
+function setText(selector, value) {
+  const element = getElement(selector);
+  if (element) {
+    element.textContent = value;
   }
 }
 
@@ -368,7 +628,6 @@ function loadVersionHistory() {
 
     historyContainer.appendChild(fragment);
   } catch (error) {
-    console.error("Error loading version history:", error);
     showError("Failed to load version history");
   }
 }
