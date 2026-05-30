@@ -28,8 +28,7 @@
     fileDetails: ["/pages/file/file-details.html"],
     fileUpload: ["/pages/file/upload.html"],
     fileHistory: ["/pages/file/version-history.html"],
-    reviewQueue: ["/pages/review/review-queue.html"],
-    reviewDetails: ["/pages/review/review-details.html"],
+    reviews: TOP_NAV_ROUTE_GROUPS.reviews,
     profile: [
       "/pages/profile/profile.html",
       "/pages/profile/profile-edit.html",
