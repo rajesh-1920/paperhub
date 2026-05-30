@@ -1,7 +1,47 @@
 .account-shell {
-  max-width: 92rem;
+  max-width: 80rem;
   margin: 0 auto;
-  padding: 1.75rem 1rem 0;
+  padding: 1.75rem 0.75rem 0;
+}
+
+/* Settings page specific */
+.settings-tabs .settings-tab-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.settings-tabs .tab-btn {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.settings-tabs .tab-btn[aria-selected="true"] {
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border-color: rgba(14, 165, 233, 0.22);
+  color: #0369a1;
+}
+
+.settings-panel {
+  padding-top: 0.5rem;
+}
+
+.profile-summary-card {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
 }
 
 .page-header {
@@ -42,7 +82,7 @@
 
 @media (min-width: 768px) {
   .account-grid {
-    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
   }
 
   .col-left {
@@ -54,10 +94,42 @@
     grid-column: 2;
   }
 
+  .col-main .card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Prevent the right/main column from stretching too wide when the global sidebar is collapsed.
+     Center the main card inside the column and cap its width for a balanced, polished layout. */
+  .col-main {
+    display: flex;
+    justify-content: center;
+  }
+
+  .col-main .card {
+    max-width: 64rem;
+    width: 100%;
+  }
+
+  /* When sidebar is collapsed allow the main card to use more horizontal space */
+  body.ph-sidebar-collapsed .account-shell {
+    max-width: 92rem;
+  }
+
+  body.ph-sidebar-collapsed .col-main .card {
+    max-width: 84rem;
+  }
+
+  .col-main .card {
+    transition: max-width 220ms ease;
+  }
+
   .profile-summary-card {
     position: sticky;
     top: 1.5rem;
     align-self: start;
+    flex: 0 0 320px;
+    min-width: 280px;
   }
 
   .profile-edit-grid {
@@ -86,7 +158,8 @@
 .profile-summary-top {
   display: flex;
   gap: 1rem;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: row;
 }
 
 .profile-avatar-wrap {
@@ -94,13 +167,75 @@
   flex-shrink: 0;
 }
 
+.profile-avatar-wrap {
+  margin-bottom: 0.45rem;
+}
+
+.profile-meta-chips {
+  margin-top: 0.8rem;
+}
+
+.profile-actions {
+  justify-content: flex-start;
+}
+
 .profile-avatar {
   background: linear-gradient(135deg, #0284c7, #06b6d4);
   border-radius: 1.25rem;
   color: #fff;
   height: 5.5rem;
-  padding: 0.95rem;
+  padding: 0.3rem;
   width: 5.5rem;
+}
+
+.profile-avatar-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.9rem;
+}
+
+.status-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, #ecfdf5, #eff6ff);
+  color: #065f46;
+  border: 1px solid rgba(6, 95, 70, 0.08);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.72rem;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.profile-action-btn {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  padding: 0.5rem 0.7rem;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.profile-action-btn:hover {
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.04);
+}
+
+.profile-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.profile-stat-card strong {
+  font-size: 1.1rem;
 }
 
 .profile-basic h2 {
@@ -432,5 +567,91 @@
   .profile-summary-top {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+/* Additional settings page enhancements */
+.settings-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 1.25rem;
+  background: linear-gradient(180deg, rgba(14, 165, 233, 0.04), rgba(255, 255, 255, 0.75));
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+}
+
+.settings-hero-copy h1 {
+  margin: 0.15rem 0 0.25rem;
+}
+
+.settings-hero-meta {
+  text-align: right;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.card {
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+}
+
+.settings-tabs {
+  padding: 1rem;
+}
+
+.settings-tab-panels {
+  padding-top: 0.5rem;
+}
+
+.settings-tab-buttons {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.tab-btn[aria-selected="true"] {
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  border-color: rgba(14, 165, 233, 0.22);
+  color: #0369a1;
+}
+
+.settings-panel {
+  padding: 0.5rem 0;
+}
+
+.toggle-row input[type="checkbox"] {
+  transform: scale(1.05);
+  margin-left: 0.6rem;
+}
+
+@media (max-width: 767px) {
+  .settings-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .settings-tab-buttons {
+    flex-wrap: wrap;
+  }
+}
+
+/* Ensure the main card becomes fluid on medium screens to avoid overflow when sidebar collapses */
+@media (max-width: 1024px) {
+  .col-main .card {
+    max-width: 100%;
+  }
+
+  .account-shell {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
