@@ -9,7 +9,6 @@
       "main .review-detailscard",
       "main .support-hero",
       "main .page-header",
-      "main .dashboard-header",
     ];
 
     const animated = document.querySelectorAll(selectors.join(", "));
