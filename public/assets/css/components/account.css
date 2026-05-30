@@ -31,7 +31,6 @@
 }
 
 .profile-summary-card {
-  padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -42,6 +41,12 @@
   align-items: center;
   justify-content: center;
   font-size: 1.6rem;
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  border-radius: 1.25rem;
+  color: #fff;
+  height: 5.5rem;
+  padding: 0.3rem;
+  width: 5.5rem;
 }
 
 .page-header {
@@ -165,28 +170,9 @@
 .profile-avatar-wrap {
   position: relative;
   flex-shrink: 0;
-}
-
-.profile-avatar-wrap {
   margin-bottom: 0.45rem;
 }
 
-.profile-meta-chips {
-  margin-top: 0.8rem;
-}
-
-.profile-actions {
-  justify-content: flex-start;
-}
-
-.profile-avatar {
-  background: linear-gradient(135deg, #0284c7, #06b6d4);
-  border-radius: 1.25rem;
-  color: #fff;
-  height: 5.5rem;
-  padding: 0.3rem;
-  width: 5.5rem;
-}
 
 .profile-avatar-img {
   display: block;
@@ -194,6 +180,18 @@
   height: 100%;
   object-fit: cover;
   border-radius: 0.9rem;
+}
+
+.status-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 0.45rem;
+}
+
+.profile-role {
+  margin-left: 0.6rem;
+  font-weight: 700;
 }
 
 .status-badge {
