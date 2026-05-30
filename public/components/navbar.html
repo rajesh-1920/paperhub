@@ -27,6 +27,17 @@
         <span class="ph-badge ph-badge-count hidden" id="notifyCount" aria-hidden="false">0</span>
       </button>
 
+      <div id="notifyDropdown" class="ph-menu ph-notify-menu hidden" role="menu" aria-label="Notifications menu">
+        <div class="ph-menu-header">
+          <strong>Notifications</strong>
+          <button id="clearNotificationsBtn" class="ph-menu-btn">Clear</button>
+        </div>
+        <div class="ph-menu-section">
+          <ul id="notifyList" class="notifications-list"></ul>
+        </div>
+        <div class="ph-menu-divider"></div>
+      </div>
+
       <button id="themeToggle" type="button" class="ph-icon-btn" aria-label="Toggle theme" aria-pressed="false">
         <span data-theme-icon>◐</span>
       </button>
@@ -67,7 +78,6 @@
     <div class="ph-menu-section">
       <a data-app-href="pages/profile/profile.html" class="ph-menu-link">Profile</a>
       <a data-app-href="pages/account/settings.html" class="ph-menu-link">Settings</a>
-      <a data-app-href="pages/notifications/notifications.html" class="ph-menu-link">Notifications</a>
       <a data-user-dashboard-link data-app-href="pages/dashboard/user.html" class="ph-menu-link">Go To Dashboard</a>
     </div>
 
@@ -87,7 +97,6 @@
       <a data-nav-link data-top-nav="support" data-app-href="pages/support/contact.html"
         class="ph-mobile-link">Support</a>
       <a data-app-href="pages/file/upload.html" class="ph-mobile-link">Upload</a>
-      <a data-app-href="pages/notifications/notifications.html" class="ph-mobile-link">Notifications</a>
       <button id="mobileThemeToggle" type="button" class="ph-menu-btn" data-theme-toggle>Toggle Theme</button>
       <button type="button" class="ph-menu-btn" data-sign-out>Sign Out</button>
     </div>

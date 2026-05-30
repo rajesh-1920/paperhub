@@ -436,7 +436,6 @@
       const targetMain = document.querySelector("main");
 
       if (newMain && targetMain) {
-        // Ensure page-specific styles from fetched document are loaded into the main document.
         try {
           const headLinks = Array.from(doc.querySelectorAll('link[rel="stylesheet"]'));
           headLinks.forEach((link) => {
@@ -454,7 +453,6 @@
             }
           });
 
-          // Copy inline <style> blocks if present and not already included.
           const styleEls = Array.from(doc.querySelectorAll("style"));
           styleEls.forEach((s) => {
             const txt = s.textContent && s.textContent.trim();
@@ -472,7 +470,6 @@
           console.warn("Failed to import styles from fetched page", err);
         }
 
-        // Merge body classes: preserve app-level classes (paperhub, ph- prefixes, dark)
         try {
           const preserve = Array.from(document.body.classList).filter((c) =>
             c && (c.startsWith("paperhub") || c.startsWith("ph-") || c === "dark" || c === "light"),
@@ -490,7 +487,6 @@
           document.title = doc.title;
         }
 
-        // Inject scripts from fetched page after styles and body classes applied.
         const scripts = Array.from(doc.querySelectorAll("script"));
         const scriptPromises = [];
 
@@ -558,9 +554,6 @@
             initVersionHistoryPage();
           }
 
-          if (body.classList.contains("notifications-page") && typeof initNotificationsPage === "function") {
-            initNotificationsPage();
-          }
         };
 
         runPageInitializer();
@@ -765,6 +758,163 @@
     }
   }
 
+  function setupNotificationsDropdown() {
+    const notifyBtn = document.getElementById("notifyBtn");
+    const notifyDropdown = document.getElementById("notifyDropdown");
+    const notifyList = document.getElementById("notifyList");
+    const notifyCount = document.getElementById("notifyCount");
+    const clearBtn = document.getElementById("clearNotificationsBtn");
+
+    if (!notifyBtn || !notifyDropdown || !notifyList) return;
+
+    const positionMenu = () => {
+      const buttonRect = notifyBtn.getBoundingClientRect();
+      const spacing = 8;
+      const viewportPadding = 12;
+
+      const wasHidden = notifyDropdown.classList.contains("hidden");
+      if (wasHidden) {
+        notifyDropdown.classList.remove("hidden");
+        notifyDropdown.style.visibility = "hidden";
+        notifyDropdown.style.left = "0px";
+      }
+
+      let menuWidth = notifyDropdown.offsetWidth || 320;
+      menuWidth = Math.min(menuWidth, window.innerWidth - viewportPadding * 2);
+
+      const idealLeft = Math.round(buttonRect.right - menuWidth);
+      const maxLeft = window.innerWidth - menuWidth - viewportPadding;
+      const minLeft = viewportPadding;
+      const left = Math.max(minLeft, Math.min(idealLeft, maxLeft));
+      const top = Math.round(buttonRect.bottom + spacing);
+
+      notifyDropdown.style.position = "fixed";
+      notifyDropdown.style.top = `${top}px`;
+      notifyDropdown.style.left = `${left}px`;
+      notifyDropdown.style.right = "auto";
+      notifyDropdown.style.transformOrigin = "top center";
+
+      if (wasHidden) {
+        notifyDropdown.style.visibility = "";
+        notifyDropdown.classList.add("hidden");
+        notifyDropdown.style.left = "";
+      }
+    };
+
+    function getTargetForNotification(n) {
+      if (!n || !n.category) return resolveLink("pages/dashboard/user.html");
+      if (n.category === "review") return resolveLink("pages/review/review-queue.html");
+      if (n.category === "billing") return resolveLink("pages/payment/payment.html");
+      if (n.category === "file") return resolveLink("pages/file/files.html");
+      return resolveLink("pages/dashboard/user.html");
+    }
+
+    function renderNotifications() {
+      const items = typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
+      const sorted = items.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      notifyList.innerHTML = sorted
+        .map((item) => {
+          const isUnread = !item.read;
+          const time = item.createdAt ? timeAgo(item.createdAt) : "";
+          const icon = item.category === "review" ? "📝" : item.category === "billing" ? "💳" : item.category === "file" ? "📁" : "🔔";
+
+          return `
+            <li class="notification-item ${isUnread ? "unread" : ""}" tabindex="0" role="menuitem" data-notification-id="${escapeHtml(item.id)}">
+              <div class="notification-icon" aria-hidden="true">${icon}</div>
+              <div class="notification-body">
+                <div class="notification-title">${escapeHtml(item.title)}</div>
+                <div class="notification-desc">${escapeHtml(item.description)}</div>
+                <div class="notification-meta">
+                  <div class="notification-time">${escapeHtml(time)}</div>
+                  <div class="notification-badge">${escapeHtml(item.category || "general")}</div>
+                </div>
+              </div>
+            </li>
+          `;
+        })
+        .join("");
+
+      const unreadCount = sorted.filter((i) => !i.read).length;
+      if (notifyCount) {
+        if (unreadCount > 0) {
+          notifyCount.textContent = String(unreadCount > 99 ? "99+" : unreadCount);
+          notifyCount.classList.remove("hidden");
+        } else {
+          notifyCount.classList.add("hidden");
+        }
+      }
+    }
+
+    notifyList.addEventListener("click", (e) => {
+      const li = e.target.closest("[data-notification-id]");
+      if (!li) return;
+      activateNotificationItem(li);
+    });
+
+    notifyList.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        const li = e.target.closest("[data-notification-id]");
+        if (!li) return;
+        e.preventDefault();
+        activateNotificationItem(li);
+      }
+    });
+
+    function activateNotificationItem(li) {
+      const id = li.getAttribute("data-notification-id");
+      const items = typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
+      const item = items.find((x) => String(x.id) === String(id));
+      if (item) item.read = true;
+
+      renderNotifications();
+
+      const target = getTargetForNotification(item);
+      if (typeof loadMainContentFromUrl === "function") {
+        loadMainContentFromUrl(target);
+      } else {
+        window.location.href = target;
+      }
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const items = typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
+        items.forEach((i) => (i.read = true));
+        renderNotifications();
+      });
+    }
+
+    notifyBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const isOpen = !notifyDropdown.classList.contains("hidden");
+      if (isOpen) {
+        notifyDropdown.classList.add("hidden");
+        notifyBtn.setAttribute("aria-expanded", "false");
+      } else {
+        renderNotifications();
+        notifyDropdown.classList.remove("hidden");
+        notifyBtn.setAttribute("aria-expanded", "true");
+        requestAnimationFrame(positionMenu);
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (!notifyDropdown.classList.contains("hidden")) positionMenu();
+    });
+
+    window.addEventListener("scroll", () => {
+      if (!notifyDropdown.classList.contains("hidden")) positionMenu();
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!notifyBtn.contains(event.target) && !notifyDropdown.contains(event.target)) {
+        notifyDropdown.classList.add("hidden");
+        notifyBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
   function setupThemeToggle() {
     const themeToggle = document.getElementById("themeToggle");
     const mobileThemeToggle = document.getElementById("mobileThemeToggle");
@@ -876,12 +1026,9 @@
     try {
       const notifyBtn = document.getElementById("notifyBtn");
       const notifyCount = document.getElementById("notifyCount");
-      const unread =
-        user && Array.isArray(user.notifications)
-          ? user.notifications.filter((n) => !n.read).length
-          : (user && user.unreadNotifications) || 0;
 
       if (notifyCount) {
+        const unread = user && Array.isArray(user.notifications) ? user.notifications.filter((n) => !n.read).length : 0;
         if (unread > 0) {
           notifyCount.textContent = String(unread > 99 ? "99+" : unread);
           notifyCount.classList.remove("hidden");
@@ -890,14 +1037,7 @@
         }
       }
 
-      if (notifyBtn) {
-        notifyBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          window.location.assign(
-            resolveLink("pages/notifications/notifications.html"),
-          );
-        });
-      }
+      setupNotificationsDropdown();
     } catch (err) {
       console.warn("Notifications init failed", err);
     }
