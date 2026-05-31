@@ -140,6 +140,7 @@
 }
 
 @keyframes heroPulse {
+
   0%,
   100% {
     opacity: 1;
@@ -461,6 +462,276 @@
 .dark .hero-chip {
   background: rgba(180, 83, 9, 0.32);
   color: #fcd34d;
+}
+
+.dark #contact {
+  position: relative;
+}
+
+.dark #contact::before {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(8, 145, 178, 0.16), transparent 30%),
+    radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(12, 18, 30, 0.96), rgba(10, 14, 24, 0.98));
+  border-radius: 2rem;
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.dark #contact .container-tight {
+  position: relative;
+  z-index: 1;
+}
+
+.dark #contact h2 {
+  color: #f8fafc;
+}
+
+.dark #contact>.container-tight>.text-center>p {
+  color: #c6d3e3;
+}
+
+.dark #contact form.card {
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(71, 85, 105, 0.72);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(59, 130, 246, 0.06) inset;
+}
+
+.dark #contact label {
+  color: #e2e8f0;
+}
+
+.dark #contact .input {
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.9), rgba(15, 23, 42, 0.96));
+  border-color: rgba(71, 85, 105, 0.74);
+  color: #f8fafc;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+.dark #contact .input::placeholder {
+  color: #94a3b8;
+}
+
+.dark #contact .input:focus {
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.dark #contact .btn-primary {
+  background: linear-gradient(135deg, #14b8ff, #0284c7);
+  border-color: rgba(14, 165, 233, 0.18);
+  box-shadow: 0 10px 24px rgba(14, 165, 233, 0.16);
+}
+
+.dark #contact .btn-primary:hover {
+  background: linear-gradient(135deg, #1dc4ff, #0f96db);
+  box-shadow: 0 14px 28px rgba(14, 165, 233, 0.22);
+}
+
+.dark .ready-to-transform {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 14% 20%, rgba(8, 145, 178, 0.2), transparent 34%),
+    radial-gradient(circle at 84% 28%, rgba(37, 99, 235, 0.18), transparent 30%),
+    linear-gradient(135deg, #020617 0%, #0f172a 52%, #111827 100%);
+  box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.1);
+}
+
+.dark .ready-to-transform::before {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 42%),
+    radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12), transparent 36%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.dark .ready-to-transform>.container-wide {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .ready-to-transform h2 {
+  color: #f8fafc;
+  text-wrap: balance;
+}
+
+.dark .ready-to-transform p {
+  color: #cbd5e1;
+}
+
+.dark .ready-to-transform button:first-of-type {
+  background: linear-gradient(135deg, #ffffff, #e2e8f0);
+  color: #0f172a;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.24);
+}
+
+.dark .ready-to-transform button:first-of-type:hover {
+  background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+}
+
+.dark .ready-to-transform button:last-of-type {
+  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  color: #f8fafc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.dark .ready-to-transform button:last-of-type:hover {
+  background: rgba(30, 41, 59, 0.58);
+  border-color: rgba(148, 163, 184, 0.36);
+}
+
+.dark .landing-hero {
+  background:
+    radial-gradient(circle at 14% 14%, rgba(8, 145, 178, 0.16), transparent 34%),
+    radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.08), transparent 28%),
+    linear-gradient(180deg, #0b1120 0%, #0f1726 100%);
+}
+
+.dark .landing-hero::before {
+  background:
+    radial-gradient(circle at 12% 24%, rgba(59, 130, 246, 0.18), transparent 44%),
+    radial-gradient(circle at 88% 18%, rgba(16, 185, 129, 0.12), transparent 40%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.72) 0%, rgba(15, 23, 42, 0.42) 100%);
+  opacity: 1;
+}
+
+.dark .landing-hero::after {
+  background: radial-gradient(ellipse at bottom right, rgba(8, 145, 178, 0.12), transparent 68%);
+  opacity: 0.9;
+}
+
+.dark .hero-subtitle {
+  color: #c6d3e3;
+}
+
+.dark .badge-primary {
+  background: linear-gradient(135deg, rgba(10, 42, 89, 0.68), rgba(15, 58, 115, 0.54));
+  border-color: rgba(45, 212, 191, 0.2);
+  color: #dbeafe;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+.dark .gradient-text {
+  background: linear-gradient(135deg, #1ea7ff, #16c1d9);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.dark .hero-visual-glow {
+  background: linear-gradient(135deg, rgba(8, 145, 178, 0.28), rgba(37, 99, 235, 0.18));
+  opacity: 0.55;
+}
+
+.dark .hero-visual-card {
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.98));
+  border-color: rgba(71, 85, 105, 0.74);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(59, 130, 246, 0.08) inset;
+}
+
+.dark .hero-visual-top {
+  border-color: rgba(71, 85, 105, 0.72);
+}
+
+.dark .hero-health {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.72), rgba(4, 120, 87, 0.58));
+  color: #6ee7b7;
+}
+
+.dark .hero-metric {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(17, 24, 39, 0.72));
+  border-color: rgba(59, 130, 246, 0.16);
+}
+
+.dark .hero-metric:hover {
+  border-color: rgba(59, 130, 246, 0.28);
+  box-shadow: 0 10px 24px rgba(8, 15, 35, 0.32);
+}
+
+.dark .hero-metric-label,
+.dark .hero-queue-time,
+.dark .hero-ticket p,
+.dark .hero-role-note,
+.dark .hero-eyebrow {
+  color: #94a3b8;
+}
+
+.dark .hero-metric-value {
+  background: linear-gradient(135deg, #1ea7ff, #1bd3a6);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.dark .hero-role-lanes,
+.dark .hero-queue {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.78), rgba(17, 24, 39, 0.72));
+  border-color: rgba(71, 85, 105, 0.72);
+}
+
+.dark .hero-role-row {
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.9), rgba(15, 23, 42, 0.8));
+  border-color: rgba(71, 85, 105, 0.68);
+}
+
+.dark .hero-role-row:hover {
+  background: linear-gradient(180deg, rgba(19, 30, 50, 0.95), rgba(17, 26, 44, 0.92));
+  border-color: rgba(59, 130, 246, 0.24);
+}
+
+.dark .hero-role-name,
+.dark .hero-queue-title,
+.dark .hero-ticket h4,
+.dark .hero-context-title,
+.dark .hero-context-list strong {
+  color: #f8fafc;
+}
+
+.dark .hero-role-badge.user {
+  background: rgba(29, 78, 216, 0.2);
+  color: #93c5fd;
+  border-color: rgba(37, 99, 235, 0.28);
+}
+
+.dark .hero-role-badge.officer {
+  background: rgba(180, 83, 9, 0.24);
+  color: #fdba74;
+  border-color: rgba(249, 115, 22, 0.24);
+}
+
+.dark .hero-role-badge.admin {
+  background: rgba(13, 148, 136, 0.24);
+  color: #99f6e4;
+  border-color: rgba(45, 212, 191, 0.24);
+}
+
+.dark .hero-ticket {
+  background: linear-gradient(135deg, rgba(20, 24, 38, 0.95), rgba(18, 22, 34, 0.9));
+  border-color: rgba(59, 130, 246, 0.16);
+}
+
+.dark .hero-ticket:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 10px 24px rgba(8, 15, 35, 0.3);
+}
+
+.dark .hero-chip {
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.22), rgba(20, 184, 166, 0.14));
+  border-color: rgba(45, 212, 191, 0.22);
+  color: #ccfbf1;
+}
+
+.dark .hero-context {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.78), rgba(17, 24, 39, 0.68));
+  border-color: rgba(71, 85, 105, 0.72);
 }
 
 @media (min-width: 768px) {
