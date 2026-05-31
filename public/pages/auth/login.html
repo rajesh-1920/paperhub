@@ -1,119 +1,109 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign In | PaperHub</title>
-    <meta name="description" content="Sign in to PaperHub and continue your secure document workflow." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../../assets/css/tailwind.css" />
-  </head>
-  <body class="login-page bg-white text-slate-900 overflow-x-hidden">
-    <div class="relative overflow-hidden py-4 lg:py-6">
-      <main class="relative mx-auto grid w-full max-w-7xl grid-cols-1 lg:grid-cols-2">
-        <section class="hidden lg:flex lg:rounded-3xl flex-col justify-between bg-slate-900 text-slate-100 p-10 xl:p-12">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In | PaperHub</title>
+  <meta name="description" content="Sign in to PaperHub and continue your secure document workflow." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/dark-mode.css" />
+  <link rel="stylesheet" href="../../assets/css/pages/auth.css" />
+</head>
+
+<body class="login-page bg-white text-slate-900 overflow-x-hidden">
+  <div class="relative overflow-hidden py-4 lg:py-6">
+    <main class="relative mx-auto grid w-full max-w-7xl grid-cols-1 lg:grid-cols-2">
+      <section class="hidden lg:flex lg:rounded-3xl flex-col justify-between bg-slate-900 text-slate-100 p-10 xl:p-12">
+        <div>
+          <a href="/" class="inline-flex items-center gap-3 text-white">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500 font-semibold">PH</span>
+            <span>
+              <span class="block font-display text-lg font-semibold">PaperHub</span>
+              <span class="block text-xs uppercase tracking-[0.18em] text-slate-300">Document Operations</span>
+            </span>
+          </a>
+        </div>
+
+        <div class="space-y-8">
           <div>
-            <a href="/" class="inline-flex items-center gap-3 text-white">
-              <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500 font-semibold">PH</span>
-              <span>
-                <span class="block font-display text-lg font-semibold">PaperHub</span>
-                <span class="block text-xs uppercase tracking-[0.18em] text-slate-300">Document Operations</span>
-              </span>
-            </a>
-          </div>
-
-          <div class="space-y-8">
-            <div>
-              <h1 class="font-display text-4xl font-semibold leading-tight">Welcome back to your secure workspace.</h1>
-              <p class="mt-4 max-w-xl text-slate-300">
-                Continue approvals, track document status, and collaborate with your team from one trusted platform.
-              </p>
-            </div>
-
-            <div class="grid gap-4">
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p class="text-sm font-semibold">Enterprise-grade workflow</p>
-                <p class="mt-1 text-sm text-slate-300">Role-based access, audit history, and secure document lifecycle.</p>
-              </div>
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p class="text-sm font-semibold">Team performance visibility</p>
-                <p class="mt-1 text-sm text-slate-300">Live status across review queue, approvals, and pending items.</p>
-              </div>
-            </div>
-          </div>
-
-          <p class="text-xs text-slate-400">Copyright 2026 PaperHub</p>
-        </section>
-
-        <section class="flex items-center justify-center p-4 sm:p-6 lg:p-8">
-          <div class="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-soft sm:p-7">
-            <div class="mb-6">
-              <p class="text-sm font-semibold uppercase tracking-[0.14em] text-sky-700">Sign In</p>
-              <h2 class="mt-2 font-display text-3xl font-semibold">Access your account</h2>
-              <p class="mt-2 text-sm text-slate-600">Use your registered email and password to continue.</p>
-            </div>
-
-            <form id="loginForm" class="space-y-4" novalidate>
-              <div>
-                <label for="email" class="mb-2 block text-sm font-medium text-slate-700">Email Address</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  autocomplete="email"
-                  placeholder="you@company.com"
-                  class="input"
-                />
-              </div>
-
-              <div>
-                <label for="password" class="mb-2 block text-sm font-medium text-slate-700">Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  required
-                  autocomplete="current-password"
-                  placeholder="Enter your password"
-                  class="input"
-                />
-              </div>
-
-              <div class="flex items-center justify-between text-sm">
-                <label class="inline-flex cursor-pointer items-center gap-2 text-slate-600">
-                  <input type="checkbox" id="rememberMe" name="rememberMe" class="h-4 w-4 rounded border-slate-300" />
-                  <span>Remember me</span>
-                </label>
-                <a href="#" class="font-medium text-sky-700 hover:text-sky-800">Forgot password?</a>
-              </div>
-
-              <button type="submit" class="btn-primary w-full">Sign In</button>
-            </form>
-
-            <div class="my-5 flex items-center gap-3">
-              <span class="h-px flex-1 bg-slate-200"></span>
-              <span class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">or</span>
-              <span class="h-px flex-1 bg-slate-200"></span>
-            </div>
-
-            <button type="button" class="btn-secondary w-full">Continue with Google</button>
-
-            <p class="mt-6 text-center text-sm text-slate-600">
-              New to PaperHub?
-              <a href="register.html" class="font-semibold text-sky-700 hover:text-sky-800">Create an account</a>
+            <h1 class="font-display text-4xl font-semibold leading-tight">Welcome back to your secure workspace.</h1>
+            <p class="mt-4 max-w-xl text-slate-300">
+              Continue approvals, track document status, and collaborate with your team from one trusted platform.
             </p>
           </div>
-        </section>
-      </main>
-    </div>
 
-    <script src="../../assets/js/utils.js"></script>
-    <script src="../../assets/js/auth.js"></script>
-  </body>
+          <div class="grid gap-4">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-sm font-semibold">Enterprise-grade workflow</p>
+              <p class="mt-1 text-sm text-slate-300">Role-based access, audit history, and secure document lifecycle.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-sm font-semibold">Team performance visibility</p>
+              <p class="mt-1 text-sm text-slate-300">Live status across review queue, approvals, and pending items.</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-400">Copyright 2026 PaperHub</p>
+      </section>
+
+      <section class="flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div class="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-soft sm:p-7 auth-card">
+          <div class="mb-6">
+            <p class="text-sm font-semibold uppercase tracking-[0.14em] text-sky-700">Sign In</p>
+            <h2 class="mt-2 font-display text-3xl font-semibold">Access your account</h2>
+            <p class="mt-2 text-sm text-slate-600">Use your registered email and password to continue.</p>
+          </div>
+
+          <form id="loginForm" class="space-y-4" novalidate>
+            <div>
+              <label for="email" class="mb-2 block text-sm font-medium text-slate-700">Email Address</label>
+              <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@company.com"
+                class="input" />
+            </div>
+
+            <div>
+              <label for="password" class="mb-2 block text-sm font-medium text-slate-700">Password</label>
+              <input type="password" id="password" name="password" required autocomplete="current-password"
+                placeholder="Enter your password" class="input" />
+            </div>
+
+            <div class="flex items-center justify-between text-sm">
+              <label class="inline-flex cursor-pointer items-center gap-2 text-slate-600">
+                <input type="checkbox" id="rememberMe" name="rememberMe" class="h-4 w-4 rounded border-slate-300" />
+                <span>Remember me</span>
+              </label>
+              <a href="#" class="font-medium text-sky-700 hover:text-sky-800">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-primary w-full">Sign In</button>
+          </form>
+
+          <div class="my-5 flex items-center gap-3">
+            <span class="h-px flex-1 bg-slate-200"></span>
+            <span class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">or</span>
+            <span class="h-px flex-1 bg-slate-200"></span>
+          </div>
+
+          <button type="button" class="btn-secondary w-full">Continue with Google</button>
+
+          <p class="mt-6 text-center text-sm text-slate-600">
+            New to PaperHub?
+            <a href="register.html" class="font-semibold text-sky-700 hover:text-sky-800">Create an account</a>
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/auth.js"></script>
+</body>
+
 </html>
