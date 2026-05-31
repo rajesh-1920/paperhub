@@ -100,7 +100,6 @@
   }
 
   function initCollapsibleSections() {
-    // Initialize button labels to match current state and keep per-button listeners
     getElements("[data-section-toggle]").forEach((button) => {
       const targetId = button.getAttribute("data-section-toggle");
       const target = targetId ? document.getElementById(targetId) : null;
@@ -110,7 +109,6 @@
     });
   }
 
-  // Delegated handler so toggles work even if sections are injected later (SPA partial loads)
   function handleSectionToggleClick(event) {
     const button = event.target.closest("[data-section-toggle]");
     if (!button) return;
@@ -150,6 +148,5 @@
     initSidebarFallback();
   });
 
-  // Global delegated listener (works even on dynamically-inserted content)
   document.addEventListener("click", handleSectionToggleClick);
 })();

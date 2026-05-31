@@ -1,36 +1,31 @@
-/* Dark mode — professional palette for PaperHub
-   - Deep slate background
-   - Neutral surface cards
-   - Muted text and subtle indigo accents
-   - Soft glass for menus
-*/
+
 
 html.dark {
   color-scheme: dark;
 }
 
-/* Core color variables for dark mode */
+
 html.dark {
   --dash-bg-start: #0b0b0b;
-  /* near-black base used by Dark Reader */
+  
   --dash-bg-end: #131313;
   --dash-surface: rgba(255, 255, 255, 0.02);
-  /* low-contrast surfaces */
+  
   --dash-surface-strong: rgba(255, 255, 255, 0.03);
   --dash-text: #e6e8ea;
-  /* slightly cool neutral text */
+  
   --dash-muted: #9aa4ab;
   --dash-border: rgba(255, 255, 255, 0.035);
   --dash-shadow-soft: 0 6px 20px rgba(2, 6, 10, 0.5);
   --dash-accent: #58a6ff;
-  /* desaturated, softened blue accent */
+  
   --dash-accent-2: #3ea0ff;
-  /* supporting blue */
+  
   --dash-hero-start: rgba(88, 166, 255, 0.04);
   --dash-hero-end: rgba(62, 160, 255, 0.02);
 }
 
-/* Shell */
+
 html.dark .dashboard-shell {
   background:
     radial-gradient(circle at 8% 6%, rgba(91, 110, 248, 0.03), transparent 22%),
@@ -38,7 +33,7 @@ html.dark .dashboard-shell {
   color: var(--dash-text);
 }
 
-/* Navbar */
+
 html.dark .ph-nav {
   background: linear-gradient(180deg, rgba(8, 10, 14, 0.82), rgba(10, 12, 16, 0.9));
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
@@ -122,7 +117,7 @@ html.dark .ph-cta-btn {
   box-shadow: 0 6px 18px rgba(59, 114, 248, 0.12);
 }
 
-/* Menus & popovers */
+
 html.dark .ph-menu {
   background: linear-gradient(180deg, rgba(18, 22, 28, 0.88), rgba(12, 14, 18, 0.9));
   border: 1px solid rgba(255, 255, 255, 0.03);
@@ -179,7 +174,7 @@ html.dark .ph-sidebar-toggle:focus-visible {
   outline-offset: 2px;
 }
 
-/* Notifications */
+
 html.dark .notification-item {
   background: rgba(255, 255, 255, 0.01);
   border-radius: 0.6rem;
@@ -213,7 +208,7 @@ html.dark .notification-badge {
   color: #cfe0ff;
 }
 
-/* Cards & content */
+
 html.dark .dash-card {
   background: linear-gradient(180deg, rgba(12, 16, 20, 0.72), rgba(10, 12, 16, 0.72));
   border-color: rgba(255, 255, 255, 0.03);
@@ -235,7 +230,7 @@ html.dark .hero-panel .caps-label {
   color: var(--dash-text);
 }
 
-/* Tables and text */
+
 html.dark .soft-table thead th {
   background: rgba(255, 255, 255, 0.02);
   color: #9fb0c3;
@@ -249,73 +244,72 @@ html.dark .soft-table tbody tr:hover {
   background: rgba(91, 110, 248, 0.03);
 }
 
-/* Footer */
+
 html.dark .dashboard-local-footer {
   background: linear-gradient(180deg, rgba(8, 10, 12, 0.92), rgba(10, 12, 14, 0.95));
   color: var(--dash-muted);
 }
 
-/* Mobile menu */
+
 html.dark .ph-mobile-link {
   color: var(--dash-text);
 }
 
-/* Focus outline */
+
 html.dark :focus {
   outline-color: rgba(91, 110, 248, 0.5);
 }
 
-/* Small utility tweaks */
+
 html.dark .ph-badge {
   background: #ef4444;
-  /* keep urgent badge visible */
+  
 }
 
-/* End */
 
-/* ======= SaaS-grade Dark Theme (semantic tokens) ======= */
-/* Strategy: expose semantic variables and use them across overrides so
-   components inherit a consistent, professional look. */
+
+
+
 
 html.dark {
-  /* core UI scale */
+  
   --bg-100: #0b1220;
-  /* main background */
+  
   --bg-200: #0f1724;
-  /* secondary */
+  
   --surface-100: rgba(255, 255, 255, 0.02);
-  /* light surface */
+  
   --surface-200: rgba(255, 255, 255, 0.03);
-  /* stronger surface */
+  
   --glass-01: rgba(255, 255, 255, 0.025);
 
-  /* typography */
+  
   --text-primary: #e6eef6;
   --text-muted: #94a3b8;
   --text-secondary: #b9c6d6;
 
-  /* semantic accents */
+  
   --accent-primary: #2563eb;
-  /* indigo-600 */
+  
   --accent-primary-2: #4f46e5;
-  /* indigo-700 */
+  
   --accent-highlight: #06b6d4;
-  /* cyan-500 */
+  
   --success: #10b981;
   --danger: #ef4444;
 
-  /* borders & shadows */
+  
   --border-muted: rgba(255, 255, 255, 0.035);
   --shadow-soft: 0 10px 30px rgba(2, 6, 23, 0.55);
 }
 
-/* Apply to shell */
+
 html.dark .dashboard-shell {
   background: linear-gradient(180deg, var(--bg-100) 0%, var(--bg-200) 100%);
   color: var(--text-primary);
 }
 
-/* NAVBAR - override existing !important rules in global.css */
+
 html.dark nav,
 html.dark .ph-nav {
   background: linear-gradient(180deg, rgba(12, 16, 22, 0.92), rgba(10, 12, 16, 0.94)) !important;
@@ -346,7 +340,7 @@ html.dark .ph-nav-link.is-active {
   background: rgba(79, 70, 229, 0.05);
 }
 
-/* ICON BUTTONS */
+
 html.dark .ph-icon-btn {
   background: var(--surface-100);
   border: 1px solid var(--border-muted);
@@ -357,14 +351,14 @@ html.dark .ph-icon-btn:hover {
   box-shadow: 0 8px 24px rgba(2, 6, 23, 0.5);
 }
 
-/* CTA */
+
 html.dark .ph-cta-btn {
   background: linear-gradient(90deg, var(--accent-primary), var(--accent-primary-2));
   color: white;
   box-shadow: 0 8px 26px rgba(37, 99, 235, 0.12);
 }
 
-/* MENUS / POPOVERS */
+
 html.dark .ph-menu {
   background: linear-gradient(180deg, rgba(12, 14, 18, 0.88), rgba(10, 12, 14, 0.94));
   border: 1px solid var(--border-muted);
@@ -384,7 +378,7 @@ html.dark .ph-menu-email {
   color: var(--text-muted);
 }
 
-/* SIDEBAR */
+
 html.dark .ph-sidebar {
   background: linear-gradient(180deg, rgba(10, 12, 16, 0.96), rgba(8, 10, 12, 0.98));
   border-right: 1px solid rgba(255, 255, 255, 0.02);
@@ -412,7 +406,7 @@ html.dark .ph-sidebar-link.is-active {
   color: #cfe0ff;
 }
 
-/* CARDS */
+
 html.dark .card,
 html.dark .dash-card {
   background: linear-gradient(180deg, rgba(15, 18, 22, 0.78), rgba(12, 14, 18, 0.78));
@@ -421,7 +415,7 @@ html.dark .dash-card {
   box-shadow: var(--shadow-soft);
 }
 
-/* HERO */
+
 html.dark .hero-panel::before {
   background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(6, 182, 212, 0.03));
 }
@@ -431,7 +425,7 @@ html.dark .hero-panel p {
   color: var(--text-primary);
 }
 
-/* NOTIFICATIONS */
+
 html.dark .notification-item {
   background: rgba(255, 255, 255, 0.01);
 }
@@ -449,7 +443,7 @@ html.dark .notification-time {
   color: var(--text-muted);
 }
 
-/* Officer dashboard hero: warm orange panel on a deep teal stage */
+
 html.dark .dashboard-shell.role-officer {
   background:
     radial-gradient(circle at 12% 0%, rgba(34, 197, 94, 0.18), transparent 28%),
@@ -554,7 +548,7 @@ html.dark .dashboard-shell.role-officer .dash-grid>.dash-card {
   border-color: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* BUTTONS */
+
 html.dark .btn-primary {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-2));
   color: white;
@@ -579,7 +573,7 @@ html.dark .btn-secondary {
   color: var(--text-primary);
 }
 
-/* FORMS */
+
 html.dark input,
 html.dark select,
 html.dark textarea,
@@ -599,7 +593,7 @@ html.dark textarea:focus {
   outline: none;
 }
 
-/* TABLES */
+
 html.dark .soft-table thead th {
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-muted);
@@ -613,7 +607,7 @@ html.dark .soft-table tbody tr:hover {
   background: rgba(79, 70, 229, 0.03);
 }
 
-/* PROGRESS */
+
 html.dark .progress-track {
   background: rgba(255, 255, 255, 0.02);
 }
@@ -622,7 +616,7 @@ html.dark .progress-fill {
   background: linear-gradient(90deg, var(--accent-primary), var(--accent-primary-2));
 }
 
-/* BADGES */
+
 html.dark .accent-pill {
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-primary);
@@ -638,7 +632,7 @@ html.dark .pill-amber {
   color: #ffd8a8;
 }
 
-/* SCROLLBARS */
+
 html.dark ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.01);
 }
@@ -648,13 +642,13 @@ html.dark ::-webkit-scrollbar-thumb {
   border-radius: 4px;
 }
 
-/* SELECTION */
+
 html.dark ::selection {
   background: linear-gradient(90deg, var(--accent-primary), var(--accent-highlight));
   color: #0b1220;
 }
 
-/* TRANSITIONS */
+
 html,
 body,
 .ph-nav,
@@ -666,19 +660,17 @@ body,
   transition: background-color 240ms ease, color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
 }
 
-/* Ensure urgent badges remain legible */
+
 html.dark .ph-badge {
   background: var(--danger);
   color: white;
 }
 
-/* End SaaS-grade dark theme */
 
-/* ==========================
-   Component-specific overrides
-   ========================== */
 
-/* FILE pages */
+
+
+
 html.dark .file-hero {
   background: linear-gradient(180deg, rgba(12, 14, 18, 0.9), rgba(10, 12, 16, 0.9));
   border: 1px solid var(--border-muted);
@@ -750,7 +742,7 @@ html.dark .upload-dropzone.upload-dropzone-active {
   border-color: rgba(79, 70, 229, 0.18);
 }
 
-/* PAYMENT pages */
+
 html.dark .payment-card,
 html.dark .payment-side,
 html.dark .payment-meta-card {
@@ -787,7 +779,7 @@ html.dark .badge-warning {
   border-color: rgba(245, 158, 11, 0.05);
 }
 
-/* REVIEW pages */
+
 html.dark .review-card,
 html.dark .review-row {
   background: rgba(255, 255, 255, 0.01);
@@ -799,39 +791,39 @@ html.dark .review-row:hover {
   background: rgba(79, 70, 229, 0.03);
 }
 
-/* CONTACT / SUPPORT */
+
 html.dark .contact-card {
   background: rgba(255, 255, 255, 0.01);
   border: 1px solid var(--border-muted);
   color: var(--text-primary);
 }
 
-/* ACCOUNT */
+
 html.dark .profile-stat-card {
   background: rgba(255, 255, 255, 0.01);
   border: 1px solid var(--border-muted);
 }
 
-/* TIMELINE */
+
 html.dark .timeline-item {
   background: rgba(255, 255, 255, 0.01);
   color: var(--text-primary);
   border-left: 2px solid rgba(255, 255, 255, 0.02);
 }
 
-/* Breadcrumbs */
+
 html.dark .breadcrumbs {
   color: var(--text-muted);
 }
 
-/* Make any remaining utility backgrounds inherit a safe surface */
+
 html.dark .bg-white,
 html.dark .bg-surface {
   background: rgba(255, 255, 255, 0.02) !important;
   color: var(--text-primary) !important;
 }
 
-/* Global non-dashboard shell in dark mode */
+
 html.dark body:not(.dashboard-shell) {
   background:
     radial-gradient(circle at top left, rgba(45, 212, 191, 0.06), transparent 30%),
@@ -850,7 +842,7 @@ html.dark body:not(.dashboard-shell)::after {
   opacity: 0.9;
 }
 
-/* ===== Final visual tuning: graphite/navy SaaS palette ===== */
+
 html.dark {
   --bg-100: #0b0b0b;
   --bg-200: #121212;
@@ -889,7 +881,7 @@ html.dark .hero-panel::before {
   opacity: 0.72;
 }
 
-/* Dark Reader approximation overrides — lower saturation, more neutral surfaces */
+
 html.dark {
   --bg-100: #161718;
   --bg-200: #1c1e1f;
@@ -909,7 +901,7 @@ html.dark .dashboard-shell {
   background: linear-gradient(180deg, var(--bg-100) 0%, var(--bg-200) 100%);
 }
 
-/* Dark Reader style: remove decorative colorful radials and lower opacities */
+
 html.dark .dashboard-shell::before,
 html.dark .dashboard-shell::after {
   display: none !important;
@@ -978,7 +970,7 @@ html.dark ::selection {
   color: var(--text-primary);
 }
 
-/* lower contrast focus rings to DR-like subtle glow */
+
 html.dark input:focus,
 html.dark select:focus,
 html.dark textarea:focus {
@@ -1162,11 +1154,9 @@ html.dark .dashboard-local-footer {
 
 
 
-/* ==========================
-   Comprehensive global overrides
-   ========================== */
 
-/* Override global `nav` (global.css uses !important) */
+
+
 html.dark nav {
   background: linear-gradient(180deg, rgba(10, 12, 16, 0.94), rgba(12, 14, 18, 0.96)) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.02) !important;
@@ -1174,14 +1164,14 @@ html.dark nav {
   color: var(--dash-text) !important;
 }
 
-/* Footer */
+
 html.dark footer {
   background: linear-gradient(180deg, rgba(6, 8, 10, 0.98), rgba(10, 12, 14, 0.98)) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.02) !important;
   color: var(--dash-muted) !important;
 }
 
-/* Generic cards */
+
 html.dark .card {
   background: linear-gradient(180deg, rgba(12, 16, 20, 0.78), rgba(10, 12, 16, 0.78));
   border: 1px solid rgba(255, 255, 255, 0.03);
@@ -1189,7 +1179,7 @@ html.dark .card {
   box-shadow: var(--dash-shadow-soft);
 }
 
-/* Buttons */
+
 html.dark .btn-primary {
   background: linear-gradient(135deg, var(--dash-accent), #4f46e5);
   color: #fff;
@@ -1214,7 +1204,7 @@ html.dark .filter-btn {
   color: var(--dash-text);
 }
 
-/* Form controls */
+
 html.dark .form-group input,
 html.dark .form-group select,
 html.dark .form-group textarea,
@@ -1237,7 +1227,7 @@ html.dark textarea:focus {
   outline: none;
 }
 
-/* Sidebar */
+
 html.dark .ph-sidebar {
   background: linear-gradient(180deg, rgba(8, 10, 14, 0.95), rgba(10, 12, 16, 0.96));
   border-right: 1px solid rgba(255, 255, 255, 0.02);
@@ -1264,7 +1254,7 @@ html.dark .ph-sidebar-link.is-active {
   color: #cfe0ff;
 }
 
-/* Badges */
+
 html.dark .accent-pill {
   background: rgba(255, 255, 255, 0.02);
   color: var(--dash-text);
@@ -1285,7 +1275,7 @@ html.dark .pill-rose {
   color: #ffc7c7;
 }
 
-/* Progress */
+
 html.dark .progress-track {
   background: rgba(255, 255, 255, 0.02);
 }
@@ -1293,7 +1283,7 @@ html.dark .progress-track {
 html.dark .progress-fill {
   background: linear-gradient(90deg, var(--dash-accent), #3b82f6);
 
-  /* Admin dashboard hero: teal executive console */
+  
   html.dark .dashboard-shell.role-admin {
     background:
       radial-gradient(circle at 14% 0%, rgba(45, 212, 191, 0.18), transparent 28%),
@@ -1449,7 +1439,7 @@ html.dark .progress-fill {
   }
 }
 
-/* Tables */
+
 html.dark .soft-table thead th {
   background: rgba(255, 255, 255, 0.02);
   color: var(--dash-muted);
@@ -1459,7 +1449,7 @@ html.dark .soft-table tbody td {
   color: var(--dash-text);
 }
 
-/* Scrollbars */
+
 html.dark ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.01);
 }
@@ -1468,13 +1458,13 @@ html.dark ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* Selection */
+
 html.dark ::selection {
   background: linear-gradient(90deg, var(--dash-accent), #06b6d4);
   color: #08101a;
 }
 
-/* Smooth theme transition */
+
 html,
 body,
 .ph-nav,
@@ -1486,8 +1476,7 @@ body,
   transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
-/* Dark Reader — ultimate flatten override
-   Force neutral, desaturated surfaces and remove decorative highlights. */
+
 html.dark {
   --dr-bg: #0f1011 !important;
   --dr-surface: #151616 !important;
@@ -1497,7 +1486,7 @@ html.dark {
   --dr-accent: #6b7f90 !important;
 }
 
-/* Flatten page shell */
+
 html.dark body,
 html.dark .dashboard-shell,
 html.dark nav,
@@ -1507,7 +1496,7 @@ html.dark .ph-sidebar {
   color: var(--dr-text) !important;
 }
 
-/* Hero & cards: flat, low-contrast surfaces */
+
 html.dark .hero-panel,
 html.dark .dash-card,
 html.dark .card,
@@ -1520,7 +1509,7 @@ html.dark .kpi-card {
   box-shadow: none !important;
 }
 
-/* Remove radial/gradient overlays */
+
 html.dark .dashboard-shell::before,
 html.dark .dashboard-shell::after,
 html.dark .hero-panel::before {
@@ -1528,7 +1517,7 @@ html.dark .hero-panel::before {
   background: none !important;
 }
 
-/* Desaturate brand & CTA */
+
 html.dark .ph-brand-mark,
 html.dark .ph-cta-btn,
 html.dark .btn-primary {
@@ -1538,7 +1527,7 @@ html.dark .btn-primary {
   box-shadow: none !important;
 }
 
-/* Muted navigation */
+
 html.dark .ph-nav-link,
 html.dark .ph-sidebar-link,
 html.dark a {
@@ -1551,7 +1540,7 @@ html.dark .ph-sidebar-link.is-active {
   background: rgba(107, 127, 144, 0.04) !important;
 }
 
-/* Buttons and chips: subtle outlines */
+
 html.dark .btn-outline,
 html.dark .file-chip,
 html.dark .badge,
@@ -1562,7 +1551,7 @@ html.dark .btn-secondary {
   color: var(--dr-text) !important;
 }
 
-/* Notifications, menus */
+
 html.dark .ph-menu,
 html.dark .ph-notify-menu,
 html.dark .notification-item,
@@ -1574,7 +1563,7 @@ html.dark .notification-badge {
   color: var(--dr-text) !important;
 }
 
-/* Hover & selection: very subtle */
+
 html.dark .soft-table tbody tr:hover,
 html.dark .file-row.is-selected,
 html.dark .review-row:hover,
@@ -1587,7 +1576,7 @@ html.dark ::selection {
   color: var(--dr-text) !important;
 }
 
-/* Forms */
+
 html.dark input,
 html.dark select,
 html.dark textarea,
@@ -1599,7 +1588,7 @@ html.dark .form-group textarea {
   color: var(--dr-text) !important;
 }
 
-/* Reduce shadows globally but keep tiny inset for subtle depth */
+
 html.dark * {
   box-shadow: none !important;
 }
@@ -1609,18 +1598,15 @@ html.dark .card {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.01) !important;
 }
 
-/* Final CTA hover readability */
+
 html.dark .ph-cta-btn:hover,
 html.dark .btn-primary:hover {
   background: rgba(108, 118, 125, 0.12) !important;
 }
 
-/* end override */
 
-/* ==========================
-   Dark Reader — final override
-   High-specificity rules to approximate Dark Reader transform
-   ========================== */
+
+
 html.dark {
   --dr-bg: #121212 !important;
   --dr-surface: #161616 !important;
@@ -1639,7 +1625,7 @@ html.dark .ph-sidebar {
   color: var(--dr-text) !important;
 }
 
-/* Neutralize hero and cards to a flat Dark Reader-like surface */
+
 html.dark .hero-panel,
 html.dark .dash-card,
 html.dark .card,
@@ -1651,7 +1637,7 @@ html.dark .payment-card {
   box-shadow: none !important;
 }
 
-/* Desaturate accents and make CTAs subtle */
+
 html.dark .ph-cta-btn,
 html.dark .btn-primary,
 html.dark .ph-brand-mark {
@@ -1661,7 +1647,7 @@ html.dark .ph-brand-mark {
   box-shadow: none !important;
 }
 
-/* Links and nav */
+
 html.dark a,
 html.dark .ph-nav-link,
 html.dark .ph-sidebar-link {
@@ -1674,7 +1660,7 @@ html.dark .ph-sidebar-link.is-active {
   background: rgba(108, 136, 160, 0.04) !important;
 }
 
-/* Notifications & badges */
+
 html.dark .notification-item,
 html.dark .notification-item.unread,
 html.dark .notification-badge {
@@ -1684,7 +1670,7 @@ html.dark .notification-badge {
   color: var(--dr-text) !important;
 }
 
-/* Reduce colorful hover highlights */
+
 html.dark .soft-table tbody tr:hover,
 html.dark .file-row.is-selected,
 html.dark .review-row:hover,
@@ -1692,7 +1678,7 @@ html.dark .notification-item:hover {
   background: rgba(255, 255, 255, 0.02) !important;
 }
 
-/* Form controls */
+
 html.dark input,
 html.dark select,
 html.dark textarea,
@@ -1704,32 +1690,32 @@ html.dark .form-group textarea {
   color: var(--dr-text) !important;
 }
 
-/* final subtle selection */
+
 html.dark ::selection {
   background: rgba(108, 136, 160, 0.08) !important;
   color: var(--dr-text) !important;
 }
 
-/* reduce all strong shadows that make theme feel glowy */
+
 html.dark * {
   box-shadow: none !important;
 }
 
-/* keep very small UI shadows for depth using inset */
+
 html.dark .dash-card,
 html.dark .card {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.01) !important;
 }
 
-/* ensure CTAs remain readable */
+
 html.dark .ph-cta-btn:hover,
 html.dark .btn-primary:hover {
   background: rgba(108, 136, 160, 0.16) !important;
 }
 
-/* end Dark Reader override */
 
-/* Utility class neutralization for Dark Reader-like tone */
+
+
 html.dark .text-sky-700,
 html.dark .text-sky-800,
 html.dark .text-cyan-500,
@@ -1773,11 +1759,7 @@ html.dark .bg-purple-900 {
   background: rgba(255, 255, 255, 0.02) !important;
 }
 
-/* =========================================================
-   Screenshot-faithful dashboard override
-   Matches the pasted look: charcoal shell, bright cyan CTA,
-   blue hero, and soft gray metric cards.
-   ========================================================= */
+
 html.dark .dashboard-shell {
   background:
     radial-gradient(circle at top left, rgba(24, 128, 172, 0.18), transparent 30%),
@@ -1988,9 +1970,7 @@ html.dark .kpi-label {
   color: rgba(226, 232, 240, 0.72) !important;
 }
 
-/* =========================================================
-   Page-specific dark surface system for the rest of the app
-   ========================================================= */
+
 html.dark .upload-dropzone,
 html.dark .review-hero,
 html.dark .review-hero-panel,
@@ -2228,7 +2208,7 @@ html.dark .profile-avatar-img {
   object-fit: cover;
 }
 
-/* File workflow surfaces: remove the last blue-tinted panels */
+
 html.dark .file-hero-panel,
 html.dark .file-kpi-card,
 html.dark .file-search-input,
@@ -2268,10 +2248,7 @@ html.dark .file-row.is-selected {
   background: rgba(255, 255, 255, 0.02) !important;
 }
 
-/* =========================================================
-   Final Dark Reader-style pass
-   Neutral graphite surfaces, muted blue accents, no glow.
-   ========================================================= */
+
 html.dark {
   --dr-bg: #121314 !important;
   --dr-surface: #17191b !important;
@@ -2562,7 +2539,7 @@ html.dark .payment-meta-card {
   transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
-/* File page polish */
+
 html.dark .file-page-shell {
   background:
     radial-gradient(circle at top left, rgba(14, 165, 233, 0.07), transparent 26%),
@@ -2595,7 +2572,7 @@ html.dark .file-preview-item {
 }
 
 
-/* Admin dashboard hero override after the final dark pass */
+
 html.dark .dashboard-shell.role-admin {
   background:
     radial-gradient(circle at 14% 0%, rgba(45, 212, 191, 0.18), transparent 28%),
@@ -2678,7 +2655,7 @@ html.dark .dashboard-shell.role-admin .action-link:hover {
   border-color: rgba(34, 211, 238, 0.34) !important;
 }
 
-/* User dashboard hero: vivid blue submission center */
+
 html.dark .dashboard-shell.role-user {
   background:
     radial-gradient(circle at 10% 0%, rgba(16, 185, 129, 0.12), transparent 24%),
@@ -2843,7 +2820,7 @@ html.dark .upload-dropzone.upload-dropzone-active {
   box-shadow: 0 8px 22px rgba(14, 165, 233, 0.08) !important;
 }
 
-/* Payment page */
+
 html.dark .payment-card,
 html.dark .payment-side,
 html.dark .payment-meta-card,
@@ -2892,7 +2869,7 @@ html.dark .summary-row.total {
   border-top-color: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Review pages */
+
 html.dark .review-hero,
 html.dark .review-hero-panel,
 html.dark .review-card,
@@ -2971,7 +2948,7 @@ html.dark .soft-table tbody tr:hover {
   background: rgba(14, 165, 233, 0.05) !important;
 }
 
-/* Settings / Account */
+
 html.dark .settings-panel,
 html.dark .settings-tabs,
 html.dark .profile-summary-card,
@@ -3013,9 +2990,10 @@ html.dark .muted,
 html.dark .page-subtitle,
 html.dark .profile-stat-label {
   color: #9aa0a6 !important;
+  background: none;
 }
 
-/* Support */
+
 html.dark .support-intro-card,
 html.dark .support-contact-card,
 html.dark .support-list li,
@@ -3045,7 +3023,7 @@ html.dark .support-form .form-group label {
   color: #d4d7da !important;
 }
 
-/* Upload */
+
 html.dark .upload-card,
 html.dark .upload-dropzone,
 html.dark .file-preview-item {

@@ -558,6 +558,10 @@
 
         runPageInitializer();
 
+        if (typeof applyCurrentUserPageData === "function") {
+          applyCurrentUserPageData();
+        }
+
         const sidebarLinks = document.querySelectorAll("[data-sidebar-link]");
         const nextPathname = new URL(url, window.location.href).pathname;
 

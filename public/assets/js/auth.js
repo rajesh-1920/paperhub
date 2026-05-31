@@ -16,7 +16,7 @@ const STATIC_LOGIN_CREDENTIALS = {
   "admin@gmail.com": {
     password: "admin",
     id: "demo-admin",
-    name: "Demo Admin",
+    name: "Rajdip Roy",
     role: "admin",
     title: "Administrator",
   },

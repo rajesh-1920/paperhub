@@ -1,4 +1,4 @@
-/* Breadcrumbs and page meta */
+
 .ph-breadcrumbs {
   display: flex;
   gap: 0.5rem;
@@ -43,7 +43,7 @@
   }
 }
 
-/* Empty state */
+
 .empty-state {
   text-align: center;
   padding: 2.2rem 1.25rem;

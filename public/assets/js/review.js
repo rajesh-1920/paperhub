@@ -246,7 +246,6 @@ function setupReviewQueueInteractions() {
     renderReviewQueue();
   });
 
-  // clear button behavior moved from inline HTML to JS
   const clearBtn = getElement('.search-clear');
   if (clearBtn && searchInput) {
     addEvent(clearBtn, 'click', (e) => {

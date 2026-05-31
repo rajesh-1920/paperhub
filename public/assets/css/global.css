@@ -106,7 +106,7 @@ html {
   background: #94a3b8;
 }
 
-/* Global shell background for all non-dashboard pages */
+
 body:not(.dashboard-shell) {
   background:
     radial-gradient(circle at top left, rgba(2, 132, 199, 0.16), transparent 30%),
@@ -153,7 +153,7 @@ body:not(.dashboard-shell)>#footer-container {
   z-index: 1;
 }
 
-/* Privileged SaaS shell */
+
 body.support-page,
 body.account-page,
 body.review-queue-page,
@@ -345,4 +345,3 @@ body.payment-page main {
   outline: none;
 }
 
-/* Route-specific styles moved to component CSS files. */

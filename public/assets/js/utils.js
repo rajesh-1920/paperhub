@@ -699,9 +699,9 @@ const MOCK_USERS = [
     ],
   },
   {
-    id: "admin-sadia",
-    name: "Sadia Rahman",
-    email: "sadia.rahman@paperhub.edu",
+    id: "admin-rajdip",
+    name: "Rajdip Roy",
+    email: "rajdip@gmail.com",
     role: "admin",
     title: "Platform Administrator",
     department: "Operations",

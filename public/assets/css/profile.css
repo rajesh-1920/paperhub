@@ -490,3 +490,155 @@ body.profile-page {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.dark body.profile-page {
+  background:
+    radial-gradient(circle at top left, rgba(8, 145, 178, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 28%),
+    linear-gradient(180deg, #070b14 0%, #0f172a 56%, #111827 100%);
+  color: #e5eef8;
+}
+
+.dark .profile-card {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(17, 24, 39, 0.98));
+  border-color: rgba(71, 85, 105, 0.78);
+  box-shadow:
+    0 24px 70px rgba(2, 6, 23, 0.42),
+    0 0 0 1px rgba(59, 130, 246, 0.06) inset;
+}
+
+.dark .profile-card:hover {
+  border-color: rgba(56, 189, 248, 0.22);
+  box-shadow:
+    0 28px 76px rgba(2, 6, 23, 0.52),
+    0 0 0 1px rgba(56, 189, 248, 0.08) inset;
+}
+
+.dark .profile-mini-card,
+.dark .profile-grid dl>div,
+.dark .profile-metric,
+.dark .stat-card,
+.dark .connected-list li,
+.dark .profile-document-list li,
+.dark .profile-activity-list li,
+.dark .profile-app-list li,
+.dark .profile-file-row,
+.dark .activity-item {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(17, 24, 39, 0.95));
+  border-color: rgba(71, 85, 105, 0.7);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.18);
+}
+
+.dark .profile-section-toggle {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.94));
+  border-color: rgba(71, 85, 105, 0.72);
+  color: #dbeafe;
+}
+
+.dark .profile-section-toggle:hover {
+  border-color: rgba(56, 189, 248, 0.28);
+  color: #f8fafc;
+}
+
+.dark .profile-summary-meta h2,
+.dark .profile-section h2,
+.dark .profile-card-header,
+.dark .profile-document-list strong,
+.dark .profile-activity-list strong,
+.dark .stat-value,
+.dark .profile-grid dd,
+.dark .profile-metric-value {
+  color: #f8fafc;
+}
+
+.dark .profile-summary-meta p,
+.dark .profile-section p,
+.dark .profile-document-list span,
+.dark .profile-activity-list span,
+.dark .stat-label,
+.dark .profile-grid dt,
+.dark .activity-time,
+.dark .activity-desc,
+.dark .quick-links a {
+  color: #94a3b8;
+}
+
+.dark .profile-avatar {
+  background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+  box-shadow:
+    0 18px 34px rgba(14, 165, 233, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.dark .profile-summary-meta .profile-role-badge,
+.dark .profile-role-badge {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(20, 184, 166, 0.18)) !important;
+  border-color: rgba(125, 211, 252, 0.36) !important;
+  color: #dbeafe !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.dark .profile-status {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.26);
+  color: #6ee7b7;
+}
+
+.dark .profile-summary-actions .profile-edit-btn,
+.dark .profile-edit-btn {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+  background-color: transparent !important;
+  background-image: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+  color: #f8fafc !important;
+  border: 0 !important;
+  box-shadow:
+    0 16px 32px rgba(14, 165, 233, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.dark .profile-edit-btn:hover {
+  filter: brightness(1.08);
+}
+
+.dark .profile-completion .progress {
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.dark .profile-completion .progress-bar {
+  background: linear-gradient(90deg, #22d3ee, #0ea5e9);
+}
+
+.dark .quick-links a:hover {
+  color: #e0f2fe;
+}
+
+.dark .profile-document-list li:hover,
+.dark .profile-activity-list li:hover,
+.dark .profile-app-list li:hover,
+.dark .profile-file-row:hover,
+.dark .activity-item:hover,
+.dark .connected-list li:hover {
+  box-shadow:
+    0 18px 36px rgba(2, 6, 23, 0.3),
+    0 0 0 1px rgba(56, 189, 248, 0.08) inset;
+  transform: translateY(-1px);
+}
+
+.dark .profile-metric:hover {
+  box-shadow:
+    0 16px 30px rgba(2, 6, 23, 0.24),
+    0 0 0 1px rgba(56, 189, 248, 0.08) inset;
+}
+
+.dark .profile-section-body .badge,
+.dark .profile-section-body .accent-pill,
+.dark .profile-section-body .pill-sky,
+.dark .profile-section-body .pill-amber,
+.dark .profile-section-body .pill-rose,
+.dark .profile-section-body .pill-emerald {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(71, 85, 105, 0.72);
+  color: #dbeafe;
+}

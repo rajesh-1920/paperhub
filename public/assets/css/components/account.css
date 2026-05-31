@@ -4,7 +4,6 @@
   padding: 1.75rem 0.75rem 0;
 }
 
-/* Settings page specific */
 .settings-tabs .settings-tab-buttons {
   display: flex;
   gap: 0.5rem;
@@ -104,8 +103,7 @@
     max-width: 100%;
   }
 
-  /* Prevent the right/main column from stretching too wide when the global sidebar is collapsed.
-     Center the main card inside the column and cap its width for a balanced, polished layout. */
+  
   .col-main {
     display: flex;
     justify-content: center;
@@ -116,7 +114,7 @@
     width: 100%;
   }
 
-  /* When sidebar is collapsed allow the main card to use more horizontal space */
+  
   body.ph-sidebar-collapsed .account-shell {
     max-width: 92rem;
   }
@@ -380,6 +378,104 @@ html.dark .profile-chip {
   color: #e8eaec !important;
 }
 
+html.dark .profile-role.bg-cyan-50,
+html.dark .profile-role.text-cyan-700,
+html.dark .profile-role.border-cyan-200 {
+  background: none;
+  background-image: none !important;
+  border-color: rgba(103, 232, 249, 0.34) !important;
+  color: #cffafe !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 8px 18px rgba(2, 6, 23, 0.16);
+}
+
+html.dark .profile-role.bg-cyan-50:hover,
+html.dark .profile-role.text-cyan-700:hover,
+html.dark .profile-role.border-cyan-200:hover {
+  border-color: rgba(103, 232, 249, 0.46) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 10px 22px rgba(2, 6, 23, 0.2);
+}
+
+html.dark .settings-item,
+html.dark .toggle-row {
+  background: linear-gradient(180deg, rgba(16, 24, 38, 0.96), rgba(11, 16, 28, 0.98)) !important;
+  border-color: rgba(71, 85, 105, 0.72) !important;
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.22) !important;
+}
+
+html.dark .toggle-row {
+  position: relative;
+  padding-right: 3rem;
+}
+
+html.dark .toggle-row input[type="checkbox"] {
+  position: absolute;
+  right: 0.95rem;
+  top: 50%;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(-50%);
+}
+
+html.dark .toggle-row::after {
+  content: "";
+  position: absolute;
+  right: 0.95rem;
+  top: 50%;
+  width: 1.2rem;
+  height: 1.2rem;
+  transform: translateY(-50%);
+  border-radius: 0.42rem;
+  border: 1px solid rgba(203, 213, 225, 0.72);
+  background: linear-gradient(180deg, rgba(71, 85, 105, 0.95), rgba(51, 65, 85, 0.98));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 8px 18px rgba(2, 6, 23, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  transition:
+    background-color 0.18s ease,
+    background-image 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+  pointer-events: none;
+}
+
+html.dark .toggle-row:has(input[type="checkbox"]:checked)::after {
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.96), rgba(14, 165, 233, 0.98));
+  border-color: rgba(125, 211, 252, 0.82);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 10px 22px rgba(14, 165, 233, 0.22),
+    0 0 0 4px rgba(56, 189, 248, 0.08);
+}
+
+html.dark .toggle-row:has(input[type="checkbox"]:checked)::before {
+  content: "";
+  position: absolute;
+  right: 1.26rem;
+  top: 50%;
+  width: 0.42rem;
+  height: 0.24rem;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: translateY(-58%) rotate(-45deg);
+  pointer-events: none;
+}
+
+html.dark .settings-item:hover,
+html.dark .toggle-row:hover {
+  border-color: rgba(56, 189, 248, 0.24) !important;
+  box-shadow:
+    0 14px 32px rgba(2, 6, 23, 0.28),
+    0 0 0 1px rgba(56, 189, 248, 0.06) inset !important;
+}
+
 .profile-details-grid>div {
   background: rgba(248, 250, 252, 0.86);
   border: 1px solid rgba(148, 163, 184, 0.14);
@@ -573,6 +669,32 @@ html.dark .profile-chip {
   padding: 0.85rem 0.95rem;
 }
 
+.settings-item:focus-within,
+.toggle-row:focus-within {
+  border-color: rgba(14, 165, 233, 0.3);
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.08);
+}
+
+.settings-item:has(input[type="checkbox"]:checked),
+.toggle-row:has(input[type="checkbox"]:checked) {
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(236, 254, 255, 0.92));
+  border-color: rgba(14, 165, 233, 0.22);
+}
+
+.settings-item input[type="checkbox"],
+.toggle-row input[type="checkbox"] {
+  accent-color: #0ea5e9;
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  flex-shrink: 0;
+  margin-left: 0.6rem;
+  cursor: pointer;
+}
+
+.toggle-row input[type="checkbox"] {
+  transform: none;
+}
+
 .settings-item h3 {
   color: #0f172a;
 }
@@ -630,7 +752,7 @@ html.dark .profile-chip {
   }
 }
 
-/* Additional settings page enhancements */
+
 .settings-hero {
   display: flex;
   justify-content: space-between;
@@ -688,8 +810,45 @@ html.dark .profile-chip {
 }
 
 .toggle-row input[type="checkbox"] {
-  transform: scale(1.05);
-  margin-left: 0.6rem;
+  transform: none;
+}
+
+html.dark .settings-item:focus-within,
+html.dark .toggle-row:focus-within {
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12) !important;
+}
+
+html.dark .settings-item:has(input[type="checkbox"]:checked),
+html.dark .toggle-row:has(input[type="checkbox"]:checked) {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(17, 24, 39, 0.96)) !important;
+  border-color: rgba(56, 189, 248, 0.28) !important;
+}
+
+html.dark .settings-item input[type="checkbox"],
+html.dark .toggle-row input[type="checkbox"] {
+  accent-color: #38bdf8;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+html.dark .settings-item input[type="checkbox"]:checked,
+html.dark .toggle-row input[type="checkbox"]:checked {
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+html.dark .settings-item input[type="checkbox"]:hover,
+html.dark .toggle-row input[type="checkbox"]:hover,
+html.dark .toggle-row:hover::after {
+  border-color: rgba(125, 211, 252, 0.86);
+}
+
+html.dark .settings-item input[type="checkbox"]:focus-visible,
+html.dark .toggle-row input[type="checkbox"]:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.42);
+  outline-offset: 2px;
 }
 
 @media (max-width: 767px) {
@@ -704,7 +863,7 @@ html.dark .profile-chip {
   }
 }
 
-/* Ensure the main card becomes fluid on medium screens to avoid overflow when sidebar collapses */
+
 @media (max-width: 1024px) {
   .col-main .card {
     max-width: 100%;
