@@ -169,19 +169,32 @@ body.paperhub-has-navbar {
   font-weight: 700;
   text-transform: uppercase;
   color: #0f172a;
-  background: #eef6fb;
-  border: 1px solid rgba(3, 105, 161, 0.08);
+  background: linear-gradient(135deg, #eff6ff, #f8fafc);
+  border: 1px solid rgba(14, 165, 233, 0.12);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
 }
 
 .ph-user-btn {
   display: none;
   align-items: center;
-  padding: 0 6px;
+  gap: 0.45rem;
+  padding: 0 0.5rem 0 0.35rem;
   height: 38px;
   border-radius: 8px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  background: white;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
   cursor: pointer;
+  color: #0f172a;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.ph-user-btn:hover,
+.ph-user-btn:focus-visible {
+  background: linear-gradient(180deg, #ffffff, #eef6fb);
+  border-color: rgba(14, 165, 233, 0.18);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
 }
 
 .ph-user-avatar {
@@ -194,6 +207,13 @@ body.paperhub-has-navbar {
   background: linear-gradient(135deg, #0ea5e9, #06b6d4);
   color: white;
   font-weight: 700;
+}
+
+.ph-user-btn>span:last-child {
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .ph-menu {

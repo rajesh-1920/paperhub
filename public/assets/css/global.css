@@ -106,6 +106,53 @@ html {
   background: #94a3b8;
 }
 
+/* Global shell background for all non-dashboard pages */
+body:not(.dashboard-shell) {
+  background:
+    radial-gradient(circle at top left, rgba(2, 132, 199, 0.16), transparent 30%),
+    radial-gradient(circle at top right, rgba(16, 185, 129, 0.14), transparent 24%),
+    linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+  color: #0f172a;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body:not(.dashboard-shell)::before,
+body:not(.dashboard-shell)::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: auto;
+  z-index: 0;
+}
+
+body:not(.dashboard-shell)::before {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.75), transparent 68%);
+  height: 24rem;
+  left: -8rem;
+  top: 8rem;
+  width: 24rem;
+  filter: blur(22px);
+  opacity: 0.8;
+}
+
+body:not(.dashboard-shell)::after {
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.16), transparent 68%);
+  bottom: 2rem;
+  height: 26rem;
+  right: -8rem;
+  width: 26rem;
+  filter: blur(22px);
+  opacity: 0.9;
+}
+
+body:not(.dashboard-shell)>main,
+body:not(.dashboard-shell)>#footer-container {
+  position: relative;
+  z-index: 1;
+}
+
 /* Privileged SaaS shell */
 body.support-page,
 body.account-page,

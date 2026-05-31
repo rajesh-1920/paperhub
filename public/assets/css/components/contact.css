@@ -213,6 +213,40 @@
   margin-top: 1.15rem;
 }
 
+html.dark .support-main,
+html.dark .support-sidebar .card,
+html.dark .support-intro-card,
+html.dark .support-contact-card,
+html.dark .support-list li,
+html.dark .support-hours>div {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .support-main h2,
+html.dark .support-info-card h2,
+html.dark .support-list strong,
+html.dark .support-hours strong,
+html.dark .support-form .form-group label {
+  color: #eef1f4 !important;
+}
+
+html.dark .support-section-note,
+html.dark .support-form-hint,
+html.dark .support-list span,
+html.dark .support-hours p {
+  color: #9aa0a6 !important;
+}
+
+html.dark .support-form .form-group input,
+html.dark .support-form .form-group select,
+html.dark .support-form .form-group textarea {
+  background: #15181b !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  color: #eef1f4 !important;
+}
+
 @media (max-width: 1024px) {
   .support-layout {
     grid-template-columns: 1fr;

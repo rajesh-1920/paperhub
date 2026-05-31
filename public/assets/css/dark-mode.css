@@ -1,0 +1,3066 @@
+/* Dark mode — professional palette for PaperHub
+   - Deep slate background
+   - Neutral surface cards
+   - Muted text and subtle indigo accents
+   - Soft glass for menus
+*/
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* Core color variables for dark mode */
+html.dark {
+  --dash-bg-start: #0b0b0b;
+  /* near-black base used by Dark Reader */
+  --dash-bg-end: #131313;
+  --dash-surface: rgba(255, 255, 255, 0.02);
+  /* low-contrast surfaces */
+  --dash-surface-strong: rgba(255, 255, 255, 0.03);
+  --dash-text: #e6e8ea;
+  /* slightly cool neutral text */
+  --dash-muted: #9aa4ab;
+  --dash-border: rgba(255, 255, 255, 0.035);
+  --dash-shadow-soft: 0 6px 20px rgba(2, 6, 10, 0.5);
+  --dash-accent: #58a6ff;
+  /* desaturated, softened blue accent */
+  --dash-accent-2: #3ea0ff;
+  /* supporting blue */
+  --dash-hero-start: rgba(88, 166, 255, 0.04);
+  --dash-hero-end: rgba(62, 160, 255, 0.02);
+}
+
+/* Shell */
+html.dark .dashboard-shell {
+  background:
+    radial-gradient(circle at 8% 6%, rgba(91, 110, 248, 0.03), transparent 22%),
+    linear-gradient(180deg, var(--dash-bg-start) 0%, var(--dash-bg-end) 100%);
+  color: var(--dash-text);
+}
+
+/* Navbar */
+html.dark .ph-nav {
+  background: linear-gradient(180deg, rgba(8, 10, 14, 0.82), rgba(10, 12, 16, 0.9));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--dash-text);
+}
+
+html.dark .ph-brand-mark {
+  background: linear-gradient(135deg, var(--dash-accent), #3b82f6);
+}
+
+html.dark .ph-brand-title {
+  color: var(--dash-text);
+}
+
+html.dark .ph-nav-link {
+  color: #c6d3e6;
+}
+
+html.dark .ph-nav-link:hover {
+  color: var(--dash-accent);
+  background: rgba(91, 110, 248, 0.04);
+}
+
+html.dark .ph-nav-link.is-active {
+  color: var(--dash-accent);
+  background: rgba(91, 110, 248, 0.06);
+}
+
+html.dark .ph-icon-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--dash-text);
+}
+
+html.dark .ph-user-btn {
+  background: linear-gradient(180deg, rgba(18, 22, 28, 0.92), rgba(12, 14, 18, 0.96));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--dash-text);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+html.dark .ph-user-btn:hover,
+html.dark .ph-user-btn:focus-visible {
+  background: linear-gradient(180deg, rgba(23, 28, 35, 0.96), rgba(16, 19, 24, 0.98));
+  border-color: rgba(91, 110, 248, 0.14);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+}
+
+html.dark .ph-user-btn>span:last-child {
+  color: var(--dash-text);
+}
+
+html.dark .ph-user-avatar {
+  background: linear-gradient(135deg, rgba(91, 110, 248, 0.85), rgba(14, 165, 233, 0.75));
+  color: #f8fbff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 8px 18px rgba(3, 8, 20, 0.28);
+}
+
+html.dark .ph-role-badge {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(24, 33, 46, 0.96));
+  border-color: rgba(91, 110, 248, 0.18) !important;
+  color: #cfe0ff !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+    0 8px 18px rgba(3, 8, 20, 0.16);
+}
+
+html.dark .ph-role-badge,
+html.dark .ph-role-badge-mobile {
+  background-color: rgba(17, 24, 39, 0.96) !important;
+  background-image: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(24, 33, 46, 0.96)) !important;
+  color: #cfe0ff !important;
+  border-color: rgba(91, 110, 248, 0.18) !important;
+}
+
+html.dark .ph-cta-btn {
+  background: linear-gradient(90deg, var(--dash-accent), #3b82f6);
+  color: white;
+  box-shadow: 0 6px 18px rgba(59, 114, 248, 0.12);
+}
+
+/* Menus & popovers */
+html.dark .ph-menu {
+  background: linear-gradient(180deg, rgba(18, 22, 28, 0.88), rgba(12, 14, 18, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: var(--dash-shadow-soft);
+}
+
+html.dark .ph-menu-section {
+  background: rgba(255, 255, 255, 0.015);
+  border-color: rgba(255, 255, 255, 0.02);
+}
+
+html.dark .ph-menu-name {
+  color: var(--dash-text);
+}
+
+html.dark .ph-menu-email {
+  color: var(--dash-muted);
+}
+
+html.dark .ph-menu-role {
+  background: rgba(91, 110, 248, 0.06);
+  color: #cfe0ff;
+  border-color: rgba(91, 110, 248, 0.08);
+}
+
+html.dark .ph-sidebar {
+  background: linear-gradient(180deg, rgba(10, 12, 16, 0.96), rgba(8, 10, 12, 0.98));
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+}
+
+html.dark .ph-sidebar-toggle {
+  background: linear-gradient(180deg, rgba(23, 28, 34, 0.98), rgba(14, 18, 22, 0.98)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #aeb7c2 !important;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.24),
+    0 1px 0 rgba(255, 255, 255, 0.03) inset !important;
+}
+
+html.dark .ph-sidebar-toggle:hover,
+html.dark .ph-sidebar-toggle:focus-visible {
+  background: linear-gradient(180deg, rgba(31, 38, 47, 0.98), rgba(18, 23, 28, 0.98)) !important;
+  border-color: rgba(45, 212, 191, 0.18) !important;
+  color: #f7fbff !important;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset !important;
+  transform: translateY(-1px) !important;
+}
+
+html.dark .ph-sidebar-toggle:focus-visible {
+  outline: 2px solid rgba(45, 212, 191, 0.35);
+  outline-offset: 2px;
+}
+
+/* Notifications */
+html.dark .notification-item {
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 0.6rem;
+}
+
+html.dark .notification-item:hover,
+html.dark .notification-item:focus {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+html.dark .notification-item.unread {
+  box-shadow: inset 4px 0 0 0 rgba(91, 110, 248, 0.12);
+}
+
+html.dark .notification-title {
+  color: var(--dash-text);
+}
+
+html.dark .notification-desc,
+html.dark .notification-time {
+  color: var(--dash-muted);
+}
+
+html.dark .notification-icon {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--dash-text);
+}
+
+html.dark .notification-badge {
+  background: rgba(91, 110, 248, 0.07);
+  color: #cfe0ff;
+}
+
+/* Cards & content */
+html.dark .dash-card {
+  background: linear-gradient(180deg, rgba(12, 16, 20, 0.72), rgba(10, 12, 16, 0.72));
+  border-color: rgba(255, 255, 255, 0.03);
+}
+
+html.dark .hero-panel::before {
+  background: linear-gradient(135deg, var(--dash-hero-start), var(--dash-hero-end));
+  opacity: 0.85;
+}
+
+html.dark .hero-glass {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.03);
+}
+
+html.dark .hero-panel h1,
+html.dark .hero-panel p,
+html.dark .hero-panel .caps-label {
+  color: var(--dash-text);
+}
+
+/* Tables and text */
+html.dark .soft-table thead th {
+  background: rgba(255, 255, 255, 0.02);
+  color: #9fb0c3;
+}
+
+html.dark .soft-table tbody td {
+  color: #dbe8f9;
+}
+
+html.dark .soft-table tbody tr:hover {
+  background: rgba(91, 110, 248, 0.03);
+}
+
+/* Footer */
+html.dark .dashboard-local-footer {
+  background: linear-gradient(180deg, rgba(8, 10, 12, 0.92), rgba(10, 12, 14, 0.95));
+  color: var(--dash-muted);
+}
+
+/* Mobile menu */
+html.dark .ph-mobile-link {
+  color: var(--dash-text);
+}
+
+/* Focus outline */
+html.dark :focus {
+  outline-color: rgba(91, 110, 248, 0.5);
+}
+
+/* Small utility tweaks */
+html.dark .ph-badge {
+  background: #ef4444;
+  /* keep urgent badge visible */
+}
+
+/* End */
+
+/* ======= SaaS-grade Dark Theme (semantic tokens) ======= */
+/* Strategy: expose semantic variables and use them across overrides so
+   components inherit a consistent, professional look. */
+
+html.dark {
+  /* core UI scale */
+  --bg-100: #0b1220;
+  /* main background */
+  --bg-200: #0f1724;
+  /* secondary */
+  --surface-100: rgba(255, 255, 255, 0.02);
+  /* light surface */
+  --surface-200: rgba(255, 255, 255, 0.03);
+  /* stronger surface */
+  --glass-01: rgba(255, 255, 255, 0.025);
+
+  /* typography */
+  --text-primary: #e6eef6;
+  --text-muted: #94a3b8;
+  --text-secondary: #b9c6d6;
+
+  /* semantic accents */
+  --accent-primary: #2563eb;
+  /* indigo-600 */
+  --accent-primary-2: #4f46e5;
+  /* indigo-700 */
+  --accent-highlight: #06b6d4;
+  /* cyan-500 */
+  --success: #10b981;
+  --danger: #ef4444;
+
+  /* borders & shadows */
+  --border-muted: rgba(255, 255, 255, 0.035);
+  --shadow-soft: 0 10px 30px rgba(2, 6, 23, 0.55);
+}
+
+/* Apply to shell */
+html.dark .dashboard-shell {
+  background: linear-gradient(180deg, var(--bg-100) 0%, var(--bg-200) 100%);
+  color: var(--text-primary);
+}
+
+/* NAVBAR - override existing !important rules in global.css */
+html.dark nav,
+html.dark .ph-nav {
+  background: linear-gradient(180deg, rgba(12, 16, 22, 0.92), rgba(10, 12, 16, 0.94)) !important;
+  border-bottom: 1px solid var(--border-muted) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.6) !important;
+}
+
+html.dark .ph-brand-mark {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-2));
+}
+
+html.dark .ph-brand-title {
+  color: var(--text-primary);
+}
+
+html.dark .ph-nav-link {
+  color: var(--text-secondary);
+}
+
+html.dark .ph-nav-link:hover {
+  color: var(--accent-primary);
+  background: rgba(37, 99, 235, 0.04);
+}
+
+html.dark .ph-nav-link.is-active {
+  color: var(--accent-primary);
+  background: rgba(79, 70, 229, 0.05);
+}
+
+/* ICON BUTTONS */
+html.dark .ph-icon-btn {
+  background: var(--surface-100);
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+}
+
+html.dark .ph-icon-btn:hover {
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.5);
+}
+
+/* CTA */
+html.dark .ph-cta-btn {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-primary-2));
+  color: white;
+  box-shadow: 0 8px 26px rgba(37, 99, 235, 0.12);
+}
+
+/* MENUS / POPOVERS */
+html.dark .ph-menu {
+  background: linear-gradient(180deg, rgba(12, 14, 18, 0.88), rgba(10, 12, 14, 0.94));
+  border: 1px solid var(--border-muted);
+  box-shadow: var(--shadow-soft);
+}
+
+html.dark .ph-menu-section {
+  background: rgba(255, 255, 255, 0.01);
+  border-color: rgba(255, 255, 255, 0.02);
+}
+
+html.dark .ph-menu-name {
+  color: var(--text-primary);
+}
+
+html.dark .ph-menu-email {
+  color: var(--text-muted);
+}
+
+/* SIDEBAR */
+html.dark .ph-sidebar {
+  background: linear-gradient(180deg, rgba(10, 12, 16, 0.96), rgba(8, 10, 12, 0.98));
+  border-right: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+html.dark .ph-sidebar-name {
+  color: var(--text-primary);
+}
+
+html.dark .ph-sidebar-mail {
+  color: var(--text-muted);
+}
+
+html.dark .ph-sidebar-link {
+  color: var(--text-secondary);
+}
+
+html.dark .ph-sidebar-link:hover {
+  background: rgba(79, 70, 229, 0.04);
+  transform: translateX(2px);
+}
+
+html.dark .ph-sidebar-link.is-active {
+  background: rgba(79, 70, 229, 0.06);
+  color: #cfe0ff;
+}
+
+/* CARDS */
+html.dark .card,
+html.dark .dash-card {
+  background: linear-gradient(180deg, rgba(15, 18, 22, 0.78), rgba(12, 14, 18, 0.78));
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-soft);
+}
+
+/* HERO */
+html.dark .hero-panel::before {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(6, 182, 212, 0.03));
+}
+
+html.dark .hero-panel h1,
+html.dark .hero-panel p {
+  color: var(--text-primary);
+}
+
+/* NOTIFICATIONS */
+html.dark .notification-item {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+html.dark .notification-item.unread {
+  box-shadow: inset 4px 0 0 0 rgba(79, 70, 229, 0.12);
+}
+
+html.dark .notification-title {
+  color: var(--text-primary);
+}
+
+html.dark .notification-desc,
+html.dark .notification-time {
+  color: var(--text-muted);
+}
+
+/* Officer dashboard hero: warm orange panel on a deep teal stage */
+html.dark .dashboard-shell.role-officer {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(34, 197, 94, 0.18), transparent 28%),
+    radial-gradient(circle at 92% 8%, rgba(20, 184, 166, 0.14), transparent 24%),
+    linear-gradient(180deg, #112520 0%, #0d1513 44%, #0b1110 100%) !important;
+}
+
+html.dark .dashboard-shell.role-officer::before {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.07), transparent 70%);
+  opacity: 0.34;
+}
+
+html.dark .dashboard-shell.role-officer::after {
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.08), transparent 70%);
+  opacity: 0.22;
+}
+
+html.dark .dashboard-shell.role-officer .hero-panel {
+  background:
+    radial-gradient(circle at 14% 18%, rgba(255, 255, 255, 0.04), transparent 24%),
+    linear-gradient(135deg, #b84e12 0%, #c85714 46%, #d16012 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.26),
+    0 0 0 1px rgba(0, 0, 0, 0.12) inset !important;
+}
+
+html.dark .dashboard-shell.role-officer .hero-panel::before {
+  background:
+    radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.06), transparent 20%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+  opacity: 1;
+}
+
+html.dark .dashboard-shell.role-officer .hero-panel::after {
+  background:
+    radial-gradient(circle at center, rgba(255, 248, 240, 0.1), rgba(255, 255, 255, 0)),
+    radial-gradient(circle at center, rgba(180, 83, 9, 0.28), rgba(180, 83, 9, 0));
+  height: 30rem;
+  opacity: 0.95;
+  right: -4rem;
+  top: -11rem;
+  width: 30rem;
+}
+
+html.dark .dashboard-shell.role-officer .role-badge {
+  background: rgba(69, 26, 10, 0.24) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #fff7ed !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 8px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.dark .dashboard-shell.role-officer .hero-panel h1 {
+  color: #fff9f3 !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+
+html.dark .dashboard-shell.role-officer .hero-panel p,
+html.dark .dashboard-shell.role-officer .hero-panel .caps-label {
+  color: rgba(255, 245, 235, 0.92) !important;
+}
+
+html.dark .dashboard-shell.role-officer .hero-glass {
+  background: linear-gradient(180deg, rgba(168, 68, 17, 0.7), rgba(147, 61, 15, 0.78)) !important;
+  border-color: rgba(120, 48, 13, 0.72) !important;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset !important;
+}
+
+html.dark .dashboard-shell.role-officer .hero-glass:hover {
+  background: linear-gradient(180deg, rgba(179, 73, 18, 0.76), rgba(155, 65, 16, 0.82)) !important;
+  border-color: rgba(142, 58, 15, 0.8) !important;
+}
+
+html.dark .dashboard-shell.role-officer .hero-glass .caps-label,
+html.dark .dashboard-shell.role-officer .hero-glass h3,
+html.dark .dashboard-shell.role-officer .hero-glass p {
+  color: #fff8f1 !important;
+}
+
+html.dark .dashboard-shell.role-officer .action-link {
+  background: linear-gradient(180deg, #0f6970, #0c5a61) !important;
+  border-color: rgba(22, 163, 174, 0.28) !important;
+  color: #ecfeff !important;
+  box-shadow:
+    0 8px 18px rgba(8, 58, 63, 0.18),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset !important;
+}
+
+html.dark .dashboard-shell.role-officer .action-link:hover {
+  background: linear-gradient(180deg, #12808a, #0f6d75) !important;
+  border-color: rgba(45, 212, 191, 0.34) !important;
+  box-shadow: 0 12px 24px rgba(8, 58, 63, 0.24) !important;
+}
+
+html.dark .dashboard-shell.role-officer .dash-grid>.dash-card {
+  background: linear-gradient(180deg, rgba(21, 25, 24, 0.96), rgba(16, 20, 19, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* BUTTONS */
+html.dark .btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-2));
+  color: white;
+  box-shadow: 0 8px 22px rgba(79, 70, 229, 0.12);
+}
+
+html.dark .btn-success {
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: white;
+}
+
+html.dark .btn-danger {
+  background: linear-gradient(135deg, var(--danger), #dc2626);
+  color: white;
+}
+
+html.dark .btn-outline,
+html.dark .filter-btn,
+html.dark .btn-secondary {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+}
+
+/* FORMS */
+html.dark input,
+html.dark select,
+html.dark textarea,
+html.dark .form-group input,
+html.dark .form-group select,
+html.dark .form-group textarea {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.035);
+  color: var(--text-primary);
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+  box-shadow: 0 0 0 6px rgba(79, 70, 229, 0.06);
+  border-color: rgba(79, 70, 229, 0.45);
+  outline: none;
+}
+
+/* TABLES */
+html.dark .soft-table thead th {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
+}
+
+html.dark .soft-table tbody td {
+  color: var(--text-primary);
+}
+
+html.dark .soft-table tbody tr:hover {
+  background: rgba(79, 70, 229, 0.03);
+}
+
+/* PROGRESS */
+html.dark .progress-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+html.dark .progress-fill {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-primary-2));
+}
+
+/* BADGES */
+html.dark .accent-pill {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+}
+
+html.dark .pill-emerald {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
+  color: #86efac;
+}
+
+html.dark .pill-amber {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.06));
+  color: #ffd8a8;
+}
+
+/* SCROLLBARS */
+html.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+}
+
+/* SELECTION */
+html.dark ::selection {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-highlight));
+  color: #0b1220;
+}
+
+/* TRANSITIONS */
+html,
+body,
+.ph-nav,
+.dash-card,
+.card,
+.ph-menu,
+.hero-panel,
+.ph-sidebar {
+  transition: background-color 240ms ease, color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+}
+
+/* Ensure urgent badges remain legible */
+html.dark .ph-badge {
+  background: var(--danger);
+  color: white;
+}
+
+/* End SaaS-grade dark theme */
+
+/* ==========================
+   Component-specific overrides
+   ========================== */
+
+/* FILE pages */
+html.dark .file-hero {
+  background: linear-gradient(180deg, rgba(12, 14, 18, 0.9), rgba(10, 12, 16, 0.9));
+  border: 1px solid var(--border-muted);
+}
+
+html.dark .file-hero-copy,
+html.dark .file-hero-panel {
+  color: var(--text-primary);
+}
+
+html.dark .file-subtitle,
+html.dark .file-name-meta {
+  color: var(--text-muted);
+}
+
+html.dark .file-chip {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--border-muted);
+  color: var(--text-secondary);
+}
+
+html.dark .file-chip:hover,
+html.dark .file-chip.active {
+  background: rgba(79, 70, 229, 0.06);
+  color: #eaf0ff;
+  border-color: rgba(79, 70, 229, 0.08);
+}
+
+html.dark .file-kpi-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+}
+
+html.dark .file-row.is-selected {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(6, 182, 212, 0.03));
+}
+
+html.dark .file-status-pill.status-completed {
+  background: rgba(16, 185, 129, 0.08);
+  color: #bbf7d0;
+}
+
+html.dark .file-status-pill.status-pending {
+  background: rgba(59, 130, 246, 0.06);
+  color: #bfdbfe;
+}
+
+html.dark .file-preview-item {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-muted);
+}
+
+html.dark .file-progress-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+html.dark .file-progress-fill {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-highlight));
+}
+
+html.dark .upload-dropzone {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.008));
+  border: 2px dashed rgba(255, 255, 255, 0.03);
+}
+
+html.dark .upload-dropzone.upload-dropzone-active {
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.06);
+  border-color: rgba(79, 70, 229, 0.18);
+}
+
+/* PAYMENT pages */
+html.dark .payment-card,
+html.dark .payment-side,
+html.dark .payment-meta-card {
+  background: linear-gradient(180deg, rgba(12, 14, 18, 0.78), rgba(10, 12, 16, 0.78));
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+}
+
+html.dark .payment-card h2,
+html.dark .payment-status strong,
+html.dark .summary-row strong {
+  color: var(--text-primary);
+}
+
+html.dark .kpi-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+}
+
+html.dark .invoice-item {
+  color: var(--text-secondary);
+}
+
+html.dark .badge-success {
+  background: rgba(16, 185, 129, 0.08);
+  color: #bbf7d0;
+  border-color: rgba(16, 185, 129, 0.06);
+}
+
+html.dark .badge-warning {
+  background: rgba(245, 158, 11, 0.06);
+  color: #ffd8a8;
+  border-color: rgba(245, 158, 11, 0.05);
+}
+
+/* REVIEW pages */
+html.dark .review-card,
+html.dark .review-row {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+}
+
+html.dark .review-row:hover {
+  background: rgba(79, 70, 229, 0.03);
+}
+
+/* CONTACT / SUPPORT */
+html.dark .contact-card {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+}
+
+/* ACCOUNT */
+html.dark .profile-stat-card {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-muted);
+}
+
+/* TIMELINE */
+html.dark .timeline-item {
+  background: rgba(255, 255, 255, 0.01);
+  color: var(--text-primary);
+  border-left: 2px solid rgba(255, 255, 255, 0.02);
+}
+
+/* Breadcrumbs */
+html.dark .breadcrumbs {
+  color: var(--text-muted);
+}
+
+/* Make any remaining utility backgrounds inherit a safe surface */
+html.dark .bg-white,
+html.dark .bg-surface {
+  background: rgba(255, 255, 255, 0.02) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Global non-dashboard shell in dark mode */
+html.dark body:not(.dashboard-shell) {
+  background:
+    radial-gradient(circle at top left, rgba(45, 212, 191, 0.06), transparent 30%),
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.04), transparent 24%),
+    linear-gradient(180deg, var(--bg-100) 0%, var(--bg-200) 100%);
+  color: var(--text-primary);
+}
+
+html.dark body:not(.dashboard-shell)::before {
+  background: radial-gradient(circle, rgba(148, 163, 184, 0.12), transparent 68%);
+  opacity: 0.8;
+}
+
+html.dark body:not(.dashboard-shell)::after {
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.16), transparent 68%);
+  opacity: 0.9;
+}
+
+/* ===== Final visual tuning: graphite/navy SaaS palette ===== */
+html.dark {
+  --bg-100: #0b0b0b;
+  --bg-200: #121212;
+  --text-primary: #e6e8ea;
+  --text-secondary: #c6cfd6;
+  --text-muted: #99a3aa;
+  --surface-100: rgba(255, 255, 255, 0.015);
+  --surface-200: rgba(255, 255, 255, 0.02);
+  --border-muted: rgba(255, 255, 255, 0.03);
+  --shadow-soft: 0 12px 36px rgba(2, 6, 10, 0.5);
+  --accent-primary: #58a6ff;
+  --accent-primary-2: #3ea0ff;
+  --accent-highlight: #22c1b8;
+}
+
+html.dark .dashboard-shell {
+  background:
+    radial-gradient(circle at top left, rgba(91, 124, 250, 0.08), transparent 26%),
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.05), transparent 22%),
+    linear-gradient(180deg, #0a0f16 0%, #111827 100%);
+}
+
+html.dark .dashboard-shell::before {
+  background: radial-gradient(circle, rgba(148, 163, 184, 0.08), transparent 66%);
+}
+
+html.dark .dashboard-shell::after {
+  background: radial-gradient(circle, rgba(91, 124, 250, 0.1), transparent 66%);
+}
+
+html.dark .hero-panel::before {
+  background:
+    radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.05), transparent 30%),
+    radial-gradient(circle at 85% 20%, rgba(91, 124, 250, 0.12), transparent 24%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.96));
+  opacity: 0.72;
+}
+
+/* Dark Reader approximation overrides — lower saturation, more neutral surfaces */
+html.dark {
+  --bg-100: #161718;
+  --bg-200: #1c1e1f;
+  --text-primary: #e6e6e6;
+  --text-secondary: #c8c9c9;
+  --text-muted: #95989a;
+  --surface-100: rgba(255, 255, 255, 0.02);
+  --surface-200: rgba(255, 255, 255, 0.03);
+  --border-muted: rgba(255, 255, 255, 0.03);
+  --shadow-soft: 0 8px 20px rgba(4, 6, 8, 0.45);
+  --accent-primary: #7ba6d6;
+  --accent-primary-2: #5b7ea8;
+  --accent-highlight: #5dc1b0;
+}
+
+html.dark .dashboard-shell {
+  background: linear-gradient(180deg, var(--bg-100) 0%, var(--bg-200) 100%);
+}
+
+/* Dark Reader style: remove decorative colorful radials and lower opacities */
+html.dark .dashboard-shell::before,
+html.dark .dashboard-shell::after {
+  display: none !important;
+}
+
+html.dark .hero-panel::before {
+  background: none !important;
+  opacity: 0.0 !important;
+}
+
+html.dark .ph-nav,
+html.dark nav {
+  background: linear-gradient(180deg, rgba(24, 26, 27, 0.96), rgba(18, 20, 21, 0.98)) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02) !important;
+}
+
+html.dark .ph-cta-btn,
+html.dark .btn-primary {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-primary-2));
+  box-shadow: 0 2px 10px rgba(8, 10, 12, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+html.dark .hero-panel,
+html.dark .dash-card,
+html.dark .card,
+html.dark .file-hero,
+html.dark .payment-card {
+  background: linear-gradient(180deg, rgba(22, 24, 25, 0.92), rgba(18, 20, 21, 0.96));
+  border-color: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 6px 14px rgba(2, 4, 6, 0.36);
+}
+
+html.dark .ph-menu,
+html.dark .ph-notify-menu,
+html.dark .ph-mobile-menu {
+  background: rgba(26, 28, 29, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  box-shadow: none;
+}
+
+html.dark .ph-nav-link,
+html.dark .ph-sidebar-link,
+html.dark a {
+  color: var(--text-secondary);
+}
+
+html.dark .ph-nav-link.is-active,
+html.dark .ph-sidebar-link.is-active {
+  color: var(--accent-primary);
+  background: rgba(127, 174, 255, 0.055);
+}
+
+html.dark .soft-table tbody tr:hover,
+html.dark .file-row.is-selected,
+html.dark .review-row:hover {
+  background: rgba(127, 174, 255, 0.03);
+}
+
+html.dark .notification-item.unread {
+  box-shadow: inset 4px 0 0 0 rgba(127, 174, 255, 0.12);
+}
+
+html.dark ::selection {
+  background: rgba(127, 174, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* lower contrast focus rings to DR-like subtle glow */
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+  box-shadow: 0 0 0 4px rgba(127, 174, 255, 0.06);
+  border-color: rgba(127, 174, 255, 0.18);
+}
+
+html.dark .hero-panel {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(17, 24, 39, 0.98));
+}
+
+html.dark .hero-glass {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(148, 163, 184, 0.12);
+}
+
+html.dark .hero-panel h1,
+html.dark .hero-panel h2,
+html.dark .hero-panel h3,
+html.dark .hero-panel p,
+html.dark .hero-panel .caps-label {
+  color: var(--text-primary);
+}
+
+html.dark .role-badge {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(148, 163, 184, 0.18);
+  color: #e9eff8;
+}
+
+html.dark .action-link {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  color: var(--text-primary);
+}
+
+html.dark .action-link:hover {
+  background: rgba(91, 124, 250, 0.08);
+  border-color: rgba(91, 124, 250, 0.2);
+}
+
+html.dark .dash-card,
+html.dark .payment-card,
+html.dark .payment-meta-card,
+html.dark .file-hero,
+html.dark .file-hero-panel,
+html.dark .file-kpi-card,
+html.dark .upload-dropzone,
+html.dark .payment-side,
+html.dark .contact-card,
+html.dark .review-card,
+html.dark .review-row,
+html.dark .timeline-item,
+html.dark .profile-stat-card,
+html.dark .meta-line,
+html.dark .file-preview-item,
+html.dark .kpi-card {
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.9), rgba(15, 23, 42, 0.94));
+  border-color: rgba(148, 163, 184, 0.14);
+  color: var(--text-primary);
+}
+
+html.dark .metric-card::after {
+  background: linear-gradient(135deg, rgba(91, 124, 250, 0.08), transparent 60%);
+}
+
+html.dark .metric-label,
+html.dark .metric-foot,
+html.dark .section-title h2,
+html.dark .file-subtitle,
+html.dark .file-name-meta,
+html.dark .kpi-label,
+html.dark .invoice-item,
+html.dark .notification-desc,
+html.dark .notification-time,
+html.dark .local-footer-brand p,
+html.dark .soft-table thead th {
+  color: var(--text-muted);
+}
+
+html.dark .metric-value,
+html.dark .soft-table tbody td,
+html.dark .payment-status strong,
+html.dark .summary-row strong,
+html.dark .summary-row span {
+  color: var(--text-primary);
+}
+
+html.dark .soft-table thead th {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+html.dark .soft-table tbody tr:hover,
+html.dark .file-row.is-selected,
+html.dark .review-row:hover,
+html.dark .notification-item:hover,
+html.dark .notification-item:focus {
+  background: rgba(91, 124, 250, 0.06);
+}
+
+html.dark .kpi-value,
+html.dark .file-kpi-card strong,
+html.dark .payment-card h2,
+html.dark .local-footer-brand h3 {
+  color: var(--text-primary);
+}
+
+html.dark .file-chip,
+html.dark .badge,
+html.dark .ph-role-switch,
+html.dark .filter-btn,
+html.dark .btn-outline,
+html.dark .btn-secondary {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(148, 163, 184, 0.14);
+  color: var(--text-primary);
+}
+
+html.dark .file-chip:hover,
+html.dark .file-chip.active,
+html.dark .filter-btn.active,
+html.dark .filter-btn:hover,
+html.dark .btn-outline:hover,
+html.dark .btn-secondary:hover,
+html.dark .ph-role-switch:hover {
+  background: rgba(91, 124, 250, 0.08);
+  border-color: rgba(91, 124, 250, 0.2);
+  color: #eff4ff;
+}
+
+html.dark .ph-nav-link.is-active {
+  color: #8bb4ff;
+  background: rgba(91, 124, 250, 0.08);
+}
+
+html.dark .ph-menu,
+html.dark .ph-sidebar,
+html.dark .dashboard-local-footer {
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.5);
+}
+
+html.dark .ph-notify-menu,
+html.dark .ph-menu-section,
+html.dark .notifications-list,
+html.dark .ph-mobile-menu {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+html.dark .notification-item.unread {
+  box-shadow: inset 4px 0 0 0 rgba(91, 124, 250, 0.18);
+}
+
+html.dark .notification-icon {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html.dark .notification-badge {
+  background: rgba(91, 124, 250, 0.12);
+  color: #dbe7ff;
+}
+
+html.dark .payment-status-block,
+html.dark .summary-row.total {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+html.dark .progress-track,
+html.dark .file-progress-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html.dark .progress-fill,
+html.dark .file-progress-fill {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-highlight));
+}
+
+html.dark .dashboard-local-footer {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(10, 15, 23, 0.98));
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+
+
+/* ==========================
+   Comprehensive global overrides
+   ========================== */
+
+/* Override global `nav` (global.css uses !important) */
+html.dark nav {
+  background: linear-gradient(180deg, rgba(10, 12, 16, 0.94), rgba(12, 14, 18, 0.96)) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02) !important;
+  box-shadow: 0 8px 28px rgba(2, 6, 23, 0.55) !important;
+  color: var(--dash-text) !important;
+}
+
+/* Footer */
+html.dark footer {
+  background: linear-gradient(180deg, rgba(6, 8, 10, 0.98), rgba(10, 12, 14, 0.98)) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.02) !important;
+  color: var(--dash-muted) !important;
+}
+
+/* Generic cards */
+html.dark .card {
+  background: linear-gradient(180deg, rgba(12, 16, 20, 0.78), rgba(10, 12, 16, 0.78));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--dash-text);
+  box-shadow: var(--dash-shadow-soft);
+}
+
+/* Buttons */
+html.dark .btn-primary {
+  background: linear-gradient(135deg, var(--dash-accent), #4f46e5);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(79, 70, 229, 0.12);
+}
+
+html.dark .btn-success {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #fff;
+}
+
+html.dark .btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+}
+
+html.dark .btn-outline,
+html.dark .btn-secondary,
+html.dark .filter-btn {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(255, 255, 255, 0.035);
+  color: var(--dash-text);
+}
+
+/* Form controls */
+html.dark .form-group input,
+html.dark .form-group select,
+html.dark .form-group textarea,
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--dash-text);
+}
+
+html.dark .form-group input:focus,
+html.dark .form-group select:focus,
+html.dark .form-group textarea:focus,
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+  border-color: rgba(79, 70, 229, 0.5);
+  box-shadow: 0 0 0 6px rgba(79, 70, 229, 0.06);
+  outline: none;
+}
+
+/* Sidebar */
+html.dark .ph-sidebar {
+  background: linear-gradient(180deg, rgba(8, 10, 14, 0.95), rgba(10, 12, 16, 0.96));
+  border-right: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+html.dark .ph-sidebar-name {
+  color: var(--dash-text);
+}
+
+html.dark .ph-sidebar-mail {
+  color: var(--dash-muted);
+}
+
+html.dark .ph-sidebar-link {
+  color: var(--dash-text);
+}
+
+html.dark .ph-sidebar-link:hover {
+  background: rgba(79, 70, 229, 0.04);
+}
+
+html.dark .ph-sidebar-link.is-active {
+  background: rgba(79, 70, 229, 0.06);
+  color: #cfe0ff;
+}
+
+/* Badges */
+html.dark .accent-pill {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--dash-text);
+}
+
+html.dark .pill-emerald {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
+  color: #86efac;
+}
+
+html.dark .pill-amber {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.06));
+  color: #ffd8a8;
+}
+
+html.dark .pill-rose {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.10), rgba(239, 68, 68, 0.04));
+  color: #ffc7c7;
+}
+
+/* Progress */
+html.dark .progress-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+html.dark .progress-fill {
+  background: linear-gradient(90deg, var(--dash-accent), #3b82f6);
+
+  /* Admin dashboard hero: teal executive console */
+  html.dark .dashboard-shell.role-admin {
+    background:
+      radial-gradient(circle at 14% 0%, rgba(45, 212, 191, 0.18), transparent 28%),
+      radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.12), transparent 24%),
+      linear-gradient(180deg, #101715 0%, #0c1211 46%, #0b1110 100%) !important;
+  }
+
+  html.dark .dashboard-shell.role-admin::before {
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.08), transparent 70%);
+    opacity: 0.34;
+  }
+
+  html.dark .dashboard-shell.role-admin::after {
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.07), transparent 70%);
+    opacity: 0.24;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-panel {
+    background:
+      radial-gradient(circle at 10% 18%, rgba(255, 255, 255, 0.03), transparent 24%),
+      linear-gradient(135deg, #0f7f79 0%, #11857f 46%, #168b84 100%) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.24),
+      0 0 0 1px rgba(0, 0, 0, 0.08) inset !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-panel::before {
+    background:
+      radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.11), transparent 28%),
+      radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.05), transparent 20%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+    opacity: 1;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-panel::after {
+    background:
+      radial-gradient(circle at center, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0)),
+      radial-gradient(circle at center, rgba(8, 145, 178, 0.22), rgba(8, 145, 178, 0));
+    height: 30rem;
+    opacity: 0.9;
+    right: -4rem;
+    top: -11rem;
+    width: 30rem;
+  }
+
+  html.dark .dashboard-shell.role-admin .role-badge {
+    background: rgba(7, 89, 91, 0.24) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+    color: #ecfeff !important;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.08) inset,
+      0 8px 20px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-panel h1 {
+    color: #f8fbff !important;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-panel p,
+  html.dark .dashboard-shell.role-admin .hero-panel .caps-label {
+    color: rgba(240, 253, 250, 0.94) !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-glass {
+    background: linear-gradient(180deg, rgba(10, 106, 100, 0.58), rgba(10, 88, 84, 0.74)) !important;
+    border-color: rgba(6, 95, 70, 0.35) !important;
+    box-shadow:
+      0 10px 28px rgba(0, 0, 0, 0.14),
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-glass:hover {
+    background: linear-gradient(180deg, rgba(12, 123, 116, 0.66), rgba(10, 102, 97, 0.78)) !important;
+    border-color: rgba(45, 212, 191, 0.34) !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-glass .caps-label,
+  html.dark .dashboard-shell.role-admin .hero-glass h3,
+  html.dark .dashboard-shell.role-admin .hero-glass p {
+    color: #f2fffd !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .action-link {
+    background: linear-gradient(180deg, #0b6770, #09585f) !important;
+    border-color: rgba(45, 212, 191, 0.3) !important;
+    color: #ecfeff !important;
+    box-shadow:
+      0 8px 18px rgba(8, 58, 63, 0.18),
+      0 1px 0 rgba(255, 255, 255, 0.04) inset !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .action-link:hover {
+    background: linear-gradient(180deg, #0f7f88, #0d6d75) !important;
+    border-color: rgba(34, 211, 238, 0.34) !important;
+    box-shadow: 0 12px 24px rgba(8, 58, 63, 0.24) !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .dash-grid>.dash-card {
+    background: linear-gradient(180deg, rgba(21, 25, 24, 0.96), rgba(16, 20, 19, 0.98)) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-panel {
+    background:
+      radial-gradient(circle at 10% 18%, rgba(255, 255, 255, 0.03), transparent 24%),
+      linear-gradient(135deg, #0f7f79 0%, #11857f 46%, #168b84 100%) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.24),
+      0 0 0 1px rgba(0, 0, 0, 0.08) inset !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-panel::before {
+    background:
+      radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.11), transparent 28%),
+      radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.05), transparent 20%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)) !important;
+    opacity: 1 !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-panel::after {
+    background:
+      radial-gradient(circle at center, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0)),
+      radial-gradient(circle at center, rgba(8, 145, 178, 0.22), rgba(8, 145, 178, 0)) !important;
+    height: 30rem !important;
+    opacity: 0.9 !important;
+    right: -4rem !important;
+    top: -11rem !important;
+    width: 30rem !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-glass {
+    background: linear-gradient(180deg, rgba(10, 106, 100, 0.58), rgba(10, 88, 84, 0.74)) !important;
+    border-color: rgba(6, 95, 70, 0.35) !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .hero-glass:hover {
+    background: linear-gradient(180deg, rgba(12, 123, 116, 0.66), rgba(10, 102, 97, 0.78)) !important;
+    border-color: rgba(45, 212, 191, 0.34) !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .action-link {
+    background: linear-gradient(180deg, #0b6770, #09585f) !important;
+    border-color: rgba(45, 212, 191, 0.3) !important;
+    color: #ecfeff !important;
+  }
+
+  html.dark .dashboard-shell.role-admin .action-link:hover {
+    background: linear-gradient(180deg, #0f7f88, #0d6d75) !important;
+    border-color: rgba(34, 211, 238, 0.34) !important;
+  }
+}
+
+/* Tables */
+html.dark .soft-table thead th {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--dash-muted);
+}
+
+html.dark .soft-table tbody td {
+  color: var(--dash-text);
+}
+
+/* Scrollbars */
+html.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Selection */
+html.dark ::selection {
+  background: linear-gradient(90deg, var(--dash-accent), #06b6d4);
+  color: #08101a;
+}
+
+/* Smooth theme transition */
+html,
+body,
+.ph-nav,
+.dash-card,
+.card,
+.ph-menu,
+.hero-panel,
+.ph-sidebar {
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+/* Dark Reader — ultimate flatten override
+   Force neutral, desaturated surfaces and remove decorative highlights. */
+html.dark {
+  --dr-bg: #0f1011 !important;
+  --dr-surface: #151616 !important;
+  --dr-surface-2: #171818 !important;
+  --dr-text: #e6e6e6 !important;
+  --dr-muted: #9aa0a4 !important;
+  --dr-accent: #6b7f90 !important;
+}
+
+/* Flatten page shell */
+html.dark body,
+html.dark .dashboard-shell,
+html.dark nav,
+html.dark .ph-sidebar {
+  background: var(--dr-bg) !important;
+  background-image: none !important;
+  color: var(--dr-text) !important;
+}
+
+/* Hero & cards: flat, low-contrast surfaces */
+html.dark .hero-panel,
+html.dark .dash-card,
+html.dark .card,
+html.dark .file-hero,
+html.dark .payment-card,
+html.dark .kpi-card {
+  background: var(--dr-surface) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+}
+
+/* Remove radial/gradient overlays */
+html.dark .dashboard-shell::before,
+html.dark .dashboard-shell::after,
+html.dark .hero-panel::before {
+  display: none !important;
+  background: none !important;
+}
+
+/* Desaturate brand & CTA */
+html.dark .ph-brand-mark,
+html.dark .ph-cta-btn,
+html.dark .btn-primary {
+  background: rgba(108, 118, 125, 0.08) !important;
+  color: var(--dr-text) !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+}
+
+/* Muted navigation */
+html.dark .ph-nav-link,
+html.dark .ph-sidebar-link,
+html.dark a {
+  color: var(--dr-muted) !important;
+}
+
+html.dark .ph-nav-link.is-active,
+html.dark .ph-sidebar-link.is-active {
+  color: var(--dr-accent) !important;
+  background: rgba(107, 127, 144, 0.04) !important;
+}
+
+/* Buttons and chips: subtle outlines */
+html.dark .btn-outline,
+html.dark .file-chip,
+html.dark .badge,
+html.dark .filter-btn,
+html.dark .btn-secondary {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  color: var(--dr-text) !important;
+}
+
+/* Notifications, menus */
+html.dark .ph-menu,
+html.dark .ph-notify-menu,
+html.dark .notification-item,
+html.dark .notification-item.unread,
+html.dark .notification-badge {
+  background: var(--dr-surface-2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+  color: var(--dr-text) !important;
+}
+
+/* Hover & selection: very subtle */
+html.dark .soft-table tbody tr:hover,
+html.dark .file-row.is-selected,
+html.dark .review-row:hover,
+html.dark .notification-item:hover {
+  background: rgba(255, 255, 255, 0.015) !important;
+}
+
+html.dark ::selection {
+  background: rgba(108, 118, 125, 0.06) !important;
+  color: var(--dr-text) !important;
+}
+
+/* Forms */
+html.dark input,
+html.dark select,
+html.dark textarea,
+html.dark .form-group input,
+html.dark .form-group select,
+html.dark .form-group textarea {
+  background: #141414 !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  color: var(--dr-text) !important;
+}
+
+/* Reduce shadows globally but keep tiny inset for subtle depth */
+html.dark * {
+  box-shadow: none !important;
+}
+
+html.dark .dash-card,
+html.dark .card {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.01) !important;
+}
+
+/* Final CTA hover readability */
+html.dark .ph-cta-btn:hover,
+html.dark .btn-primary:hover {
+  background: rgba(108, 118, 125, 0.12) !important;
+}
+
+/* end override */
+
+/* ==========================
+   Dark Reader — final override
+   High-specificity rules to approximate Dark Reader transform
+   ========================== */
+html.dark {
+  --dr-bg: #121212 !important;
+  --dr-surface: #161616 !important;
+  --dr-surface-2: #181818 !important;
+  --dr-text: #e6e6e6 !important;
+  --dr-muted: #9a9ea1 !important;
+  --dr-accent: #6c89a3 !important;
+}
+
+html.dark body,
+html.dark .dashboard-shell,
+html.dark nav,
+html.dark .ph-sidebar {
+  background-color: var(--dr-bg) !important;
+  background-image: none !important;
+  color: var(--dr-text) !important;
+}
+
+/* Neutralize hero and cards to a flat Dark Reader-like surface */
+html.dark .hero-panel,
+html.dark .dash-card,
+html.dark .card,
+html.dark .file-hero,
+html.dark .payment-card {
+  background-color: var(--dr-surface) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+}
+
+/* Desaturate accents and make CTAs subtle */
+html.dark .ph-cta-btn,
+html.dark .btn-primary,
+html.dark .ph-brand-mark {
+  background: rgba(108, 136, 160, 0.12) !important;
+  color: var(--dr-text) !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+}
+
+/* Links and nav */
+html.dark a,
+html.dark .ph-nav-link,
+html.dark .ph-sidebar-link {
+  color: var(--dr-muted) !important;
+}
+
+html.dark .ph-nav-link.is-active,
+html.dark .ph-sidebar-link.is-active {
+  color: var(--dr-accent) !important;
+  background: rgba(108, 136, 160, 0.04) !important;
+}
+
+/* Notifications & badges */
+html.dark .notification-item,
+html.dark .notification-item.unread,
+html.dark .notification-badge {
+  background: var(--dr-surface-2) !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  color: var(--dr-text) !important;
+}
+
+/* Reduce colorful hover highlights */
+html.dark .soft-table tbody tr:hover,
+html.dark .file-row.is-selected,
+html.dark .review-row:hover,
+html.dark .notification-item:hover {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Form controls */
+html.dark input,
+html.dark select,
+html.dark textarea,
+html.dark .form-group input,
+html.dark .form-group select,
+html.dark .form-group textarea {
+  background: #141414 !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  color: var(--dr-text) !important;
+}
+
+/* final subtle selection */
+html.dark ::selection {
+  background: rgba(108, 136, 160, 0.08) !important;
+  color: var(--dr-text) !important;
+}
+
+/* reduce all strong shadows that make theme feel glowy */
+html.dark * {
+  box-shadow: none !important;
+}
+
+/* keep very small UI shadows for depth using inset */
+html.dark .dash-card,
+html.dark .card {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.01) !important;
+}
+
+/* ensure CTAs remain readable */
+html.dark .ph-cta-btn:hover,
+html.dark .btn-primary:hover {
+  background: rgba(108, 136, 160, 0.16) !important;
+}
+
+/* end Dark Reader override */
+
+/* Utility class neutralization for Dark Reader-like tone */
+html.dark .text-sky-700,
+html.dark .text-sky-800,
+html.dark .text-cyan-500,
+html.dark .text-cyan-600,
+html.dark .text-blue-600,
+html.dark .text-blue-700,
+html.dark .text-primary-500,
+html.dark .text-primary-600,
+html.dark .text-primary-700,
+html.dark .hover\:text-sky-800:hover,
+html.dark .hover\:text-primary-500:hover,
+html.dark .hover\:text-primary-600:hover,
+html.dark .hover\:text-blue-600:hover {
+  color: #8fa1b0 !important;
+}
+
+html.dark .text-amber-600,
+html.dark .text-amber-700,
+html.dark .text-emerald-600,
+html.dark .text-emerald-700,
+html.dark .text-rose-600,
+html.dark .text-rose-700 {
+  color: #c8b08a !important;
+}
+
+html.dark .bg-primary-100,
+html.dark .bg-secondary-100,
+html.dark .bg-blue-100,
+html.dark .bg-green-100,
+html.dark .bg-yellow-100,
+html.dark .bg-purple-100 {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .bg-primary-900,
+html.dark .bg-secondary-900,
+html.dark .bg-blue-900,
+html.dark .bg-green-900,
+html.dark .bg-yellow-900,
+html.dark .bg-purple-900 {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* =========================================================
+   Screenshot-faithful dashboard override
+   Matches the pasted look: charcoal shell, bright cyan CTA,
+   blue hero, and soft gray metric cards.
+   ========================================================= */
+html.dark .dashboard-shell {
+  background:
+    radial-gradient(circle at top left, rgba(24, 128, 172, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(45, 212, 191, 0.08), transparent 24%),
+    linear-gradient(180deg, #1a1b1d 0%, #1f2022 100%) !important;
+}
+
+html.dark .dashboard-shell::before {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 68%) !important;
+  display: block !important;
+  opacity: 0.22 !important;
+}
+
+html.dark .dashboard-shell::after {
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.1), transparent 68%) !important;
+  display: block !important;
+  opacity: 0.2 !important;
+}
+
+html.dark .ph-nav,
+html.dark nav {
+  background: linear-gradient(180deg, rgba(21, 22, 24, 0.98), rgba(18, 19, 21, 0.98)) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22) !important;
+}
+
+html.dark .ph-sidebar {
+  background: linear-gradient(180deg, rgba(18, 19, 21, 0.98), rgba(16, 17, 19, 0.98)) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .hero-panel {
+  background: linear-gradient(135deg, #0f66bf 0%, #244cc8 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.26) !important;
+}
+
+html.dark .hero-panel::before {
+  background:
+    radial-gradient(circle at 16% 24%, rgba(255, 255, 255, 0.06), transparent 28%),
+    radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.08), transparent 24%),
+    linear-gradient(135deg, rgba(15, 102, 191, 0.88), rgba(36, 76, 200, 0.88)) !important;
+  opacity: 0.95 !important;
+  display: block !important;
+}
+
+html.dark .hero-glass {
+  background: rgba(20, 48, 119, 0.42) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html.dark .dash-card,
+html.dark .card,
+html.dark .payment-card,
+html.dark .payment-meta-card,
+html.dark .review-card,
+html.dark .review-row,
+html.dark .file-hero,
+html.dark .file-hero-panel,
+html.dark .file-kpi-card,
+html.dark .upload-dropzone,
+html.dark .payment-side,
+html.dark .contact-card,
+html.dark .timeline-item,
+html.dark .profile-stat-card,
+html.dark .meta-line,
+html.dark .file-preview-item,
+html.dark .kpi-card {
+  background: linear-gradient(180deg, rgba(33, 34, 36, 0.96), rgba(25, 26, 28, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18) !important;
+}
+
+html.dark .metric-card {
+  background: linear-gradient(135deg, rgba(34, 35, 37, 0.96), rgba(45, 46, 49, 0.96)) !important;
+}
+
+html.dark .metric-card::after {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), transparent 60%) !important;
+}
+
+html.dark .role-badge,
+html.dark .accent-pill,
+html.dark .badge,
+html.dark .file-chip,
+html.dark .btn-outline,
+html.dark .btn-secondary,
+html.dark .filter-btn,
+html.dark .ph-role-switch {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  color: #f8fafc !important;
+}
+
+html.dark .pill-emerald {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.12)) !important;
+  color: #c8f7dc !important;
+}
+
+html.dark .pill-amber {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(245, 158, 11, 0.12)) !important;
+  color: #ffd9a0 !important;
+}
+
+html.dark .pill-rose {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(244, 63, 94, 0.1)) !important;
+  color: #ffc2cb !important;
+}
+
+html.dark .pill-sky {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(14, 165, 233, 0.08)) !important;
+  color: #c2eafe !important;
+}
+
+html.dark .pill-slate {
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.24), rgba(51, 65, 85, 0.18)) !important;
+  color: #e1e6eb !important;
+}
+
+html.dark .ph-cta-btn,
+html.dark .btn-primary {
+  background: linear-gradient(90deg, #14b8ff, #0ea5e9) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 18px rgba(14, 165, 233, 0.12) !important;
+  color: #fff !important;
+}
+
+html.dark .ph-nav-link.is-active,
+html.dark .ph-sidebar-link.is-active {
+  background: rgba(20, 184, 166, 0.12) !important;
+  color: #9ff8ff !important;
+}
+
+html.dark .soft-table thead th {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #a5b1bc !important;
+}
+
+html.dark .soft-table tbody tr:hover,
+html.dark .file-row.is-selected,
+html.dark .review-row:hover,
+html.dark .notification-item:hover,
+html.dark .notification-item:focus {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+html.dark .notification-item.unread {
+  box-shadow: inset 4px 0 0 0 rgba(20, 184, 166, 0.16) !important;
+}
+
+html.dark .notification-badge {
+  background: rgba(20, 184, 166, 0.12) !important;
+  color: #d9fffb !important;
+}
+
+html.dark .file-status-pill.status-completed {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #d1fae5 !important;
+}
+
+html.dark .file-status-pill.status-reviewing {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #fde68a !important;
+}
+
+html.dark .file-status-pill.status-pending {
+  background: rgba(14, 165, 233, 0.14) !important;
+  color: #dbeafe !important;
+}
+
+html.dark .file-progress-fill,
+html.dark .progress-fill {
+  background: linear-gradient(90deg, #14b8ff, #22c55e) !important;
+}
+
+html.dark .hero-panel h1,
+html.dark .hero-panel h2,
+html.dark .hero-panel h3,
+html.dark .hero-panel p,
+html.dark .hero-panel .caps-label,
+html.dark .dash-card,
+html.dark .card,
+html.dark .local-footer-brand h3,
+html.dark .local-footer-brand p,
+html.dark .local-footer-links a,
+html.dark .local-footer-meta,
+html.dark .soft-table tbody td,
+html.dark .section-title h2,
+html.dark .metric-label,
+html.dark .metric-foot {
+  color: #f8fafc !important;
+}
+
+html.dark .hero-panel p[data-dashboard-description],
+html.dark .hero-panel .text-slate-200,
+html.dark .hero-panel .text-slate-100,
+html.dark .metric-foot,
+html.dark .section-title a,
+html.dark .local-footer-meta,
+html.dark .local-footer-brand p,
+html.dark .soft-table thead th,
+html.dark .file-subtitle,
+html.dark .file-name-meta,
+html.dark .notification-desc,
+html.dark .notification-time,
+html.dark .invoice-item,
+html.dark .kpi-label {
+  color: rgba(226, 232, 240, 0.72) !important;
+}
+
+/* =========================================================
+   Page-specific dark surface system for the rest of the app
+   ========================================================= */
+html.dark .upload-dropzone,
+html.dark .review-hero,
+html.dark .review-hero-panel,
+html.dark .review-metric,
+html.dark .review-table-meta,
+html.dark .support-intro-card,
+html.dark .support-contact-card,
+html.dark .support-hours>div,
+html.dark .support-list li,
+html.dark .payment-card,
+html.dark .payment-side,
+html.dark .payment-meta-card,
+html.dark .status-card,
+html.dark .invoice-card,
+html.dark .history-card,
+html.dark .kpi-card,
+html.dark .profile-summary-card,
+html.dark .profile-info-card,
+html.dark .profile-form-card,
+html.dark .profile-side-card,
+html.dark .profile-activity-card,
+html.dark .account-plan-card,
+html.dark .connected-apps-card,
+html.dark .settings-panel,
+html.dark .settings-tabs,
+html.dark .card,
+html.dark .page-meta-card,
+html.dark .file-table-panel,
+html.dark .file-sidebar,
+html.dark .file-hero,
+html.dark .file-hero-panel,
+html.dark .file-preview-item,
+html.dark .timeline-item,
+html.dark .contact-card {
+  background: linear-gradient(180deg, rgba(33, 34, 36, 0.97), rgba(24, 25, 27, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18) !important;
+}
+
+html.dark .review-hero {
+  background:
+    radial-gradient(circle at top right, rgba(20, 184, 166, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(33, 34, 36, 0.97), rgba(24, 25, 27, 0.98)) !important;
+}
+
+html.dark .review-hero-panel {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+html.dark .review-hero-badge,
+html.dark .review-hero-meta-chip,
+html.dark .review-table-meta {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  color: #e6e8ea !important;
+}
+
+html.dark .review-hero-copy h1,
+html.dark .review-hero-panel-title,
+html.dark .support-main h2,
+html.dark .support-info-card h2,
+html.dark .account-grid h2,
+html.dark .payment-card h2,
+html.dark .payment-status strong,
+html.dark .summary-row strong,
+html.dark .meta-line strong,
+html.dark .profile-email,
+html.dark .profile-basic h2,
+html.dark .file-hero h1,
+html.dark .file-kpi-card strong,
+html.dark .kpi-value {
+  color: #f8fafc !important;
+}
+
+html.dark .review-hero-text,
+html.dark .review-hero-kicker,
+html.dark .review-metric span,
+html.dark .support-section-note,
+html.dark .support-form-hint,
+html.dark .support-hours p,
+html.dark .support-list span,
+html.dark .file-subtitle,
+html.dark .file-name-meta,
+html.dark .page-subtitle,
+html.dark .muted,
+html.dark .kpi-label,
+html.dark .invoice-item,
+html.dark .notification-desc,
+html.dark .notification-time,
+html.dark .metric-foot {
+  color: rgba(226, 232, 240, 0.72) !important;
+}
+
+html.dark .review-search-input,
+html.dark .file-search-input,
+html.dark .file-status-filter,
+html.dark .support-form .form-group input,
+html.dark .support-form .form-group select,
+html.dark .support-form .form-group textarea,
+html.dark .form-group input,
+html.dark .form-group select,
+html.dark .form-group textarea,
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: #f8fafc !important;
+  box-shadow: none !important;
+}
+
+html.dark .review-search-input:focus,
+html.dark .file-search-input:focus,
+html.dark .file-status-filter:focus,
+html.dark .support-form .form-group input:focus,
+html.dark .support-form .form-group select:focus,
+html.dark .support-form .form-group textarea:focus,
+html.dark .form-group input:focus,
+html.dark .form-group select:focus,
+html.dark .form-group textarea:focus,
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+  border-color: rgba(20, 184, 166, 0.35) !important;
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.08) !important;
+}
+
+html.dark .upload-dropzone {
+  border: 1px dashed rgba(20, 184, 166, 0.28) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.015)) !important;
+}
+
+html.dark .upload-icon,
+html.dark .upload-text {
+  color: #9de5ef !important;
+}
+
+html.dark .file-chip:hover,
+html.dark .file-chip.active,
+html.dark .filter-btn.active,
+html.dark .filter-btn:hover,
+html.dark .btn-outline:hover,
+html.dark .btn-secondary:hover,
+html.dark .ph-role-switch:hover {
+  background: rgba(20, 184, 166, 0.12) !important;
+  border-color: rgba(20, 184, 166, 0.18) !important;
+  color: #d9fffb !important;
+}
+
+html.dark .btn-primary,
+html.dark .ph-cta-btn {
+  background: linear-gradient(90deg, #14b8ff, #0ea5e9) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 18px rgba(14, 165, 233, 0.14) !important;
+}
+
+html.dark .btn-primary:hover,
+html.dark .ph-cta-btn:hover {
+  background: linear-gradient(90deg, #1ec2ff, #19a8f4) !important;
+}
+
+html.dark .badge-success,
+html.dark .status-badge,
+html.dark .file-status-pill.status-completed {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #d1fae5 !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+html.dark .badge-warning,
+html.dark .file-status-pill.status-reviewing,
+html.dark .pill-amber {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #fde68a !important;
+  border-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+html.dark .file-status-pill.status-pending,
+html.dark .pill-sky {
+  background: rgba(14, 165, 233, 0.14) !important;
+  color: #dbeafe !important;
+  border-color: rgba(14, 165, 233, 0.16) !important;
+}
+
+html.dark .review-hero-orb,
+html.dark .hero-panel::before,
+html.dark .hero-panel::after {
+  opacity: 0.45 !important;
+}
+
+html.dark .support-main h2,
+html.dark .support-info-card h2,
+html.dark .account-grid h2,
+html.dark .section-title,
+html.dark .section-title h2 {
+  color: #f8fafc !important;
+}
+
+html.dark .settings-tabs .tab-btn,
+html.dark .profile-action-btn,
+html.dark .profile-summary-card .btn,
+html.dark .profile-info-card .btn,
+html.dark .account-plan-card .btn,
+html.dark .connected-apps-card .btn,
+html.dark .profile-form-card .btn,
+html.dark .profile-side-card .btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #f8fafc !important;
+  box-shadow: none !important;
+}
+
+html.dark .settings-tabs .tab-btn[aria-selected="true"] {
+  background: rgba(20, 184, 166, 0.14) !important;
+  border-color: rgba(20, 184, 166, 0.22) !important;
+  color: #d9fffb !important;
+}
+
+html.dark .status-badge {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #d1fae5 !important;
+  border-color: rgba(16, 185, 129, 0.18) !important;
+}
+
+html.dark .profile-avatar,
+html.dark .profile-avatar-wrap,
+html.dark .profile-avatar-img {
+  background: linear-gradient(135deg, #1f2937, #111827) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+html.dark .profile-avatar-img {
+  object-fit: cover;
+}
+
+/* File workflow surfaces: remove the last blue-tinted panels */
+html.dark .file-hero-panel,
+html.dark .file-kpi-card,
+html.dark .file-search-input,
+html.dark .file-status-filter,
+html.dark .file-preview-item,
+html.dark .upload-dropzone,
+html.dark .file-progress-track,
+html.dark .file-type-icon,
+html.dark .table-container,
+html.dark .page-meta-card,
+html.dark .file-table-panel {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  box-shadow: none !important;
+}
+
+html.dark .file-kpi-card strong,
+html.dark .file-hero-panel,
+html.dark .file-search-input,
+html.dark .file-status-filter {
+  color: var(--dr-text) !important;
+}
+
+html.dark .file-progress-fill {
+  background: linear-gradient(90deg, rgba(107, 127, 144, 0.9), rgba(136, 153, 170, 0.85)) !important;
+}
+
+html.dark .file-status-pill.status-completed,
+html.dark .file-status-pill.status-reviewing,
+html.dark .file-status-pill.status-pending {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+  color: #d5dadd !important;
+}
+
+html.dark .file-row.is-selected {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* =========================================================
+   Final Dark Reader-style pass
+   Neutral graphite surfaces, muted blue accents, no glow.
+   ========================================================= */
+html.dark {
+  --dr-bg: #121314 !important;
+  --dr-surface: #17191b !important;
+  --dr-surface-2: #1a1c1f !important;
+  --dr-text: #e8eaec !important;
+  --dr-muted: #9aa0a6 !important;
+  --dr-accent: #6f8fb0 !important;
+  --dr-accent-strong: #4f6f8d !important;
+}
+
+html.dark body,
+html.dark .dashboard-shell,
+html.dark nav,
+html.dark .ph-nav,
+html.dark .ph-sidebar {
+  background: var(--dr-bg) !important;
+  background-image: none !important;
+  color: var(--dr-text) !important;
+}
+
+html.dark .dashboard-shell::before,
+html.dark .dashboard-shell::after,
+html.dark .hero-panel::before,
+html.dark .hero-panel::after,
+html.dark .review-hero-orb {
+  display: none !important;
+  background: none !important;
+}
+
+html.dark .hero-panel,
+html.dark .dash-card,
+html.dark .card,
+html.dark .file-hero,
+html.dark .file-hero-panel,
+html.dark .payment-card,
+html.dark .payment-meta-card,
+html.dark .payment-side,
+html.dark .review-card,
+html.dark .review-row,
+html.dark .kpi-card,
+html.dark .file-kpi-card,
+html.dark .contact-card,
+html.dark .timeline-item,
+html.dark .profile-stat-card,
+html.dark .meta-line,
+html.dark .file-preview-item,
+html.dark .upload-dropzone,
+html.dark .page-meta-card,
+html.dark .file-table-panel,
+html.dark .support-intro-card,
+html.dark .support-contact-card,
+html.dark .support-hours>div,
+html.dark .support-list li,
+html.dark .settings-panel,
+html.dark .settings-tabs,
+html.dark .profile-summary-card,
+html.dark .profile-info-card,
+html.dark .profile-form-card,
+html.dark .profile-side-card,
+html.dark .profile-activity-card,
+html.dark .account-plan-card,
+html.dark .connected-apps-card {
+  background: var(--dr-surface) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  color: var(--dr-text) !important;
+  box-shadow: none !important;
+}
+
+html.dark .hero-panel {
+  background: linear-gradient(135deg, #183f66 0%, #17385a 100%) !important;
+}
+
+html.dark .hero-glass {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .ph-brand-mark,
+html.dark .ph-cta-btn,
+html.dark .btn-primary {
+  background: rgba(111, 143, 176, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+  color: var(--dr-text) !important;
+}
+
+html.dark .ph-nav-link,
+html.dark .ph-sidebar-link,
+html.dark a {
+  color: var(--dr-muted) !important;
+}
+
+html.dark .ph-nav-link.is-active,
+html.dark .ph-sidebar-link.is-active {
+  background: rgba(111, 143, 176, 0.06) !important;
+  color: var(--dr-accent) !important;
+}
+
+html.dark .btn-outline,
+html.dark .btn-secondary,
+html.dark .filter-btn,
+html.dark .file-chip,
+html.dark .badge,
+html.dark .ph-role-switch,
+html.dark .role-badge,
+html.dark .accent-pill {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: var(--dr-text) !important;
+}
+
+html.dark .ph-menu,
+html.dark .ph-notify-menu,
+html.dark .ph-mobile-menu,
+html.dark .notification-item,
+html.dark .notification-item.unread,
+html.dark .notification-badge {
+  background: var(--dr-surface-2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+  color: var(--dr-text) !important;
+}
+
+html.dark .notification-item.unread {
+  box-shadow: inset 4px 0 0 0 rgba(111, 143, 176, 0.12) !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea,
+html.dark .form-group input,
+html.dark .form-group select,
+html.dark .form-group textarea,
+html.dark .review-search-input,
+html.dark .file-search-input,
+html.dark .file-status-filter,
+html.dark .support-form .form-group input,
+html.dark .support-form .form-group select,
+html.dark .support-form .form-group textarea {
+  background: #151617 !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+  color: var(--dr-text) !important;
+  box-shadow: none !important;
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus,
+html.dark .review-search-input:focus,
+html.dark .file-search-input:focus,
+html.dark .file-status-filter:focus {
+  border-color: rgba(111, 143, 176, 0.22) !important;
+  box-shadow: 0 0 0 4px rgba(111, 143, 176, 0.06) !important;
+}
+
+html.dark .soft-table thead th {
+  background: rgba(255, 255, 255, 0.02) !important;
+  color: var(--dr-muted) !important;
+}
+
+html.dark .soft-table tbody td,
+html.dark .hero-panel h1,
+html.dark .hero-panel h2,
+html.dark .hero-panel h3,
+html.dark .hero-panel p,
+html.dark .hero-panel .caps-label,
+html.dark .section-title h2,
+html.dark .metric-label,
+html.dark .metric-value,
+html.dark .metric-foot,
+html.dark .local-footer-brand h3,
+html.dark .local-footer-brand p,
+html.dark .local-footer-links a,
+html.dark .local-footer-meta,
+html.dark .file-subtitle,
+html.dark .file-name-meta,
+html.dark .kpi-label,
+html.dark .invoice-item,
+html.dark .notification-desc,
+html.dark .notification-time,
+html.dark .support-main h2,
+html.dark .support-info-card h2,
+html.dark .account-grid h2,
+html.dark .payment-card h2,
+html.dark .payment-status strong,
+html.dark .summary-row strong,
+html.dark .meta-line strong,
+html.dark .profile-email,
+html.dark .profile-basic h2,
+html.dark .file-hero h1,
+html.dark .file-kpi-card strong,
+html.dark .kpi-value,
+html.dark .review-hero-copy h1,
+html.dark .review-hero-panel-title,
+html.dark .review-hero-text,
+html.dark .review-hero-kicker,
+html.dark .review-metric span,
+html.dark .page-subtitle,
+html.dark .muted {
+  color: var(--dr-text) !important;
+}
+
+html.dark .hero-panel p[data-dashboard-description],
+html.dark .soft-table thead th,
+html.dark .review-hero-text,
+html.dark .review-hero-kicker,
+html.dark .review-metric span,
+html.dark .support-section-note,
+html.dark .support-form-hint,
+html.dark .support-hours p,
+html.dark .support-list span,
+html.dark .local-footer-meta,
+html.dark .local-footer-brand p,
+html.dark .section-title a {
+  color: rgba(232, 234, 236, 0.72) !important;
+}
+
+html.dark .soft-table tbody tr:hover,
+html.dark .file-row.is-selected,
+html.dark .review-row:hover,
+html.dark .notification-item:hover,
+html.dark .notification-item:focus {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+html.dark .progress-track,
+html.dark .file-progress-track {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .progress-fill,
+html.dark .file-progress-fill {
+  background: linear-gradient(90deg, #6f8fb0, #8aa4bb) !important;
+}
+
+html.dark .file-status-pill.status-completed,
+html.dark .badge-success,
+html.dark .status-badge {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: var(--dr-text) !important;
+}
+
+html.dark .file-status-pill.status-reviewing,
+html.dark .file-status-pill.status-pending,
+html.dark .badge-warning,
+html.dark .pill-amber,
+html.dark .pill-sky,
+html.dark .pill-emerald,
+html.dark .pill-rose,
+html.dark .pill-slate {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: var(--dr-text) !important;
+}
+
+html.dark ::selection {
+  background: rgba(111, 143, 176, 0.08) !important;
+  color: var(--dr-text) !important;
+}
+
+html.dark .dashboard-shell,
+html.dark .hero-panel,
+html.dark .dash-card,
+html.dark .card,
+html.dark .ph-nav,
+html.dark .ph-sidebar,
+html.dark .ph-menu,
+html.dark .ph-notify-menu,
+html.dark .ph-mobile-menu,
+html.dark .payment-card,
+html.dark .file-hero,
+html.dark .review-card,
+html.dark .review-row,
+html.dark .settings-panel,
+html.dark .profile-summary-card,
+html.dark .profile-info-card,
+html.dark .profile-form-card,
+html.dark .profile-side-card,
+html.dark .profile-activity-card,
+html.dark .account-plan-card,
+html.dark .connected-apps-card,
+html.dark .support-intro-card,
+html.dark .support-contact-card,
+html.dark .payment-side,
+html.dark .payment-meta-card {
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+/* File page polish */
+html.dark .file-page-shell {
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.07), transparent 26%),
+    radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 22%);
+}
+
+html.dark .file-hero {
+  background:
+    radial-gradient(circle at 8% 12%, rgba(14, 165, 233, 0.1), transparent 30%),
+    radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.07), transparent 34%),
+    linear-gradient(180deg, #14181d 0%, #101418 100%) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22) !important;
+}
+
+html.dark .file-hero-panel,
+html.dark .file-table-panel,
+html.dark .page-meta-card,
+html.dark .file-storage-card,
+html.dark .empty-state {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .file-kpi-card,
+html.dark .file-preview-item {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+
+/* Admin dashboard hero override after the final dark pass */
+html.dark .dashboard-shell.role-admin {
+  background:
+    radial-gradient(circle at 14% 0%, rgba(45, 212, 191, 0.18), transparent 28%),
+    radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.12), transparent 24%),
+    linear-gradient(180deg, #101715 0%, #0c1211 46%, #0b1110 100%) !important;
+}
+
+html.dark .dashboard-shell.role-admin::before {
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.08), transparent 70%) !important;
+  opacity: 0.34 !important;
+}
+
+html.dark .dashboard-shell.role-admin::after {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.07), transparent 70%) !important;
+  opacity: 0.24 !important;
+}
+
+html.dark .dashboard-shell.role-admin .hero-panel {
+  background:
+    radial-gradient(circle at 10% 18%, rgba(255, 255, 255, 0.03), transparent 24%),
+    linear-gradient(135deg, #0f7f79 0%, #11857f 46%, #168b84 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(0, 0, 0, 0.08) inset !important;
+}
+
+html.dark .dashboard-shell.role-admin .hero-panel::before {
+  background:
+    radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.11), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.05), transparent 20%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)) !important;
+  opacity: 1 !important;
+}
+
+html.dark .dashboard-shell.role-admin .hero-panel::after {
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0)),
+    radial-gradient(circle at center, rgba(8, 145, 178, 0.22), rgba(8, 145, 178, 0)) !important;
+  height: 30rem !important;
+  opacity: 0.9 !important;
+  right: -4rem !important;
+  top: -11rem !important;
+  width: 30rem !important;
+}
+
+html.dark .dashboard-shell.role-admin .role-badge {
+  background: rgba(7, 89, 91, 0.24) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #ecfeff !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 8px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.dark .dashboard-shell.role-admin .hero-panel h1,
+html.dark .dashboard-shell.role-admin .hero-panel p,
+html.dark .dashboard-shell.role-admin .hero-panel .caps-label {
+  color: #f4fffd !important;
+}
+
+html.dark .dashboard-shell.role-admin .hero-glass {
+  background: linear-gradient(180deg, rgba(10, 106, 100, 0.58), rgba(10, 88, 84, 0.74)) !important;
+  border-color: rgba(6, 95, 70, 0.35) !important;
+}
+
+html.dark .dashboard-shell.role-admin .hero-glass:hover {
+  background: linear-gradient(180deg, rgba(12, 123, 116, 0.66), rgba(10, 102, 97, 0.78)) !important;
+  border-color: rgba(45, 212, 191, 0.34) !important;
+}
+
+html.dark .dashboard-shell.role-admin .action-link {
+  background: linear-gradient(180deg, #0b6770, #09585f) !important;
+  border-color: rgba(45, 212, 191, 0.3) !important;
+  color: #ecfeff !important;
+}
+
+html.dark .dashboard-shell.role-admin .action-link:hover {
+  background: linear-gradient(180deg, #0f7f88, #0d6d75) !important;
+  border-color: rgba(34, 211, 238, 0.34) !important;
+}
+
+/* User dashboard hero: vivid blue submission center */
+html.dark .dashboard-shell.role-user {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(16, 185, 129, 0.12), transparent 24%),
+    radial-gradient(circle at 92% 10%, rgba(37, 99, 235, 0.18), transparent 26%),
+    linear-gradient(180deg, #11161f 0%, #0d121a 46%, #0b1118 100%) !important;
+}
+
+html.dark .dashboard-shell.role-user::before {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08), transparent 70%) !important;
+  opacity: 0.32 !important;
+}
+
+html.dark .dashboard-shell.role-user::after {
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.08), transparent 70%) !important;
+  opacity: 0.22 !important;
+}
+
+html.dark .dashboard-shell.role-user .hero-panel {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.04), transparent 24%),
+    linear-gradient(135deg, #1467b6 0%, #195eb7 45%, #244fc1 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(0, 0, 0, 0.08) inset !important;
+}
+
+html.dark .dashboard-shell.role-user .hero-panel::before {
+  background:
+    radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.11), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.05), transparent 20%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)) !important;
+  opacity: 1 !important;
+}
+
+html.dark .dashboard-shell.role-user .hero-panel::after {
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0)),
+    radial-gradient(circle at center, rgba(37, 99, 235, 0.26), rgba(37, 99, 235, 0)) !important;
+  height: 30rem !important;
+  opacity: 0.92 !important;
+  right: -4rem !important;
+  top: -11rem !important;
+  width: 30rem !important;
+}
+
+html.dark .dashboard-shell.role-user .role-badge {
+  background: rgba(12, 42, 89, 0.28) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #eff6ff !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 8px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.dark .dashboard-shell.role-user .hero-panel h1,
+html.dark .dashboard-shell.role-user .hero-panel p,
+html.dark .dashboard-shell.role-user .hero-panel .caps-label {
+  color: #f6fbff !important;
+}
+
+html.dark .dashboard-shell.role-user .hero-glass {
+  background: linear-gradient(180deg, rgba(27, 53, 112, 0.72), rgba(24, 45, 96, 0.8)) !important;
+  border-color: rgba(37, 99, 235, 0.16) !important;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset !important;
+}
+
+html.dark .dashboard-shell.role-user .hero-glass:hover {
+  background: linear-gradient(180deg, rgba(31, 64, 134, 0.76), rgba(27, 52, 114, 0.84)) !important;
+  border-color: rgba(59, 130, 246, 0.22) !important;
+}
+
+html.dark .dashboard-shell.role-user .action-link {
+  background: linear-gradient(180deg, #0f6970, #0c5a61) !important;
+  border-color: rgba(22, 163, 174, 0.28) !important;
+  color: #ecfeff !important;
+}
+
+html.dark .dashboard-shell.role-user .action-link:hover {
+  background: linear-gradient(180deg, #12808a, #0f6d75) !important;
+  border-color: rgba(45, 212, 191, 0.34) !important;
+}
+
+html.dark .dashboard-shell.role-user .dash-grid>.dash-card {
+  background: linear-gradient(180deg, rgba(21, 25, 24, 0.96), rgba(16, 20, 19, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .file-chip {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: #d4d7da !important;
+}
+
+html.dark .file-chip:hover,
+html.dark .file-chip.active {
+  background: rgba(14, 165, 233, 0.08) !important;
+  border-color: rgba(14, 165, 233, 0.18) !important;
+  color: #bfe9ff !important;
+}
+
+html.dark .file-search-input,
+html.dark .file-status-filter {
+  background: #15181b !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  color: #eef1f4 !important;
+}
+
+html.dark .file-search-input:focus,
+html.dark .file-status-filter:focus {
+  border-color: rgba(14, 165, 233, 0.22) !important;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.08) !important;
+}
+
+html.dark .file-table-panel .table-container {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .file-table-panel table thead th {
+  background: rgba(255, 255, 255, 0.015) !important;
+  color: #9aa0a6 !important;
+}
+
+html.dark .file-row:hover,
+html.dark .file-row.is-selected {
+  background: rgba(14, 165, 233, 0.05) !important;
+}
+
+html.dark .file-status-pill.status-completed {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #bfe8d1 !important;
+}
+
+html.dark .file-status-pill.status-reviewing {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #f6d38a !important;
+}
+
+html.dark .file-status-pill.status-pending {
+  background: rgba(14, 165, 233, 0.1) !important;
+  color: #bfe9ff !important;
+}
+
+html.dark .file-progress-track {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .file-progress-fill {
+  background: linear-gradient(90deg, #14b8ff, #22c55e) !important;
+}
+
+html.dark .upload-dropzone {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.01)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+html.dark .upload-dropzone.upload-dropzone-active {
+  border-color: rgba(14, 165, 233, 0.18) !important;
+  box-shadow: 0 8px 22px rgba(14, 165, 233, 0.08) !important;
+}
+
+/* Payment page */
+html.dark .payment-card,
+html.dark .payment-side,
+html.dark .payment-meta-card,
+html.dark .kpi-card,
+html.dark .history-card,
+html.dark .status-card,
+html.dark .invoice-card {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .payment-card h2,
+html.dark .payment-status strong,
+html.dark .summary-row strong,
+html.dark .summary-row span,
+html.dark .meta-line strong,
+html.dark .invoice-item,
+html.dark .kpi-value {
+  color: #eef1f4 !important;
+}
+
+html.dark .kpi-label,
+html.dark .invoice-item,
+html.dark .muted,
+html.dark .small {
+  color: #9aa0a6 !important;
+}
+
+html.dark .badge-success,
+html.dark .badge-warning {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: #e8eaec !important;
+}
+
+html.dark .payment-methods-card.disabled::after {
+  background: linear-gradient(180deg, rgba(16, 18, 22, 0.68), rgba(16, 18, 22, 0.68)) !important;
+}
+
+html.dark .invoice-item+.invoice-item {
+  border-top-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+html.dark .summary-row.total {
+  border-top-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Review pages */
+html.dark .review-hero,
+html.dark .review-hero-panel,
+html.dark .review-card,
+html.dark .review-row,
+html.dark .review-detailscard,
+html.dark .comment-item,
+html.dark .version-item,
+html.dark .settings-item,
+html.dark .timeline-item {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .review-hero-badge,
+html.dark .review-hero-meta-chip,
+html.dark .review-table-meta,
+html.dark .review-metric,
+html.dark .review-search-input,
+html.dark .search-input-group {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  color: #e8eaec !important;
+}
+
+html.dark .review-hero-copy h1,
+html.dark .review-hero-panel-title,
+html.dark .review-metric strong,
+html.dark .review-table-card h2,
+html.dark .review-table-card p,
+html.dark .review-details-header h2,
+html.dark .version-title,
+html.dark .settings-item h3,
+html.dark .timeline-item h3 {
+  color: #eef1f4 !important;
+}
+
+html.dark .review-hero-text,
+html.dark .review-hero-kicker,
+html.dark .review-metric span,
+html.dark .comment-date,
+html.dark .version-author,
+html.dark .version-date,
+html.dark .review-table-card p,
+html.dark .support-section-note,
+html.dark .page-subtitle {
+  color: #9aa0a6 !important;
+}
+
+html.dark .filter-btn {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: #d4d7da !important;
+}
+
+html.dark .filter-btn.active,
+html.dark .filter-btn:hover,
+html.dark .search-clear:hover {
+  background: rgba(14, 165, 233, 0.08) !important;
+  color: #bfe9ff !important;
+}
+
+html.dark .table-container thead th,
+html.dark .soft-table thead th {
+  background: rgba(255, 255, 255, 0.015) !important;
+  color: #9aa0a6 !important;
+}
+
+html.dark .table-container tbody td,
+html.dark .soft-table tbody td {
+  color: #eef1f4 !important;
+}
+
+html.dark .table-container tbody tr:hover,
+html.dark .soft-table tbody tr:hover {
+  background: rgba(14, 165, 233, 0.05) !important;
+}
+
+/* Settings / Account */
+html.dark .settings-panel,
+html.dark .settings-tabs,
+html.dark .profile-summary-card,
+html.dark .profile-info-card,
+html.dark .profile-form-card,
+html.dark .profile-side-card,
+html.dark .profile-activity-card,
+html.dark .account-plan-card,
+html.dark .connected-apps-card,
+html.dark .profile-stat-card {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .settings-tabs .tab-btn,
+html.dark .profile-action-btn {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: #e8eaec !important;
+}
+
+html.dark .settings-tabs .tab-btn[aria-selected="true"] {
+  background: rgba(14, 165, 233, 0.08) !important;
+  border-color: rgba(14, 165, 233, 0.18) !important;
+  color: #bfe9ff !important;
+}
+
+html.dark .profile-avatar,
+html.dark .profile-avatar-wrap,
+html.dark .profile-avatar-img {
+  background: linear-gradient(135deg, #1f2937, #111827) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .profile-email,
+html.dark .profile-company,
+html.dark .muted,
+html.dark .page-subtitle,
+html.dark .profile-stat-label {
+  color: #9aa0a6 !important;
+}
+
+/* Support */
+html.dark .support-intro-card,
+html.dark .support-contact-card,
+html.dark .support-list li,
+html.dark .support-hours>div,
+html.dark .support-main,
+html.dark .support-sidebar .card {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .support-main h2,
+html.dark .support-info-card h2,
+html.dark .support-list strong,
+html.dark .support-hours strong {
+  color: #eef1f4 !important;
+}
+
+html.dark .support-section-note,
+html.dark .support-form-hint,
+html.dark .support-list span,
+html.dark .support-hours p {
+  color: #9aa0a6 !important;
+}
+
+html.dark .support-form .form-group label {
+  color: #d4d7da !important;
+}
+
+/* Upload */
+html.dark .upload-card,
+html.dark .upload-dropzone,
+html.dark .file-preview-item {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .upload-icon,
+html.dark .upload-text {
+  color: #bfe9ff !important;
+}
+
+html.dark .upload-hint,
+html.dark .upload-checklist-item,
+html.dark .upload-tips {
+  color: #9aa0a6 !important;
+}

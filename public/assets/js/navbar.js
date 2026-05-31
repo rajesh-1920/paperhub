@@ -150,7 +150,7 @@
       const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
       roleBadge.textContent = roleLabel;
       roleBadge.className =
-        "hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold sm:inline-flex transition-all duration-200";
+        "ph-role-badge hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold sm:inline-flex transition-all duration-200";
 
       if (role === "admin") {
         roleBadge.classList.add("border-red-300", "bg-red-50", "text-red-700");

@@ -238,6 +238,58 @@
   width: 100%
 }
 
+
+html.dark .review-hero,
+html.dark .review-hero-panel,
+html.dark .review-card,
+html.dark .card,
+html.dark .search-input-group,
+html.dark .review-metric,
+html.dark .review-table-meta,
+html.dark .filter-btn,
+html.dark .review-search-input {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .review-hero-copy h1,
+html.dark .review-hero-panel-title,
+html.dark .review-metric strong,
+html.dark .review-link,
+html.dark .review-table-card h2,
+html.dark .review-table-card p,
+html.dark .review-table-card td,
+html.dark .review-hero-status-dot {
+  color: #eef1f4 !important;
+}
+
+html.dark .review-hero-text,
+html.dark .review-hero-kicker,
+html.dark .review-metric span,
+html.dark .review-doc-subtext,
+html.dark .review-table-meta,
+html.dark .review-search-input::placeholder {
+  color: #9aa0a6 !important;
+}
+
+html.dark .filter-btn.active,
+html.dark .filter-btn:hover,
+html.dark .search-clear:hover {
+  background: rgba(14, 165, 233, 0.08) !important;
+  color: #bfe9ff !important;
+}
+
+html.dark .table-container thead th,
+html.dark .soft-table thead th {
+  color: #9aa0a6 !important;
+}
+
+html.dark .table-container tbody td,
+html.dark .soft-table tbody td {
+  color: #eef1f4 !important;
+}
+
 .table-container {
   overflow: hidden
 }

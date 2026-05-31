@@ -259,6 +259,47 @@
   box-sizing: border-box;
 }
 
+html.dark .payment-card,
+html.dark .payment-side,
+html.dark .card,
+html.dark .kpi-card,
+html.dark .payment-meta-card {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .payment-card h2,
+html.dark .payment-status strong,
+html.dark .summary-row strong,
+html.dark .summary-row span,
+html.dark .meta-line strong,
+html.dark .kpi-value,
+html.dark .invoice-item,
+html.dark .table-container td {
+  color: #eef1f4 !important;
+}
+
+html.dark .kpi-label,
+html.dark .muted,
+html.dark .small,
+html.dark .invoice-summary,
+html.dark .table-container th {
+  color: #9aa0a6 !important;
+}
+
+html.dark .badge-success,
+html.dark .badge-warning {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  color: #e8eaec !important;
+}
+
+html.dark .invoice-item+.invoice-item,
+html.dark .summary-row.total {
+  border-top-color: rgba(255, 255, 255, 0.05) !important;
+}
+
 .col-main.card {
   padding: 1.25rem;
 }

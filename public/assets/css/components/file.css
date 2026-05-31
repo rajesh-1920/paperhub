@@ -365,3 +365,189 @@
     width: 100%;
   }
 }
+
+html.dark .file-hero,
+html.dark .file-table-panel,
+html.dark .file-kpi-card,
+html.dark .file-preview-item,
+html.dark .file-hero-panel {
+  background: #17191b !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  box-shadow: none !important;
+  color: #e8eaec !important;
+}
+
+html.dark .file-hero-copy,
+html.dark .file-hero h1,
+html.dark .file-hero h2,
+html.dark .file-hero p,
+html.dark .file-hero-panel,
+html.dark .file-table-meta,
+html.dark .file-kpi-card strong {
+  color: #e8eaec !important;
+}
+
+html.dark .file-search-input,
+html.dark .file-status-filter {
+  background: #151617 !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+  color: #e8eaec !important;
+}
+
+html.dark .file-search-input:focus,
+html.dark .file-status-filter:focus {
+  border-color: rgba(111, 143, 176, 0.22) !important;
+  box-shadow: 0 0 0 4px rgba(111, 143, 176, 0.06) !important;
+}
+
+html.dark .file-table-panel .table-container {
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .file-type-icon {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #e8eaec !important;
+}
+
+html.dark .file-row:hover,
+html.dark .file-row.is-selected {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+html.dark .file-status-pill.status-completed,
+html.dark .file-status-pill.status-reviewing,
+html.dark .file-status-pill.status-pending {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: #e8eaec !important;
+}
+
+html.dark .file-page-shell {
+  background:
+    radial-gradient(circle at top left, rgba(34, 197, 94, 0.05), transparent 24%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.07), transparent 28%);
+}
+
+html.dark .file-hero {
+  background:
+    radial-gradient(circle at 8% 12%, rgba(14, 165, 233, 0.12), transparent 32%),
+    radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.08), transparent 36%),
+    linear-gradient(180deg, #14181d 0%, #101418 100%) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22) !important;
+}
+
+html.dark .file-hero-panel,
+html.dark .file-table-panel,
+html.dark .page-meta-card,
+html.dark .file-storage-card,
+html.dark .file-preview-item,
+html.dark .empty-state {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .file-subtitle,
+html.dark .file-name-meta,
+html.dark .file-table-meta,
+html.dark .upload-tips,
+html.dark .file-storage-progress span {
+  color: #9aa0a6 !important;
+}
+
+html.dark .file-chip {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  color: #d4d7da !important;
+}
+
+html.dark .file-chip:hover,
+html.dark .file-chip.active {
+  background: rgba(14, 165, 233, 0.08) !important;
+  border-color: rgba(14, 165, 233, 0.18) !important;
+  color: #bfe9ff !important;
+}
+
+html.dark .file-kpi-card {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .file-kpi-card span {
+  color: #9aa0a6 !important;
+}
+
+html.dark .file-kpi-card strong {
+  color: #eef1f4 !important;
+}
+
+html.dark .file-search-input,
+html.dark .file-status-filter {
+  background: #15181b !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  color: #eef1f4 !important;
+}
+
+html.dark .file-search-input:focus,
+html.dark .file-status-filter:focus {
+  border-color: rgba(14, 165, 233, 0.22) !important;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.08) !important;
+}
+
+html.dark .file-table-panel .table-container {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .file-table-panel table thead th {
+  background: rgba(255, 255, 255, 0.015) !important;
+  color: #9aa0a6 !important;
+}
+
+html.dark .file-row:hover,
+html.dark .file-row.is-selected {
+  background: rgba(14, 165, 233, 0.05) !important;
+}
+
+html.dark .file-status-pill.status-completed {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #bfe8d1 !important;
+}
+
+html.dark .file-status-pill.status-reviewing {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #f6d38a !important;
+}
+
+html.dark .file-status-pill.status-pending {
+  background: rgba(14, 165, 233, 0.1) !important;
+  color: #bfe9ff !important;
+}
+
+html.dark .file-type-icon {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #dfe4e8 !important;
+}
+
+html.dark .file-progress-track {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+html.dark .file-progress-fill {
+  background: linear-gradient(90deg, #14b8ff, #22c55e) !important;
+}
+
+html.dark .upload-dropzone {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.01)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+html.dark .upload-dropzone.upload-dropzone-active {
+  border-color: rgba(14, 165, 233, 0.18) !important;
+  box-shadow: 0 8px 22px rgba(14, 165, 233, 0.08) !important;
+}
+
+html.dark .empty-state {
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}

@@ -318,6 +318,68 @@
   margin-top: 1rem;
 }
 
+html.dark .settings-tabs .tab-btn,
+html.dark .profile-action-btn,
+html.dark .profile-summary-card,
+html.dark .profile-info-card,
+html.dark .account-plan-card,
+html.dark .connected-apps-card,
+html.dark .profile-activity-card,
+html.dark .profile-form-card,
+html.dark .profile-side-card,
+html.dark .profile-stat-card,
+html.dark .settings-panel,
+html.dark .settings-tabs {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .settings-tabs .tab-btn[aria-selected="true"] {
+  background: rgba(14, 165, 233, 0.08) !important;
+  border-color: rgba(14, 165, 233, 0.18) !important;
+  color: #bfe9ff !important;
+}
+
+html.dark .profile-avatar,
+html.dark .profile-avatar-wrap,
+html.dark .profile-avatar-img {
+  background: linear-gradient(135deg, #1f2937, #111827) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .profile-basic h2,
+html.dark .profile-stat-card strong,
+html.dark .status-badge,
+html.dark .profile-chip strong,
+html.dark .account-grid h2,
+html.dark .settings-panel h3,
+html.dark .settings-item h4,
+html.dark .settings-item p,
+html.dark .profile-email,
+html.dark .profile-company,
+html.dark .profile-stat-label,
+html.dark .page-subtitle,
+html.dark .muted {
+  color: #eef1f4 !important;
+}
+
+html.dark .profile-email,
+html.dark .profile-company,
+html.dark .page-subtitle,
+html.dark .muted,
+html.dark .profile-stat-label,
+html.dark .settings-item p {
+  color: #9aa0a6 !important;
+}
+
+html.dark .status-badge,
+html.dark .profile-chip {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  color: #e8eaec !important;
+}
+
 .profile-details-grid>div {
   background: rgba(248, 250, 252, 0.86);
   border: 1px solid rgba(148, 163, 184, 0.14);

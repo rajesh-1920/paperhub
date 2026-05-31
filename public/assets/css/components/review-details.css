@@ -187,6 +187,63 @@
   margin-top: 1rem;
 }
 
+html.dark .review-detailscard,
+html.dark .review-details-section,
+html.dark .comment-item,
+html.dark .version-item,
+html.dark .settings-item,
+html.dark .timeline-item,
+html.dark .payment-meta-card,
+html.dark .invoice-summary,
+html.dark .support-layout .card,
+html.dark .account-grid .card,
+html.dark .upload-card,
+html.dark .upload-dropzone {
+  background: linear-gradient(180deg, rgba(24, 28, 33, 0.96), rgba(19, 22, 26, 0.98)) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.dark .review-details-header h2,
+html.dark .version-title,
+html.dark .settings-item h3,
+html.dark .timeline-item h3,
+html.dark .support-layout h2,
+html.dark .account-grid h2,
+html.dark .payment-card h2,
+html.dark .upload-title,
+html.dark .review-link,
+html.dark .review-detail-hero h1 {
+  color: #eef1f4 !important;
+}
+
+html.dark .comment-date,
+html.dark .version-author,
+html.dark .version-date,
+html.dark .review-doc-subtext,
+html.dark .support-section-note,
+html.dark .page-subtitle,
+html.dark .upload-hint,
+html.dark .upload-checklist-item {
+  color: #9aa0a6 !important;
+}
+
+html.dark .review-search-input,
+html.dark .file-search-input,
+html.dark .file-status-filter,
+html.dark .support-form .form-group input,
+html.dark .support-form .form-group select,
+html.dark .support-form .form-group textarea {
+  background: #15181b !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  color: #eef1f4 !important;
+}
+
+html.dark .upload-icon,
+html.dark .upload-text {
+  color: #bfe9ff !important;
+}
+
 @media (max-width: 767px) {
 
   .review-details-header,

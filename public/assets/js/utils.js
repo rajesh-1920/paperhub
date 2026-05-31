@@ -151,7 +151,15 @@ function setStorage(key, value) {
 function getStorage(key, defaultValue = null) {
   try {
     const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : defaultValue;
+    if (value === null) {
+      return defaultValue;
+    }
+
+    try {
+      return JSON.parse(value);
+    } catch (parseError) {
+      return value;
+    }
   } catch (error) {
     console.error("Storage error:", error);
     return defaultValue;
@@ -213,7 +221,12 @@ function setTheme(isDark) {
   } else {
     html.classList.remove("dark");
   }
-  setStorage(StorageKey.THEME, isDark ? "dark" : "light");
+
+  try {
+    localStorage.setItem(StorageKey.THEME, isDark ? "dark" : "light");
+  } catch (error) {
+    console.error("Storage error:", error);
+  }
 }
 
 function getTheme() {

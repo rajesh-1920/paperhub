@@ -247,24 +247,27 @@
 
 html.dark .dashboard-shell {
   background:
-    radial-gradient(circle at top left, rgba(14, 165, 233, 0.16), transparent 30%),
-    radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 24%),
-    linear-gradient(135deg, #020617 0%, #0f172a 100%);
+    radial-gradient(circle at top left, rgba(18, 104, 163, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 24%),
+    linear-gradient(180deg, #17181a 0%, #1f2023 100%);
 }
 
 html.dark .dashboard-shell::before {
-  background: radial-gradient(circle, rgba(148, 163, 184, 0.12), transparent 68%);
-  opacity: 0.8;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent 70%);
+  display: block;
+  opacity: 0.26;
 }
 
 html.dark .dashboard-shell::after {
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.15), transparent 68%);
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.1), transparent 70%);
+  display: block;
+  opacity: 0.22;
 }
 
 html.dark .dash-card,
 html.dark .dashboard-local-footer {
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.9));
-  border-color: rgba(71, 85, 105, 0.35);
+  background: linear-gradient(180deg, rgba(29, 30, 32, 0.95), rgba(24, 25, 27, 0.98));
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 html.dark .section-title h2,
@@ -281,12 +284,98 @@ html.dark .soft-table tbody td {
 
 html.dark .metric-foot,
 html.dark .soft-table thead th {
-  color: #94a3b8;
+  color: #a3abb3;
 }
 
 html.dark .dash-card,
 html.dark .hero-glass {
-  border-color: rgba(71, 85, 105, 0.45);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+html.dark .hero-panel {
+  background: linear-gradient(135deg, #0f5eb8 0%, #1e54cc 100%);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+html.dark .hero-panel::before,
+html.dark .hero-panel::after {
+  display: block;
+}
+
+html.dark .hero-glass {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html.dark .hero-glass .action-link,
+html.dark .action-link {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #f8fafc;
+  box-shadow: none;
+}
+
+html.dark .role-badge {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.26);
+  color: #f8fafc;
+}
+
+html.dark .metric-card {
+  background: linear-gradient(135deg, rgba(39, 40, 43, 0.96), rgba(57, 59, 62, 0.96));
+}
+
+html.dark .metric-card::before {
+  opacity: 0.02;
+}
+
+html.dark .metric-card:hover {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+html.dark .soft-table thead th {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html.dark .soft-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+html.dark .pill-emerald {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.12));
+  border-color: rgba(16, 185, 129, 0.22);
+  color: #c8f7dc;
+}
+
+html.dark .pill-amber {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.24), rgba(245, 158, 11, 0.12));
+  border-color: rgba(245, 158, 11, 0.2);
+  color: #ffd9a0;
+}
+
+html.dark .pill-rose {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(244, 63, 94, 0.1));
+  border-color: rgba(244, 63, 94, 0.18);
+  color: #ffc2cb;
+}
+
+html.dark .pill-sky {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(14, 165, 233, 0.08));
+  border-color: rgba(14, 165, 233, 0.16);
+  color: #c2eafe;
+}
+
+html.dark .pill-slate {
+  background: linear-gradient(135deg, rgba(71, 85, 105, 0.26), rgba(51, 65, 85, 0.2));
+  border-color: rgba(148, 163, 184, 0.12);
+  color: #e1e6eb;
+}
+
+html.dark .section-title,
+html.dark .dashboard-shell h1,
+html.dark .dashboard-shell h2,
+html.dark .dashboard-shell h3 {
+  color: #f8fafc;
 }
 
 @media (min-width: 768px) {

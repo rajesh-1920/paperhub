@@ -46,6 +46,7 @@ async function initApp() {
     "assets/css/components/contact.css",
     "assets/css/components/account.css",
     "assets/css/components/payment.css",
+    "assets/css/dark-mode.css",
   ]);
 
   await Promise.all([
