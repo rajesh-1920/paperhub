@@ -536,10 +536,6 @@ const PAPERHUB_CURRENT_USER_STORAGE_KEY = "paperhub-current-user-id";
 
 const MOCK_USERS = Array.isArray(PAPERHUB_DATA.users) ? PAPERHUB_DATA.users : [];
 
-function getAllMockUsers() {
-  return MOCK_USERS.slice();
-}
-
 function getDashboardRole(role) {
   return normalizeRole(role);
 }
@@ -672,10 +668,6 @@ function getCurrentUserData() {
 
 function getCurrentUserFiles() {
   return getCurrentUserData().files || [];
-}
-
-function getCurrentUserReviews() {
-  return getCurrentUserData().reviews || [];
 }
 
 function getCurrentUserPayment() {

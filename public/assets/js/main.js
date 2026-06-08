@@ -290,22 +290,9 @@ function applyCurrentUserPageData() {
   document.querySelectorAll("[data-user-activity]").forEach((container) => {
     const items = Array.isArray(user.notifications) ? user.notifications.slice(0, 6) : [];
 
-    function timeAgo(iso) {
-      if (!iso) return "";
-      const then = new Date(iso).getTime();
-      const diff = Date.now() - then;
-      const minutes = Math.floor(diff / 60000);
-      if (minutes < 1) return "just now";
-      if (minutes < 60) return `${minutes}m ago`;
-      const hours = Math.floor(minutes / 60);
-      if (hours < 24) return `${hours}h ago`;
-      const days = Math.floor(hours / 24);
-      return `${days}d ago`;
-    }
-
     container.innerHTML = items
       .map((item) => {
-        const when = item.createdAt ? timeAgo(item.createdAt) : "";
+        const when = item.createdAt ? phTimeAgo(item.createdAt) : "";
         const ts = item.createdAt ? new Date(item.createdAt).toISOString() : "";
         const icon =
           item.category === "review"
