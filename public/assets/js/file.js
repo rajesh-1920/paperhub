@@ -238,6 +238,7 @@ async function handleUpload() {
           statusEl.style.color = "var(--success)";
         }
         addClass(filePreview, "file-preview-success");
+        persistUploadedFile(file);
         uploadedCount++;
 
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -250,11 +251,99 @@ async function handleUpload() {
   }
 
   if (uploadedCount === fileEntries.length) {
-    showSuccess("All files uploaded successfully!");
+    showSuccess(`${uploadedCount} file${uploadedCount === 1 ? "" : "s"} uploaded and sent for review`);
     setTimeout(() => {
-      window.location.href = "/pages/file/files.html";
+      window.location.href = typeof resolveAppPath === "function"
+        ? resolveAppPath("pages/file/files.html")
+        : "/pages/file/files.html";
     }, 1000);
   }
+}
+
+function persistUploadedFile(file) {
+  if (typeof phAddFile !== "function") {
+    return;
+  }
+
+  const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+  if (!user) {
+    return;
+  }
+
+  const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
+  const officer = (dataset.users || []).find((entry) => entry.role === "officer");
+  const reviewerName = officer ? officer.name : "Review Officer";
+  const extension = getFileExtension(file.name);
+  const nowIso = new Date().toISOString();
+  const id = typeof generateId === "function" ? generateId("file") : `file-${Date.now()}`;
+
+  const newFile = {
+    id,
+    name: file.name,
+    size: Number(file.size || 0),
+    sizeLabel: formatFileSize(Number(file.size || 0)),
+    uploadedAt: nowIso,
+    updatedAt: nowIso,
+    status: "pending",
+    ownerId: user.id,
+    ownerName: user.name,
+    ownerRole: user.role,
+    category: user.role,
+    department: user.department || "General",
+    reviewer: reviewerName,
+    fileType: getFileTypeLabel(extension),
+    extension,
+    mimeType: file.type || "application/octet-stream",
+    pageCount: 1,
+    version: "v1.0",
+    tags: ["Upload", "Bangladesh"],
+    description: `Uploaded by ${user.name} via PaperHub.`,
+    summary: "Newly uploaded document awaiting review.",
+    content: `${file.name}\n\nUploaded by ${user.name} on ${formatDate(nowIso)}.\nThis document has been submitted and is awaiting officer review.`,
+  };
+
+  const reviewItem = {
+    id: `${id}-review`,
+    fileId: id,
+    documentName: newFile.name,
+    submittedBy: user.name,
+    submittedDate: nowIso.slice(0, 10),
+    priority: "medium",
+    status: "pending",
+    department: newFile.department,
+    reviewer: reviewerName,
+    dueDate: "Today",
+    pageCount: 1,
+    tags: newFile.tags,
+    summary: newFile.summary,
+    reviewReason: newFile.summary,
+    fileType: newFile.fileType,
+    ownerName: user.name,
+    content: newFile.content,
+    checklist: [
+      { label: "Core details verified", done: false },
+      { label: "Supporting evidence attached", done: false },
+      { label: "Approval chain confirmed", done: false },
+    ],
+    comments: [],
+    highlights: [`${newFile.fileType} • 1 page`, newFile.description, "Tracked in the PaperHub review queue"],
+  };
+
+  phAddFile(newFile, reviewItem);
+}
+
+function getFileTypeLabel(extension) {
+  const map = {
+    pdf: "PDF Document",
+    doc: "Word Document",
+    docx: "Word Document",
+    xls: "Excel Spreadsheet",
+    xlsx: "Excel Spreadsheet",
+    png: "Image File",
+    jpg: "Image File",
+    jpeg: "Image File",
+  };
+  return map[String(extension || "").toLowerCase()] || "Document";
 }
 
 function createUploadId() {
@@ -339,17 +428,52 @@ function setupFileDetailsInteractions() {
       showWarning("Select a file first");
       return;
     }
-    showInfo(`Previewing ${file.name}`);
+    renderFileContent(file);
+    const card = getElement(".file-content-card");
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 
-  addEvent(getElement("#metaDownloadBtn"), "click", () => {
-    const file = getSelectedFile();
-    if (!file) {
-      showWarning("Select a file first");
-      return;
-    }
-    showSuccess(`Downloading ${file.name}`);
-  });
+  addEvent(getElement("#metaDownloadBtn"), "click", () => downloadFile(getSelectedFile()));
+  addEvent(getElement("#metaDeleteBtn"), "click", deleteSelectedFile);
+}
+
+function downloadFile(file) {
+  if (!file) {
+    showWarning("Select a file first");
+    return;
+  }
+
+  const text = file.content || `${file.name}\n\nNo stored content for this document.`;
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${String(file.name || "document").replace(/\.[^.]+$/, "")}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  showSuccess(`Downloaded ${link.download}`);
+}
+
+function deleteSelectedFile() {
+  const file = getSelectedFile();
+  if (!file) {
+    showWarning("Select a file first");
+    return;
+  }
+
+  if (!confirm(`Delete "${file.name}"? This cannot be undone.`)) {
+    return;
+  }
+
+  if (typeof phDeleteFile === "function") {
+    phDeleteFile(file.id);
+  }
+
+  selectedFileId = null;
+  loadFileList();
+  showSuccess(`Deleted ${file.name}`);
 }
 
 async function loadFileList() {
@@ -489,12 +613,14 @@ function createFileRow(file) {
 
     const action = actionButton.getAttribute("data-action");
     if (action === "view") {
-      showInfo(`Opening ${file.name}`);
+      renderFileContent(file);
+      const card = getElement(".file-content-card");
+      if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
       return;
     }
 
     if (action === "download") {
-      showSuccess(`Downloading ${file.name}`);
+      downloadFile(file);
     }
   });
 

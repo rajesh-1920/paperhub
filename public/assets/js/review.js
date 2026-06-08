@@ -620,6 +620,25 @@ function handleReviewAction(action) {
     return;
   }
 
+  if (activeReview) {
+    const statusMap = { approved: "completed", rejected: "rejected", forwarded: "in-review" };
+    const nextStatus = statusMap[action] || activeReview.status;
+
+    if (comment && comment.trim() && typeof phAddReviewComment === "function") {
+      const reviewer = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+      phAddReviewComment(activeReview.id, {
+        author: reviewer?.name || "Review Officer",
+        role: "Review Officer",
+        date: new Date().toISOString(),
+        text: comment.trim(),
+      });
+    }
+
+    if (typeof phSetReviewStatus === "function") {
+      phSetReviewStatus(activeReview.id, nextStatus);
+    }
+  }
+
   showSuccess(`Document ${action} successfully`);
 
   setTimeout(() => {
@@ -643,15 +662,19 @@ function addComment() {
     return;
   }
 
+  const reviewer = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
   const comment = {
-    author: "You",
-    role: "Current reviewer",
+    author: reviewer?.name || "You",
+    role: "Review Officer",
     date: new Date().toISOString(),
     text: commentText,
   };
 
   if (activeReview) {
     activeReview.comments.push(comment);
+    if (typeof phAddReviewComment === "function") {
+      phAddReviewComment(activeReview.id, comment);
+    }
   }
 
   const commentCard = createElement("div", "comment-item review-comment-item animate-slide-in-up");

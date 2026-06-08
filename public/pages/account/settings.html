@@ -76,6 +76,7 @@
                       <div class="form-group">
                         <label for="language">Language</label>
                         <select id="language">
+                          <option>Bengali</option>
                           <option>English</option>
                           <option>Spanish</option>
                           <option>French</option>
@@ -84,6 +85,7 @@
                       <div class="form-group">
                         <label for="timezone">Timezone</label>
                         <select id="timezone">
+                          <option>UTC +06:00</option>
                           <option>UTC +00:00</option>
                           <option>UTC +05:30</option>
                           <option>UTC -05:00</option>
@@ -93,8 +95,9 @@
 
                     <div class="toggle-list">
                       <label class="toggle-row"><span>Email notifications</span><input type="checkbox"
-                          checked /></label>
-                      <label class="toggle-row"><span>SMS alerts</span><input type="checkbox" /></label>
+                          id="settingsEmailNotif" checked /></label>
+                      <label class="toggle-row"><span>SMS alerts</span><input type="checkbox"
+                          id="settingsSmsAlerts" /></label>
                       <label class="toggle-row"><span>Dark mode preference</span><input type="checkbox"
                           id="settingsDarkMode" /></label>
                     </div>
@@ -196,6 +199,53 @@
         const saved = localStorage.getItem(STORAGE_KEY) || 'account';
         showPanel(saved, false);
       })();
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('settingsForm');
+        if (!form) return;
+
+        const user = typeof getCurrentUserData === 'function' ? getCurrentUserData() : null;
+        const prefs = (user && user.preferences) || {};
+
+        const setSelect = (id, value) => {
+          const select = document.getElementById(id);
+          if (!select || !value) return;
+          const exists = Array.from(select.options).some((opt) => opt.value === value || opt.text === value);
+          if (!exists) {
+            const opt = document.createElement('option');
+            opt.textContent = value;
+            select.insertBefore(opt, select.firstChild);
+          }
+          select.value = value;
+        };
+
+        setSelect('language', prefs.language || (user && user.language));
+        setSelect('timezone', prefs.timezone || (user && user.timezone));
+
+        const emailToggle = document.getElementById('settingsEmailNotif');
+        const smsToggle = document.getElementById('settingsSmsAlerts');
+        if (emailToggle && typeof prefs.emailNotifications === 'boolean') emailToggle.checked = prefs.emailNotifications;
+        if (smsToggle && typeof prefs.smsAlerts === 'boolean') smsToggle.checked = prefs.smsAlerts;
+
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+
+          const nextPrefs = {
+            language: document.getElementById('language')?.value,
+            timezone: document.getElementById('timezone')?.value,
+            emailNotifications: !!emailToggle?.checked,
+            smsAlerts: !!smsToggle?.checked,
+          };
+
+          if (typeof phSaveUserPreferences === 'function' && user) {
+            phSaveUserPreferences(user.id, nextPrefs);
+          }
+
+          if (typeof showSuccess === 'function') showSuccess('Settings saved successfully');
+        });
+      });
     </script>
 
   </main>

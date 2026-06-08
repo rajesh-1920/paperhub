@@ -870,6 +870,11 @@
       const item = items.find((x) => String(x.id) === String(id));
       if (item) item.read = true;
 
+      if (typeof phSetNotificationRead === "function" && typeof getCurrentUserData === "function") {
+        const currentUser = getCurrentUserData();
+        if (currentUser) phSetNotificationRead(currentUser.id, id, true);
+      }
+
       renderNotifications();
 
       const target = getTargetForNotification(item);
@@ -885,6 +890,12 @@
         e.stopPropagation();
         const items = typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
         items.forEach((i) => (i.read = true));
+
+        if (typeof phMarkAllNotificationsRead === "function" && typeof getCurrentUserData === "function") {
+          const currentUser = getCurrentUserData();
+          if (currentUser) phMarkAllNotificationsRead(currentUser.id);
+        }
+
         renderNotifications();
       });
     }

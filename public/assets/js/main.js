@@ -455,13 +455,15 @@ function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
         <tr>
           <td class="font-semibold">${escapeHtml(account.name)}</td>
           <td>${phPill(phRoleLabel(account.role), phRoleVariant(account.role))}</td>
-          <td>${phPill(account.accountStatus || "Active", "emerald")}</td>
+          <td>${phPill(account.accountStatus || "Active", (account.accountStatus || "Active") === "Active" ? "emerald" : "rose")}</td>
           <td>${escapeHtml(formatDate(account.joinedDate))}</td>
-          <td><button class="font-semibold text-teal-700 hover:text-teal-800 transition-colors">Edit</button></td>
+          <td><button type="button" data-admin-edit data-user-id="${escapeHtml(account.id)}" class="font-semibold text-teal-700 hover:text-teal-800 transition-colors">Edit</button></td>
         </tr>`,
     )
     .join("");
   phRenderInto("[data-admin-users]", userRows || emptyRow(5, "No users found"));
+
+  setupAdminUserManagement();
 
   const pendingRows = queue
     .filter((item) => item.status === "pending" || item.status === "in-review")
@@ -512,6 +514,115 @@ function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
     })
     .join("");
   phRenderInto("[data-admin-infrastructure]", infraRows);
+}
+
+function setupAdminUserManagement() {
+  const modal = document.getElementById("adminUserModal");
+  const addButton = document.getElementById("adminAddUserBtn");
+  const form = document.getElementById("adminUserForm");
+  if (!modal || !form || modal.dataset.bound === "true") {
+    return;
+  }
+  modal.dataset.bound = "true";
+
+  const titleEl = document.getElementById("adminUserModalTitle");
+  const passwordField = modal.querySelector("[data-admin-password-field]");
+  const statusField = modal.querySelector("[data-admin-status-field]");
+  const field = (id) => document.getElementById(id);
+
+  const openModal = (mode, account) => {
+    const isEdit = mode === "edit";
+    titleEl.textContent = isEdit ? "Edit User" : "Add User";
+    field("adminUserId").value = account ? account.id : "";
+    field("adminUserName").value = account ? account.name : "";
+    field("adminUserEmail").value = account ? account.email : "";
+    field("adminUserRole").value = account ? normalizeRole(account.role) : "user";
+    field("adminUserTitle").value = account ? account.title || "" : "";
+    field("adminUserStatus").value = account ? account.accountStatus || "Active" : "Active";
+    if (passwordField) passwordField.hidden = isEdit;
+    if (statusField) statusField.hidden = !isEdit;
+    modal.classList.remove("hidden");
+  };
+
+  const closeModal = () => modal.classList.add("hidden");
+
+  if (addButton) {
+    addButton.addEventListener("click", () => openModal("add"));
+  }
+
+  modal.querySelectorAll("[data-admin-modal-close]").forEach((node) => {
+    node.addEventListener("click", closeModal);
+  });
+
+  document.addEventListener("click", (event) => {
+    const editButton = event.target.closest("[data-admin-edit]");
+    if (!editButton) return;
+    const account = phFindUser(editButton.getAttribute("data-user-id"));
+    if (account) openModal("edit", account);
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const id = field("adminUserId").value;
+    const name = field("adminUserName").value.trim();
+    const email = field("adminUserEmail").value.trim().toLowerCase();
+    const role = normalizeRole(field("adminUserRole").value);
+    const title = field("adminUserTitle").value.trim() || phRoleLabel(role);
+
+    if (!name || !email) {
+      showError("Name and email are required");
+      return;
+    }
+
+    if (id) {
+      phUpdateUser(id, { name, email, role, title, accountStatus: field("adminUserStatus").value });
+      showSuccess(`Updated ${name}`);
+    } else {
+      const dataset = getPaperHubDataset();
+      const exists = (dataset.authAccounts || []).some((entry) => String(entry.email).toLowerCase() === email);
+      if (exists) {
+        showError("An account with this email already exists");
+        return;
+      }
+      const newId = `${role}-${slugify(name)}-${Date.now().toString(36)}`;
+      const account = { id: newId, name, email, password: field("adminUserPassword").value || "user01", role, title };
+      phAddUser(account, buildNewUserProfile(account));
+      showSuccess(`Added ${name}`);
+    }
+
+    closeModal();
+    applyCurrentUserPageData();
+  });
+}
+
+function buildNewUserProfile(account) {
+  const today = new Date().toISOString().slice(0, 10);
+  return {
+    id: account.id,
+    name: account.name,
+    email: account.email,
+    role: account.role,
+    title: account.title,
+    department: "General",
+    lastLogin: "Just now",
+    joinedDate: today,
+    address: "Bangladesh",
+    company: "PaperHub Bangladesh",
+    phone: "",
+    timezone: "UTC +06:00",
+    language: "Bengali",
+    bio: "New PaperHub account.",
+    accountStatus: "Active",
+    twoFactorEnabled: account.role !== "user",
+    plan: { name: "Starter", cycle: "Billed yearly", renewal: "", seats: "1 seat", status: "Active" },
+    connectedApps: [],
+    permissions: [],
+    dashboard: { description: "", stats: { totalSubmissions: 0, pendingReview: 0, approved: 0, rejected: 0 } },
+    files: [],
+    reviews: [],
+    payment: { status: "Settled", totalDue: "BDT 0.00", lastUpdated: "", nextReview: "" },
+    notifications: [],
+  };
 }
 
 function renderOfficerDashboard(queue) {
@@ -711,6 +822,22 @@ function renderPaymentPage(user) {
   versionFileName.forEach((element) => {
     element.textContent = files[0]?.name || "No file selected";
   });
+
+  const confirmBtn = document.getElementById("confirmPaymentBtn");
+  if (confirmBtn) {
+    const isPayable = user.role === "user" && /pending/i.test(payment.status || "");
+    confirmBtn.classList.toggle("hidden", !isPayable);
+    if (confirmBtn.dataset.bound !== "true") {
+      confirmBtn.dataset.bound = "true";
+      confirmBtn.addEventListener("click", () => {
+        if (typeof phSetPaymentStatus === "function") {
+          phSetPaymentStatus(user.id, "Paid");
+        }
+        showSuccess("Payment confirmed");
+        applyCurrentUserPageData();
+      });
+    }
+  }
 }
 
 async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage }) {
@@ -858,7 +985,6 @@ function initPageSpecificForms() {
     resetAfterSubmit: true,
   });
   registerSimpleForm("profileForm", "Profile updated successfully");
-  registerSimpleForm("settingsForm", "Settings saved successfully");
 
   const darkModeToggle = getElement("#settingsDarkMode");
   if (darkModeToggle) {

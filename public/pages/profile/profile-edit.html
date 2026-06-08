@@ -224,6 +224,26 @@
         }
 
         setCurrentUser(user);
+
+        if (typeof phUpdateUser === 'function') {
+          const datasetUser = typeof getCurrentUserData === 'function' ? getCurrentUserData() : null;
+          const targetId = (datasetUser && datasetUser.id) || user.id;
+          if (targetId) {
+            phUpdateUser(targetId, {
+              name: user.name,
+              title: user.title,
+              email: user.email,
+              phone: user.phone,
+              company: user.company,
+              department: user.department,
+              timezone: user.timezone,
+              language: user.language,
+              bio: user.bio,
+              twoFactorEnabled: user.twoFactorEnabled,
+            });
+          }
+        }
+
         showSuccess('Profile saved');
         setTimeout(() => {
           window.location.href = typeof resolveAppPath === 'function'

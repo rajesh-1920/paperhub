@@ -71,7 +71,7 @@
         <article class="dash-card col-span-12 xl:col-span-8 animate-rise delay-1">
           <div class="section-title">
             <h2>User Management</h2>
-            <button
+            <button id="adminAddUserBtn" type="button"
               class="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 transition-all">+
               Add User</button>
           </div>
@@ -159,9 +159,130 @@
         <div class="local-footer-meta">System status: Stable</div>
       </footer>
     </div>
+
+    <div id="adminUserModal" class="admin-modal hidden" role="dialog" aria-modal="true"
+      aria-labelledby="adminUserModalTitle">
+    <div class="admin-modal-backdrop" data-admin-modal-close></div>
+    <div class="admin-modal-card">
+      <h3 id="adminUserModalTitle">Add User</h3>
+      <form id="adminUserForm" class="admin-modal-form">
+        <input type="hidden" id="adminUserId" />
+        <label>Full name<input id="adminUserName" type="text" required /></label>
+        <label>Email<input id="adminUserEmail" type="email" required /></label>
+        <label>Role
+          <select id="adminUserRole">
+            <option value="user">Student</option>
+            <option value="officer">Officer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+        <label>Title<input id="adminUserTitle" type="text" /></label>
+        <label data-admin-password-field>Temporary password<input id="adminUserPassword" type="text"
+            value="user01" /></label>
+        <label data-admin-status-field hidden>Status
+          <select id="adminUserStatus">
+            <option>Active</option>
+            <option>Suspended</option>
+          </select>
+        </label>
+        <div class="admin-modal-actions">
+          <button type="button" class="btn btn-outline" data-admin-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+    </div>
   </main>
 
   <div id="footer-container"></div>
+
+  <style>
+    .admin-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .admin-modal.hidden {
+      display: none;
+    }
+
+    .admin-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(2px);
+    }
+
+    .admin-modal-card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 1.1rem;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+      padding: 1.5rem;
+    }
+
+    .admin-modal-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    .admin-modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .admin-modal-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .admin-modal-form input,
+    .admin-modal-form select {
+      padding: 0.55rem 0.7rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.6rem;
+      font-size: 0.9rem;
+      color: #0f172a;
+      background: #fff;
+    }
+
+    .admin-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
+    }
+
+    html.dark .admin-modal-card {
+      background: #0f172a;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    html.dark .admin-modal-card h3 {
+      color: #e2e8f0;
+    }
+
+    html.dark .admin-modal-form input,
+    html.dark .admin-modal-form select {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+    }
+  </style>
 
   <script src="../../assets/js/utils.js"></script>
   <script src="../../assets/js/main.js"></script>

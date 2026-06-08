@@ -68,27 +68,233 @@ function resolveAppPath(path) {
 
 const PAPERHUB_DATA_URL = resolveAppPath("assets/data/paperhub-backend.json");
 
-function getPaperHubDataset() {
-  if (window.__paperhubDataset) {
-    return window.__paperhubDataset;
+/* ---------------------------------------------------------------------------
+ * Persistent data store — a localStorage-backed, mutable overlay on top of the
+ * read-only seed dataset. The whole app reads through getPaperHubDataset() and
+ * writes through the ph* mutators, so user actions (upload, review decisions,
+ * edits, settings) persist across page loads and reflect on every page.
+ * Bump PAPERHUB_DB_VERSION whenever the seed schema/content changes to discard
+ * any stale stored copy and reseed.
+ * ------------------------------------------------------------------------- */
+
+const PAPERHUB_DB_STORAGE_KEY = "paperhub-db";
+const PAPERHUB_DB_VERSION_KEY = "paperhub-db-version";
+const PAPERHUB_DB_VERSION = "2.1.0";
+
+function readStoredDataset() {
+  try {
+    if (localStorage.getItem(PAPERHUB_DB_VERSION_KEY) !== PAPERHUB_DB_VERSION) {
+      return null;
+    }
+    const raw = localStorage.getItem(PAPERHUB_DB_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    return null;
   }
+}
 
-  let dataset = {};
-
+function fetchSeedDataset() {
   try {
     const request = new XMLHttpRequest();
     request.open("GET", PAPERHUB_DATA_URL, false);
     request.send(null);
 
     if (request.status >= 200 && request.status < 300 && request.responseText) {
-      dataset = JSON.parse(request.responseText);
+      return JSON.parse(request.responseText);
     }
   } catch (error) {
-    dataset = {};
+    /* fall through to empty dataset */
   }
 
-  window.__paperhubDataset = dataset || {};
+  return {};
+}
+
+function getPaperHubDataset() {
+  if (window.__paperhubDataset) {
+    return window.__paperhubDataset;
+  }
+
+  window.__paperhubDataset = readStoredDataset() || fetchSeedDataset();
   return window.__paperhubDataset;
+}
+
+function persistPaperHubData() {
+  try {
+    localStorage.setItem(PAPERHUB_DB_STORAGE_KEY, JSON.stringify(getPaperHubDataset()));
+    localStorage.setItem(PAPERHUB_DB_VERSION_KEY, PAPERHUB_DB_VERSION);
+  } catch (error) {
+    console.warn("Unable to persist PaperHub data", error);
+  }
+}
+
+function resetPaperHubData() {
+  try {
+    localStorage.removeItem(PAPERHUB_DB_STORAGE_KEY);
+    localStorage.removeItem(PAPERHUB_DB_VERSION_KEY);
+  } catch (error) {
+    /* ignore */
+  }
+  delete window.__paperhubDataset;
+}
+
+function phFindUser(userId) {
+  const dataset = getPaperHubDataset();
+  return (dataset.users || []).find((user) => user.id === userId) || null;
+}
+
+function phMapReviewToFileStatus(status) {
+  if (status === "completed" || status === "approved") return "completed";
+  if (status === "rejected") return "rejected";
+  if (status === "in-review" || status === "forwarded") return "reviewing";
+  return "pending";
+}
+
+function phAddFile(file, reviewItem) {
+  const dataset = getPaperHubDataset();
+  dataset.files = dataset.files || [];
+  dataset.files.unshift(file);
+
+  const owner = phFindUser(file.ownerId);
+  if (owner) {
+    owner.files = owner.files || [];
+    owner.files.unshift(file);
+  }
+
+  if (reviewItem) {
+    dataset.reviewQueue = dataset.reviewQueue || [];
+    dataset.reviewQueue.unshift(reviewItem);
+    if (owner) {
+      owner.reviews = owner.reviews || [];
+      owner.reviews.unshift(reviewItem);
+    }
+  }
+
+  persistPaperHubData();
+}
+
+function phUpdateFileStatus(fileId, status) {
+  const dataset = getPaperHubDataset();
+  const apply = (files) => (files || []).forEach((file) => {
+    if (file.id === fileId) file.status = status;
+  });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  persistPaperHubData();
+}
+
+function phDeleteFile(fileId) {
+  const dataset = getPaperHubDataset();
+  dataset.files = (dataset.files || []).filter((file) => file.id !== fileId);
+  (dataset.users || []).forEach((user) => {
+    user.files = (user.files || []).filter((file) => file.id !== fileId);
+  });
+  dataset.reviewQueue = (dataset.reviewQueue || []).filter((review) => review.fileId !== fileId);
+  persistPaperHubData();
+}
+
+function phUpdateUser(userId, patch) {
+  const dataset = getPaperHubDataset();
+  const user = phFindUser(userId);
+  if (user) {
+    Object.assign(user, patch);
+  }
+  const account = (dataset.authAccounts || []).find((entry) => entry.id === userId);
+  if (account) {
+    if (patch.name) account.name = patch.name;
+    if (patch.email) account.email = String(patch.email).toLowerCase();
+    if (patch.title) account.title = patch.title;
+    if (patch.role) account.role = patch.role;
+  }
+  persistPaperHubData();
+  return user;
+}
+
+function phAddUser(account, profile) {
+  const dataset = getPaperHubDataset();
+  dataset.authAccounts = dataset.authAccounts || [];
+  dataset.users = dataset.users || [];
+  dataset.authAccounts.push(account);
+  dataset.users.push(profile);
+  persistPaperHubData();
+}
+
+function phSetReviewStatus(reviewId, status) {
+  const dataset = getPaperHubDataset();
+  let fileId = null;
+  (dataset.reviewQueue || []).forEach((review) => {
+    if (review.id === reviewId) {
+      review.status = status;
+      fileId = review.fileId || fileId;
+    }
+  });
+  (dataset.users || []).forEach((user) => (user.reviews || []).forEach((review) => {
+    if (review.id === reviewId) review.status = status;
+  }));
+
+  if (fileId) {
+    const fileStatus = phMapReviewToFileStatus(status);
+    const apply = (files) => (files || []).forEach((file) => {
+      if (file.id === fileId) file.status = fileStatus;
+    });
+    apply(dataset.files);
+    (dataset.users || []).forEach((user) => apply(user.files));
+  }
+
+  persistPaperHubData();
+}
+
+function phAddReviewComment(reviewId, comment) {
+  const dataset = getPaperHubDataset();
+  const push = (review) => {
+    review.comments = review.comments || [];
+    review.comments.push(comment);
+  };
+  (dataset.reviewQueue || []).forEach((review) => {
+    if (review.id === reviewId) push(review);
+  });
+  (dataset.users || []).forEach((user) => (user.reviews || []).forEach((review) => {
+    if (review.id === reviewId) push(review);
+  }));
+  persistPaperHubData();
+}
+
+function phSetNotificationRead(userId, notificationId, read = true) {
+  const user = phFindUser(userId);
+  if (user) {
+    (user.notifications || []).forEach((notification) => {
+      if (String(notification.id) === String(notificationId)) notification.read = read;
+    });
+  }
+  persistPaperHubData();
+}
+
+function phMarkAllNotificationsRead(userId) {
+  const user = phFindUser(userId);
+  if (user) {
+    (user.notifications || []).forEach((notification) => {
+      notification.read = true;
+    });
+  }
+  persistPaperHubData();
+}
+
+function phSaveUserPreferences(userId, prefs) {
+  const user = phFindUser(userId);
+  if (user) {
+    user.preferences = Object.assign({}, user.preferences, prefs);
+    if (prefs.language) user.language = prefs.language;
+    if (prefs.timezone) user.timezone = prefs.timezone;
+  }
+  persistPaperHubData();
+}
+
+function phSetPaymentStatus(userId, status) {
+  const user = phFindUser(userId);
+  if (user && user.payment) {
+    user.payment.status = status;
+    user.payment.lastUpdated = formatDate(new Date(), "DD MMM YYYY, HH:mm");
+  }
+  persistPaperHubData();
 }
 
 function showToast(message, type = "info", duration = 3000) {
