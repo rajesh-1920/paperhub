@@ -339,6 +339,130 @@ function applyCurrentUserPageData() {
       applyText("[data-payment-next-review]", payment.nextReview);
     }
   }
+
+  if (document.body.classList.contains("payment-page")) {
+    renderPaymentPage(user);
+  }
+}
+
+function renderPaymentPage(user) {
+  const payment = user.payment || {};
+  const files = Array.isArray(user.files) ? user.files : [];
+  const notifications = Array.isArray(user.notifications) ? user.notifications : [];
+  const reviews = Array.isArray(user.reviews) ? user.reviews : [];
+
+  const applyText = (selector, value) => {
+    if (value === undefined || value === null) {
+      return;
+    }
+
+    document.querySelectorAll(selector).forEach((element) => {
+      element.textContent = String(value);
+    });
+  };
+
+  const formatCurrency = (amount) => {
+    const value = Number(amount || 0);
+    return `BDT ${value.toLocaleString("en-BD", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
+
+  const deriveAmount = (file, index) => {
+    const sizeBase = Math.max(250, Math.round((Number(file.size || 0) / 1024) * 0.6));
+    return sizeBase + index * 75;
+  };
+
+  const invoiceItems = document.querySelector("[data-payment-invoice-items]");
+  if (invoiceItems) {
+    const items = files.slice(0, 4);
+    invoiceItems.innerHTML = items.length
+      ? items
+        .map((file, index) => {
+          const amount = deriveAmount(file, index);
+          return `
+              <div class="invoice-item">
+                <span>${escapeHtml(file.name)}</span>
+                <span>${escapeHtml(formatCurrency(amount))}</span>
+              </div>
+            `;
+        })
+        .join("")
+      : `
+        <div class="invoice-item">
+          <span>No active invoices</span>
+          <span>${escapeHtml(formatCurrency(0))}</span>
+        </div>
+      `;
+  }
+
+  const subtotal = files.slice(0, 4).reduce((sum, file, index) => sum + deriveAmount(file, index), 0);
+  const tax = Math.round(subtotal * 0.1);
+  const total = payment.totalDue && typeof payment.totalDue === "string" && payment.totalDue.includes("BDT")
+    ? payment.totalDue
+    : formatCurrency(subtotal + tax);
+
+  applyText("[data-payment-subtotal]", formatCurrency(subtotal));
+  applyText("[data-payment-tax]", formatCurrency(tax));
+  applyText("[data-payment-total-due]", total);
+  applyText("[data-kpi-outstanding]", total);
+  applyText("[data-kpi-upcoming]", formatCurrency(reviews.filter((review) => review.status === "pending" || review.status === "in-review").length * 250));
+  applyText("[data-kpi-paid]", formatCurrency(notifications.length * 325));
+  applyText("[data-payment-note]", user.role === "user" ? "Payments unlock automatically after document approval is complete." : "This account does not have an active payment lock.");
+  applyText("[data-payment-approval-note]", user.role === "user" ? "Approval usually takes 1-2 business days." : "No approval delay applies to this account.");
+  applyText("[data-payment-method-note]", user.role === "user" ? "Linked to the current Bangladesh student workspace." : "This account uses platform-level billing.");
+
+  const paymentMethods = document.querySelector("[data-payment-methods]");
+  if (paymentMethods) {
+    const planName = escapeHtml(user.plan?.name || "Plan");
+    const planCycle = escapeHtml(user.plan?.cycle || "Billing cycle");
+    const planStatus = escapeHtml(user.plan?.status || "Active");
+    const primaryMethod = user.connectedApps?.[0]?.name || "Workspace billing";
+
+    paymentMethods.innerHTML = `
+      <div class="method-row">
+        <div>
+          <strong>${planName}</strong>
+          <div class="muted small">${planCycle} • ${planStatus}</div>
+        </div>
+        <button class="btn btn-outline btn-sm" disabled>${escapeHtml(primaryMethod)}</button>
+      </div>
+    `;
+  }
+
+  const paymentHistory = document.querySelector("[data-payment-history]");
+  if (paymentHistory) {
+    const entries = reviews.slice(0, 3);
+    paymentHistory.innerHTML = entries
+      .map((review, index) => {
+        const amount = formatCurrency(deriveAmount(files[index] || { size: 0 }, index));
+        const statusLabel = review.status === "completed" ? "Completed" : review.status === "pending" ? "Pending" : "Processing";
+        const historyDate = review.submittedDate
+          ? new Date(review.submittedDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+          : "Recent";
+
+        return `
+          <tr>
+            <td>${escapeHtml(historyDate)}</td>
+            <td>${escapeHtml(review.documentName)}</td>
+            <td>${escapeHtml(amount)}</td>
+            <td><span class="badge ${statusLabel === "Completed" ? "badge-success" : "badge-warning"}">${escapeHtml(statusLabel)}</span></td>
+          </tr>
+        `;
+      })
+      .join("");
+  }
+
+  if (paymentHistory && !paymentHistory.children.length) {
+    paymentHistory.innerHTML = `
+      <tr>
+        <td colspan="4">No payment history available</td>
+      </tr>
+    `;
+  }
+
+  const versionFileName = document.querySelectorAll("[data-version-file-name]");
+  versionFileName.forEach((element) => {
+    element.textContent = files[0]?.name || "No file selected";
+  });
 }
 
 async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage }) {

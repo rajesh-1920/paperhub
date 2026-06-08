@@ -609,29 +609,46 @@ function loadVersionHistory() {
   if (!historyContainer) return;
 
   try {
-    const versions = [
-      {
-        version: "v3.0",
-        date: "2024-04-07",
-        author: "John Doe",
-        changes: "Final review and approval",
-        size: "2.1 MB",
-      },
-      {
-        version: "v2.5",
-        date: "2024-04-05",
-        author: "Jane Smith",
-        changes: "Updated financial data",
-        size: "2.0 MB",
-      },
-      {
-        version: "v2.0",
-        date: "2024-04-03",
-        author: "John Doe",
-        changes: "Initial submission",
-        size: "1.9 MB",
-      },
-    ];
+    const currentUser = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+    const files = Array.isArray(currentUser?.files) ? currentUser.files : [];
+    const latestFile = files[0] || null;
+
+    if (!latestFile) {
+      historyContainer.innerHTML = `
+        <div class="empty-state">
+          <h3>No version history yet</h3>
+          <p>Your dataset does not contain any file versions for the current user.</p>
+        </div>
+      `;
+      document.querySelectorAll("[data-version-file-name]").forEach((element) => {
+        element.textContent = "";
+      });
+      document.querySelectorAll("[data-version-current]").forEach((element) => {
+        element.textContent = "";
+      });
+      return;
+    }
+
+    document.querySelectorAll("[data-version-file-name]").forEach((element) => {
+      element.textContent = latestFile.name || "";
+    });
+    document.querySelectorAll("[data-version-current]").forEach((element) => {
+      element.textContent = "v" + Math.max(files.length, 1) + ".0";
+    });
+
+    const versions = files.slice(0, 3).map((file, index) => {
+      const versionNumber = files.length - index;
+      const versionDate = file.uploadedAt ? new Date(file.uploadedAt) : null;
+      const fileSize = typeof formatFileSize === "function" ? formatFileSize(file.size || 0) : `${Math.round((file.size || 0) / 1024)} KB`;
+
+      return {
+        version: `v${versionNumber}.0`,
+        date: versionDate ? versionDate.toISOString().slice(0, 10) : "",
+        author: currentUser.name,
+        changes: `${file.name} updated from the Bangladesh dataset`,
+        size: fileSize,
+      };
+    });
 
     const fragment = document.createDocumentFragment();
 

@@ -1,27 +1,3 @@
-const STATIC_LOGIN_CREDENTIALS = {
-  "user@paperhub.edu.bd": {
-    password: "user",
-    id: "demo-user",
-    name: "Md. Arif Hossain",
-    role: "user",
-    title: "Student Document User",
-  },
-  "officer@paperhub.com.bd": {
-    password: "officer",
-    id: "demo-officer",
-    name: "Mahmudul Hasan",
-    role: "officer",
-    title: "Document Review Officer",
-  },
-  "admin@paperhub.com.bd": {
-    password: "admin",
-    id: "demo-admin",
-    name: "Rajdip Roy",
-    role: "admin",
-    title: "Platform Administrator",
-  },
-};
-
 const AUTH_USERS_STORAGE_KEY = "paperhub-auth-users";
 
 function getFormDataSafe(form) {
@@ -79,16 +55,7 @@ function validateRegisterData(formData) {
 
 function getSeedAuthUsers() {
   const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : null;
-  const authAccounts = Array.isArray(dataset?.authAccounts) && dataset.authAccounts.length
-    ? dataset.authAccounts
-    : Object.entries(STATIC_LOGIN_CREDENTIALS).map(([email, account]) => ({
-      id: account.id,
-      name: account.name,
-      email,
-      password: account.password,
-      role: account.role,
-      title: account.title,
-    }));
+  const authAccounts = Array.isArray(dataset?.authAccounts) ? dataset.authAccounts : [];
 
   return authAccounts.map((account) => ({
     id: account.id,

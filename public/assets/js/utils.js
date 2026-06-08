@@ -498,35 +498,11 @@ async function apiCall(endpoint) {
       const mockResponses = {
         "/api/dashboard/stats": {
           success: true,
-          data:
-            dataset.dashboardStats || {
-              totalDocuments: 156,
-              pendingReview: 12,
-              processedDocuments: 144,
-              totalPayments: 2450.0,
-            },
+          data: dataset.dashboardStats || {},
         },
         "/api/files": {
           success: true,
-          data:
-            Array.isArray(dataset.files) && dataset.files.length
-              ? dataset.files
-              : [
-                {
-                  id: "1",
-                  name: "Q4 Financial Report.pdf",
-                  size: 2048576,
-                  uploadedAt: new Date().toISOString(),
-                  status: "completed",
-                },
-                {
-                  id: "2",
-                  name: "Annual Summary.pdf",
-                  size: 1024000,
-                  uploadedAt: new Date().toISOString(),
-                  status: "reviewing",
-                },
-              ],
+          data: Array.isArray(dataset.files) ? dataset.files : [],
         },
       };
 
@@ -558,270 +534,7 @@ const PAPERHUB_DATA = getPaperHubDataset();
 const PAPERHUB_ROLE_STORAGE_KEY = "paperhub-role";
 const PAPERHUB_CURRENT_USER_STORAGE_KEY = "paperhub-current-user-id";
 
-const MOCK_USERS = Array.isArray(PAPERHUB_DATA.users) && PAPERHUB_DATA.users.length ? PAPERHUB_DATA.users : [
-  {
-    id: "student-rajesh",
-    name: "Md. Arif Hossain",
-    email: "md.arif.hossain@paperhub.edu.bd",
-    role: "user",
-    title: "Student Document User",
-    department: "Student Services",
-    lastLogin: "Today, 09:12 AM",
-    joinedDate: "2024-08-12",
-    address: "Dhanmondi, Dhaka, Bangladesh",
-    company: "PaperHub Bangladesh Campus",
-    phone: "+880 1711 120001",
-    timezone: "UTC +06:00",
-    language: "Bengali",
-    bio: "Keeps Bangladeshi student uploads, approvals, and payment records organized.",
-    accountStatus: "Active",
-    twoFactorEnabled: true,
-    plan: {
-      name: "Student Starter",
-      cycle: "Billed yearly",
-      renewal: "2026-06-30",
-      seats: "1 seat",
-      status: "Active",
-    },
-    connectedApps: [
-      { name: "Google Drive", provider: "Google Workspace", status: "Connected" },
-      { name: "Office 365", provider: "Bangladesh University Email", status: "Connected" },
-    ],
-    permissions: ["Upload Documents", "Track Submission", "Access Payment"],
-    dashboard: {
-      description: "Your Bangladesh document workspace for uploads, approvals, and payment tracking.",
-      stats: {
-        totalSubmissions: 12,
-        pendingReview: 3,
-        approved: 8,
-        rejected: 1,
-      },
-    },
-    files: [
-      {
-        id: "s1",
-        name: "Dhaka-Admission-Form.pdf",
-        size: 2048576,
-        uploadedAt: "2026-04-18T08:30:00.000Z",
-        status: "reviewing",
-      },
-      {
-        id: "s2",
-        name: "Bangladesh-Transcript-Copy.pdf",
-        size: 1024000,
-        uploadedAt: "2026-04-15T10:15:00.000Z",
-        status: "completed",
-      },
-    ],
-    reviews: [],
-    payment: {
-      status: "Pending Approval",
-      totalDue: "BDT 1,265.00",
-      lastUpdated: "18 Apr 2026 - 10:30 AM",
-      nextReview: "20 Apr 2026",
-    },
-    notifications: [
-      {
-        id: "n1",
-        title: "Your admission form needs one more attachment",
-        description: "The Bangladeshi review desk requested a clearer copy of the student ID.",
-        category: "review",
-        read: false,
-        createdAt: "2026-05-23T08:15:00.000Z",
-      },
-      {
-        id: "n2",
-        title: "Payment status updated",
-        description: "Your invoice is ready once the Bangladesh document is approved.",
-        category: "billing",
-        read: true,
-        createdAt: "2026-05-22T16:40:00.000Z",
-      },
-    ],
-  },
-  {
-    id: "teacher-mahmud",
-    name: "Mahmudul Hasan",
-    email: "mahmudul.hasan@paperhub.com.bd",
-    role: "officer",
-    title: "Document Review Officer",
-    department: "Academic Records",
-    lastLogin: "Today, 08:45 AM",
-    joinedDate: "2023-05-21",
-    address: "Agargaon, Dhaka, Bangladesh",
-    company: "PaperHub Review Center",
-    phone: "+880 1811 120002",
-    timezone: "UTC +06:00",
-    language: "Bengali",
-    bio: "Document review officer managing queue triage, approvals, and quality checks across Bangladesh workflows.",
-    accountStatus: "Active",
-    twoFactorEnabled: true,
-    plan: {
-      name: "Review Pro",
-      cycle: "Billed monthly",
-      renewal: "2026-06-30",
-      seats: "6 seats",
-      status: "Active",
-    },
-    connectedApps: [
-      { name: "Google Drive", provider: "Google Workspace", status: "Connected" },
-      { name: "Slack", provider: "Notifications", status: "Connected" },
-      { name: "Outlook", provider: "Email sync", status: "Connected" },
-    ],
-    permissions: ["Review Queue", "Approve / Reject", "Comment & Escalate"],
-    dashboard: {
-      description: "Prioritize pending submissions and keep Bangladesh review quality high.",
-      stats: {
-        pendingReviews: 7,
-        approved: 24,
-        rejected: 3,
-        assignedStudents: 42,
-      },
-    },
-    files: [
-      {
-        id: "t1",
-        name: "Bangladesh-Pending-Application-Batch.pdf",
-        size: 1843200,
-        uploadedAt: "2026-04-16T07:00:00.000Z",
-        status: "reviewing",
-      },
-    ],
-    reviews: [
-      {
-        id: "r1",
-        documentName: "Bangladesh-Admission-Form.pdf",
-        submittedBy: "Md. Arif Hossain",
-        submittedDate: "2026-04-18",
-        priority: "high",
-        status: "pending",
-      },
-      {
-        id: "r2",
-        documentName: "Bangladesh-Application.pdf",
-        submittedBy: "Nusrat Jahan",
-        submittedDate: "2026-04-17",
-        priority: "medium",
-        status: "in-review",
-      },
-    ],
-    payment: {
-      status: "N/A",
-      totalDue: "BDT 0.00",
-      lastUpdated: "Not Applicable",
-      nextReview: "Not Applicable",
-    },
-    notifications: [
-      {
-        id: "n3",
-        title: "Queue pressure is above target",
-        description: "Three Bangladesh submissions are due for review this morning.",
-        category: "review",
-        read: false,
-        createdAt: "2026-05-23T07:50:00.000Z",
-      },
-      {
-        id: "n4",
-        title: "Quality score is stable",
-        description: "Your average approval quality remains above 95% for the Bangladesh queue.",
-        category: "system",
-        read: true,
-        createdAt: "2026-05-22T12:30:00.000Z",
-      },
-    ],
-  },
-  {
-    id: "admin-rajdip",
-    name: "Rajdip Roy",
-    email: "rajdip.roy@paperhub.com.bd",
-    role: "admin",
-    title: "Platform Administrator",
-    department: "Operations",
-    lastLogin: "Today, 07:58 AM",
-    joinedDate: "2022-11-05",
-    address: "Motijheel, Dhaka, Bangladesh",
-    company: "PaperHub Bangladesh Operations",
-    phone: "+880 1911 120003",
-    timezone: "UTC +06:00",
-    language: "Bengali",
-    bio: "Platform administrator responsible for governance, access control, and security posture in Bangladesh.",
-    accountStatus: "Active",
-    twoFactorEnabled: true,
-    plan: {
-      name: "Enterprise",
-      cycle: "Annual contract",
-      renewal: "2026-12-01",
-      seats: "Unlimited",
-      status: "Active",
-    },
-    connectedApps: [
-      { name: "Google Workspace", provider: "Admin suite", status: "Connected" },
-      { name: "Slack", provider: "Ops alerts", status: "Connected" },
-      { name: "GitHub", provider: "Engineering sync", status: "Connected" },
-    ],
-    permissions: ["User Management", "System Reports", "Global Approval Authority"],
-    dashboard: {
-      description: "Monitor platform health, user growth, and escalated approvals across Bangladesh.",
-      stats: {
-        totalUsers: 245,
-        documents: "1.2K+",
-        approved: 892,
-        alerts: 2,
-      },
-    },
-    files: [
-      {
-        id: "a1",
-        name: "Bangladesh-System-Audit-April.pdf",
-        size: 2457600,
-        uploadedAt: "2026-04-17T13:22:00.000Z",
-        status: "completed",
-      },
-    ],
-    reviews: [
-      {
-        id: "r3",
-        documentName: "Bangladesh-Research-Paper.pdf",
-        submittedBy: "Mahmudul Hasan",
-        submittedDate: "2026-04-16",
-        priority: "high",
-        status: "pending",
-      },
-      {
-        id: "r4",
-        documentName: "Bangladesh-Final-Thesis.pdf",
-        submittedBy: "Sadia Khan",
-        submittedDate: "2026-04-15",
-        priority: "medium",
-        status: "in-review",
-      },
-    ],
-    payment: {
-      status: "Cleared",
-      totalDue: "BDT 0.00",
-      lastUpdated: "19 Apr 2026 - 09:05 AM",
-      nextReview: "Completed",
-    },
-    notifications: [
-      {
-        id: "n5",
-        title: "Platform uptime remains healthy",
-        description: "All monitoring checks are green across the Bangladesh core services.",
-        category: "system",
-        read: false,
-        createdAt: "2026-05-23T06:20:00.000Z",
-      },
-      {
-        id: "n6",
-        title: "Security settings reviewed",
-        description: "A login alert rule was updated in the Bangladesh admin console.",
-        category: "security",
-        read: true,
-        createdAt: "2026-05-21T14:15:00.000Z",
-      },
-    ],
-  },
-];
+const MOCK_USERS = Array.isArray(PAPERHUB_DATA.users) ? PAPERHUB_DATA.users : [];
 
 function getAllMockUsers() {
   return MOCK_USERS.slice();
@@ -845,9 +558,26 @@ function getMockUserById(userId) {
   return MOCK_USERS.find((user) => user.id === value) || null;
 }
 
+function getMockUserByIdentity(user) {
+  if (!user) {
+    return null;
+  }
+
+  const id = String(user.id || "").trim();
+  const email = String(user.email || "").trim().toLowerCase();
+  const name = String(user.name || "").trim().toLowerCase();
+
+  return (
+    MOCK_USERS.find((candidate) => candidate.id === id) ||
+    MOCK_USERS.find((candidate) => String(candidate.email || "").trim().toLowerCase() === email) ||
+    MOCK_USERS.find((candidate) => String(candidate.name || "").trim().toLowerCase() === name) ||
+    null
+  );
+}
+
 function getDefaultUserForRole(role) {
   const normalizedRole = normalizeRole(role);
-  return MOCK_USERS.find((user) => user.role === normalizedRole) || MOCK_USERS[0];
+  return MOCK_USERS.find((user) => user.role === normalizedRole) || null;
 }
 
 function setStoredRole(role) {
@@ -877,6 +607,10 @@ function setCurrentUserById(userId) {
   const selectedUser = getMockUserById(userId);
   const nextUser = selectedUser || getDefaultUserForRole(getStoredRole());
 
+  if (!nextUser) {
+    return null;
+  }
+
   try {
     localStorage.setItem(PAPERHUB_CURRENT_USER_STORAGE_KEY, nextUser.id);
   } catch (error) {
@@ -894,8 +628,24 @@ function setCurrentUserById(userId) {
 function getCurrentUserData() {
   const authUser = getCurrentUser();
   if (authUser && authUser.name && authUser.email) {
+    const matchedUser = getMockUserByIdentity(authUser);
+    const datasetUser = matchedUser || getDefaultUserForRole(authUser.role);
+    if (datasetUser) {
+      if (matchedUser) {
+        return {
+          ...datasetUser,
+          ...authUser,
+          role: normalizeRole(datasetUser.role || authUser.role),
+        };
+      }
+
+      return {
+        ...datasetUser,
+        role: normalizeRole(datasetUser.role || authUser.role),
+      };
+    }
+
     return {
-      ...getDefaultUserForRole(authUser.role),
       ...authUser,
       role: normalizeRole(authUser.role),
     };
@@ -913,6 +663,9 @@ function getCurrentUserData() {
   }
 
   const fallbackUser = getDefaultUserForRole(getStoredRole());
+  if (!fallbackUser) {
+    return null;
+  }
   setCurrentUserById(fallbackUser.id);
   return fallbackUser;
 }
