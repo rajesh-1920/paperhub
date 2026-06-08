@@ -349,9 +349,6 @@ function applyCurrentUserPageData() {
   }
 }
 
-/* ---------------------------------------------------------------------------
- * Dynamic dashboards — drive admin/officer/user dashboards from the dataset.
- * ------------------------------------------------------------------------- */
 
 function phPill(label, variant) {
   return `<span class="accent-pill pill-${variant}">${escapeHtml(label)}</span>`;
