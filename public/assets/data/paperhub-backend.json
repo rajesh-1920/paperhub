@@ -1,7 +1,7 @@
 {
   "meta": {
     "name": "PaperHub Bangladesh Demo Backend",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "generatedAt": "2026-06-09T00:00:00.000Z",
     "description": "Three-person PaperHub dataset (admin Rajesh Biswas, officer Rajdip Roy, user Mahmud Hasan). Every other record is a fully-detailed file including its document content."
   },
@@ -576,7 +576,9 @@
             "PDF Document • 8 pages",
             "Undergraduate admission application form submitted to the University of Dhaka for the 2026 session.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "UNIVERSITY OF DHAKA — UNDERGRADUATE ADMISSION APPLICATION (SESSION 2026)\n\nApplicant Name: Mahmud Hasan\nFather's Name: Abdul Hasan\nMother's Name: Rahima Begum\nDate of Birth: 12 March 2006\nNational ID / Birth Reg. No: 19062711000123456\nPresent Address: Dhanmondi 27, Dhaka 1209, Bangladesh\nPermanent Address: Village - Boalia, P.O. - Boalia, Rajshahi\nMobile: +880 1911 200300    Email: mahmud.hasan@paperhub.edu.bd\n\nProgramme Applied For: B.Sc. (Honours) in Computer Science and Engineering\nFaculty / Unit: Faculty of Engineering and Technology (Unit-A)\nHSC Roll: 512344    HSC Board: Dhaka    Passing Year: 2025    GPA: 5.00\nSSC Roll: 318922    SSC Board: Dhaka    Passing Year: 2023    GPA: 5.00\n\nQuota: None    Hall Choice: Dr. Muhammad Shahidullah Hall\nAdmission Fee Paid: BDT 1,065 (Trxn DU-ADM-2026-44102, bKash)\n\nDeclaration: I hereby declare that the information furnished above is true and correct\nto the best of my knowledge. I shall abide by all rules and regulations of the University.\n\nApplicant Signature: Mahmud Hasan        Date: 01 March 2026",
+          "fileId": "file-001"
         },
         {
           "id": "file-002-review",
@@ -621,7 +623,9 @@
             "PDF Document • 4 pages",
             "Higher Secondary Certificate academic transcript issued by the Dhaka Education Board.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "BOARD OF INTERMEDIATE AND SECONDARY EDUCATION, DHAKA\nHIGHER SECONDARY CERTIFICATE (HSC) EXAMINATION 2025 — ACADEMIC TRANSCRIPT\n\nName of Student: MAHMUD HASAN\nRoll No: 512344    Registration No: 1903456789 (2023-24)\nGroup: Science    Institution: Dhaka College, Dhaka\n\nSubject-wise Grades:\n  Bangla ................................. A+ (5.00)\n  English ................................ A+ (5.00)\n  Physics ................................ A+ (5.00)\n  Chemistry .............................. A+ (5.00)\n  Higher Mathematics ..................... A+ (5.00)\n  Biology ................................ A+ (5.00)\n  ICT .................................... A+ (5.00)\n\nTotal Credit: 13    GPA (without 4th subject): 5.00\nResult: PASSED    Letter Grade: A+\n\nIssued On: 18 January 2026    Controller of Examinations, BISE Dhaka",
+          "fileId": "file-002"
         },
         {
           "id": "file-003-review",
@@ -666,7 +670,9 @@
             "PDF Document • 2 pages",
             "National ID card verification document for identity confirmation.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "GOVERNMENT OF THE PEOPLE'S REPUBLIC OF BANGLADESH\nNATIONAL IDENTITY CARD — VERIFICATION COPY\n\nName (English): Mahmud Hasan\nName (Bangla): মাহমুদ হাসান\nFather's Name: Abdul Hasan\nMother's Name: Rahima Begum\nDate of Birth: 12 March 2006\nNID Number: 1990 234 5678\nBlood Group: B+\nAddress: Dhanmondi 27, Dhaka 1209\n\nVerification Request: Confirm identity against the Election Commission server\nfor the PaperHub admission workflow.\nStatus: Submitted for officer verification.\nReference: NID-VER-2026-0007",
+          "fileId": "file-003"
         },
         {
           "id": "file-004-review",
@@ -711,7 +717,9 @@
             "PDF Document • 3 pages",
             "Bank solvency certificate from Dutch-Bangla Bank for financial proof.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "DUTCH-BANGLA BANK PLC — SOLVENCY CERTIFICATE\n\nThis is to certify that Mr. Mahmud Hasan, son of Mr. Abdul Hasan, holding\nSavings Account No. 145.101.0098765 at our Dhanmondi Branch, Dhaka, is a\nvalued client of this bank since 10 January 2024.\n\nAs of 28 February 2026, the account maintains a satisfactory balance and the\nclient is solvent to the extent of BDT 8,50,000 (Eight Lakh Fifty Thousand Taka only).\n\nThis certificate is issued upon the client's request for academic admission\npurposes and carries no financial obligation on the part of the bank.\n\nBranch Manager\nDutch-Bangla Bank PLC, Dhanmondi Branch\nDate: 28 February 2026    Ref: DBBL/DHN/SOLV/2026/3391",
+          "fileId": "file-004"
         },
         {
           "id": "file-005-review",
@@ -756,7 +764,9 @@
             "PDF Document • 2 pages",
             "Machine-readable passport bio-page copy.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "PEOPLE'S REPUBLIC OF BANGLADESH — PASSPORT (BIO DATA PAGE)\n\nType: P    Country Code: BGD    Passport No: A05544321\nSurname: HASAN    Given Names: MAHMUD\nNationality: BANGLADESHI    Date of Birth: 12 MAR 2006\nPlace of Birth: DHAKA    Sex: M\nDate of Issue: 05 JAN 2025    Date of Expiry: 04 JAN 2035\nIssuing Authority: DIP/DHAKA\n\nMRZ:\nP<BGDHASAN<<MAHMUD<<<<<<<<<<<<<<<<<<<<<<<<<<<\nA055443210BGD0603129M3501045<<<<<<<<<<<<<<04",
+          "fileId": "file-005"
         },
         {
           "id": "file-006-review",
@@ -801,7 +811,9 @@
             "PDF Document • 1 pages",
             "Tuition fee payment receipt for the spring 2026 semester.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "PAPERHUB BANGLADESH — TUITION PAYMENT RECEIPT\n\nReceipt No: PH-RCPT-2026-00781    Date: 02 March 2026\nStudent: Mahmud Hasan (user-mahmud.hasan)\nSemester: Spring 2026\n\nDescription                         Amount (BDT)\n  Tuition Fee ..................... 9,500.00\n  Library Fee .................... 1,200.00\n  Lab / Technology Fee ........... 1,500.00\n  Student Welfare ................   450.00\n  -----------------------------------------\n  Total Paid ..................... 12,650.00\n\nPayment Method: bKash (Trxn 8GH22XK91)    Status: PAID\nAuthorised By: Accounts Office, PaperHub Bangladesh",
+          "fileId": "file-006"
         },
         {
           "id": "file-007-review",
@@ -846,7 +858,9 @@
             "Word Document • 2 pages",
             "Academic recommendation letter from a college professor.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "LETTER OF RECOMMENDATION\n\nTo Whom It May Concern,\n\nI am pleased to recommend Mr. Mahmud Hasan, whom I have taught for two years at\nDhaka College in the Higher Secondary science programme. Mahmud consistently\nranked among the top students of his cohort and demonstrated exceptional aptitude\nin mathematics, physics, and computer studies.\n\nBeyond academics, he showed strong leadership as the secretary of the college\nscience club and organised the inter-college programming olympiad in 2024. He is\ndisciplined, curious, and dependable.\n\nI recommend him without reservation for admission to your undergraduate programme.\n\nSincerely,\nDr. Anwar Kabir\nAssociate Professor, Department of Physics\nDhaka College    Date: 24 February 2026",
+          "fileId": "file-007"
         },
         {
           "id": "file-008-review",
@@ -891,7 +905,9 @@
             "PDF Document • 2 pages",
             "Medical fitness certificate required for hall residence.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "MEDICAL FITNESS CERTIFICATE\n\nPatient Name: Mahmud Hasan    Age: 20    Sex: Male\nExamined On: 26 February 2026\n\nExamination Summary:\n  Blood Pressure: 118/76 mmHg (Normal)\n  Pulse: 72 bpm    Height: 172 cm    Weight: 64 kg    BMI: 21.6\n  Chest X-Ray: Normal    Vision: 6/6 both eyes\n  Hepatitis B / C: Negative    General Health: Satisfactory\n\nOpinion: The applicant is medically fit for hall residence and academic activities.\n\nDr. Sharmin Akter, MBBS, BCS (Health)\nDhaka Medical College Hospital    Reg. No: A-44021",
+          "fileId": "file-008"
         },
         {
           "id": "file-009-review",
@@ -936,7 +952,9 @@
             "PDF Document • 2 pages",
             "Secondary School Certificate issued by the Dhaka Education Board.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "BOARD OF INTERMEDIATE AND SECONDARY EDUCATION, DHAKA\nSECONDARY SCHOOL CERTIFICATE (SSC) — 2023\n\nThis is to certify that MAHMUD HASAN, Roll No 318922, Registration No 1801234567,\nson of Abdul Hasan and Rahima Begum, passed the Secondary School Certificate\nExamination of 2023 in the Science group from Motijheel Government Boys' High School.\n\nGrade Point Average (GPA): 5.00    Letter Grade: A+    Result: PASSED\n\nGiven under the seal of the Board on 28 May 2023.\nChairman, BISE Dhaka",
+          "fileId": "file-009"
         },
         {
           "id": "file-010-review",
@@ -981,7 +999,9 @@
             "PDF Document • 1 pages",
             "Digital birth registration certificate.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "GOVERNMENT OF BANGLADESH — DIGITAL BIRTH REGISTRATION CERTIFICATE\n\nBirth Registration No: 19062711000123456\nName: Mahmud Hasan\nDate of Birth: 12 March 2006 (Twelfth March Two Thousand Six)\nSex: Male    Place of Birth: Dhaka\nFather: Abdul Hasan    Mother: Rahima Begum\nPermanent Address: Boalia, Rajshahi\n\nRegistration Office: Dhaka City Corporation, Ward 14\nDate of Registration: 02 April 2006    Date of Issue: 11 January 2024",
+          "fileId": "file-010"
         },
         {
           "id": "file-011-review",
@@ -1026,7 +1046,9 @@
             "Word Document • 3 pages",
             "Application requesting a seat in the university residential hall.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "APPLICATION FOR HALL ACCOMMODATION\n\nTo: The Provost, Dr. Muhammad Shahidullah Hall, University of Dhaka\nFrom: Mahmud Hasan, 1st Year, Computer Science and Engineering\n\nSubject: Request for allotment of a residential seat for the 2026 session.\n\nRespected Sir,\nI am a newly admitted student from Rajshahi with no local guardian in Dhaka.\nI respectfully request the allotment of a seat in your hall so that I can attend\nclasses regularly. I have attached my admission slip, medical clearance, and\nguardian consent. I will abide by all hall rules.\n\nYours faithfully,\nMahmud Hasan    Date: 04 March 2026",
+          "fileId": "file-011"
         },
         {
           "id": "file-012-review",
@@ -1071,7 +1093,9 @@
             "PDF Document • 1 pages",
             "Guardian consent declaration for the minor-to-adult transition student.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "GUARDIAN CONSENT FORM\n\nI, Abdul Hasan, father and legal guardian of Mahmud Hasan, hereby give my full\nconsent for my son to enroll at the University of Dhaka and to reside in the\nuniversity hall for the 2026 academic session.\n\nI take responsibility for his conduct and will remain reachable at +880 1711 778899.\n\nGuardian Signature: Abdul Hasan    NID: 1234 567 8901\nDate: 03 March 2026",
+          "fileId": "file-012"
         },
         {
           "id": "file-013-review",
@@ -1116,7 +1140,9 @@
             "Word Document • 4 pages",
             "Merit scholarship application based on HSC results.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "MERIT SCHOLARSHIP APPLICATION — 2026\n\nApplicant: Mahmud Hasan    Programme: B.Sc. CSE (1st Year)\nHSC GPA: 5.00    SSC GPA: 5.00    Household Annual Income: BDT 3,20,000\n\nStatement of Purpose:\nI come from a modest family in Rajshahi where my father runs a small stationery\nshop. Despite financial constraints I have maintained a strong academic record.\nA merit scholarship would allow me to focus on my studies without the burden of\ntuition, and I intend to contribute to the university's programming community.\n\nRequested Award: Full tuition waiver + monthly stipend of BDT 3,000\nAttachments: HSC transcript, income certificate, bank solvency statement.\n\nSignature: Mahmud Hasan    Date: 05 March 2026",
+          "fileId": "file-013"
         },
         {
           "id": "file-014-review",
@@ -1161,7 +1187,9 @@
             "PDF Document • 1 pages",
             "Guardian income certificate issued by the local union council.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "UNION PARISHAD — INCOME CERTIFICATE\n\nThis is to certify that Mr. Abdul Hasan, son of late Karim Hasan, resident of\nBoalia, Rajshahi, earns an approximate annual income of BDT 3,20,000 (Three Lakh\nTwenty Thousand Taka) from his retail stationery business.\n\nThis certificate is issued for the educational scholarship purpose of his son,\nMahmud Hasan.\n\nChairman, Boalia Union Parishad\nDate: 04 March 2026    Memo No: BUP/INC/2026/118",
+          "fileId": "file-014"
         },
         {
           "id": "file-015-review",
@@ -1206,7 +1234,9 @@
             "Excel Spreadsheet • 1 pages",
             "Spring 2026 course registration sheet.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "COURSE REGISTRATION — SPRING 2026 (Mahmud Hasan)\n\nCode      Course Title                       Credit   Section\nCSE-101   Structured Programming             3.0      A\nCSE-103   Discrete Mathematics               3.0      A\nPHY-101   Physics I                          3.0      B\nMAT-101   Calculus and Linear Algebra        3.0      A\nENG-101   English Composition                2.0      C\n----------------------------------------------------------\nTotal Registered Credit: 14.0    Status: CONFIRMED\nAdvisor: Dr. Nasima Sultana    Date: 06 March 2026",
+          "fileId": "file-015"
         },
         {
           "id": "file-016-review",
@@ -1251,7 +1281,9 @@
             "PDF Document • 1 pages",
             "Central library membership registration form.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "CENTRAL LIBRARY — MEMBERSHIP REGISTRATION\n\nMember: Mahmud Hasan    Membership No: LIB-2026-10455\nDepartment: Computer Science and Engineering    Category: Undergraduate\nBorrowing Limit: 4 books / 14 days    Security Deposit: BDT 500 (paid)\nIssued: 07 March 2026    Valid Till: 06 March 2030\nLibrarian: Mr. Habibur Rahman",
+          "fileId": "file-016"
         }
       ],
       "payment": {
@@ -1579,7 +1611,9 @@
             "PDF Document • 6 pages",
             "Monthly document review summary report prepared by the review officer.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "PAPERHUB BANGLADESH — MONTHLY DOCUMENT REVIEW REPORT (MAY 2026)\nPrepared by: Rajdip Roy, Document Review Officer\n\n1. Volume\n   Documents received .................... 142\n   Documents reviewed and cleared ........ 104\n   Returned for correction ...............  22\n   Pending at month end ..................  16\n\n2. Turnaround\n   Average review time ................... 1.8 business days\n   High-priority average ................. 0.9 business days\n\n3. Common Issues\n   - Mismatched NID and birth-registration dates (9 cases)\n   - Bank solvency letters missing official seal (6 cases)\n   - Illegible scan quality on transcripts (4 cases)\n\n4. Recommendation\n   Introduce an automated pre-check for NID/birth-date consistency before\n   documents enter the manual review queue.\n\nSigned: Rajdip Roy    Date: 31 May 2026",
+          "fileId": "file-017"
         },
         {
           "id": "file-018-review",
@@ -1624,7 +1658,9 @@
             "Excel Spreadsheet • 2 pages",
             "Compliance audit checklist applied to reviewed submissions.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "COMPLIANCE AUDIT CHECKLIST — MAY 2026 CYCLE (Officer: Rajdip Roy)\n\nCheck Item                                       Result\nIdentity document present & legible ............ PASS\nNID matches birth registration ................. PASS\nFinancial proof has official seal .............. PASS\nAcademic transcript board-verified ............. PASS\nGuardian consent attached (minors) ............. PASS\nPayment receipt reconciled with accounts ....... PASS\nDuplicate submission check ..................... PASS\nPersonal data stored per retention policy ...... PASS\n\nOverall Compliance Score: 98%    Auditor Sign-off: Rajdip Roy",
+          "fileId": "file-018"
         },
         {
           "id": "file-019-review",
@@ -1669,7 +1705,9 @@
             "PDF Document • 5 pages",
             "Chronological verification log of identity checks performed.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "OFFICER VERIFICATION LOG (Q2 2026) — Rajdip Roy\n\nDate        Document                         Subject          Action      Result\n2026-05-02  National-ID-Verification         Mahmud Hasan     EC cross-check  OK\n2026-05-03  Bank-Solvency-Statement          Mahmud Hasan     Seal verify     OK\n2026-05-04  Medical-Clearance                Mahmud Hasan     Reg. verify     OK\n2026-05-06  Income-Certificate-Guardian      Mahmud Hasan     UP cross-check  PENDING\n2026-05-08  Scholarship-Application          Mahmud Hasan     Eligibility     IN-REVIEW\n\nNotes: One income certificate awaiting union parishad confirmation.\nOfficer: Rajdip Roy",
+          "fileId": "file-019"
         },
         {
           "id": "file-020-review",
@@ -1714,7 +1752,9 @@
             "Word Document • 2 pages",
             "Standard notice template sent when a document is returned for correction.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "DOCUMENT RETURN NOTICE (TEMPLATE)\n\nDear {applicant_name},\n\nYour submitted document \"{document_name}\" could not be cleared during review for\nthe following reason(s):\n\n  - {reason_1}\n  - {reason_2}\n\nPlease correct the above and re-upload the document within 7 working days through\nyour PaperHub dashboard. If you need assistance, contact the review desk.\n\nRegards,\nRajdip Roy\nDocument Review Officer, PaperHub Bangladesh",
+          "fileId": "file-020"
         },
         {
           "id": "file-021-review",
@@ -1759,7 +1799,9 @@
             "Excel Spreadsheet • 3 pages",
             "Backlog analysis of the pending review queue.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "REVIEW QUEUE BACKLOG ANALYSIS — JUNE 2026\n\nPriority   Pending   Avg Age (days)   Oldest Item\nHigh ......... 4 ......... 1.2 ......... NID-VER-2026-0007\nMedium ....... 8 ......... 2.6 ......... Scholarship-Application-Merit\nLow .......... 4 ......... 4.1 ......... Income-Certificate-Guardian\n\nBottleneck: external verification dependencies (EC + Union Parishad).\nOwner: Rajdip Roy",
+          "fileId": "file-021"
         },
         {
           "id": "file-022-review",
@@ -1804,7 +1846,9 @@
             "PDF Document • 4 pages",
             "Internal guidelines for cross-checking identity documents.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "IDENTITY CROSS-CHECK GUIDELINES (v2)\n\n1. Always match NID number, name, and date of birth against the birth\n   registration certificate before clearing identity.\n2. For applicants under 18 at submission, require guardian consent.\n3. Reject any document where the photo is missing or the seal is absent.\n4. Escalate suspected forgery to the Platform Administrator immediately.\n5. Record every check in the Officer Verification Log.\n\nMaintainer: Rajdip Roy, Document Review Officer    Effective: 01 May 2026",
+          "fileId": "file-022"
         },
         {
           "id": "file-023-review",
@@ -1849,7 +1893,9 @@
             "PDF Document • 2 pages",
             "Weekly clearance summary for management.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "WEEKLY CLEARANCE SUMMARY — WEEK 22, 2026\n\nCleared: 31 documents    Returned: 5    Escalated: 1\nTop category: Academic transcripts (12)\nSLA adherence: 96%\nNotable: One scholarship case escalated for income verification.\n\nReviewer: Rajdip Roy",
+          "fileId": "file-023"
         }
       ],
       "payment": {
@@ -2178,7 +2224,9 @@
             "PDF Document • 7 pages",
             "Quarterly platform usage analytics across all PaperHub Bangladesh accounts.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "PAPERHUB BANGLADESH — PLATFORM USAGE ANALYTICS (Q2 2026)\nPrepared by: Rajesh Biswas, Platform Administrator\n\nKey Metrics\n  Total documents on platform ........... 180\n  Documents processed this quarter ...... 104\n  Pending review ........................  16\n  Total payments collected .............. BDT 24,50,000\n\nEngagement\n  Active daily users .................... steady\n  Avg uploads per active user ........... 6.0\n  Peak upload window .................... 08:00–11:00 (Asia/Dhaka)\n\nReliability\n  Platform uptime ....................... 99.95%\n  Failed upload rate .................... 0.4%\n\nAction Items\n  - Expand storage quota ahead of the admission season.\n  - Add automated NID pre-checks (per review officer recommendation).\n\nSigned: Rajesh Biswas    Date: 30 June 2026",
+          "fileId": "file-024"
         },
         {
           "id": "file-025-review",
@@ -2223,7 +2271,9 @@
             "PDF Document • 5 pages",
             "Role-based access control policy for the platform.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "USER ACCESS CONTROL POLICY (v3)\n\n1. Roles\n   - User: upload documents, track submissions, access own payments.\n   - Officer: review/verify documents, manage the review queue.\n   - Admin: full platform governance, analytics, and policy.\n\n2. Principle of Least Privilege\n   Each account receives only the permissions required for its role.\n\n3. Authentication\n   Two-factor authentication is mandatory for officer and admin accounts.\n\n4. Audit\n   All privileged actions are logged and reviewed monthly.\n\nOwner: Rajesh Biswas, Platform Administrator    Effective: 01 June 2026",
+          "fileId": "file-025"
         },
         {
           "id": "file-026-review",
@@ -2268,7 +2318,9 @@
             "PDF Document • 3 pages",
             "Automated system backup verification report.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "SYSTEM BACKUP REPORT — JUNE 2026\n\nBackup Schedule: Daily 02:00 (Asia/Dhaka), 30-day retention\nLast Successful Backup: 08 June 2026, 02:04\nBackup Size: 4.2 GB    Integrity Check: PASSED\nRestore Drill: Performed 07 June 2026 — full restore in 11 minutes (PASS)\nOffsite Replication: Enabled (Singapore region)\n\nReviewed by: Rajesh Biswas, Platform Administrator",
+          "fileId": "file-026"
         },
         {
           "id": "file-027-review",
@@ -2313,7 +2365,9 @@
             "Word Document • 4 pages",
             "Guidelines governing how long document data is retained.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "DATA RETENTION GUIDELINES (DRAFT)\n\n- Identity documents: retain 5 years after account closure.\n- Financial proofs: retain 7 years per audit requirement.\n- Academic records: retain for the lifetime of the account.\n- Review logs: retain 3 years.\n- Deleted documents: purged from backups within 30 days.\n\nAll retention is subject to Bangladesh data-protection requirements.\nAuthor: Rajesh Biswas    Status: Under legal review",
+          "fileId": "file-027"
         },
         {
           "id": "file-028-review",
@@ -2358,7 +2412,9 @@
             "Excel Spreadsheet • 2 pages",
             "Quarterly reconciliation of platform payments.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "QUARTERLY PAYMENT RECONCILIATION — Q2 2026\n\nChannel        Collected (BDT)    Transactions\nbKash ............ 11,80,000 ......... 412\nNagad ............  6,20,000 ......... 233\nBank Transfer ....  6,50,000 ......... 121\n-----------------------------------------------\nTotal ............ 24,50,000 ......... 766\n\nLedger vs Gateway: MATCHED (0 discrepancy)\nReconciled by: Rajesh Biswas    Date: 30 June 2026",
+          "fileId": "file-028"
         },
         {
           "id": "file-029-review",
@@ -2403,7 +2459,9 @@
             "PDF Document • 6 pages",
             "Platform incident response and escalation plan.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "INCIDENT RESPONSE PLAN (v2)\n\nSeverity Levels\n  SEV-1: Data breach or full outage — notify admin within 15 minutes.\n  SEV-2: Partial outage — notify within 1 hour.\n  SEV-3: Degraded performance — handle within the business day.\n\nEscalation Chain: Officer -> Platform Administrator (Rajesh Biswas) -> Vendor.\nCommunication: Status page + email to affected users.\nPost-Incident: Root-cause report within 72 hours.\n\nOwner: Rajesh Biswas, Platform Administrator    Effective: 15 May 2026",
+          "fileId": "file-029"
         },
         {
           "id": "file-030-review",
@@ -2448,7 +2506,9 @@
             "Word Document • 2 pages",
             "Checklist for onboarding new platform accounts.",
             "Tracked in the PaperHub review queue"
-          ]
+          ],
+          "content": "ACCOUNT ONBOARDING CHECKLIST\n\n[ ] Verify applicant identity (NID + birth registration)\n[ ] Assign correct role (user / officer / admin)\n[ ] Enforce 2FA for privileged roles\n[ ] Issue welcome email with dashboard guide\n[ ] Set storage quota per plan\n[ ] Record onboarding in the audit log\n\nPrepared by: Rajesh Biswas    Status: Awaiting sign-off",
+          "fileId": "file-030"
         }
       ],
       "payment": {
@@ -3371,7 +3431,12 @@
         "PDF Document • 8 pages",
         "Undergraduate admission application form submitted to the University of Dhaka for the 2026 session.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-001",
+      "content": "UNIVERSITY OF DHAKA — UNDERGRADUATE ADMISSION APPLICATION (SESSION 2026)\n\nApplicant Name: Mahmud Hasan\nFather's Name: Abdul Hasan\nMother's Name: Rahima Begum\nDate of Birth: 12 March 2006\nNational ID / Birth Reg. No: 19062711000123456\nPresent Address: Dhanmondi 27, Dhaka 1209, Bangladesh\nPermanent Address: Village - Boalia, P.O. - Boalia, Rajshahi\nMobile: +880 1911 200300    Email: mahmud.hasan@paperhub.edu.bd\n\nProgramme Applied For: B.Sc. (Honours) in Computer Science and Engineering\nFaculty / Unit: Faculty of Engineering and Technology (Unit-A)\nHSC Roll: 512344    HSC Board: Dhaka    Passing Year: 2025    GPA: 5.00\nSSC Roll: 318922    SSC Board: Dhaka    Passing Year: 2023    GPA: 5.00\n\nQuota: None    Hall Choice: Dr. Muhammad Shahidullah Hall\nAdmission Fee Paid: BDT 1,065 (Trxn DU-ADM-2026-44102, bKash)\n\nDeclaration: I hereby declare that the information furnished above is true and correct\nto the best of my knowledge. I shall abide by all rules and regulations of the University.\n\nApplicant Signature: Mahmud Hasan        Date: 01 March 2026",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Completed admission form with applicant, guardian, and programme details verified."
     },
     {
       "id": "file-002-review",
@@ -3416,7 +3481,12 @@
         "PDF Document • 4 pages",
         "Higher Secondary Certificate academic transcript issued by the Dhaka Education Board.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-002",
+      "content": "BOARD OF INTERMEDIATE AND SECONDARY EDUCATION, DHAKA\nHIGHER SECONDARY CERTIFICATE (HSC) EXAMINATION 2025 — ACADEMIC TRANSCRIPT\n\nName of Student: MAHMUD HASAN\nRoll No: 512344    Registration No: 1903456789 (2023-24)\nGroup: Science    Institution: Dhaka College, Dhaka\n\nSubject-wise Grades:\n  Bangla ................................. A+ (5.00)\n  English ................................ A+ (5.00)\n  Physics ................................ A+ (5.00)\n  Chemistry .............................. A+ (5.00)\n  Higher Mathematics ..................... A+ (5.00)\n  Biology ................................ A+ (5.00)\n  ICT .................................... A+ (5.00)\n\nTotal Credit: 13    GPA (without 4th subject): 5.00\nResult: PASSED    Letter Grade: A+\n\nIssued On: 18 January 2026    Controller of Examinations, BISE Dhaka",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Official HSC transcript, GPA 5.00, all subjects passed."
     },
     {
       "id": "file-003-review",
@@ -3461,7 +3531,12 @@
         "PDF Document • 2 pages",
         "National ID card verification document for identity confirmation.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-003",
+      "content": "GOVERNMENT OF THE PEOPLE'S REPUBLIC OF BANGLADESH\nNATIONAL IDENTITY CARD — VERIFICATION COPY\n\nName (English): Mahmud Hasan\nName (Bangla): মাহমুদ হাসান\nFather's Name: Abdul Hasan\nMother's Name: Rahima Begum\nDate of Birth: 12 March 2006\nNID Number: 1990 234 5678\nBlood Group: B+\nAddress: Dhanmondi 27, Dhaka 1209\n\nVerification Request: Confirm identity against the Election Commission server\nfor the PaperHub admission workflow.\nStatus: Submitted for officer verification.\nReference: NID-VER-2026-0007",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "NID submitted, awaiting officer identity verification."
     },
     {
       "id": "file-004-review",
@@ -3506,7 +3581,12 @@
         "PDF Document • 3 pages",
         "Bank solvency certificate from Dutch-Bangla Bank for financial proof.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-004",
+      "content": "DUTCH-BANGLA BANK PLC — SOLVENCY CERTIFICATE\n\nThis is to certify that Mr. Mahmud Hasan, son of Mr. Abdul Hasan, holding\nSavings Account No. 145.101.0098765 at our Dhanmondi Branch, Dhaka, is a\nvalued client of this bank since 10 January 2024.\n\nAs of 28 February 2026, the account maintains a satisfactory balance and the\nclient is solvent to the extent of BDT 8,50,000 (Eight Lakh Fifty Thousand Taka only).\n\nThis certificate is issued upon the client's request for academic admission\npurposes and carries no financial obligation on the part of the bank.\n\nBranch Manager\nDutch-Bangla Bank PLC, Dhanmondi Branch\nDate: 28 February 2026    Ref: DBBL/DHN/SOLV/2026/3391",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Solvency statement under review for financial eligibility."
     },
     {
       "id": "file-005-review",
@@ -3551,7 +3631,12 @@
         "PDF Document • 2 pages",
         "Machine-readable passport bio-page copy.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-005",
+      "content": "PEOPLE'S REPUBLIC OF BANGLADESH — PASSPORT (BIO DATA PAGE)\n\nType: P    Country Code: BGD    Passport No: A05544321\nSurname: HASAN    Given Names: MAHMUD\nNationality: BANGLADESHI    Date of Birth: 12 MAR 2006\nPlace of Birth: DHAKA    Sex: M\nDate of Issue: 05 JAN 2025    Date of Expiry: 04 JAN 2035\nIssuing Authority: DIP/DHAKA\n\nMRZ:\nP<BGDHASAN<<MAHMUD<<<<<<<<<<<<<<<<<<<<<<<<<<<\nA055443210BGD0603129M3501045<<<<<<<<<<<<<<04",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Passport copy verified and archived."
     },
     {
       "id": "file-006-review",
@@ -3596,7 +3681,12 @@
         "PDF Document • 1 pages",
         "Tuition fee payment receipt for the spring 2026 semester.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-006",
+      "content": "PAPERHUB BANGLADESH — TUITION PAYMENT RECEIPT\n\nReceipt No: PH-RCPT-2026-00781    Date: 02 March 2026\nStudent: Mahmud Hasan (user-mahmud.hasan)\nSemester: Spring 2026\n\nDescription                         Amount (BDT)\n  Tuition Fee ..................... 9,500.00\n  Library Fee .................... 1,200.00\n  Lab / Technology Fee ........... 1,500.00\n  Student Welfare ................   450.00\n  -----------------------------------------\n  Total Paid ..................... 12,650.00\n\nPayment Method: bKash (Trxn 8GH22XK91)    Status: PAID\nAuthorised By: Accounts Office, PaperHub Bangladesh",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Tuition receipt confirming BDT 12,650 paid."
     },
     {
       "id": "file-007-review",
@@ -3641,7 +3731,12 @@
         "Word Document • 2 pages",
         "Academic recommendation letter from a college professor.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-007",
+      "content": "LETTER OF RECOMMENDATION\n\nTo Whom It May Concern,\n\nI am pleased to recommend Mr. Mahmud Hasan, whom I have taught for two years at\nDhaka College in the Higher Secondary science programme. Mahmud consistently\nranked among the top students of his cohort and demonstrated exceptional aptitude\nin mathematics, physics, and computer studies.\n\nBeyond academics, he showed strong leadership as the secretary of the college\nscience club and organised the inter-college programming olympiad in 2024. He is\ndisciplined, curious, and dependable.\n\nI recommend him without reservation for admission to your undergraduate programme.\n\nSincerely,\nDr. Anwar Kabir\nAssociate Professor, Department of Physics\nDhaka College    Date: 24 February 2026",
+      "fileType": "Word Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Recommendation letter received and archived."
     },
     {
       "id": "file-008-review",
@@ -3686,7 +3781,12 @@
         "PDF Document • 2 pages",
         "Medical fitness certificate required for hall residence.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-008",
+      "content": "MEDICAL FITNESS CERTIFICATE\n\nPatient Name: Mahmud Hasan    Age: 20    Sex: Male\nExamined On: 26 February 2026\n\nExamination Summary:\n  Blood Pressure: 118/76 mmHg (Normal)\n  Pulse: 72 bpm    Height: 172 cm    Weight: 64 kg    BMI: 21.6\n  Chest X-Ray: Normal    Vision: 6/6 both eyes\n  Hepatitis B / C: Negative    General Health: Satisfactory\n\nOpinion: The applicant is medically fit for hall residence and academic activities.\n\nDr. Sharmin Akter, MBBS, BCS (Health)\nDhaka Medical College Hospital    Reg. No: A-44021",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Medical clearance under review for hall admission."
     },
     {
       "id": "file-009-review",
@@ -3731,7 +3831,12 @@
         "PDF Document • 2 pages",
         "Secondary School Certificate issued by the Dhaka Education Board.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-009",
+      "content": "BOARD OF INTERMEDIATE AND SECONDARY EDUCATION, DHAKA\nSECONDARY SCHOOL CERTIFICATE (SSC) — 2023\n\nThis is to certify that MAHMUD HASAN, Roll No 318922, Registration No 1801234567,\nson of Abdul Hasan and Rahima Begum, passed the Secondary School Certificate\nExamination of 2023 in the Science group from Motijheel Government Boys' High School.\n\nGrade Point Average (GPA): 5.00    Letter Grade: A+    Result: PASSED\n\nGiven under the seal of the Board on 28 May 2023.\nChairman, BISE Dhaka",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "SSC certificate verified, GPA 5.00."
     },
     {
       "id": "file-010-review",
@@ -3776,7 +3881,12 @@
         "PDF Document • 1 pages",
         "Digital birth registration certificate.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-010",
+      "content": "GOVERNMENT OF BANGLADESH — DIGITAL BIRTH REGISTRATION CERTIFICATE\n\nBirth Registration No: 19062711000123456\nName: Mahmud Hasan\nDate of Birth: 12 March 2006 (Twelfth March Two Thousand Six)\nSex: Male    Place of Birth: Dhaka\nFather: Abdul Hasan    Mother: Rahima Begum\nPermanent Address: Boalia, Rajshahi\n\nRegistration Office: Dhaka City Corporation, Ward 14\nDate of Registration: 02 April 2006    Date of Issue: 11 January 2024",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Birth registration verified."
     },
     {
       "id": "file-011-review",
@@ -3821,7 +3931,12 @@
         "Word Document • 3 pages",
         "Application requesting a seat in the university residential hall.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-011",
+      "content": "APPLICATION FOR HALL ACCOMMODATION\n\nTo: The Provost, Dr. Muhammad Shahidullah Hall, University of Dhaka\nFrom: Mahmud Hasan, 1st Year, Computer Science and Engineering\n\nSubject: Request for allotment of a residential seat for the 2026 session.\n\nRespected Sir,\nI am a newly admitted student from Rajshahi with no local guardian in Dhaka.\nI respectfully request the allotment of a seat in your hall so that I can attend\nclasses regularly. I have attached my admission slip, medical clearance, and\nguardian consent. I will abide by all hall rules.\n\nYours faithfully,\nMahmud Hasan    Date: 04 March 2026",
+      "fileType": "Word Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Accommodation request pending allocation."
     },
     {
       "id": "file-012-review",
@@ -3866,7 +3981,12 @@
         "PDF Document • 1 pages",
         "Guardian consent declaration for the minor-to-adult transition student.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-012",
+      "content": "GUARDIAN CONSENT FORM\n\nI, Abdul Hasan, father and legal guardian of Mahmud Hasan, hereby give my full\nconsent for my son to enroll at the University of Dhaka and to reside in the\nuniversity hall for the 2026 academic session.\n\nI take responsibility for his conduct and will remain reachable at +880 1711 778899.\n\nGuardian Signature: Abdul Hasan    NID: 1234 567 8901\nDate: 03 March 2026",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Guardian consent received."
     },
     {
       "id": "file-013-review",
@@ -3911,7 +4031,12 @@
         "Word Document • 4 pages",
         "Merit scholarship application based on HSC results.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-013",
+      "content": "MERIT SCHOLARSHIP APPLICATION — 2026\n\nApplicant: Mahmud Hasan    Programme: B.Sc. CSE (1st Year)\nHSC GPA: 5.00    SSC GPA: 5.00    Household Annual Income: BDT 3,20,000\n\nStatement of Purpose:\nI come from a modest family in Rajshahi where my father runs a small stationery\nshop. Despite financial constraints I have maintained a strong academic record.\nA merit scholarship would allow me to focus on my studies without the burden of\ntuition, and I intend to contribute to the university's programming community.\n\nRequested Award: Full tuition waiver + monthly stipend of BDT 3,000\nAttachments: HSC transcript, income certificate, bank solvency statement.\n\nSignature: Mahmud Hasan    Date: 05 March 2026",
+      "fileType": "Word Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Scholarship application under review."
     },
     {
       "id": "file-014-review",
@@ -3956,7 +4081,12 @@
         "PDF Document • 1 pages",
         "Guardian income certificate issued by the local union council.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-014",
+      "content": "UNION PARISHAD — INCOME CERTIFICATE\n\nThis is to certify that Mr. Abdul Hasan, son of late Karim Hasan, resident of\nBoalia, Rajshahi, earns an approximate annual income of BDT 3,20,000 (Three Lakh\nTwenty Thousand Taka) from his retail stationery business.\n\nThis certificate is issued for the educational scholarship purpose of his son,\nMahmud Hasan.\n\nChairman, Boalia Union Parishad\nDate: 04 March 2026    Memo No: BUP/INC/2026/118",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Income certificate pending verification."
     },
     {
       "id": "file-015-review",
@@ -4001,7 +4131,12 @@
         "Excel Spreadsheet • 1 pages",
         "Spring 2026 course registration sheet.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-015",
+      "content": "COURSE REGISTRATION — SPRING 2026 (Mahmud Hasan)\n\nCode      Course Title                       Credit   Section\nCSE-101   Structured Programming             3.0      A\nCSE-103   Discrete Mathematics               3.0      A\nPHY-101   Physics I                          3.0      B\nMAT-101   Calculus and Linear Algebra        3.0      A\nENG-101   English Composition                2.0      C\n----------------------------------------------------------\nTotal Registered Credit: 14.0    Status: CONFIRMED\nAdvisor: Dr. Nasima Sultana    Date: 06 March 2026",
+      "fileType": "Excel Spreadsheet",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Course registration completed for 5 courses."
     },
     {
       "id": "file-016-review",
@@ -4046,7 +4181,12 @@
         "PDF Document • 1 pages",
         "Central library membership registration form.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-016",
+      "content": "CENTRAL LIBRARY — MEMBERSHIP REGISTRATION\n\nMember: Mahmud Hasan    Membership No: LIB-2026-10455\nDepartment: Computer Science and Engineering    Category: Undergraduate\nBorrowing Limit: 4 books / 14 days    Security Deposit: BDT 500 (paid)\nIssued: 07 March 2026    Valid Till: 06 March 2030\nLibrarian: Mr. Habibur Rahman",
+      "fileType": "PDF Document",
+      "ownerName": "Mahmud Hasan",
+      "reviewReason": "Library membership active."
     },
     {
       "id": "file-017-review",
@@ -4091,7 +4231,12 @@
         "PDF Document • 6 pages",
         "Monthly document review summary report prepared by the review officer.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-017",
+      "content": "PAPERHUB BANGLADESH — MONTHLY DOCUMENT REVIEW REPORT (MAY 2026)\nPrepared by: Rajdip Roy, Document Review Officer\n\n1. Volume\n   Documents received .................... 142\n   Documents reviewed and cleared ........ 104\n   Returned for correction ...............  22\n   Pending at month end ..................  16\n\n2. Turnaround\n   Average review time ................... 1.8 business days\n   High-priority average ................. 0.9 business days\n\n3. Common Issues\n   - Mismatched NID and birth-registration dates (9 cases)\n   - Bank solvency letters missing official seal (6 cases)\n   - Illegible scan quality on transcripts (4 cases)\n\n4. Recommendation\n   Introduce an automated pre-check for NID/birth-date consistency before\n   documents enter the manual review queue.\n\nSigned: Rajdip Roy    Date: 31 May 2026",
+      "fileType": "PDF Document",
+      "ownerName": "Rajdip Roy",
+      "reviewReason": "May 2026 review report: 104 documents processed."
     },
     {
       "id": "file-018-review",
@@ -4136,7 +4281,12 @@
         "Excel Spreadsheet • 2 pages",
         "Compliance audit checklist applied to reviewed submissions.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-018",
+      "content": "COMPLIANCE AUDIT CHECKLIST — MAY 2026 CYCLE (Officer: Rajdip Roy)\n\nCheck Item                                       Result\nIdentity document present & legible ............ PASS\nNID matches birth registration ................. PASS\nFinancial proof has official seal .............. PASS\nAcademic transcript board-verified ............. PASS\nGuardian consent attached (minors) ............. PASS\nPayment receipt reconciled with accounts ....... PASS\nDuplicate submission check ..................... PASS\nPersonal data stored per retention policy ...... PASS\n\nOverall Compliance Score: 98%    Auditor Sign-off: Rajdip Roy",
+      "fileType": "Excel Spreadsheet",
+      "ownerName": "Rajdip Roy",
+      "reviewReason": "Audit checklist completed for the May cycle."
     },
     {
       "id": "file-019-review",
@@ -4181,7 +4331,12 @@
         "PDF Document • 5 pages",
         "Chronological verification log of identity checks performed.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-019",
+      "content": "OFFICER VERIFICATION LOG (Q2 2026) — Rajdip Roy\n\nDate        Document                         Subject          Action      Result\n2026-05-02  National-ID-Verification         Mahmud Hasan     EC cross-check  OK\n2026-05-03  Bank-Solvency-Statement          Mahmud Hasan     Seal verify     OK\n2026-05-04  Medical-Clearance                Mahmud Hasan     Reg. verify     OK\n2026-05-06  Income-Certificate-Guardian      Mahmud Hasan     UP cross-check  PENDING\n2026-05-08  Scholarship-Application          Mahmud Hasan     Eligibility     IN-REVIEW\n\nNotes: One income certificate awaiting union parishad confirmation.\nOfficer: Rajdip Roy",
+      "fileType": "PDF Document",
+      "ownerName": "Rajdip Roy",
+      "reviewReason": "Verification log being finalised for the quarter."
     },
     {
       "id": "file-020-review",
@@ -4226,7 +4381,12 @@
         "Word Document • 2 pages",
         "Standard notice template sent when a document is returned for correction.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-020",
+      "content": "DOCUMENT RETURN NOTICE (TEMPLATE)\n\nDear {applicant_name},\n\nYour submitted document \"{document_name}\" could not be cleared during review for\nthe following reason(s):\n\n  - {reason_1}\n  - {reason_2}\n\nPlease correct the above and re-upload the document within 7 working days through\nyour PaperHub dashboard. If you need assistance, contact the review desk.\n\nRegards,\nRajdip Roy\nDocument Review Officer, PaperHub Bangladesh",
+      "fileType": "Word Document",
+      "ownerName": "Rajdip Roy",
+      "reviewReason": "Notice template approved for use."
     },
     {
       "id": "file-021-review",
@@ -4271,7 +4431,12 @@
         "Excel Spreadsheet • 3 pages",
         "Backlog analysis of the pending review queue.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-021",
+      "content": "REVIEW QUEUE BACKLOG ANALYSIS — JUNE 2026\n\nPriority   Pending   Avg Age (days)   Oldest Item\nHigh ......... 4 ......... 1.2 ......... NID-VER-2026-0007\nMedium ....... 8 ......... 2.6 ......... Scholarship-Application-Merit\nLow .......... 4 ......... 4.1 ......... Income-Certificate-Guardian\n\nBottleneck: external verification dependencies (EC + Union Parishad).\nOwner: Rajdip Roy",
+      "fileType": "Excel Spreadsheet",
+      "ownerName": "Rajdip Roy",
+      "reviewReason": "Backlog analysis in progress."
     },
     {
       "id": "file-022-review",
@@ -4316,7 +4481,12 @@
         "PDF Document • 4 pages",
         "Internal guidelines for cross-checking identity documents.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-022",
+      "content": "IDENTITY CROSS-CHECK GUIDELINES (v2)\n\n1. Always match NID number, name, and date of birth against the birth\n   registration certificate before clearing identity.\n2. For applicants under 18 at submission, require guardian consent.\n3. Reject any document where the photo is missing or the seal is absent.\n4. Escalate suspected forgery to the Platform Administrator immediately.\n5. Record every check in the Officer Verification Log.\n\nMaintainer: Rajdip Roy, Document Review Officer    Effective: 01 May 2026",
+      "fileType": "PDF Document",
+      "ownerName": "Rajdip Roy",
+      "reviewReason": "Guidelines published to the review team."
     },
     {
       "id": "file-023-review",
@@ -4361,7 +4531,12 @@
         "PDF Document • 2 pages",
         "Weekly clearance summary for management.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-023",
+      "content": "WEEKLY CLEARANCE SUMMARY — WEEK 22, 2026\n\nCleared: 31 documents    Returned: 5    Escalated: 1\nTop category: Academic transcripts (12)\nSLA adherence: 96%\nNotable: One scholarship case escalated for income verification.\n\nReviewer: Rajdip Roy",
+      "fileType": "PDF Document",
+      "ownerName": "Rajdip Roy",
+      "reviewReason": "Weekly clearance summary delivered."
     },
     {
       "id": "file-024-review",
@@ -4406,7 +4581,12 @@
         "PDF Document • 7 pages",
         "Quarterly platform usage analytics across all PaperHub Bangladesh accounts.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-024",
+      "content": "PAPERHUB BANGLADESH — PLATFORM USAGE ANALYTICS (Q2 2026)\nPrepared by: Rajesh Biswas, Platform Administrator\n\nKey Metrics\n  Total documents on platform ........... 180\n  Documents processed this quarter ...... 104\n  Pending review ........................  16\n  Total payments collected .............. BDT 24,50,000\n\nEngagement\n  Active daily users .................... steady\n  Avg uploads per active user ........... 6.0\n  Peak upload window .................... 08:00–11:00 (Asia/Dhaka)\n\nReliability\n  Platform uptime ....................... 99.95%\n  Failed upload rate .................... 0.4%\n\nAction Items\n  - Expand storage quota ahead of the admission season.\n  - Add automated NID pre-checks (per review officer recommendation).\n\nSigned: Rajesh Biswas    Date: 30 June 2026",
+      "fileType": "PDF Document",
+      "ownerName": "Rajesh Biswas",
+      "reviewReason": "Q2 2026 analytics: 180 documents, growth across all metrics."
     },
     {
       "id": "file-025-review",
@@ -4451,7 +4631,12 @@
         "PDF Document • 5 pages",
         "Role-based access control policy for the platform.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-025",
+      "content": "USER ACCESS CONTROL POLICY (v3)\n\n1. Roles\n   - User: upload documents, track submissions, access own payments.\n   - Officer: review/verify documents, manage the review queue.\n   - Admin: full platform governance, analytics, and policy.\n\n2. Principle of Least Privilege\n   Each account receives only the permissions required for its role.\n\n3. Authentication\n   Two-factor authentication is mandatory for officer and admin accounts.\n\n4. Audit\n   All privileged actions are logged and reviewed monthly.\n\nOwner: Rajesh Biswas, Platform Administrator    Effective: 01 June 2026",
+      "fileType": "PDF Document",
+      "ownerName": "Rajesh Biswas",
+      "reviewReason": "Access policy v3 approved and enforced."
     },
     {
       "id": "file-026-review",
@@ -4496,7 +4681,12 @@
         "PDF Document • 3 pages",
         "Automated system backup verification report.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-026",
+      "content": "SYSTEM BACKUP REPORT — JUNE 2026\n\nBackup Schedule: Daily 02:00 (Asia/Dhaka), 30-day retention\nLast Successful Backup: 08 June 2026, 02:04\nBackup Size: 4.2 GB    Integrity Check: PASSED\nRestore Drill: Performed 07 June 2026 — full restore in 11 minutes (PASS)\nOffsite Replication: Enabled (Singapore region)\n\nReviewed by: Rajesh Biswas, Platform Administrator",
+      "fileType": "PDF Document",
+      "ownerName": "Rajesh Biswas",
+      "reviewReason": "Daily backups verified, restore test passed."
     },
     {
       "id": "file-027-review",
@@ -4541,7 +4731,12 @@
         "Word Document • 4 pages",
         "Guidelines governing how long document data is retained.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-027",
+      "content": "DATA RETENTION GUIDELINES (DRAFT)\n\n- Identity documents: retain 5 years after account closure.\n- Financial proofs: retain 7 years per audit requirement.\n- Academic records: retain for the lifetime of the account.\n- Review logs: retain 3 years.\n- Deleted documents: purged from backups within 30 days.\n\nAll retention is subject to Bangladesh data-protection requirements.\nAuthor: Rajesh Biswas    Status: Under legal review",
+      "fileType": "Word Document",
+      "ownerName": "Rajesh Biswas",
+      "reviewReason": "Retention guidelines under review for legal alignment."
     },
     {
       "id": "file-028-review",
@@ -4586,7 +4781,12 @@
         "Excel Spreadsheet • 2 pages",
         "Quarterly reconciliation of platform payments.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-028",
+      "content": "QUARTERLY PAYMENT RECONCILIATION — Q2 2026\n\nChannel        Collected (BDT)    Transactions\nbKash ............ 11,80,000 ......... 412\nNagad ............  6,20,000 ......... 233\nBank Transfer ....  6,50,000 ......... 121\n-----------------------------------------------\nTotal ............ 24,50,000 ......... 766\n\nLedger vs Gateway: MATCHED (0 discrepancy)\nReconciled by: Rajesh Biswas    Date: 30 June 2026",
+      "fileType": "Excel Spreadsheet",
+      "ownerName": "Rajesh Biswas",
+      "reviewReason": "Payments reconciled with zero discrepancy."
     },
     {
       "id": "file-029-review",
@@ -4631,7 +4831,12 @@
         "PDF Document • 6 pages",
         "Platform incident response and escalation plan.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-029",
+      "content": "INCIDENT RESPONSE PLAN (v2)\n\nSeverity Levels\n  SEV-1: Data breach or full outage — notify admin within 15 minutes.\n  SEV-2: Partial outage — notify within 1 hour.\n  SEV-3: Degraded performance — handle within the business day.\n\nEscalation Chain: Officer -> Platform Administrator (Rajesh Biswas) -> Vendor.\nCommunication: Status page + email to affected users.\nPost-Incident: Root-cause report within 72 hours.\n\nOwner: Rajesh Biswas, Platform Administrator    Effective: 15 May 2026",
+      "fileType": "PDF Document",
+      "ownerName": "Rajesh Biswas",
+      "reviewReason": "Incident response plan ratified."
     },
     {
       "id": "file-030-review",
@@ -4676,7 +4881,12 @@
         "Word Document • 2 pages",
         "Checklist for onboarding new platform accounts.",
         "Tracked in the PaperHub review queue"
-      ]
+      ],
+      "fileId": "file-030",
+      "content": "ACCOUNT ONBOARDING CHECKLIST\n\n[ ] Verify applicant identity (NID + birth registration)\n[ ] Assign correct role (user / officer / admin)\n[ ] Enforce 2FA for privileged roles\n[ ] Issue welcome email with dashboard guide\n[ ] Set storage quota per plan\n[ ] Record onboarding in the audit log\n\nPrepared by: Rajesh Biswas    Status: Awaiting sign-off",
+      "fileType": "Word Document",
+      "ownerName": "Rajesh Biswas",
+      "reviewReason": "Onboarding checklist pending sign-off."
     }
   ],
   "dashboardStats": {
@@ -4684,5 +4894,27 @@
     "pendingReview": 10,
     "processedDocuments": 20,
     "totalPayments": "BDT 24,50,000"
-  }
+  },
+  "infrastructure": [
+    {
+      "label": "API",
+      "value": "Online",
+      "state": "ok"
+    },
+    {
+      "label": "Database",
+      "value": "Running",
+      "state": "ok"
+    },
+    {
+      "label": "Uptime",
+      "value": "99.95%",
+      "state": "info"
+    },
+    {
+      "label": "Last Backup",
+      "value": "2h ago",
+      "state": "info"
+    }
+  ]
 }

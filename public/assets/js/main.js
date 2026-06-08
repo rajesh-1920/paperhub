@@ -340,8 +340,272 @@ function applyCurrentUserPageData() {
     }
   }
 
+  if (document.body.classList.contains("dashboard-shell")) {
+    renderDashboard(user);
+  }
+
   if (document.body.classList.contains("payment-page")) {
     renderPaymentPage(user);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Dynamic dashboards — drive admin/officer/user dashboards from the dataset.
+ * ------------------------------------------------------------------------- */
+
+function phPill(label, variant) {
+  return `<span class="accent-pill pill-${variant}">${escapeHtml(label)}</span>`;
+}
+
+function phStatusVariant(status) {
+  const value = String(status || "").toLowerCase();
+  if (["completed", "approved", "active", "settled"].includes(value)) return "emerald";
+  if (["reviewing", "in-review", "pending", "pending approval", "revision"].includes(value)) return "amber";
+  if (["rejected", "failed", "overdue"].includes(value)) return "rose";
+  return "slate";
+}
+
+function phPriorityVariant(priority) {
+  const value = String(priority || "").toLowerCase();
+  if (value === "high") return "rose";
+  if (value === "medium") return "amber";
+  return "slate";
+}
+
+function phRoleVariant(role) {
+  const value = String(role || "").toLowerCase();
+  if (value === "admin") return "rose";
+  if (value === "officer") return "amber";
+  return "sky";
+}
+
+function phRoleLabel(role) {
+  const map = { admin: "Admin", officer: "Officer", user: "Student" };
+  return map[String(role || "").toLowerCase()] || "User";
+}
+
+function phStatusLabel(status) {
+  const value = String(status || "").toLowerCase();
+  if (value === "in-review") return "In Review";
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function phTimeAgo(iso) {
+  if (!iso) return "Recently";
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "Recently";
+  const diff = Date.now() - then;
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  return `${months}mo ago`;
+}
+
+function phFileEmoji(name) {
+  const ext = String(name || "").split(".").pop().toLowerCase();
+  if (ext === "pdf") return "📄";
+  if (ext === "doc" || ext === "docx") return "📝";
+  if (ext === "xls" || ext === "xlsx") return "📊";
+  if (["png", "jpg", "jpeg"].includes(ext)) return "🖼️";
+  return "📎";
+}
+
+function phRenderInto(selector, html) {
+  document.querySelectorAll(selector).forEach((node) => {
+    node.innerHTML = html;
+  });
+}
+
+function phSetText(selector, value) {
+  document.querySelectorAll(selector).forEach((node) => {
+    node.textContent = String(value);
+  });
+}
+
+function renderDashboard(user) {
+  const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
+  const allFiles = Array.isArray(dataset.files) ? dataset.files : [];
+  const allUsers = Array.isArray(dataset.users) ? dataset.users : [];
+  const queue = Array.isArray(dataset.reviewQueue) ? dataset.reviewQueue : [];
+  const role = normalizeRole(user.role);
+  const userFiles = Array.isArray(user.files) ? user.files : [];
+
+  const setStat = (key, value) => {
+    document.querySelectorAll(`[data-dashboard-stat="${key}"]`).forEach((node) => {
+      node.textContent = String(value);
+    });
+  };
+
+  if (role === "admin") {
+    setStat("totalUsers", allUsers.length);
+    setStat("documents", allFiles.length);
+    setStat("approved", allFiles.filter((file) => file.status === "completed").length);
+    setStat("alerts", allFiles.filter((file) => file.status === "pending" || file.status === "reviewing").length);
+    renderAdminDashboard(allUsers, allFiles, queue, dataset);
+  } else if (role === "officer") {
+    setStat("pendingReviews", queue.filter((item) => item.status === "pending" || item.status === "in-review").length);
+    setStat("approved", queue.filter((item) => item.status === "completed").length);
+    setStat("rejected", queue.filter((item) => item.status === "rejected").length);
+    setStat("assignedStudents", new Set(queue.map((item) => item.submittedBy)).size);
+    renderOfficerDashboard(queue);
+  } else {
+    setStat("totalSubmissions", userFiles.length);
+    setStat("pendingReview", userFiles.filter((file) => file.status === "reviewing" || file.status === "pending").length);
+    setStat("approved", userFiles.filter((file) => file.status === "completed").length);
+    setStat("rejected", userFiles.filter((file) => file.status === "rejected").length);
+    renderUserDashboard(user, userFiles);
+  }
+}
+
+function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
+  const emptyRow = (cols, message) => `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
+
+  const userRows = allUsers
+    .map(
+      (account) => `
+        <tr>
+          <td class="font-semibold">${escapeHtml(account.name)}</td>
+          <td>${phPill(phRoleLabel(account.role), phRoleVariant(account.role))}</td>
+          <td>${phPill(account.accountStatus || "Active", "emerald")}</td>
+          <td>${escapeHtml(formatDate(account.joinedDate))}</td>
+          <td><button class="font-semibold text-teal-700 hover:text-teal-800 transition-colors">Edit</button></td>
+        </tr>`,
+    )
+    .join("");
+  phRenderInto("[data-admin-users]", userRows || emptyRow(5, "No users found"));
+
+  const pendingRows = queue
+    .filter((item) => item.status === "pending" || item.status === "in-review")
+    .slice(0, 5)
+    .map(
+      (item) => `
+        <tr>
+          <td class="font-semibold">${escapeHtml(item.submittedBy)}</td>
+          <td>${escapeHtml(item.reviewer)}</td>
+          <td>${phPill(phStatusLabel(item.priority), phPriorityVariant(item.priority))}</td>
+        </tr>`,
+    )
+    .join("");
+  phRenderInto("[data-admin-pending]", pendingRows || emptyRow(3, "Queue is clear"));
+
+  const palettes = [
+    { border: "border-emerald-100", bg: "bg-emerald-50", head: "text-emerald-900", body: "text-emerald-700", foot: "text-emerald-600" },
+    { border: "border-blue-100", bg: "bg-blue-50", head: "text-blue-900", body: "text-blue-700", foot: "text-blue-600" },
+    { border: "border-sky-100", bg: "bg-sky-50", head: "text-sky-900", body: "text-sky-700", foot: "text-sky-600" },
+  ];
+  const activity = allFiles
+    .slice()
+    .sort((left, right) => new Date(right.uploadedAt).getTime() - new Date(left.uploadedAt).getTime())
+    .slice(0, 4)
+    .map((file, index) => {
+      const palette = palettes[index % palettes.length];
+      return `
+        <div class="rounded-lg border ${palette.border} ${palette.bg} p-3.5">
+          <p class="font-semibold ${palette.head}">${phFileEmoji(file.name)} ${escapeHtml(file.fileType || "Document")} ${escapeHtml(phStatusLabel(file.status))}</p>
+          <p class="${palette.body} mt-1.5">${escapeHtml(file.ownerName)} uploaded ${escapeHtml(file.name)}</p>
+          <p class="text-xs ${palette.foot} mt-2 font-medium">${escapeHtml(phTimeAgo(file.uploadedAt))}</p>
+        </div>`;
+    })
+    .join("");
+  phRenderInto("[data-admin-activity]", activity || `<p class="muted">No recent activity</p>`);
+
+  const infra = Array.isArray(dataset.infrastructure) ? dataset.infrastructure : [];
+  const infraRows = infra
+    .map((entry) => {
+      const ok = entry.state === "ok";
+      const wrap = ok ? "bg-emerald-50" : "bg-blue-50";
+      const dot = ok ? "text-emerald-600" : "text-blue-600";
+      return `
+        <div class="flex items-center justify-between p-2 rounded-lg ${wrap}">
+          <span class="text-slate-700">${escapeHtml(entry.label)}</span>
+          <span class="font-semibold ${dot}">${ok ? "● " : ""}${escapeHtml(entry.value)}</span>
+        </div>`;
+    })
+    .join("");
+  phRenderInto("[data-admin-infrastructure]", infraRows);
+}
+
+function renderOfficerDashboard(queue) {
+  const emptyRow = (cols, message) => `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
+
+  const pendingRows = queue
+    .filter((item) => item.status === "pending" || item.status === "in-review")
+    .slice(0, 5)
+    .map(
+      (item) => `
+        <tr>
+          <td class="font-semibold">${escapeHtml(item.submittedBy)}</td>
+          <td>${phFileEmoji(item.documentName)} ${escapeHtml(item.documentName)}</td>
+          <td>${escapeHtml(formatDate(item.submittedDate))}</td>
+          <td>${phPill(phStatusLabel(item.priority), phPriorityVariant(item.priority))}</td>
+          <td><a href="../review/review-details.html?id=${encodeURIComponent(item.id)}" data-app-href="pages/review/review-details.html?id=${encodeURIComponent(item.id)}" class="font-semibold text-amber-700 hover:text-amber-800 transition-colors">Review →</a></td>
+        </tr>`,
+    )
+    .join("");
+  phRenderInto("[data-officer-pending]", pendingRows || emptyRow(5, "No pending submissions"));
+
+  const activityRows = queue
+    .filter((item) => item.status === "completed")
+    .slice(0, 5)
+    .map((item) => {
+      const note = item.comments && item.comments.length ? item.comments[item.comments.length - 1].text : item.summary;
+      return `
+        <tr>
+          <td class="font-semibold">${escapeHtml(item.submittedBy)}</td>
+          <td>${phFileEmoji(item.documentName)} ${escapeHtml(item.documentName)}</td>
+          <td>${phPill("Approved", "emerald")}</td>
+          <td>${escapeHtml(formatDate(item.submittedDate))}</td>
+          <td><span class="text-emerald-700 font-medium">${escapeHtml(note)}</span></td>
+        </tr>`;
+    })
+    .join("");
+  phRenderInto("[data-officer-activity]", activityRows || emptyRow(5, "No recent decisions"));
+
+  const highPending = queue.filter((item) => item.priority === "high" && (item.status === "pending" || item.status === "in-review")).length;
+  phSetText("[data-officer-highlight]", `High-priority queue: ${highPending} file${highPending === 1 ? "" : "s"}`);
+}
+
+function renderUserDashboard(user, userFiles) {
+  const emptyRow = (cols, message) => `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
+
+  const submissionRows = userFiles
+    .slice()
+    .sort((left, right) => new Date(right.uploadedAt).getTime() - new Date(left.uploadedAt).getTime())
+    .slice(0, 5)
+    .map(
+      (file) => `
+        <tr>
+          <td class="font-semibold">${phFileEmoji(file.name)} ${escapeHtml(file.name)}</td>
+          <td>${escapeHtml(file.fileType || "Document")}</td>
+          <td>${escapeHtml(formatDate(file.uploadedAt))}</td>
+          <td>${phPill(phStatusLabel(file.status), phStatusVariant(file.status))}</td>
+          <td><a href="../file/files.html" data-app-href="pages/file/files.html" class="text-sky-700 font-semibold hover:text-sky-800 transition-colors">Open →</a></td>
+        </tr>`,
+    )
+    .join("");
+  phRenderInto("[data-user-submissions]", submissionRows || emptyRow(5, "No submissions yet"));
+
+  const total = userFiles.length;
+  const completed = userFiles.filter((file) => file.status === "completed").length;
+  const percent = total ? Math.round((completed / total) * 100) : 0;
+  document.querySelectorAll("[data-user-health-fill]").forEach((node) => {
+    node.style.width = `${percent}%`;
+  });
+  phSetText("[data-user-health-label]", `${percent}%`);
+
+  const pending = userFiles.filter((file) => file.status === "reviewing" || file.status === "pending");
+  const nextFile = pending[0];
+  if (nextFile) {
+    phSetText("[data-user-nextstep-title]", `Follow up on ${nextFile.name}`);
+    phSetText("[data-user-nextstep-note]", `You have ${pending.length} submission${pending.length === 1 ? "" : "s"} awaiting officer review.`);
+  } else {
+    phSetText("[data-user-nextstep-title]", "You're all caught up");
+    phSetText("[data-user-nextstep-note]", "Every submission has been reviewed. Upload a new document any time.");
   }
 }
 

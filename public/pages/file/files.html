@@ -114,11 +114,22 @@
             <h4>Selected File</h4>
             <div class="meta-line"><span>Selected</span><strong id="metaSelected">—</strong></div>
             <div class="meta-line"><span>Owner</span><span id="metaOwner">—</span></div>
+            <div class="meta-line"><span>Type</span><span id="metaType">—</span></div>
+            <div class="meta-line"><span>Pages</span><span id="metaPages">—</span></div>
+            <div class="meta-line"><span>Status</span><span id="metaStatus">—</span></div>
             <div class="meta-line"><span>Last updated</span><span id="metaUpdated">—</span></div>
+            <p id="metaDescription" class="file-subtitle" style="margin-top:0.6rem;"></p>
+            <div id="metaTags" class="file-meta-tags"></div>
             <div class="file-meta-actions">
               <button id="metaPreviewBtn" class="btn btn-outline" type="button">Preview</button>
               <button id="metaDownloadBtn" class="btn btn-primary" type="button">Download</button>
             </div>
+          </div>
+
+          <div class="card file-content-card">
+            <h4>Document Content</h4>
+            <p class="file-subtitle" id="fileContentMeta">Select a file to read its contents.</p>
+            <pre id="fileContentBody" class="file-content-body"></pre>
           </div>
 
           <div class="card file-storage-card">

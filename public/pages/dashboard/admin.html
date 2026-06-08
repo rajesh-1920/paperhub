@@ -86,32 +86,7 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td class="font-semibold">Sarah Johnson</td>
-                  <td><span class="accent-pill pill-sky">Student</span></td>
-                  <td><span class="accent-pill pill-emerald">Active</span></td>
-                  <td>Apr 10</td>
-                  <td><button class="font-semibold text-teal-700 hover:text-teal-800 transition-colors">Edit</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="font-semibold">Michael Chen</td>
-                  <td><span class="accent-pill pill-amber">Officer</span></td>
-                  <td><span class="accent-pill pill-emerald">Active</span></td>
-                  <td>Mar 25</td>
-                  <td><button class="font-semibold text-teal-700 hover:text-teal-800 transition-colors">Edit</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="font-semibold">Emma Williams</td>
-                  <td><span class="accent-pill pill-sky">Student</span></td>
-                  <td><span class="accent-pill pill-emerald">Active</span></td>
-                  <td>Mar 18</td>
-                  <td><button class="font-semibold text-teal-700 hover:text-teal-800 transition-colors">Edit</button>
-                  </td>
-                </tr>
-              </tbody>
+              <tbody data-admin-users></tbody>
             </table>
           </div>
         </article>
@@ -137,24 +112,7 @@
 
           <article class="dash-card">
             <h3 class="text-lg font-semibold mb-4">🖥️ Infrastructure Status</h3>
-            <div class="mt-3 space-y-3 text-sm">
-              <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-50">
-                <span class="text-slate-700">API</span>
-                <span class="font-semibold text-emerald-600">● Online</span>
-              </div>
-              <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-50">
-                <span class="text-slate-700">Database</span>
-                <span class="font-semibold text-emerald-600">● Running</span>
-              </div>
-              <div class="flex items-center justify-between p-2 rounded-lg bg-blue-50">
-                <span class="text-slate-700">Uptime</span>
-                <span class="font-semibold text-blue-600">99.9%</span>
-              </div>
-              <div class="flex items-center justify-between p-2 rounded-lg bg-blue-50">
-                <span class="text-slate-700">Last Backup</span>
-                <span class="font-semibold text-blue-600">2h ago</span>
-              </div>
-            </div>
+            <div class="mt-3 space-y-3 text-sm" data-admin-infrastructure></div>
           </article>
         </aside>
       </section>
@@ -175,18 +133,7 @@
                   <th>Priority</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td class="font-semibold">John Smith</td>
-                  <td>Dr. Johnson</td>
-                  <td><span class="accent-pill pill-rose">High</span></td>
-                </tr>
-                <tr>
-                  <td class="font-semibold">Lisa Chen</td>
-                  <td>Prof. Brown</td>
-                  <td><span class="accent-pill pill-amber">Medium</span></td>
-                </tr>
-              </tbody>
+              <tbody data-admin-pending></tbody>
             </table>
           </div>
         </article>
@@ -195,23 +142,7 @@
           <div class="section-title">
             <h2>System Activity Log</h2>
           </div>
-          <div class="space-y-3 text-sm">
-            <div class="rounded-lg border border-emerald-100 bg-emerald-50 p-3.5">
-              <p class="font-semibold text-emerald-900">📄 New Document Uploaded</p>
-              <p class="text-emerald-700 mt-1.5">Sarah Johnson uploaded Thesis.pdf</p>
-              <p class="text-xs text-emerald-600 mt-2 font-medium">5m ago</p>
-            </div>
-            <div class="rounded-lg border border-blue-100 bg-blue-50 p-3.5">
-              <p class="font-semibold text-blue-900">✅ Document Approved</p>
-              <p class="text-blue-700 mt-1.5">Prof. Chen approved Application.pdf</p>
-              <p class="text-xs text-blue-600 mt-2 font-medium">15m ago</p>
-            </div>
-            <div class="rounded-lg border border-sky-100 bg-sky-50 p-3.5">
-              <p class="font-semibold text-sky-900">👤 User Registered</p>
-              <p class="text-sky-700 mt-1.5">New student Emma Davis registered</p>
-              <p class="text-xs text-sky-600 mt-2 font-medium">1h ago</p>
-            </div>
-          </div>
+          <div class="space-y-3 text-sm" data-admin-activity></div>
         </article>
       </section>
 

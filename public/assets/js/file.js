@@ -543,8 +543,43 @@ function updateStorageHealth(files) {
 function updateMetaPanel(file) {
   const currentUser = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
   setText("#metaSelected", file ? file.name : "—");
-  setText("#metaOwner", currentUser?.name || "PaperHub User");
-  setText("#metaUpdated", file ? formatDate(file.uploadedAt) : "—");
+  setText("#metaOwner", file?.ownerName || currentUser?.name || "PaperHub User");
+  setText("#metaType", file?.fileType || (file ? getFileExtension(file.name).toUpperCase() + " Document" : "—"));
+  setText("#metaPages", file?.pageCount ? String(file.pageCount) : "—");
+  setText("#metaStatus", file ? formatFileStatusLabel(file.status) : "—");
+  setText("#metaUpdated", file ? formatDate(file.updatedAt || file.uploadedAt) : "—");
+  setText("#metaDescription", file?.description || "");
+
+  const tagsEl = getElement("#metaTags");
+  if (tagsEl) {
+    const tags = Array.isArray(file?.tags) ? file.tags : [];
+    tagsEl.innerHTML = tags.map((tag) => `<span class="file-meta-tag">${escapeHtml(tag)}</span>`).join("");
+  }
+
+  renderFileContent(file);
+}
+
+function renderFileContent(file) {
+  const meta = getElement("#fileContentMeta");
+  const body = getElement("#fileContentBody");
+  if (!body) {
+    return;
+  }
+
+  if (!file) {
+    if (meta) meta.textContent = "Select a file to read its contents.";
+    body.textContent = "";
+    return;
+  }
+
+  if (meta) {
+    const sizeLabel = file.sizeLabel || formatFileSize(Number(file.size || 0));
+    meta.textContent = `${file.fileType || "Document"} • ${file.pageCount || 1} page${file.pageCount === 1 ? "" : "s"} • ${sizeLabel}`;
+  }
+
+  body.textContent = file.content
+    ? String(file.content)
+    : "No stored content for this document.";
 }
 
 function syncStatusChip(status) {

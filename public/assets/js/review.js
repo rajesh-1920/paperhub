@@ -431,13 +431,15 @@ function renderReviewDetails(review) {
               </div>
               <div class="review-document-page">
                 <div class="review-document-heading">${escapeHtml(review.documentName)}</div>
-                <div class="review-document-lines">
+                ${review.content
+        ? `<pre class="review-document-content">${escapeHtml(review.content)}</pre>`
+        : `<div class="review-document-lines">
                   <span></span>
                   <span></span>
                   <span></span>
                   <span></span>
                   <span></span>
-                </div>
+                </div>`}
                 <div class="review-document-callout">
                   <strong>Why this is under review</strong>
                   <p>${escapeHtml(reviewReason)}</p>
