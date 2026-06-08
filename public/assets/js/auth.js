@@ -1,24 +1,24 @@
 const STATIC_LOGIN_CREDENTIALS = {
-  "user@gmail.com": {
+  "user@paperhub.edu.bd": {
     password: "user",
     id: "demo-user",
-    name: "Demo User",
+    name: "Md. Arif Hossain",
     role: "user",
-    title: "User",
+    title: "Student Document User",
   },
-  "officer@gmail.com": {
+  "officer@paperhub.com.bd": {
     password: "officer",
     id: "demo-officer",
-    name: "Demo Officer",
+    name: "Mahmudul Hasan",
     role: "officer",
-    title: "Review Officer",
+    title: "Document Review Officer",
   },
-  "admin@gmail.com": {
+  "admin@paperhub.com.bd": {
     password: "admin",
     id: "demo-admin",
     name: "Rajdip Roy",
     role: "admin",
-    title: "Administrator",
+    title: "Platform Administrator",
   },
 };
 
@@ -78,10 +78,22 @@ function validateRegisterData(formData) {
 }
 
 function getSeedAuthUsers() {
-  return Object.entries(STATIC_LOGIN_CREDENTIALS).map(([email, account]) => ({
+  const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : null;
+  const authAccounts = Array.isArray(dataset?.authAccounts) && dataset.authAccounts.length
+    ? dataset.authAccounts
+    : Object.entries(STATIC_LOGIN_CREDENTIALS).map(([email, account]) => ({
+      id: account.id,
+      name: account.name,
+      email,
+      password: account.password,
+      role: account.role,
+      title: account.title,
+    }));
+
+  return authAccounts.map((account) => ({
     id: account.id,
     name: account.name,
-    email,
+    email: String(account.email || "").toLowerCase(),
     password: account.password,
     role: account.role,
     title: account.title,
