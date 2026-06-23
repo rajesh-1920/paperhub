@@ -17,6 +17,7 @@ async function startTestServer() {
   process.env.PAPERHUB_DB_FILE = dbFile;
   process.env.PAPERHUB_SEED_FILE = seedFile;
   process.env.PAPERHUB_UPLOAD_DIR = join(dir, "uploads");
+  process.env.BCRYPT_ROUNDS = "4"; // keep auth tests fast
 
   const { createApp } = await import("../server/index.js");
   const server = createApp().listen(0);
@@ -51,6 +52,60 @@ test("API serves the dataset and persists writes to the JSON file", async (t) =>
 
   const onDisk = JSON.parse(await readFile(dbFile, "utf8"));
   assert.equal(onDisk.users[0].name, "Server Test User", "JSON file on disk updated");
+});
+
+async function login(base, email, password) {
+  return fetch(`${base}/api/auth/login`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+test("auth: login issues tokens, refresh renews, bad creds rejected", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  // Wrong password and unknown email are both 401 (no user enumeration).
+  assert.equal((await login(base, "rajesh.biswas@paperhub.com.bd", "nope")).status, 401);
+  assert.equal((await login(base, "ghost@nowhere.test", "admin01")).status, 401);
+
+  const res = await login(base, "rajesh.biswas@paperhub.com.bd", "admin01");
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.ok(body.token, "access token issued");
+  assert.ok(body.refreshToken, "refresh token issued");
+  assert.equal(body.user.role, "admin");
+  assert.equal(body.user.password, undefined, "no plaintext leaks");
+  assert.equal(body.user.passwordHash, undefined, "no hash leaks");
+
+  // The legacy plaintext password is migrated to a hash on first login.
+  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  const account = dataset.authAccounts.find((a) => a.email === "rajesh.biswas@paperhub.com.bd");
+  assert.ok(account.passwordHash, "password hashed on login");
+  assert.equal(account.password, undefined, "plaintext removed");
+
+  // Refresh exchanges the refresh token for a fresh access token.
+  const refreshed = await fetch(`${base}/api/auth/refresh`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ refreshToken: body.refreshToken }),
+  });
+  assert.equal(refreshed.status, 200);
+  assert.ok((await refreshed.json()).token, "new access token issued");
+
+  // After logout the refresh token is revoked.
+  await fetch(`${base}/api/auth/logout`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ refreshToken: body.refreshToken }),
+  });
+  const afterLogout = await fetch(`${base}/api/auth/refresh`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ refreshToken: body.refreshToken }),
+  });
+  assert.equal(afterLogout.status, 401, "revoked refresh token rejected");
 });
 
 test("dataset exposes the new SaaS collections and round-trips them", async (t) => {

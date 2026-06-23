@@ -12,6 +12,8 @@ import {
   readFileContent,
   deleteFileContent,
 } from "./db.js";
+import { authRouter } from "./routes/auth.js";
+import { assertAuthConfig } from "./config.js";
 
 const ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
 const PDF_MAGIC = Buffer.from("%PDF");
@@ -29,6 +31,9 @@ export function createApp() {
   app.use(express.json({ limit: "8mb" }));
 
   app.get("/api/health", (req, res) => res.json({ ok: true }));
+
+  // Authentication (login / refresh / logout).
+  app.use("/api/auth", authRouter());
 
   // Read the whole dataset. Never cache it — the frontend re-fetches after
   // every mutation and must always see the latest counts.
@@ -133,6 +138,7 @@ export function createApp() {
 }
 
 export async function start(port = process.env.PORT || 8000) {
+  assertAuthConfig();
   await ensureDataset();
   const app = createApp();
   return app.listen(port, () => {
