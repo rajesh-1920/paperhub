@@ -1,0 +1,16 @@
+# Dependencies & generated output
+node_modules
+coverage
+package-lock.json
+
+# Generated / vendored CSS — do not reformat
+public/assets/css/
+
+# Hand-tuned seed dataset — preserve formatting
+public/assets/data/paperhub-backend.json
+
+# HTML pages are authored by hand; keep Prettier scoped to JS/JSON/MD
+public/**/*.html
+
+# Static-host headers file (no Prettier parser)
+public/_headers

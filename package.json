@@ -4,16 +4,31 @@
   "description": "Modern SaaS Frontend - Document Management System",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "http-server public -c-1 -o",
-    "build:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css",
-    "watch:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --watch",
     "serve": "http-server public -p 8000",
-    "start": "npm run watch:css & npm run serve"
+    "build:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --watch",
+    "start": "npm run watch:css & npm run serve",
+    "test": "node --test",
+    "test:watch": "node --test --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm test"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17",
-    "http-server": "^14.1.1"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.5.0",
+    "globals": "^17.7.0",
+    "http-server": "^14.1.1",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.8.4",
+    "tailwindcss": "^3.4.17"
   },
   "keywords": [
     "saas",
@@ -24,5 +39,13 @@
     "document-management"
   ],
   "author": "PaperHub Team",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rajesh-1920/paperhub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rajesh-1920/paperhub/issues"
+  },
+  "homepage": "https://github.com/rajesh-1920/paperhub#readme"
 }
