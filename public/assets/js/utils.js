@@ -354,6 +354,113 @@ function phDeleteFile(fileId) {
   persistPaperHubData();
 }
 
+/* ---------------------------------------------------------------------------
+ * Folders. Owner-scoped hierarchy with a materialized `path` for breadcrumbs
+ * and search. Files reference a folder via file.folderId (null = root).
+ * ------------------------------------------------------------------------- */
+
+function phListFolders(ownerId) {
+  const dataset = getPaperHubDataset();
+  return (dataset.folders || []).filter(
+    (folder) => !folder.deletedAt && (!ownerId || folder.ownerId === ownerId),
+  );
+}
+
+function phGetFolder(folderId) {
+  const dataset = getPaperHubDataset();
+  return (dataset.folders || []).find((folder) => folder.id === folderId) || null;
+}
+
+// Materialized "/a/b/c" path for a folder given its parent and name.
+function phComputeFolderPath(dataset, parentId, name) {
+  if (!parentId) {
+    return "/" + name;
+  }
+  const parent = (dataset.folders || []).find((folder) => folder.id === parentId);
+  return (parent ? parent.path : "") + "/" + name;
+}
+
+// Recompute path for a folder and all of its descendants (after move/rename).
+function phReindexFolderPaths(dataset, folderId) {
+  const folders = dataset.folders || [];
+  const folder = folders.find((f) => f.id === folderId);
+  if (!folder) return;
+  folder.path = phComputeFolderPath(dataset, folder.parentId, folder.name);
+  folders
+    .filter((f) => f.parentId === folderId)
+    .forEach((child) => {
+      phReindexFolderPaths(dataset, child.id);
+    });
+}
+
+function phAddFolder({ name, parentId = null, ownerId, color = null, description = "" } = {}) {
+  const cleanName = String(name || "").trim();
+  if (!cleanName) return null;
+  const dataset = getPaperHubDataset();
+  const now = new Date().toISOString();
+  const owner =
+    ownerId || (typeof getCurrentUserData === "function" ? getCurrentUserData()?.id : null) || null;
+  const folder = {
+    id: generateId("folder"),
+    name: cleanName,
+    parentId: parentId || null,
+    path: phComputeFolderPath(dataset, parentId, cleanName),
+    ownerId: owner,
+    createdAt: now,
+    updatedAt: now,
+    deletedAt: null,
+    color,
+    description,
+    acl: [],
+    tagIds: [],
+  };
+  dataset.folders = dataset.folders || [];
+  dataset.folders.push(folder);
+  persistPaperHubData();
+  return folder;
+}
+
+function phRenameFolder(folderId, newName) {
+  const cleanName = String(newName || "").trim();
+  if (!cleanName) return false;
+  const dataset = getPaperHubDataset();
+  const folder = (dataset.folders || []).find((f) => f.id === folderId);
+  if (!folder) return false;
+  folder.name = cleanName;
+  folder.updatedAt = new Date().toISOString();
+  phReindexFolderPaths(dataset, folder.id);
+  persistPaperHubData();
+  return true;
+}
+
+// Remove a folder, reparenting its subfolders and files to its parent so
+// nothing is orphaned (the parent of a root folder is null = root).
+function phDeleteFolder(folderId) {
+  const dataset = getPaperHubDataset();
+  const folders = dataset.folders || [];
+  const folder = folders.find((f) => f.id === folderId);
+  if (!folder) return false;
+  const parentId = folder.parentId || null;
+
+  folders
+    .filter((f) => f.parentId === folderId)
+    .forEach((child) => {
+      child.parentId = parentId;
+      phReindexFolderPaths(dataset, child.id);
+    });
+
+  const rehomeFiles = (list) =>
+    (list || []).forEach((file) => {
+      if (file.folderId === folderId) file.folderId = parentId;
+    });
+  rehomeFiles(dataset.files);
+  (dataset.users || []).forEach((user) => rehomeFiles(user.files));
+
+  dataset.folders = folders.filter((f) => f.id !== folderId);
+  persistPaperHubData();
+  return true;
+}
+
 function phUpdateUser(userId, patch) {
   const dataset = getPaperHubDataset();
   const user = phFindUser(userId);
