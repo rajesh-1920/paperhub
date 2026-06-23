@@ -251,6 +251,40 @@
             : 'profile.html';
         }, 450);
       });
+
+      const passwordForm = document.getElementById('passwordForm');
+      passwordForm?.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const current = document.getElementById('currentPassword')?.value || '';
+        const next = document.getElementById('newPassword')?.value || '';
+        const confirm = document.getElementById('confirmPassword')?.value || '';
+
+        const datasetUser = typeof getCurrentUserData === 'function' ? getCurrentUserData() : null;
+        const userId = datasetUser && datasetUser.id;
+        const stored = typeof phGetAccountPassword === 'function' && userId
+          ? phGetAccountPassword(userId)
+          : null;
+
+        if (stored !== null && String(current) !== String(stored)) {
+          showError('Current password is incorrect');
+          return;
+        }
+        if (typeof isValidPassword === 'function' ? !isValidPassword(next) : next.length < 8) {
+          showError('New password must be at least 8 characters');
+          return;
+        }
+        if (next !== confirm) {
+          showError('New passwords do not match');
+          return;
+        }
+
+        if (typeof phChangePassword === 'function' && userId) {
+          phChangePassword(userId, next);
+        }
+        passwordForm.reset();
+        showSuccess('Password changed');
+      });
     });
   </script>
 </body>

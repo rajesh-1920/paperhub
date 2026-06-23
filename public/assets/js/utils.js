@@ -419,6 +419,35 @@ function phSetPaymentStatus(userId, status) {
   persistPaperHubData();
 }
 
+function phGetAccountPassword(userId) {
+  const dataset = getPaperHubDataset();
+  const account = (dataset.authAccounts || []).find((entry) => entry.id === userId);
+  return account ? account.password : null;
+}
+
+function phChangePassword(userId, newPassword) {
+  const dataset = getPaperHubDataset();
+  const account = (dataset.authAccounts || []).find((entry) => entry.id === userId);
+  if (!account) return false;
+  account.password = String(newPassword);
+  persistPaperHubData();
+  return true;
+}
+
+// Mark a file as freshly updated (used by "Restore version"); bumps it to the
+// top of the most-recent ordering everywhere it appears.
+function phTouchFile(fileId) {
+  const dataset = getPaperHubDataset();
+  const now = new Date().toISOString();
+  const apply = (files) =>
+    (files || []).forEach((file) => {
+      if (file.id === fileId) file.updatedAt = now;
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  persistPaperHubData();
+}
+
 function showToast(message, type = "info", duration = 3000) {
   const container = getOrCreateToastContainer();
   const toastId = "toast-" + Date.now();

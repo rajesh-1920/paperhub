@@ -617,6 +617,22 @@ function setupAdminUserManagement() {
     addButton.addEventListener("click", () => openModal("add"));
   }
 
+  // Admin Toolkit shortcuts.
+  document.querySelectorAll("[data-admin-action]").forEach((button) => {
+    if (button.dataset.bound === "true") return;
+    button.dataset.bound = "true";
+    button.addEventListener("click", () => {
+      const action = button.getAttribute("data-admin-action");
+      if (action === "add-user") {
+        openModal("add");
+      } else if (action === "reports" || action === "analytics") {
+        window.location.href = resolveAppPath("pages/review/review-queue.html");
+      } else if (action === "security") {
+        window.location.href = resolveAppPath("pages/account/settings.html");
+      }
+    });
+  });
+
   modal.querySelectorAll("[data-admin-modal-close]").forEach((node) => {
     node.addEventListener("click", closeModal);
   });
@@ -769,6 +785,56 @@ function renderOfficerDashboard(queue) {
         ? `../review/review-details.html?id=${encodeURIComponent(latest.id)}`
         : "../review/review-queue.html",
     );
+  });
+
+  const next = officerNextReview();
+  phSetText("[data-officer-next-label]", `Next: ${next ? next.documentName : "queue is clear"}`);
+  setupOfficerShortcuts();
+}
+
+// The highest-priority item still awaiting a decision.
+function officerNextReview() {
+  const dataset = getPaperHubDataset();
+  const queue = Array.isArray(dataset.reviewQueue) ? dataset.reviewQueue : [];
+  const open = queue.filter((r) => r.status === "pending" || r.status === "in-review");
+  const weight = (p) => (p === "high" ? 3 : p === "medium" ? 2 : 1);
+  return open.sort((a, b) => weight(b.priority) - weight(a.priority))[0] || null;
+}
+
+function setupOfficerShortcuts() {
+  document.querySelectorAll("[data-officer-action]").forEach((button) => {
+    if (button.dataset.bound === "true") return;
+    button.dataset.bound = "true";
+
+    button.addEventListener("click", () => {
+      const next = officerNextReview();
+      if (!next) {
+        showInfo("The review queue is clear.");
+        return;
+      }
+      const action = button.getAttribute("data-officer-action");
+
+      if (action === "open" || action === "notes") {
+        const href = resolveAppPath(
+          `pages/review/review-details.html?id=${encodeURIComponent(next.id)}`,
+        );
+        window.location.href = href;
+        return;
+      }
+
+      const decision = action === "approve" ? "completed" : "rejected";
+      if (
+        !window.confirm(
+          `${action === "approve" ? "Approve" : "Request revision on"} "${next.documentName}"?`,
+        )
+      ) {
+        return;
+      }
+      phSetReviewStatus(next.id, decision);
+      showSuccess(
+        `${next.documentName} ${action === "approve" ? "approved" : "sent back for revision"}`,
+      );
+    });
   });
 }
 

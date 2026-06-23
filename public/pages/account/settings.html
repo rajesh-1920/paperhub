@@ -143,7 +143,7 @@
                         <h4>Change password</h4>
                         <p>Update your password regularly.</p>
                       </div>
-                      <button class="btn btn-outline btn-sm" type="button">Update</button>
+                      <button id="changePasswordBtn" class="btn btn-outline btn-sm" type="button">Update</button>
                     </div>
                     <div class="settings-item">
                       <div>
@@ -252,6 +252,15 @@
 
           if (typeof showSuccess === 'function') showSuccess('Settings saved successfully');
         });
+
+        const changePwBtn = document.getElementById('changePasswordBtn');
+        if (changePwBtn) {
+          changePwBtn.addEventListener('click', function () {
+            window.location.href = typeof resolveAppPath === 'function'
+              ? resolveAppPath('pages/profile/profile-edit.html')
+              : '../profile/profile-edit.html';
+          });
+        }
 
         const resetBtn = document.getElementById('resetDemoDataBtn');
         if (resetBtn) {

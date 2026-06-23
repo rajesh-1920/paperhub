@@ -447,6 +447,22 @@ function setupFileDetailsInteractions() {
   addEvent(getElement("#metaDeleteBtn"), "click", deleteSelectedFile);
 }
 
+function viewFileContent(file) {
+  if (!file) {
+    showWarning("No file to view");
+    return;
+  }
+  const text = file.content || `${file.name}\n\nNo stored content for this document.`;
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const opened = window.open(url, "_blank");
+  if (!opened) {
+    showInfo(`Pop-up blocked — downloading ${file.name} instead`);
+    downloadFile(file);
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
 function downloadFile(file) {
   if (!file) {
     showWarning("Select a file first");
@@ -783,6 +799,8 @@ function loadVersionHistory() {
   const historyContainer = getElement("#versionHistoryContainer");
   if (!historyContainer) return;
 
+  historyContainer.innerHTML = "";
+
   try {
     const currentUser = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
     const files = Array.isArray(currentUser?.files) ? currentUser.files : [];
@@ -825,6 +843,7 @@ function loadVersionHistory() {
         author: currentUser.name,
         changes: `${file.name} updated from the Bangladesh dataset`,
         size: fileSize,
+        file,
       };
     });
 
@@ -842,15 +861,28 @@ function loadVersionHistory() {
             </p>
           </div>
           <div class="version-actions">
-            <button class="btn btn-sm btn-outline">View</button>
-            <button class="btn btn-sm btn-outline">Download</button>
-            ${index === 0 ? "" : '<button class="btn btn-sm btn-outline">Restore</button>'}
+            <button class="btn btn-sm btn-outline" data-version-act="view">View</button>
+            <button class="btn btn-sm btn-outline" data-version-act="download">Download</button>
+            ${index === 0 ? "" : '<button class="btn btn-sm btn-outline" data-version-act="restore">Restore</button>'}
           </div>
         </div>
         <p class="version-changes">${escapeHtml(version.changes)}</p>
         <p class="version-size">File size: ${escapeHtml(version.size)}</p>
         ${index < versions.length - 1 ? '<div class="version-divider"></div>' : ""}
       `;
+
+      addEvent(versionItem.querySelector('[data-version-act="view"]'), "click", () =>
+        viewFileContent(version.file),
+      );
+      addEvent(versionItem.querySelector('[data-version-act="download"]'), "click", () =>
+        downloadFile(version.file),
+      );
+      addEvent(versionItem.querySelector('[data-version-act="restore"]'), "click", () => {
+        if (typeof phTouchFile === "function") phTouchFile(version.file.id);
+        showSuccess(`Restored ${version.version} of ${version.file.name}`);
+        loadVersionHistory();
+      });
+
       fragment.appendChild(versionItem);
     });
 
