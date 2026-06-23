@@ -1,19 +1,24 @@
 # Architecture
 
-PaperHub is a static, multi-page document-management frontend built with plain
-HTML, Tailwind CSS, and vanilla JavaScript — no framework and no bundler. This
-document explains how the moving parts fit together.
+PaperHub is a multi-page document-management app: a plain HTML + Tailwind +
+vanilla-JavaScript frontend (no framework, no bundler) served by a small
+Node/Express backend that uses a JSON file as its database. This document
+explains how the moving parts fit together.
 
 ## High-level shape
 
 ```
+server/
+├── index.js               Express app: REST API + static hosting
+├── db.js                  atomic read/write of the JSON database
+└── seed.json              pristine dataset used by POST /api/reset
 public/
 ├── index.html              Landing page
 ├── _headers                Security headers for static hosts
 ├── components/             navbar / sidebar / footer partials (fetched at runtime)
 ├── pages/                  Auth, dashboard, file, review, payment, account, support
 └── assets/
-    ├── data/paperhub-backend.json   The seed "database" (3 people, 30 files)
+    ├── data/paperhub-backend.json   The JSON database (3 people, 30 files)
     ├── js/                 Application scripts (shared-global architecture)
     └── css/                Tailwind build output + component/page styles
 src/css/input.css           Tailwind source (compiled to assets/css/tailwind.css)
@@ -33,21 +38,33 @@ Because of this, ESLint runs with `no-undef`/`no-unused-vars` disabled for
 `public/assets/js/**` (cross-file references and the global "exported" API would
 otherwise look like errors). See `eslint.config.js` for the rationale.
 
-## Data: one seed + a localStorage overlay
+## Data: the JSON file is the database
 
-`public/assets/data/paperhub-backend.json` is the **read-only seed**. At runtime
-the app layers a mutable, `localStorage`-backed store on top of it:
+`public/assets/data/paperhub-backend.json` **is the database**. The Node backend
+(`server/`) owns it and the frontend reads/writes it through a REST API:
 
-- `getPaperHubDataset()` returns the working dataset — from `localStorage` if a
-  saved copy exists and its version matches `PAPERHUB_DB_VERSION`, otherwise it
-  loads the seed (synchronous `XMLHttpRequest`) and caches it on `window`.
+| Method & path      | Purpose                                           |
+| ------------------ | ------------------------------------------------- |
+| `GET /api/dataset` | return the current dataset                        |
+| `PUT /api/dataset` | overwrite the dataset (atomic temp-file + rename) |
+| `POST /api/reset`  | restore the dataset from `server/seed.json`       |
+
+- `server/db.js` validates payloads, serializes writes through an in-process
+  lock, and writes atomically (write a temp file, then `rename`) so a crash or
+  concurrent request can't corrupt the file. Paths are overridable via
+  `PAPERHUB_DB_FILE` / `PAPERHUB_SEED_FILE` (the tests point them at a temp copy).
+
+On the frontend, the data layer keeps its synchronous model but talks to the API:
+
+- `getPaperHubDataset()` loads `GET /api/dataset` via synchronous `XMLHttpRequest`
+  (falling back to the static JSON file if the API is unreachable) and caches it
+  on `window`.
 - The `ph*` mutators (`phAddFile`, `phUpdateUser`, `phSetReviewStatus`,
   `phAddReviewComment`, `phSaveUserPreferences`, `phSetPaymentStatus`,
-  `phDeleteFile`, …) mutate that dataset and call `persistPaperHubData()`, which
-  writes it back to `localStorage`.
-- Bumping `PAPERHUB_DB_VERSION` invalidates any stored copy and reseeds — this is
-  how you ship dataset changes. `resetPaperHubData()` (wired to **Settings →
-  Security → Reset demo data**) clears the overlay.
+  `phDeleteFile`, …) mutate the in-memory dataset and call
+  `persistPaperHubData()`, which `PUT`s it back to the server.
+- `resetPaperHubData()` (wired to **Settings → Security → Reset demo data**)
+  `POST`s `/api/reset`.
 
 Because consumers read through `getPaperHubDataset()` and accessors read the
 dataset **fresh** each call (e.g. `getReviewData()`, `getMockUsers()`), changes
@@ -80,20 +97,23 @@ navbar/sidebar mounted.
 
 The suite under `tests/` runs on Node's built-in `node:test` with **jsdom**.
 `tests/helpers/dom.mjs > bootPage()` loads a real page into jsdom, stubs
-`localStorage` and the dataset `XHR`, and evaluates the browser scripts so tests
-can call the page functions exactly as the browser would
-(`runScripts: "outside-only"` + `window.eval`). This is why the tests assert on
-`window.*` globals rather than importing modules.
+`localStorage` and replaces `XMLHttpRequest` with a **tiny in-memory PaperHub
+API** (GET returns the dataset, PUT replaces it, POST `/api/reset` restores the
+seed), then evaluates the browser scripts so tests call the page functions
+exactly as the browser would (`runScripts: "outside-only"` + `window.eval`).
+This is why the tests assert on `window.*` globals rather than importing modules.
 
 Coverage: the persistence layer (`store.test.mjs`), dynamic rendering
 (`render.test.mjs`), end-to-end flows (`flows.test.mjs`), confirmed-bug
 regressions (`regressions.test.mjs`), output-escaping/validation
-(`security.test.mjs`), and seed integrity (`seed.test.mjs`).
+(`security.test.mjs`), seed integrity (`seed.test.mjs`), and the backend API
+(`server.test.mjs`, which exercises GET/PUT/reset against a temp JSON file).
 
 ## Build & deploy
 
 - `npm run build:css` compiles `src/css/input.css` → `public/assets/css/tailwind.css`
-  (minified). The compiled CSS **is committed** because the site is served
-  statically with no build step at deploy time.
-- Deploy by serving `public/` on any static host. Hosts that read `_headers`
-  (Netlify, Cloudflare Pages) pick up the security headers automatically.
+  (minified). The compiled CSS **is committed** so no CSS build step is needed at
+  deploy time.
+- Deploy on any Node host: `npm ci --omit=dev && npm start` (the backend serves
+  the app and owns the JSON database). Set security response headers at your
+  proxy; the `public/_headers` file applies on hosts that read it.

@@ -2,26 +2,30 @@
 
 [![CI](https://github.com/rajesh-1920/paperhub/actions/workflows/ci.yml/badge.svg)](https://github.com/rajesh-1920/paperhub/actions/workflows/ci.yml)
 
-PaperHub is a static, SaaS-style **document-management frontend** built with
-HTML, Tailwind CSS, and vanilla JavaScript — no framework, no bundler. It has a
-public landing page, role-based auth, dashboards for users/officers/admins,
-file and review workflows, payment screens, and account pages.
+PaperHub is a SaaS-style **document-management app**: a vanilla HTML + Tailwind +
+JavaScript frontend (no framework, no bundler) served by a small **Node/Express
+backend** that uses a **JSON file as its database**. It has a public landing
+page, role-based auth, dashboards for users/officers/admins, file and review
+workflows, payment screens, and account pages.
 
 It is **fully interactive**: uploads, reviews, edits, settings, and payments
-persist in the browser via a `localStorage`-backed store layered over a JSON
-seed dataset. See [ARCHITECTURE.md](ARCHITECTURE.md) for how it works.
+persist to `public/assets/data/paperhub-backend.json` through the backend API,
+so changes survive reloads and are shared across the app. See
+[ARCHITECTURE.md](ARCHITECTURE.md) for how it works.
 
-> ⚠️ **Demo only.** Authentication, authorization, and persistence are entirely
-> client-side and trivially bypassable. Do not deploy with real data. See
-> [SECURITY.md](SECURITY.md).
+> ⚠️ **Demo only.** Authentication and authorization are client-side and the API
+> is unauthenticated, so everything is trivially bypassable. Do not deploy with
+> real data. See [SECURITY.md](SECURITY.md).
 
 ## Quick start
 
 ```bash
 npm install
-npm run dev        # serve public/ (cache disabled) and open a browser
-# or: npm run serve  # serve public/ on http://localhost:8000
+npm run dev        # start the server with --watch on http://localhost:8000
+# or: npm run serve
 ```
+
+Then open http://localhost:8000.
 
 ### Demo logins
 
@@ -32,7 +36,18 @@ npm run dev        # serve public/ (cache disabled) and open a browser
 | User    | `mahmud.hasan@paperhub.edu.bd`  | `user01`    |
 
 To reset everything to the original sample data: **Settings → Security → Reset
-demo data** (or clear the site's `localStorage`).
+demo data** (which calls `POST /api/reset`).
+
+## API
+
+The backend (`server/`) exposes a tiny REST API backed by the JSON file:
+
+| Method & path      | Purpose                                        |
+| ------------------ | ---------------------------------------------- |
+| `GET /api/dataset` | Read the full dataset                          |
+| `PUT /api/dataset` | Persist the dataset (atomic write to the file) |
+| `POST /api/reset`  | Restore the dataset from the pristine seed     |
+| `GET /api/health`  | Liveness check                                 |
 
 ## What works
 
@@ -49,13 +64,17 @@ demo data** (or clear the site's `localStorage`).
 
 ```text
 paperhub/
-├── public/                     # everything served
+├── server/                     # Node/Express backend
+│   ├── index.js                # REST API + static hosting
+│   ├── db.js                   # atomic read/write of the JSON database
+│   └── seed.json               # pristine dataset used by /api/reset
+├── public/                     # frontend, served by the backend
 │   ├── index.html
 │   ├── _headers                # security headers for static hosts
 │   ├── components/             # navbar / sidebar / footer partials
 │   ├── pages/                  # auth, dashboard, file, review, payment, account, support
 │   └── assets/
-│       ├── data/paperhub-backend.json   # seed "database"
+│       ├── data/paperhub-backend.json   # the JSON database (read/written by the server)
 │       ├── js/                 # app scripts (shared-global architecture)
 │       └── css/                # compiled Tailwind + component/page styles
 ├── src/css/input.css           # Tailwind source
@@ -80,10 +99,11 @@ sending a change.
 
 ## Deploy
 
-Serve `public/` on any static host. Hosts that read a `_headers` file (Netlify,
-Cloudflare Pages) automatically apply the bundled security headers. The compiled
-`public/assets/css/tailwind.css` is committed, so no build step is needed at
-deploy time.
+PaperHub now needs a Node runtime (the backend serves the app and owns the JSON
+database). Run `npm ci --omit=dev && npm start` on any Node host. The compiled
+`public/assets/css/tailwind.css` is committed, so no CSS build step is needed at
+deploy time. (The `_headers` file still applies on hosts that read it; for a
+Node host, set the equivalent response headers at your proxy.)
 
 ## License
 

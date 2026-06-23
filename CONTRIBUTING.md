@@ -36,22 +36,24 @@ npm run check
 
 All three must pass. If you changed Tailwind classes, run `npm run build:css`
 and commit the regenerated `public/assets/css/tailwind.css` (it ships in the
-repo — the site is served statically with no build step).
+repo so no CSS build step runs at deploy time).
 
 ## Conventions
 
 - **Architecture.** Read [ARCHITECTURE.md](ARCHITECTURE.md). The browser scripts
-  share a global namespace; `utils.js` loads first and defines the shared API.
+  share a global namespace (`utils.js` loads first and defines the shared API),
+  and the JSON file is the database, served/persisted by `server/`.
 - **Escaping policy (important).** Any value derived from the dataset or user
   input that is interpolated into `innerHTML` **must** be wrapped in
   `escapeHtml()`. Prefer `textContent` for plain text. This is enforced by
   review and covered by `tests/security.test.mjs`.
 - **Data changes.** Mutate state only through the `ph*` mutators in `utils.js`
-  (never write `localStorage["paperhub-db"]` directly). If you change the seed
-  schema or contents, bump `PAPERHUB_DB_VERSION` so stored copies reseed.
-- **Add a test** for any bug fix or new store behavior. The helper
-  `tests/helpers/dom.mjs > bootPage()` makes it easy to drive a real page in
-  jsdom.
+  (they persist via `PUT /api/dataset`); never write the dataset file or call the
+  API directly from feature code. To reseed, edit `public/assets/data/paperhub-backend.json`
+  and copy it to `server/seed.json` (the `/api/reset` source).
+- **Add a test** for any bug fix or new behavior. The helper
+  `tests/helpers/dom.mjs > bootPage()` (with its in-memory API stub) makes it
+  easy to drive a real page in jsdom; backend changes go in `tests/server.test.mjs`.
 - **Theme is locked.** Do not change the core dashboard colors, gradients, or
   role color schemes without an explicit request (see `.instructions.md`).
   CSS changes to _align_ pages with the existing theme are welcome.

@@ -2,25 +2,26 @@
 
 ## Threat model — read this first
 
-PaperHub is a **frontend-only demo**. There is no backend server: the app ships
-as static files and keeps all of its state in the browser. As a direct
+PaperHub is a **demo**. It has a Node backend, but that backend only reads and
+writes a JSON file — it does **no** authentication or authorization. As a direct
 consequence, the following are **intentional, documented limitations** — not
 bugs:
 
 - **Authentication is client-side.** Seed credentials (e.g. `admin01`) live in
-  `public/assets/data/paperhub-backend.json` and in `localStorage`. They are
-  sample values, not secrets. Login compares them in plain text.
+  `public/assets/data/paperhub-backend.json`. They are sample values, not
+  secrets. Login compares them in plain text in the browser.
 - **Authorization (RBAC) is client-side and bypassable.** Role checks
   (`hasRole`, `canAccessPathByRole`, `enforcePageAccess`) read the role from
   `localStorage`. Anyone can set `localStorage["paperhub-user-role"] = "admin"`
   and reload. The route guards are UX, not a security boundary.
-- **The data store is unsigned `localStorage`.** Anyone with DevTools can edit
-  `localStorage["paperhub-db"]` and reload. There is no integrity check.
+- **The API is unauthenticated.** `GET/PUT /api/dataset` and `POST /api/reset`
+  accept any caller; `PUT` overwrites the whole database. There is no identity,
+  no per-record authorization, and no integrity check.
 
 **Do not deploy PaperHub with real user data or real credentials.** A
-production version would require a server that authenticates users, hashes
-credentials, and enforces authorization on every mutation — none of which can
-be done safely in a static frontend.
+production version would require per-user authentication, hashed credentials,
+and authorization enforced on every API mutation — not a single unguarded
+"replace the whole dataset" endpoint.
 
 ## What we _do_ harden
 
