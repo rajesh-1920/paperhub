@@ -357,13 +357,34 @@ function fileContentUrl(file) {
   return new URL(`/api/files/${encodeURIComponent(file.id)}/content`, window.location.origin).href;
 }
 
+// Authorization header for the (protected) content routes, when signed in.
+function fileAuthHeaders(extra) {
+  const headers = Object.assign({}, extra);
+  const token = typeof getAuthToken === "function" ? getAuthToken() : "";
+  if (token) {
+    headers.Authorization = "Bearer " + token;
+  }
+  return headers;
+}
+
 // Upload the real PDF bytes to the backend for a just-created file record.
 async function uploadFileBinary(id, file) {
+  const url = new URL(`/api/files/${encodeURIComponent(id)}/content`, window.location.origin).href;
+  const doPut = () =>
+    fetch(url, {
+      method: "PUT",
+      headers: fileAuthHeaders({ "Content-Type": "application/pdf" }),
+      body: file,
+    });
   try {
-    const response = await fetch(
-      new URL(`/api/files/${encodeURIComponent(id)}/content`, window.location.origin).href,
-      { method: "PUT", headers: { "Content-Type": "application/pdf" }, body: file },
-    );
+    let response = await doPut();
+    if (
+      response.status === 401 &&
+      typeof refreshAccessTokenSync === "function" &&
+      refreshAccessTokenSync()
+    ) {
+      response = await doPut();
+    }
     return response.ok;
   } catch (error) {
     return false;
@@ -374,6 +395,7 @@ function deleteFileBinary(id) {
   try {
     fetch(new URL(`/api/files/${encodeURIComponent(id)}/content`, window.location.origin).href, {
       method: "DELETE",
+      headers: fileAuthHeaders(),
     });
   } catch (error) {
     /* best effort */

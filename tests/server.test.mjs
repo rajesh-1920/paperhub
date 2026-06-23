@@ -33,10 +33,24 @@ test("API serves the dataset and persists writes to the JSON file", async (t) =>
   const dataset = await (await fetch(`${base}/api/dataset`)).json();
   assert.ok(Array.isArray(dataset.users) && dataset.users.length > 0, "GET returns the dataset");
 
+  // Writes require authentication.
+  assert.equal(
+    (
+      await fetch(`${base}/api/dataset`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(dataset),
+      })
+    ).status,
+    401,
+    "unauthenticated PUT rejected",
+  );
+
+  const token = await tokenFor(base);
   dataset.users[0].name = "Server Test User";
   const put = await fetch(`${base}/api/dataset`, {
     method: "PUT",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...bearer(token) },
     body: JSON.stringify(dataset),
   });
   assert.equal(put.status, 200, "PUT accepted");
@@ -61,6 +75,12 @@ async function login(base, email, password) {
     body: JSON.stringify({ email, password }),
   });
 }
+
+// Mutating routes require a bearer token; default to the seed admin.
+async function tokenFor(base, email = "rajesh.biswas@paperhub.com.bd", password = "admin01") {
+  return (await (await login(base, email, password)).json()).token;
+}
+const bearer = (token) => ({ authorization: `Bearer ${token}` });
 
 test("auth: login issues tokens, refresh renews, bad creds rejected", async (t) => {
   const { server, base, dbFile } = await startTestServer();
@@ -216,12 +236,12 @@ test("dataset PUT preserves server-only credentials it never sent to the client"
 
   // Log in to migrate an account to a hash, then round-trip the (credential-less)
   // dataset back via PUT and confirm the hash survives.
-  await login(base, "mahmud.hasan@paperhub.edu.bd", "user01");
+  const { token } = await (await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")).json();
   const exposed = await (await fetch(`${base}/api/dataset`)).json();
   exposed.users[0].name = "Renamed Via PUT";
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...bearer(token) },
     body: JSON.stringify(exposed),
   });
 
@@ -249,7 +269,7 @@ test("dataset exposes the new SaaS collections and round-trips them", async (t) 
   dataset.tags.push({ id: "tag-1", label: "Important", slug: "important" });
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...bearer(await tokenFor(base)) },
     body: JSON.stringify(dataset),
   });
 
@@ -264,7 +284,7 @@ test("API rejects an invalid dataset payload", async (t) => {
 
   const res = await fetch(`${base}/api/dataset`, {
     method: "PUT",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...bearer(await tokenFor(base)) },
     body: JSON.stringify({ not: "a dataset" }),
   });
   assert.equal(res.status, 400, "invalid payload rejected");
@@ -275,10 +295,24 @@ test("file content: stores and serves real PDF bytes, rejects non-PDF", async (t
   t.after(() => server.close());
 
   const pdf = Buffer.from("%PDF-1.4\nhello world\n%%EOF\n");
+  const token = await tokenFor(base);
+
+  // Uploading bytes requires authentication.
+  assert.equal(
+    (
+      await fetch(`${base}/api/files/file-x/content`, {
+        method: "PUT",
+        headers: { "content-type": "application/pdf" },
+        body: pdf,
+      })
+    ).status,
+    401,
+    "unauthenticated upload rejected",
+  );
 
   const put = await fetch(`${base}/api/files/file-x/content`, {
     method: "PUT",
-    headers: { "content-type": "application/pdf" },
+    headers: { "content-type": "application/pdf", ...bearer(token) },
     body: pdf,
   });
   assert.equal(put.status, 200, "PDF accepted");
@@ -291,7 +325,7 @@ test("file content: stores and serves real PDF bytes, rejects non-PDF", async (t
 
   const notPdf = await fetch(`${base}/api/files/file-y/content`, {
     method: "PUT",
-    headers: { "content-type": "application/pdf" },
+    headers: { "content-type": "application/pdf", ...bearer(token) },
     body: Buffer.from("this is not a pdf"),
   });
   assert.equal(notPdf.status, 415, "non-PDF rejected by magic-byte check");
@@ -304,10 +338,11 @@ test("file content: orphaned binaries are pruned when the dataset drops the file
   const { server, base } = await startTestServer();
   t.after(() => server.close());
 
+  const token = await tokenFor(base);
   const pdf = Buffer.from("%PDF-1.4\norphan\n%%EOF\n");
   await fetch(`${base}/api/files/file-orphan/content`, {
     method: "PUT",
-    headers: { "content-type": "application/pdf" },
+    headers: { "content-type": "application/pdf", ...bearer(token) },
     body: pdf,
   });
   assert.equal((await fetch(`${base}/api/files/file-orphan/content`)).status, 200, "stored");
@@ -316,7 +351,7 @@ test("file content: orphaned binaries are pruned when the dataset drops the file
   const dataset = await (await fetch(`${base}/api/dataset`)).json();
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...bearer(token) },
     body: JSON.stringify(dataset),
   });
 
@@ -331,11 +366,12 @@ test("file content: a version's binary is retained through orphan pruning", asyn
   const { server, base } = await startTestServer();
   t.after(() => server.close());
 
+  const token = await tokenFor(base);
   const pdf = Buffer.from("%PDF-1.4\nversion one\n%%EOF\n");
   // A version binary is stored under the file's versioned content ref.
   await fetch(`${base}/api/files/file-ver__v1/content`, {
     method: "PUT",
-    headers: { "content-type": "application/pdf" },
+    headers: { "content-type": "application/pdf", ...bearer(token) },
     body: pdf,
   });
 
@@ -349,7 +385,7 @@ test("file content: a version's binary is retained through orphan pruning", asyn
   });
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...bearer(token) },
     body: JSON.stringify(dataset),
   });
 
@@ -364,15 +400,27 @@ test("API reset restores the dataset from the seed", async (t) => {
   const { server, base, dbFile } = await startTestServer();
   t.after(() => server.close());
 
+  const adminToken = await tokenFor(base);
   const dataset = await (await fetch(`${base}/api/dataset`)).json();
   dataset.users[0].name = "Temporarily Changed";
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...bearer(adminToken) },
     body: JSON.stringify(dataset),
   });
 
-  const reset = await (await fetch(`${base}/api/reset`, { method: "POST" })).json();
+  // Reset is destructive and admin-only.
+  assert.equal((await fetch(`${base}/api/reset`, { method: "POST" })).status, 401, "needs auth");
+  const userToken = await tokenFor(base, "mahmud.hasan@paperhub.edu.bd", "user01");
+  assert.equal(
+    (await fetch(`${base}/api/reset`, { method: "POST", headers: bearer(userToken) })).status,
+    403,
+    "non-admin forbidden",
+  );
+
+  const reset = await (
+    await fetch(`${base}/api/reset`, { method: "POST", headers: bearer(adminToken) })
+  ).json();
   assert.notEqual(reset.users[0].name, "Temporarily Changed", "reset restores seed values");
 
   const onDisk = JSON.parse(await readFile(dbFile, "utf8"));

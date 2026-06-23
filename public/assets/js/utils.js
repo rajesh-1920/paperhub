@@ -127,13 +127,33 @@ function refreshPaperHubDataset() {
   return getPaperHubDataset();
 }
 
+// Send a synchronous, authenticated request; on a 401 refresh the access token
+// once and retry, so a write never silently fails just because the short-lived
+// access token expired mid-session.
+function sendAuthedSync(method, url, { body = null, contentType = null } = {}) {
+  const send = () => {
+    const request = new XMLHttpRequest();
+    request.open(method, url, false);
+    if (contentType) {
+      request.setRequestHeader("Content-Type", contentType);
+    }
+    attachAuthHeader(request);
+    request.send(body);
+    return request;
+  };
+  let request = send();
+  if (request.status === 401 && refreshAccessTokenSync()) {
+    request = send();
+  }
+  return request;
+}
+
 function persistPaperHubData() {
   try {
-    const request = new XMLHttpRequest();
-    request.open("PUT", paperhubApiUrl("/api/dataset"), false);
-    request.setRequestHeader("Content-Type", "application/json");
-    attachAuthHeader(request);
-    request.send(JSON.stringify(getPaperHubDataset()));
+    const request = sendAuthedSync("PUT", paperhubApiUrl("/api/dataset"), {
+      body: JSON.stringify(getPaperHubDataset()),
+      contentType: "application/json",
+    });
     if (request.status < 200 || request.status >= 300) {
       console.warn("Unable to persist PaperHub data: HTTP", request.status);
     }
@@ -145,10 +165,7 @@ function persistPaperHubData() {
 
 function resetPaperHubData() {
   try {
-    const request = new XMLHttpRequest();
-    request.open("POST", paperhubApiUrl("/api/reset"), false);
-    attachAuthHeader(request);
-    request.send(null);
+    sendAuthedSync("POST", paperhubApiUrl("/api/reset"));
   } catch (error) {
     console.warn("Unable to reset PaperHub data", error);
   }
@@ -548,6 +565,31 @@ function attachAuthHeader(request) {
   if (token) {
     request.setRequestHeader("Authorization", "Bearer " + token);
   }
+}
+
+// Exchange the stored refresh token for a fresh access token (synchronously, so
+// the sync-XHR data layer can retry a 401 in place). Returns true on success.
+function refreshAccessTokenSync() {
+  try {
+    const refreshToken = getStorage(StorageKey.REFRESH, "");
+    if (!refreshToken) {
+      return false;
+    }
+    const request = new XMLHttpRequest();
+    request.open("POST", paperhubApiUrl("/api/auth/refresh"), false);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.send(JSON.stringify({ refreshToken }));
+    if (request.status >= 200 && request.status < 300) {
+      const data = JSON.parse(request.responseText || "{}");
+      if (data.token) {
+        setStorage(StorageKey.TOKEN, data.token);
+        return true;
+      }
+    }
+  } catch (error) {
+    /* refresh failed — caller proceeds unauthenticated */
+  }
+  return false;
 }
 
 // Rotate the signed-in user's password through the server (credentials never
