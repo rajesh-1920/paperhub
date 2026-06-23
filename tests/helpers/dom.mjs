@@ -4,7 +4,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const SEED = readFileSync(join(ROOT, "public/assets/data/paperhub-backend.json"), "utf8");
+// Tests run against a frozen full dataset fixture, independent of the app's
+// seed (which may be trimmed of demo content).
+const SEED = readFileSync(join(ROOT, "tests/fixtures/dataset.json"), "utf8");
 
 const loadScript = (name) => readFileSync(join(ROOT, "public/assets/js", name), "utf8");
 

@@ -18,7 +18,7 @@ try {
   mem = await MongoMemoryServer.create();
   process.env.MONGODB_URI = mem.getUri();
   process.env.MONGODB_DB = "paperhub_test";
-  process.env.PAPERHUB_SEED_FILE = join(ROOT, "server/seed.json");
+  process.env.PAPERHUB_SEED_FILE = join(ROOT, "tests/fixtures/dataset.json");
   db = await import("../server/db.js");
   ({ closeMongo } = await import("../server/stores/mongoStore.js"));
 } catch (error) {

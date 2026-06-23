@@ -6,7 +6,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SEED = join(ROOT, "server/seed.json");
+const SEED = join(ROOT, "tests/fixtures/dataset.json");
 
 async function startTestServer() {
   const dir = await mkdtemp(join(tmpdir(), "paperhub-"));

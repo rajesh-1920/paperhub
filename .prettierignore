@@ -6,9 +6,10 @@ package-lock.json
 # Generated / vendored CSS — do not reformat
 public/assets/css/
 
-# Hand-tuned seed dataset / DB — preserve formatting
+# Hand-tuned seed dataset / DB + test fixture — preserve formatting
 public/assets/data/paperhub-backend.json
 server/seed.json
+tests/fixtures/dataset.json
 
 # HTML pages are authored by hand; keep Prettier scoped to JS/JSON/MD
 public/**/*.html
