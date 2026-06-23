@@ -11,6 +11,9 @@
     "start": "node server/index.js",
     "serve": "node server/index.js",
     "dev": "node --watch server/index.js",
+    "db:up": "docker run -d -p 27017:27017 --name paperhub-mongo mongo:7",
+    "db:down": "docker rm -f paperhub-mongo",
+    "db:migrate": "node server/migrate.js",
     "build:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --watch",
     "test": "node --test",
@@ -26,6 +29,7 @@
     "eslint": "^10.5.0",
     "globals": "^17.7.0",
     "jsdom": "^29.1.1",
+    "mongodb-memory-server": "^11.2.0",
     "prettier": "^3.8.4",
     "tailwindcss": "^3.4.17"
   },
@@ -48,6 +52,7 @@
   },
   "homepage": "https://github.com/rajesh-1920/paperhub#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mongodb": "^7.3.0"
   }
 }

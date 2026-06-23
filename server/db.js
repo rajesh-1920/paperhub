@@ -1,30 +1,10 @@
-import { readFile, writeFile, rename, copyFile, access } from "node:fs/promises";
-import { constants } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import * as jsonStore from "./stores/jsonStore.js";
+import * as mongoStore from "./stores/mongoStore.js";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(HERE, "..");
-
-// Paths are resolved lazily so tests can point them at a temp copy via env.
-function dbFile() {
-  return process.env.PAPERHUB_DB_FILE || join(ROOT, "public/assets/data/paperhub-backend.json");
-}
-function seedFile() {
-  return process.env.PAPERHUB_SEED_FILE || join(HERE, "seed.json");
-}
-
-// Serialize writes so two concurrent requests can never interleave or corrupt
-// the file. Each write awaits the previous one; failures don't break the chain.
-let writeChain = Promise.resolve();
-function withLock(task) {
-  const run = writeChain.then(task, task);
-  writeChain = run.then(
-    () => {},
-    () => {},
-  );
-  return run;
-}
+// Storage façade. The backend is chosen at call time: MongoDB when MONGODB_URI
+// is set, otherwise the JSON-file store (the default and the CI/test fallback).
+// server/index.js imports only from here, so swapping backends needs no changes
+// elsewhere.
 
 const REQUIRED_KEYS = ["users", "files", "reviewQueue", "authAccounts"];
 
@@ -38,37 +18,15 @@ export function isValidDataset(data) {
   );
 }
 
-/** Create the live database file from the seed if it does not exist yet. */
-export async function ensureDataset() {
-  const file = dbFile();
-  try {
-    await access(file, constants.F_OK);
-  } catch {
-    await copyFile(seedFile(), file);
-  }
-  return file;
+export function usingMongo() {
+  return Boolean(process.env.MONGODB_URI);
 }
 
-export async function readDataset() {
-  await ensureDataset();
-  return JSON.parse(await readFile(dbFile(), "utf8"));
+function backend() {
+  return usingMongo() ? mongoStore : jsonStore;
 }
 
-/** Atomically overwrite the database file (write temp, then rename). */
-export function writeDataset(data) {
-  return withLock(async () => {
-    const file = dbFile();
-    const tmp = `${file}.${process.pid}.tmp`;
-    await writeFile(tmp, JSON.stringify(data, null, 2) + "\n", "utf8");
-    await rename(tmp, file);
-    return data;
-  });
-}
-
-/** Restore the database file from the pristine seed. */
-export function resetDataset() {
-  return withLock(async () => {
-    await copyFile(seedFile(), dbFile());
-    return JSON.parse(await readFile(dbFile(), "utf8"));
-  });
-}
+export const ensureDataset = (...args) => backend().ensureDataset(...args);
+export const readDataset = (...args) => backend().readDataset(...args);
+export const writeDataset = (...args) => backend().writeDataset(...args);
+export const resetDataset = (...args) => backend().resetDataset(...args);

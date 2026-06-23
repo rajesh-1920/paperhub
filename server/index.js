@@ -1,7 +1,14 @@
 import express from "express";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { readDataset, writeDataset, resetDataset, ensureDataset, isValidDataset } from "./db.js";
+import {
+  readDataset,
+  writeDataset,
+  resetDataset,
+  ensureDataset,
+  isValidDataset,
+  usingMongo,
+} from "./db.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(HERE, "..", "public");
@@ -57,11 +64,23 @@ export async function start(port = process.env.PORT || 8000) {
   await ensureDataset();
   const app = createApp();
   return app.listen(port, () => {
-    console.log(`PaperHub running at http://localhost:${port}`);
+    const backend = usingMongo()
+      ? `MongoDB (${process.env.MONGODB_DB || "paperhub"})`
+      : "JSON file";
+    console.log(`PaperHub running at http://localhost:${port} — database: ${backend}`);
   });
 }
 
 // Start the server only when this file is run directly.
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  start();
+  // Load .env only for a real run, never on import (keeps tests deterministic).
+  try {
+    process.loadEnvFile();
+  } catch {
+    /* no .env file — fall back to JSON storage */
+  }
+  start().catch((error) => {
+    console.error("Failed to start PaperHub:", error.message);
+    process.exit(1);
+  });
 }
