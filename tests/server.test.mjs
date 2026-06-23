@@ -554,6 +554,60 @@ test("file content: copy duplicates the binary to a new id (auth required)", asy
   assert.ok(got.equals(pdf), "duplicated bytes are identical");
 });
 
+test("file versions: a new version archives bytes and becomes the current content", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+  const token = await tokenFor(base);
+
+  const v1 = Buffer.from("%PDF-1.4\nversion one\n%%EOF\n");
+  const v2 = Buffer.from("%PDF-1.4\nversion two is longer\n%%EOF\n");
+  await fetch(`${base}/api/files/file-v/content`, {
+    method: "PUT",
+    headers: { "content-type": "application/pdf", ...bearer(token) },
+    body: v1,
+  });
+
+  assert.equal(
+    (
+      await fetch(`${base}/api/files/file-v/versions`, {
+        method: "POST",
+        headers: { "content-type": "application/pdf" },
+        body: v2,
+      })
+    ).status,
+    401,
+    "adding a version requires auth",
+  );
+
+  const added = await fetch(`${base}/api/files/file-v/versions`, {
+    method: "POST",
+    headers: { "content-type": "application/pdf", ...bearer(token) },
+    body: v2,
+  });
+  assert.equal(added.status, 200);
+  const { versionId, contentRef } = await added.json();
+  assert.ok(versionId && contentRef === `file-v__${versionId}`);
+
+  // Current content is now v2.
+  const current = Buffer.from(
+    await (await fetch(`${base}/api/files/file-v/content`)).arrayBuffer(),
+  );
+  assert.ok(current.equals(v2), "current content updated to the new version");
+
+  // The archived version is byte-identical and survives a dataset prune.
+  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  dataset.files.push({ id: "file-v", name: "v.pdf", versions: [{ versionId, contentRef }] });
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", ...bearer(token) },
+    body: JSON.stringify(dataset),
+  });
+  const archived = Buffer.from(
+    await (await fetch(`${base}/api/files/${contentRef}/content`)).arrayBuffer(),
+  );
+  assert.ok(archived.equals(v2), "archived version retained byte-identical");
+});
+
 test("file content: orphaned binaries are pruned when the dataset drops the file", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());

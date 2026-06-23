@@ -566,6 +566,75 @@ function phCopyFile(fileId, targetFolderId = null) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Version history. Each file keeps versions[] {versionId, contentRef, number,
+ * versionLabel, size, uploadedAt, uploadedByName, changeNote}; currentVersion
+ * points at the live one. The binary for a version lives at its contentRef.
+ * ------------------------------------------------------------------------- */
+
+function phListVersions(fileId) {
+  const file = (getPaperHubDataset().files || []).find((f) => f.id === fileId);
+  if (!file) return [];
+  if (Array.isArray(file.versions) && file.versions.length) {
+    return file.versions;
+  }
+  // Legacy file with content but no history: present its current content as v1.
+  if (file.hasContent) {
+    return [
+      {
+        versionId: "v1",
+        contentRef: file.id,
+        number: 1,
+        versionLabel: "v1",
+        size: file.size || 0,
+        sizeLabel: file.sizeLabel || formatFileSize(file.size || 0),
+        uploadedAt: file.uploadedAt,
+        uploadedByName: file.ownerName || null,
+        changeNote: "Original upload",
+        current: true,
+      },
+    ];
+  }
+  return [];
+}
+
+function phAddFileVersion(fileId, meta = {}) {
+  const dataset = getPaperHubDataset();
+  const now = new Date().toISOString();
+  let found = false;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (file.id !== fileId) return;
+      file.versions = file.versions || [];
+      const number = file.versions.length + 1;
+      const entry = {
+        versionId: meta.versionId,
+        contentRef: meta.contentRef || `${fileId}__${meta.versionId}`,
+        number,
+        versionLabel: meta.versionLabel || `v${number}`,
+        size: Number(meta.size || 0),
+        sizeLabel: formatFileSize(Number(meta.size || 0)),
+        uploadedAt: now,
+        uploadedBy: meta.uploadedBy || null,
+        uploadedByName: meta.uploadedByName || null,
+        changeNote: meta.changeNote || "",
+        pageCount: meta.pageCount || 1,
+      };
+      file.versions.push(entry);
+      file.currentVersion = entry.versionId;
+      file.versionCount = file.versions.length;
+      file.size = entry.size || file.size;
+      file.sizeLabel = entry.sizeLabel || file.sizeLabel;
+      file.updatedAt = now;
+      file.hasContent = true;
+      found = true;
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  if (found) persistPaperHubData();
+  return found;
+}
+
+/* ---------------------------------------------------------------------------
  * Access control (ACL). Files and folders carry an acl[] of grants:
  *   { principalType: "user"|"role"|"team", principalId, permission, grantedBy,
  *     grantedAt, expiresAt }

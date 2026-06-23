@@ -1,4 +1,5 @@
 import express from "express";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import {
@@ -165,6 +166,36 @@ export function createApp() {
       res.status(500).json({ error: "Unable to copy file" });
     }
   });
+
+  // Add a new version of a file: archive the bytes under a version content ref
+  // AND make them the current content. Previous versions stay archived.
+  app.post(
+    "/api/files/:id/versions",
+    requireAuth,
+    express.raw({ type: "application/pdf", limit: "55mb" }),
+    async (req, res) => {
+      const { id } = req.params;
+      const body = req.body;
+      if (!ID_PATTERN.test(id)) {
+        return res.status(400).json({ error: "Invalid file id" });
+      }
+      if (!Buffer.isBuffer(body) || body.length === 0) {
+        return res.status(400).json({ error: "Expected a PDF body" });
+      }
+      if (!body.subarray(0, 4).equals(PDF_MAGIC)) {
+        return res.status(415).json({ error: "Only PDF files are accepted" });
+      }
+      try {
+        const versionId = `v${crypto.randomBytes(6).toString("hex")}`;
+        const contentRef = `${id}__${versionId}`;
+        await writeFileContent(contentRef, body); // archive this version
+        await writeFileContent(id, body); // becomes the current content
+        res.json({ ok: true, versionId, contentRef, size: body.length });
+      } catch {
+        res.status(500).json({ error: "Unable to store version" });
+      }
+    },
+  );
 
   app.use(express.static(PUBLIC_DIR, { extensions: ["html"] }));
 

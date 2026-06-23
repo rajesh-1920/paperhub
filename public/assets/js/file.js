@@ -414,6 +414,32 @@ async function uploadFileBinary(id, file) {
   }
 }
 
+// Upload a new version's bytes; returns { versionId, contentRef, size } or null.
+async function uploadFileVersionViaApi(fileId, file) {
+  const url = new URL(`/api/files/${encodeURIComponent(fileId)}/versions`, window.location.origin)
+    .href;
+  const doPost = () =>
+    fetch(url, {
+      method: "POST",
+      headers: fileAuthHeaders({ "Content-Type": "application/pdf" }),
+      body: file,
+    });
+  try {
+    let response = await doPost();
+    if (
+      response.status === 401 &&
+      typeof refreshAccessTokenSync === "function" &&
+      refreshAccessTokenSync()
+    ) {
+      response = await doPost();
+    }
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    return null;
+  }
+}
+
 function deleteFileBinary(id) {
   try {
     fetch(new URL(`/api/files/${encodeURIComponent(id)}/content`, window.location.origin).href, {
