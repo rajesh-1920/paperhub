@@ -96,6 +96,9 @@ function fetchDatasetSync() {
     try {
       const request = new XMLHttpRequest();
       request.open("GET", url, false);
+      // Always pull a fresh copy — a browser-cached dataset would show stale
+      // counts (e.g. an upload not reflected on the dashboard).
+      request.setRequestHeader("Cache-Control", "no-cache");
       request.send(null);
       if (request.status >= 200 && request.status < 300 && request.responseText) {
         return JSON.parse(request.responseText);
@@ -114,6 +117,13 @@ function getPaperHubDataset() {
 
   window.__paperhubDataset = fetchDatasetSync();
   return window.__paperhubDataset;
+}
+
+// Drop the in-page cache and re-read the dataset from the server. Used when a
+// page is restored from the back/forward cache so it never shows stale data.
+function refreshPaperHubDataset() {
+  delete window.__paperhubDataset;
+  return getPaperHubDataset();
 }
 
 function persistPaperHubData() {

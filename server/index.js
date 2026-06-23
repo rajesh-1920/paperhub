@@ -30,9 +30,11 @@ export function createApp() {
 
   app.get("/api/health", (req, res) => res.json({ ok: true }));
 
-  // Read the whole dataset.
+  // Read the whole dataset. Never cache it — the frontend re-fetches after
+  // every mutation and must always see the latest counts.
   app.get("/api/dataset", async (req, res) => {
     try {
+      res.setHeader("Cache-Control", "no-store");
       res.json(await readDataset());
     } catch {
       res.status(500).json({ error: "Unable to read dataset" });

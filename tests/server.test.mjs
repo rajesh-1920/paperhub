@@ -40,7 +40,13 @@ test("API serves the dataset and persists writes to the JSON file", async (t) =>
   });
   assert.equal(put.status, 200, "PUT accepted");
 
-  const reread = await (await fetch(`${base}/api/dataset`)).json();
+  const rereadRes = await fetch(`${base}/api/dataset`);
+  assert.equal(
+    rereadRes.headers.get("cache-control"),
+    "no-store",
+    "dataset GET is uncacheable so counts never go stale",
+  );
+  const reread = await rereadRes.json();
   assert.equal(reread.users[0].name, "Server Test User", "GET reflects the write");
 
   const onDisk = JSON.parse(await readFile(dbFile, "utf8"));

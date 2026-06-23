@@ -80,6 +80,19 @@ async function initApp() {
   if (typeof setPaperHubRefresh === "function") {
     setPaperHubRefresh(paperhubSyncRefresh);
   }
+
+  // When the page is restored from the back/forward cache, DOMContentLoaded
+  // does not fire again — re-pull the dataset and re-render so counts (e.g. a
+  // freshly uploaded file) are never stale.
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) {
+      return;
+    }
+    if (typeof refreshPaperHubDataset === "function") {
+      refreshPaperHubDataset();
+    }
+    paperhubSyncRefresh();
+  });
 }
 
 // Re-render every dynamic surface on the current page after a data change, so a
