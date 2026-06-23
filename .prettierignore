@@ -15,3 +15,7 @@ public/**/*.html
 
 # Static-host headers file (no Prettier parser)
 public/_headers
+
+# Docker files (no Prettier parser)
+Dockerfile
+.dockerignore

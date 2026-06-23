@@ -19,16 +19,34 @@ so changes survive reloads and are shared across the app. See
 
 ## Quick start
 
+### Option A — Docker Compose (app + MongoDB, recommended)
+
+The whole stack — the Node app and a MongoDB database — runs with one command:
+
+```bash
+docker compose up -d --build
+```
+
+Then open **http://localhost:8000**. The database is seeded automatically on
+first run and persists in a Docker volume. Useful commands:
+
+```bash
+docker compose logs -f app     # tail app logs
+docker compose down            # stop (keeps the data volume)
+docker compose down -v         # stop and wipe the database
+```
+
+### Option B — Node directly (JSON-file database, no Docker)
+
 ```bash
 npm install
 npm run dev        # start the server with --watch on http://localhost:8000
 # or: npm run serve
 ```
 
-Then open http://localhost:8000. By default the database is the JSON file — no
-extra setup needed.
+By default the database is the JSON file — no extra setup needed.
 
-### Optional: use MongoDB (via Docker)
+#### Optional: MongoDB without Compose
 
 ```bash
 npm run db:up                          # start MongoDB in Docker (mongo:7)
