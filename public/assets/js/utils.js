@@ -709,6 +709,74 @@ function shareLinkUrl(token) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Teams. A team groups members and can be used as an ACL principal so a whole
+ * group is granted access to a file/folder at once.
+ * ------------------------------------------------------------------------- */
+
+function phListTeams() {
+  return getPaperHubDataset().teams || [];
+}
+
+function phGetTeam(teamId) {
+  return (getPaperHubDataset().teams || []).find((t) => t.id === teamId) || null;
+}
+
+function phListMyTeams(userId) {
+  return (getPaperHubDataset().teams || []).filter(
+    (t) => t.ownerId === userId || (t.members || []).some((m) => m.userId === userId),
+  );
+}
+
+function phCreateTeam({ name, ownerId } = {}) {
+  const clean = String(name || "").trim();
+  if (!clean) return null;
+  const dataset = getPaperHubDataset();
+  const owner =
+    ownerId || (typeof getCurrentUserData === "function" ? getCurrentUserData()?.id : null) || null;
+  const team = {
+    id: generateId("team"),
+    name: clean,
+    ownerId: owner,
+    createdAt: new Date().toISOString(),
+    members: owner ? [{ userId: owner, role: "manager" }] : [],
+  };
+  dataset.teams = dataset.teams || [];
+  dataset.teams.push(team);
+  persistPaperHubData();
+  return team;
+}
+
+function phAddTeamMember(teamId, userId, role = "member") {
+  const team = phGetTeam(teamId);
+  if (!team || !userId) return false;
+  team.members = team.members || [];
+  const existing = team.members.find((m) => m.userId === userId);
+  if (existing) existing.role = role;
+  else team.members.push({ userId, role: role === "manager" ? "manager" : "member" });
+  persistPaperHubData();
+  return true;
+}
+
+function phRemoveTeamMember(teamId, userId) {
+  const team = phGetTeam(teamId);
+  if (!team || !Array.isArray(team.members)) return false;
+  team.members = team.members.filter((m) => m.userId !== userId);
+  persistPaperHubData();
+  return true;
+}
+
+function phDeleteTeam(teamId) {
+  const dataset = getPaperHubDataset();
+  const before = (dataset.teams || []).length;
+  dataset.teams = (dataset.teams || []).filter((t) => t.id !== teamId);
+  if ((dataset.teams || []).length !== before) {
+    persistPaperHubData();
+    return true;
+  }
+  return false;
+}
+
+/* ---------------------------------------------------------------------------
  * Bulk file actions (used by the multi-select toolbar). Each applies to every
  * copy of the affected files and persists once.
  * ------------------------------------------------------------------------- */

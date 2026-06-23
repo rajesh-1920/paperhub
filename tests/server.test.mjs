@@ -291,6 +291,45 @@ test("search: owner-scoped, filtered, sorted and paginated", async (t) => {
   );
 });
 
+test("search: a team-scoped ACL grant gives team members access", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const adminToken = await tokenFor(base);
+  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const officer = ds.users.find((u) => u.role === "officer");
+  const file = ds.files.find((f) => f.ownerId !== officer.id);
+  ds.teams.push({
+    id: "team-rev",
+    name: "Reviewers",
+    ownerId: "admin-rajesh.biswas",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    members: [{ userId: officer.id, role: "member" }],
+  });
+  file.acl = [
+    {
+      principalType: "team",
+      principalId: "team-rev",
+      permission: "view",
+      grantedAt: "2026-01-01T00:00:00.000Z",
+    },
+  ];
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", ...bearer(adminToken) },
+    body: JSON.stringify(ds),
+  });
+
+  const { token } = await (await login(base, "rajdip.roy@paperhub.com.bd", "officer01")).json();
+  const shared = await (
+    await fetch(`${base}/api/files/search?shared=1&pageSize=100`, { headers: bearer(token) })
+  ).json();
+  assert.ok(
+    shared.items.some((f) => f.id === file.id),
+    "team member sees the team-shared file",
+  );
+});
+
 test("search: includes files shared via an ACL grant (shared=1 excludes own)", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());
