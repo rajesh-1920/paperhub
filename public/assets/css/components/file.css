@@ -620,3 +620,27 @@ html.dark .file-content-body {
 html.dark .file-content-text {
   color: #cbd5e1 !important;
 }
+
+/* Bulk-select toolbar + selection column on the files table. */
+.file-bulk-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 0.5rem;
+  background: var(--surface-muted, #f8fafc);
+}
+.file-bulk-bar[hidden] {
+  display: none;
+}
+.file-bulk-bar #fileBulkCount {
+  font-weight: 600;
+  margin-right: auto;
+}
+.file-select-col {
+  width: 2.25rem;
+  text-align: center;
+}

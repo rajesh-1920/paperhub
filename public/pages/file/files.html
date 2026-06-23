@@ -86,10 +86,22 @@
             <span id="filesVisibleCount">0 files visible</span>
           </div>
 
+          <div id="fileBulkBar" class="file-bulk-bar" hidden>
+            <span id="fileBulkCount">0 selected</span>
+            <select id="fileBulkFolder" class="file-status-filter" aria-label="Target folder">
+              <option value="">Root</option>
+            </select>
+            <button type="button" id="fileBulkMove" class="btn btn-sm btn-outline">Move</button>
+            <input id="fileBulkTag" type="text" class="file-status-filter" placeholder="Tag name" aria-label="Tag name" />
+            <button type="button" id="fileBulkTagBtn" class="btn btn-sm btn-outline">Tag</button>
+            <button type="button" id="fileBulkDelete" class="btn btn-sm btn-danger">Delete</button>
+          </div>
+
           <div class="table-container">
             <table>
               <thead>
                 <tr>
+                  <th class="file-select-col"><input type="checkbox" id="fileSelectAll" aria-label="Select all files" /></th>
                   <th>Document Name</th>
                   <th>Size</th>
                   <th>Status</th>

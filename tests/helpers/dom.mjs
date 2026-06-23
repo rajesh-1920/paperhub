@@ -84,6 +84,34 @@ function handleApi(method, url, body, headers, ctx) {
     if (!account) return { status: 401, body: JSON.stringify({ error: "Unauthenticated" }) };
     return { status: 200, body: JSON.stringify({ user: publicUser(ds, account) }) };
   }
+  if (url.includes("/api/files/search")) {
+    const params = new URL(url, "http://localhost").searchParams;
+    const query = (params.get("q") || "").toLowerCase();
+    let items = (ds.files || []).filter((f) => !f.deletedAt);
+    if (query) {
+      items = items.filter((f) =>
+        String(f.name || "")
+          .toLowerCase()
+          .includes(query),
+      );
+    }
+    if (params.get("folderId") !== null) {
+      const raw = params.get("folderId");
+      const target = raw === "root" || raw === "" ? null : raw;
+      items = items.filter((f) => (f.folderId || null) === target);
+    }
+    const pageSize = Number(params.get("pageSize") || 20);
+    return {
+      status: 200,
+      body: JSON.stringify({
+        items: items.slice(0, pageSize),
+        total: items.length,
+        page: 1,
+        pageSize,
+        pages: 1,
+      }),
+    };
+  }
   if (m === "POST" && url.includes("/api/reset")) {
     ctx.server.dataset = JSON.parse(SEED);
     return { status: 200, body: JSON.stringify(ctx.server.dataset) };

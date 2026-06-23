@@ -18,6 +18,7 @@ let filePageSearch = "";
 let filePageStatusFilter = "all";
 let filePageSortBy = "recent";
 let selectedFileId = null;
+const filePageSelected = new Set();
 
 function initFileUploadPage() {
   const dropzone = getElement(".upload-dropzone");
@@ -357,6 +358,28 @@ function fileContentUrl(file) {
   return new URL(`/api/files/${encodeURIComponent(file.id)}/content`, window.location.origin).href;
 }
 
+// Query the server-side search endpoint (owner-scoped). Returns
+// { items, total, page, pageSize, pages }; an empty result on failure.
+async function searchFilesViaApi(params = {}) {
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") qs.set(key, value);
+  });
+  const url = new URL(`/api/files/search?${qs.toString()}`, window.location.origin).href;
+  const headers = {};
+  const token = typeof getAuthToken === "function" ? getAuthToken() : "";
+  if (token) headers.Authorization = "Bearer " + token;
+  try {
+    const response = await fetch(url, { headers });
+    if (!response.ok) {
+      return { items: [], total: 0, page: 1, pageSize: 20, pages: 1 };
+    }
+    return await response.json();
+  } catch (error) {
+    return { items: [], total: 0, page: 1, pageSize: 20, pages: 1 };
+  }
+}
+
 // Authorization header for the (protected) content routes, when signed in.
 function fileAuthHeaders(extra) {
   const headers = Object.assign({}, extra);
@@ -451,7 +474,94 @@ async function simulateUpload(progressElement) {
 
 function initFileDetailsPage() {
   setupFileDetailsInteractions();
+  setupBulkActions();
   loadFileList();
+}
+
+// Multi-select toolbar: move / tag / delete the checked files in one action.
+function setupBulkActions() {
+  const body = getElement("#fileTableBody");
+  addEvent(body, "change", (event) => {
+    const box = event.target.closest(".file-row-select");
+    if (!box) return;
+    const id = box.getAttribute("data-file-select");
+    if (box.checked) filePageSelected.add(id);
+    else filePageSelected.delete(id);
+    refreshBulkUI();
+  });
+
+  addEvent(getElement("#fileSelectAll"), "change", (event) => {
+    const checked = Boolean(event.target.checked);
+    document.querySelectorAll(".file-row-select").forEach((box) => {
+      box.checked = checked;
+      const id = box.getAttribute("data-file-select");
+      if (checked) filePageSelected.add(id);
+      else filePageSelected.delete(id);
+    });
+    refreshBulkUI();
+  });
+
+  addEvent(getElement("#fileBulkMove"), "click", () => {
+    if (!filePageSelected.size) return;
+    const folderId = getElement("#fileBulkFolder")?.value || null;
+    phMoveFiles([...filePageSelected], folderId || null);
+    clearBulkSelection();
+    showSuccess("Moved selected files");
+    loadFileList();
+  });
+
+  addEvent(getElement("#fileBulkTagBtn"), "click", () => {
+    if (!filePageSelected.size) return;
+    const label = String(getElement("#fileBulkTag")?.value || "").trim();
+    if (!label) {
+      showWarning("Enter a tag name");
+      return;
+    }
+    const tag = typeof phCreateTag === "function" ? phCreateTag({ label }) : null;
+    if (tag) phTagFiles([...filePageSelected], tag.id);
+    const input = getElement("#fileBulkTag");
+    if (input) input.value = "";
+    clearBulkSelection();
+    showSuccess(`Tagged with "${label}"`);
+    loadFileList();
+  });
+
+  addEvent(getElement("#fileBulkDelete"), "click", () => {
+    if (!filePageSelected.size) return;
+    if (!window.confirm(`Delete ${filePageSelected.size} selected file(s)?`)) return;
+    phDeleteFiles([...filePageSelected]);
+    clearBulkSelection();
+    showSuccess("Deleted selected files");
+    loadFileList();
+  });
+
+  populateBulkFolders();
+}
+
+function populateBulkFolders() {
+  const select = getElement("#fileBulkFolder");
+  if (!select || typeof phListFolders !== "function") return;
+  const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+  const folders = phListFolders(user?.id);
+  select.innerHTML =
+    '<option value="">Root</option>' +
+    folders
+      .map((f) => `<option value="${escapeHtml(f.id)}">${escapeHtml(f.path || f.name)}</option>`)
+      .join("");
+}
+
+function refreshBulkUI() {
+  const bar = getElement("#fileBulkBar");
+  const count = getElement("#fileBulkCount");
+  if (count) count.textContent = `${filePageSelected.size} selected`;
+  if (bar) bar.hidden = filePageSelected.size === 0;
+}
+
+function clearBulkSelection() {
+  filePageSelected.clear();
+  const selectAll = getElement("#fileSelectAll");
+  if (selectAll) selectAll.checked = false;
+  refreshBulkUI();
 }
 
 function setupFileDetailsInteractions() {
@@ -665,6 +775,7 @@ function renderFileTable() {
 
   updateMetaPanel(getSelectedFile());
   syncSelectedRowState();
+  if (typeof refreshBulkUI === "function") refreshBulkUI();
 }
 
 function getFilteredAndSortedFiles(files) {
@@ -702,7 +813,13 @@ function createFileRow(file) {
   const row = createElement("tr", "file-row");
   row.setAttribute("data-file-id", file._id);
 
+  const selectId = file.id || file._id;
   row.innerHTML = `
+    <td class="file-select-col">
+      <input type="checkbox" class="file-row-select" data-file-select="${escapeHtml(selectId)}" ${
+        filePageSelected.has(selectId) ? "checked" : ""
+      } aria-label="Select file" />
+    </td>
     <td>
       <div class="file-cell">
         <span class="file-type-icon">${escapeHtml(getFileIconByName(file.name))}</span>

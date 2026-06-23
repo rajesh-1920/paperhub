@@ -566,6 +566,59 @@ function phCopyFile(fileId, targetFolderId = null) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Bulk file actions (used by the multi-select toolbar). Each applies to every
+ * copy of the affected files and persists once.
+ * ------------------------------------------------------------------------- */
+
+function phMoveFiles(ids, folderId = null) {
+  const set = new Set(ids || []);
+  if (!set.size) return;
+  const dataset = getPaperHubDataset();
+  const now = new Date().toISOString();
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (set.has(file.id)) {
+        file.folderId = folderId || null;
+        file.updatedAt = now;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  persistPaperHubData();
+}
+
+function phTagFiles(ids, tagId) {
+  const set = new Set(ids || []);
+  if (!set.size || !tagId) return;
+  const dataset = getPaperHubDataset();
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (set.has(file.id)) {
+        file.tagIds = file.tagIds || [];
+        if (!file.tagIds.includes(tagId)) file.tagIds.push(tagId);
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  persistPaperHubData();
+}
+
+function phDeleteFiles(ids) {
+  const set = new Set(ids || []);
+  if (!set.size) return;
+  const dataset = getPaperHubDataset();
+  dataset.files = (dataset.files || []).filter((file) => !set.has(file.id));
+  (dataset.users || []).forEach((user) => {
+    user.files = (user.files || []).filter((file) => !set.has(file.id));
+  });
+  dataset.reviewQueue = (dataset.reviewQueue || []).filter((review) => !set.has(review.fileId));
+  if (typeof phRecomputeDashboardStats === "function") {
+    phRecomputeDashboardStats(dataset);
+  }
+  persistPaperHubData();
+}
+
+/* ---------------------------------------------------------------------------
  * Tags. A normalized tags[] table referenced by file.tagIds / folder.tagIds.
  * The legacy free-text file.tags[] is left untouched.
  * ------------------------------------------------------------------------- */
