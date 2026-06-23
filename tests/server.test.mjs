@@ -16,6 +16,7 @@ async function startTestServer() {
   await copyFile(SEED, seedFile);
   process.env.PAPERHUB_DB_FILE = dbFile;
   process.env.PAPERHUB_SEED_FILE = seedFile;
+  process.env.PAPERHUB_UPLOAD_DIR = join(dir, "uploads");
 
   const { createApp } = await import("../server/index.js");
   const server = createApp().listen(0);
@@ -56,6 +57,36 @@ test("API rejects an invalid dataset payload", async (t) => {
     body: JSON.stringify({ not: "a dataset" }),
   });
   assert.equal(res.status, 400, "invalid payload rejected");
+});
+
+test("file content: stores and serves real PDF bytes, rejects non-PDF", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const pdf = Buffer.from("%PDF-1.4\nhello world\n%%EOF\n");
+
+  const put = await fetch(`${base}/api/files/file-x/content`, {
+    method: "PUT",
+    headers: { "content-type": "application/pdf" },
+    body: pdf,
+  });
+  assert.equal(put.status, 200, "PDF accepted");
+
+  const get = await fetch(`${base}/api/files/file-x/content`);
+  assert.equal(get.status, 200);
+  assert.equal(get.headers.get("content-type"), "application/pdf");
+  const back = Buffer.from(await get.arrayBuffer());
+  assert.ok(back.equals(pdf), "bytes round-trip unchanged");
+
+  const notPdf = await fetch(`${base}/api/files/file-y/content`, {
+    method: "PUT",
+    headers: { "content-type": "application/pdf" },
+    body: Buffer.from("this is not a pdf"),
+  });
+  assert.equal(notPdf.status, 415, "non-PDF rejected by magic-byte check");
+
+  const missing = await fetch(`${base}/api/files/file-z/content`);
+  assert.equal(missing.status, 404, "unknown file content is 404");
 });
 
 test("API reset restores the dataset from the seed", async (t) => {

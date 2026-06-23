@@ -26,6 +26,10 @@ tmp/
 *.tmp
 *.bak
 
+# ───────────────────────────── Uploaded files ───────────────────────────
+# Uploaded PDF binaries (JSON-store backend); MongoDB uses GridFS instead.
+server/uploads/
+
 # ───────────────────────────── Test / coverage ──────────────────────────
 coverage/
 .nyc_output/

@@ -231,8 +231,11 @@ async function handleUpload() {
           statusEl.textContent = "Uploaded successfully";
           statusEl.style.color = "var(--success)";
         }
+        const record = persistUploadedFile(file);
+        if (record) {
+          await uploadFileBinary(record.id, file);
+        }
         addClass(filePreview, "file-preview-success");
-        persistUploadedFile(file);
         uploadedCount++;
 
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -291,13 +294,15 @@ function persistUploadedFile(file) {
     reviewer: reviewerName,
     fileType: getFileTypeLabel(extension),
     extension,
-    mimeType: file.type || "application/octet-stream",
+    mimeType: "application/pdf",
     pageCount: 1,
     version: "v1.0",
     tags: ["Upload", "Bangladesh"],
     description: `Uploaded by ${user.name} via PaperHub.`,
     summary: "Newly uploaded document awaiting review.",
-    content: `${file.name}\n\nUploaded by ${user.name} on ${formatDate(nowIso)}.\nThis document has been submitted and is awaiting officer review.`,
+    // The real PDF bytes are stored server-side and served from
+    // /api/files/<id>/content; hasContent tells the UI to embed the PDF.
+    hasContent: true,
   };
 
   const reviewItem = {
@@ -317,7 +322,7 @@ function persistUploadedFile(file) {
     reviewReason: newFile.summary,
     fileType: newFile.fileType,
     ownerName: user.name,
-    content: newFile.content,
+    hasContent: true,
     checklist: [
       { label: "Core details verified", done: false },
       { label: "Supporting evidence attached", done: false },
@@ -332,6 +337,35 @@ function persistUploadedFile(file) {
   };
 
   phAddFile(newFile, reviewItem);
+  return newFile;
+}
+
+// URL that serves a file's stored PDF bytes (same origin as the app).
+function fileContentUrl(file) {
+  return new URL(`/api/files/${encodeURIComponent(file.id)}/content`, window.location.origin).href;
+}
+
+// Upload the real PDF bytes to the backend for a just-created file record.
+async function uploadFileBinary(id, file) {
+  try {
+    const response = await fetch(
+      new URL(`/api/files/${encodeURIComponent(id)}/content`, window.location.origin).href,
+      { method: "PUT", headers: { "Content-Type": "application/pdf" }, body: file },
+    );
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+}
+
+function deleteFileBinary(id) {
+  try {
+    fetch(new URL(`/api/files/${encodeURIComponent(id)}/content`, window.location.origin).href, {
+      method: "DELETE",
+    });
+  } catch (error) {
+    /* best effort */
+  }
 }
 
 function getFileTypeLabel(extension) {
@@ -446,6 +480,18 @@ function viewFileContent(file) {
     showWarning("No file to view");
     return;
   }
+
+  // Real uploaded PDF — open it so the browser renders the full document.
+  if (file.hasContent) {
+    const opened = window.open(fileContentUrl(file), "_blank");
+    if (!opened) {
+      showInfo(`Pop-up blocked — downloading ${file.name} instead`);
+      downloadFile(file);
+    }
+    return;
+  }
+
+  // Legacy/demo record with text content only.
   const text = file.content || `${file.name}\n\nNo stored content for this document.`;
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -463,10 +509,23 @@ function downloadFile(file) {
     return;
   }
 
+  const link = document.createElement("a");
+
+  // Real uploaded PDF — download the actual bytes with the original name.
+  if (file.hasContent) {
+    link.href = fileContentUrl(file);
+    link.download = ensureExtension(file.name, "pdf");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showSuccess(`Downloaded ${link.download}`);
+    return;
+  }
+
+  // Legacy/demo record — export its text content.
   const text = file.content || `${file.name}\n\nNo stored content for this document.`;
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
   link.href = url;
   link.download = `${String(file.name || "document").replace(/\.[^.]+$/, "")}.txt`;
   document.body.appendChild(link);
@@ -474,6 +533,11 @@ function downloadFile(file) {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
   showSuccess(`Downloaded ${link.download}`);
+}
+
+function ensureExtension(name, ext) {
+  const base = String(name || "document");
+  return new RegExp(`\\.${ext}$`, "i").test(base) ? base : `${base.replace(/\.[^.]+$/, "")}.${ext}`;
 }
 
 function deleteSelectedFile() {
@@ -489,6 +553,9 @@ function deleteSelectedFile() {
 
   if (typeof phDeleteFile === "function") {
     phDeleteFile(file.id);
+  }
+  if (file.hasContent) {
+    deleteFileBinary(file.id);
   }
 
   selectedFileId = null;
@@ -720,7 +787,7 @@ function renderFileContent(file) {
 
   if (!file) {
     if (meta) meta.textContent = "Select a file to read its contents.";
-    body.textContent = "";
+    body.innerHTML = "";
     return;
   }
 
@@ -729,7 +796,17 @@ function renderFileContent(file) {
     meta.textContent = `${file.fileType || "Document"} • ${file.pageCount || 1} page${file.pageCount === 1 ? "" : "s"} • ${sizeLabel}`;
   }
 
-  body.textContent = file.content ? String(file.content) : "No stored content for this document.";
+  // Real uploaded PDF — embed the actual document so the full PDF is visible.
+  if (file.hasContent) {
+    body.innerHTML = `<iframe class="file-pdf-frame" src="${escapeHtml(fileContentUrl(file))}" title="${escapeHtml(file.name)}"></iframe>`;
+    return;
+  }
+
+  // Legacy/demo record — show the stored text.
+  const pre = createElement("pre", "file-content-text");
+  pre.textContent = file.content ? String(file.content) : "No stored content for this document.";
+  body.innerHTML = "";
+  body.appendChild(pre);
 }
 
 function syncStatusChip(status) {

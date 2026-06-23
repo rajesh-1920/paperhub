@@ -30,3 +30,8 @@ export const ensureDataset = (...args) => backend().ensureDataset(...args);
 export const readDataset = (...args) => backend().readDataset(...args);
 export const writeDataset = (...args) => backend().writeDataset(...args);
 export const resetDataset = (...args) => backend().resetDataset(...args);
+
+// Uploaded file binaries (the actual PDF bytes).
+export const writeFileContent = (...args) => backend().writeFileContent(...args);
+export const readFileContent = (...args) => backend().readFileContent(...args);
+export const deleteFileContent = (...args) => backend().deleteFileContent(...args);

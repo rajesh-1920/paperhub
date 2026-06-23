@@ -1,17 +1,19 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, GridFSBucket } from "mongodb";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 // MongoDB storage backend. Active when MONGODB_URI is set. The dataset's
 // top-level arrays each map to a collection; the scalar parts (meta,
-// dashboardStats, infrastructure) live in a single "meta" document. The
-// frontend keeps using GET/PUT /api/dataset — this layer assembles the dataset
-// on read and splits it across collections on write.
+// dashboardStats, infrastructure) live in a single "meta" document. Uploaded
+// file binaries are stored in GridFS (handles files of any size). The frontend
+// keeps using GET/PUT /api/dataset — this layer assembles the dataset on read
+// and splits it across collections on write.
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ARRAY_COLLECTIONS = ["authAccounts", "users", "files", "reviewQueue"];
 const META_ID = "singleton";
+const CONTENT_BUCKET = "fileContents";
 
 function seedFile() {
   return process.env.PAPERHUB_SEED_FILE || join(HERE, "..", "seed.json");
@@ -97,6 +99,46 @@ export function writeDataset(data) {
 export async function resetDataset() {
   await writeDataset(await readSeed());
   return readDataset();
+}
+
+// --- File binaries via GridFS ----------------------------------------------
+
+async function getBucket() {
+  const db = await getDb();
+  return new GridFSBucket(db, { bucketName: CONTENT_BUCKET });
+}
+
+export async function writeFileContent(id, buffer) {
+  const bucket = await getBucket();
+  await deleteFileContent(id); // replace any existing version
+  await new Promise((resolve, reject) => {
+    const stream = bucket.openUploadStream(String(id));
+    stream.on("error", reject);
+    stream.on("finish", resolve);
+    stream.end(buffer);
+  });
+}
+
+export async function readFileContent(id) {
+  const bucket = await getBucket();
+  const files = await bucket.find({ filename: String(id) }).toArray();
+  if (!files.length) return null;
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    bucket
+      .openDownloadStreamByName(String(id))
+      .on("data", (chunk) => chunks.push(chunk))
+      .on("error", reject)
+      .on("end", () => resolve(Buffer.concat(chunks)));
+  });
+}
+
+export async function deleteFileContent(id) {
+  const bucket = await getBucket();
+  const files = await bucket.find({ filename: String(id) }).toArray();
+  for (const file of files) {
+    await bucket.delete(file._id);
+  }
 }
 
 /** Close the connection (used by tests for clean shutdown). */

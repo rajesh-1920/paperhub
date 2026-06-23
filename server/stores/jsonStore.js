@@ -1,10 +1,11 @@
-import { readFile, writeFile, rename, copyFile, access } from "node:fs/promises";
+import { readFile, writeFile, rename, copyFile, access, mkdir, unlink } from "node:fs/promises";
 import { constants } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 // JSON-file storage backend. Used by default and as the CI/test fallback when
-// no MONGODB_URI is configured.
+// no MONGODB_URI is configured. Uploaded file binaries live as individual files
+// under an uploads directory (the dataset only stores metadata).
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..", "..");
@@ -15,6 +16,15 @@ function dbFile() {
 }
 function seedFile() {
   return process.env.PAPERHUB_SEED_FILE || join(HERE, "..", "seed.json");
+}
+function uploadsDir() {
+  return process.env.PAPERHUB_UPLOAD_DIR || join(HERE, "..", "uploads");
+}
+
+// Keep file ids confined to a safe, flat filename (no path traversal).
+function contentPath(id) {
+  const safe = String(id).replace(/[^a-zA-Z0-9_-]/g, "");
+  return join(uploadsDir(), `${safe}.pdf`);
 }
 
 // Serialize writes so two concurrent requests can never interleave or corrupt
@@ -62,4 +72,27 @@ export function resetDataset() {
     await copyFile(seedFile(), dbFile());
     return JSON.parse(await readFile(dbFile(), "utf8"));
   });
+}
+
+// --- File binaries (the actual uploaded PDF bytes) -------------------------
+
+export async function writeFileContent(id, buffer) {
+  await mkdir(uploadsDir(), { recursive: true });
+  await writeFile(contentPath(id), buffer);
+}
+
+export async function readFileContent(id) {
+  try {
+    return await readFile(contentPath(id));
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteFileContent(id) {
+  try {
+    await unlink(contentPath(id));
+  } catch {
+    /* already gone */
+  }
 }

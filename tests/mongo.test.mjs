@@ -57,6 +57,17 @@ test("MongoDB backend reset restores the seed", { skip: !db }, async () => {
   assert.notEqual(reset.users.find((u) => u.id === id).name, "Temporary");
 });
 
+test("MongoDB stores and serves file binaries via GridFS", { skip: !db }, async () => {
+  const pdf = Buffer.from("%PDF-1.4\nmongo binary\n%%EOF\n");
+  await db.writeFileContent("file-gridfs", pdf);
+
+  const back = await db.readFileContent("file-gridfs");
+  assert.ok(back && Buffer.from(back).equals(pdf), "GridFS round-trip unchanged");
+
+  await db.deleteFileContent("file-gridfs");
+  assert.equal(await db.readFileContent("file-gridfs"), null, "deleted content is gone");
+});
+
 after(async () => {
   if (closeMongo) await closeMongo();
   if (mem) await mem.stop();

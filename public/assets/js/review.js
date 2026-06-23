@@ -487,9 +487,11 @@ function renderReviewDetails(review) {
               <div class="review-document-page">
                 <div class="review-document-heading">${escapeHtml(review.documentName)}</div>
                 ${
-                  review.content
-                    ? `<pre class="review-document-content">${escapeHtml(review.content)}</pre>`
-                    : `<div class="review-document-lines">
+                  review.hasContent && review.fileId
+                    ? `<iframe class="review-document-frame-pdf" src="${escapeHtml(new URL(`/api/files/${encodeURIComponent(review.fileId)}/content`, window.location.origin).href)}" title="${escapeHtml(review.documentName)}"></iframe>`
+                    : review.content
+                      ? `<pre class="review-document-content">${escapeHtml(review.content)}</pre>`
+                      : `<div class="review-document-lines">
                   <span></span>
                   <span></span>
                   <span></span>
