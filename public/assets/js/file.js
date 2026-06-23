@@ -616,7 +616,34 @@ function setupFileDetailsInteractions() {
   });
 
   addEvent(getElement("#metaDownloadBtn"), "click", () => downloadFile(getSelectedFile()));
+  addEvent(getElement("#metaShareBtn"), "click", shareSelectedFile);
   addEvent(getElement("#metaDeleteBtn"), "click", deleteSelectedFile);
+}
+
+// Create a view-only share link for the selected file and copy it to clipboard.
+async function shareSelectedFile() {
+  const file = getSelectedFile();
+  if (!file || !file.id) {
+    showWarning("Select a file first");
+    return;
+  }
+  if (typeof createShareLinkViaApi !== "function") return;
+  try {
+    const { token } = await createShareLinkViaApi("file", file.id, { permission: "view" });
+    const url = typeof shareLinkUrl === "function" ? shareLinkUrl(token) : token;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+        showSuccess("Share link copied to clipboard");
+      } else {
+        showSuccess(`Share link: ${url}`);
+      }
+    } catch (clipErr) {
+      showSuccess(`Share link: ${url}`);
+    }
+  } catch (error) {
+    showError(error.message || "Could not create a share link");
+  }
 }
 
 function viewFileContent(file) {

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Shared document · PaperHub</title>
+    <link rel="stylesheet" href="/assets/css/tailwind.css" />
+    <link rel="stylesheet" href="/assets/css/components/file.css" />
+    <style>
+      .share-view-wrap {
+        max-width: 920px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      .share-view-card {
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        background: #fff;
+      }
+      .share-view-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .share-view-error {
+        color: var(--danger, #dc2626);
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body class="share-view-page">
+    <main class="share-view-wrap">
+      <div class="share-view-card">
+        <div class="share-view-head">
+          <div>
+            <p class="muted" style="margin: 0">Shared via PaperHub</p>
+            <h1 id="shareResourceName" style="margin: 0.25rem 0 0">Opening shared document…</h1>
+          </div>
+        </div>
+        <div id="shareViewError" class="share-view-error"></div>
+        <div id="shareViewBody" class="file-content-body"></div>
+      </div>
+    </main>
+    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/share-view.js"></script>
+  </body>
+</html>

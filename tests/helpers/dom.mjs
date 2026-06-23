@@ -112,6 +112,59 @@ function handleApi(method, url, body, headers, ctx) {
       }),
     };
   }
+  if (url.includes("/api/share")) {
+    const pathname = new URL(url, "http://localhost").pathname;
+    if (pathname.endsWith("/api/share/mine")) {
+      const items = (ds.shareLinks || []).map(({ passwordHash, ...rest }) => ({
+        ...rest,
+        passwordProtected: !!passwordHash,
+      }));
+      return { status: 200, body: JSON.stringify({ items }) };
+    }
+    if (m === "POST" && /\/api\/share\/?$/.test(pathname)) {
+      const b = parse();
+      const link = {
+        token: `share-${b.resourceId || "x"}`,
+        resourceType: b.resourceType,
+        resourceId: b.resourceId,
+        permission: b.permission || "view",
+        createdBy: "me",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        expiresAt: b.expiresAt || null,
+        revoked: false,
+        accessCount: 0,
+      };
+      ds.shareLinks = ds.shareLinks || [];
+      ds.shareLinks.push(link);
+      return {
+        status: 201,
+        body: JSON.stringify({ ok: true, token: link.token, link: { ...link } }),
+      };
+    }
+    if (m === "DELETE") {
+      return { status: 200, body: JSON.stringify({ ok: true }) };
+    }
+    const tokenMatch = pathname.match(/\/api\/share\/([^/]+)$/);
+    if (tokenMatch) {
+      const link = (ds.shareLinks || []).find((l) => l.token === tokenMatch[1] && !l.revoked);
+      if (!link) return { status: 404, body: JSON.stringify({ error: "Not found" }) };
+      const resource =
+        link.resourceType === "file"
+          ? (ds.files || []).find((f) => f.id === link.resourceId)
+          : (ds.folders || []).find((f) => f.id === link.resourceId);
+      return {
+        status: 200,
+        body: JSON.stringify({
+          ok: true,
+          resourceType: link.resourceType,
+          permission: link.permission,
+          resource: resource
+            ? { id: resource.id, name: resource.name, hasContent: !!resource.hasContent }
+            : null,
+        }),
+      };
+    }
+  }
   if (m === "POST" && url.includes("/api/reset")) {
     ctx.server.dataset = JSON.parse(SEED);
     return { status: 200, body: JSON.stringify(ctx.server.dataset) };
