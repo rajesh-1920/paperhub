@@ -8,17 +8,9 @@ const FILE_ICON_MAP = {
   "image/jpeg": "🖼️",
   "image/png": "🖼️",
 };
-const ALLOWED_FILE_TYPES = new Set(Object.keys(FILE_ICON_MAP));
-const ALLOWED_FILE_EXTENSIONS = new Set([
-  "pdf",
-  "doc",
-  "docx",
-  "xls",
-  "xlsx",
-  "jpg",
-  "jpeg",
-  "png",
-]);
+// Uploads are restricted to PDF files only.
+const ALLOWED_FILE_TYPES = new Set(["application/pdf"]);
+const ALLOWED_FILE_EXTENSIONS = new Set(["pdf"]);
 const uploadState = new Map();
 let filePageItems = [];
 let filePageFilteredItems = [];
@@ -93,7 +85,7 @@ function handleFiles(files) {
 
   Array.from(files).forEach((file) => {
     if (!validateFile(file)) {
-      showError(`File ${file.name} is not allowed`);
+      // validateFile already surfaced a specific reason.
       return;
     }
 
@@ -112,16 +104,18 @@ function handleFiles(files) {
 
 function validateFile(file) {
   if (file.size > MAX_UPLOAD_SIZE_BYTES) {
-    showError(`File ${file.name} exceeds 50MB limit`);
+    showError(`File ${file.name} exceeds the 50MB limit`);
     return false;
   }
 
+  // PDF only: require a .pdf extension and a matching (or empty) MIME type, so a
+  // renamed non-PDF (e.g. image saved as .pdf) is also rejected.
   const extension = getFileExtension(file.name);
-  const hasAllowedMimeType = ALLOWED_FILE_TYPES.has(file.type);
-  const hasAllowedExtension = ALLOWED_FILE_EXTENSIONS.has(extension);
+  const isPdf =
+    ALLOWED_FILE_EXTENSIONS.has(extension) && (!file.type || ALLOWED_FILE_TYPES.has(file.type));
 
-  if (!hasAllowedMimeType && !hasAllowedExtension) {
-    showError(`File type ${file.type} not allowed`);
+  if (!isPdf) {
+    showError(`Only PDF files can be uploaded — "${file.name}" was rejected`);
     return false;
   }
 
