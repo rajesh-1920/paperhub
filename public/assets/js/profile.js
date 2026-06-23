@@ -131,7 +131,6 @@
     return `${svg}<span class="sr-only">${label} section</span>`;
   }
 
-
   function initSidebarFallback() {
     const sidebarToggle = getElement("[data-sidebar-toggle]");
     const sidebar = getElement("#paperhubSidebar");

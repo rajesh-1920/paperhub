@@ -16,10 +16,7 @@
       "/pages/file/upload.html",
       "/pages/file/version-history.html",
     ],
-    reviews: [
-      "/pages/review/review-queue.html",
-      "/pages/review/review-details.html",
-    ],
+    reviews: ["/pages/review/review-queue.html", "/pages/review/review-details.html"],
     support: ["/pages/support/contact.html"],
   };
 
@@ -29,10 +26,7 @@
     fileUpload: ["/pages/file/upload.html"],
     fileHistory: ["/pages/file/version-history.html"],
     reviews: TOP_NAV_ROUTE_GROUPS.reviews,
-    profile: [
-      "/pages/profile/profile.html",
-      "/pages/profile/profile-edit.html",
-    ],
+    profile: ["/pages/profile/profile.html", "/pages/profile/profile-edit.html"],
     settings: ["/pages/account/settings.html"],
     billing: ["/pages/payment/payment.html"],
     support: TOP_NAV_ROUTE_GROUPS.support,
@@ -155,11 +149,7 @@
       if (role === "admin") {
         roleBadge.classList.add("border-red-300", "bg-red-50", "text-red-700");
       } else if (role === "officer") {
-        roleBadge.classList.add(
-          "border-purple-300",
-          "bg-purple-50",
-          "text-purple-700",
-        );
+        roleBadge.classList.add("border-purple-300", "bg-purple-50", "text-purple-700");
       } else {
         roleBadge.classList.add("text-slate-600");
       }
@@ -319,12 +309,8 @@
     const isExpanded = state === "expanded";
     const body = document.body;
     const sidebar = document.getElementById("paperhubSidebar");
-    const toggleButtons = Array.from(
-      document.querySelectorAll("[data-sidebar-toggle]"),
-    );
-    const toggleLabels = document.querySelectorAll(
-      "[data-sidebar-toggle-label]",
-    );
+    const toggleButtons = Array.from(document.querySelectorAll("[data-sidebar-toggle]"));
+    const toggleLabels = document.querySelectorAll("[data-sidebar-toggle-label]");
     const toggleIcons = document.querySelectorAll("[data-sidebar-toggle-icon]");
 
     body.classList.toggle("ph-sidebar-expanded", isExpanded);
@@ -337,10 +323,7 @@
 
     toggleButtons.forEach((button) => {
       button.setAttribute("aria-pressed", String(isExpanded));
-      button.setAttribute(
-        "aria-label",
-        isExpanded ? "Collapse sidebar" : "Expand sidebar",
-      );
+      button.setAttribute("aria-label", isExpanded ? "Collapse sidebar" : "Expand sidebar");
     });
 
     toggleLabels.forEach((element) => {
@@ -357,9 +340,7 @@
   }
 
   function setupSidebarToggle() {
-    const toggleButtons = Array.from(
-      document.querySelectorAll("[data-sidebar-toggle]"),
-    );
+    const toggleButtons = Array.from(document.querySelectorAll("[data-sidebar-toggle]"));
     if (toggleButtons.length === 0) {
       return;
     }
@@ -375,9 +356,7 @@
 
     toggleButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        const isExpanded = document.body.classList.contains(
-          "ph-sidebar-expanded",
-        );
+        const isExpanded = document.body.classList.contains("ph-sidebar-expanded");
         const nextState = isExpanded ? "collapsed" : "expanded";
 
         hasManualPreference = true;
@@ -471,8 +450,10 @@
         }
 
         try {
-          const preserve = Array.from(document.body.classList).filter((c) =>
-            c && (c.startsWith("paperhub") || c.startsWith("ph-") || c === "dark" || c === "light"),
+          const preserve = Array.from(document.body.classList).filter(
+            (c) =>
+              c &&
+              (c.startsWith("paperhub") || c.startsWith("ph-") || c === "dark" || c === "light"),
           );
           const incoming = Array.from(doc.body.classList || []);
           const merged = Array.from(new Set([...preserve, ...incoming]));
@@ -530,30 +511,47 @@
         const runPageInitializer = () => {
           const body = document.body;
 
-          if (body.classList.contains("support-page") && typeof initPageSpecificForms === "function") {
+          if (
+            body.classList.contains("support-page") &&
+            typeof initPageSpecificForms === "function"
+          ) {
             initPageSpecificForms();
           }
 
-          if (body.classList.contains("review-queue-page") && typeof initReviewQueuePage === "function") {
+          if (
+            body.classList.contains("review-queue-page") &&
+            typeof initReviewQueuePage === "function"
+          ) {
             initReviewQueuePage();
           }
 
-          if (body.classList.contains("review-details-page") && typeof initReviewDetailsPage === "function") {
+          if (
+            body.classList.contains("review-details-page") &&
+            typeof initReviewDetailsPage === "function"
+          ) {
             initReviewDetailsPage();
           }
 
-          if (body.classList.contains("file-upload-page") && typeof initFileUploadPage === "function") {
+          if (
+            body.classList.contains("file-upload-page") &&
+            typeof initFileUploadPage === "function"
+          ) {
             initFileUploadPage();
           }
 
-          if (body.classList.contains("file-details-page") && typeof initFileDetailsPage === "function") {
+          if (
+            body.classList.contains("file-details-page") &&
+            typeof initFileDetailsPage === "function"
+          ) {
             initFileDetailsPage();
           }
 
-          if (body.classList.contains("version-history-page") && typeof initVersionHistoryPage === "function") {
+          if (
+            body.classList.contains("version-history-page") &&
+            typeof initVersionHistoryPage === "function"
+          ) {
             initVersionHistoryPage();
           }
-
         };
 
         runPageInitializer();
@@ -581,10 +579,7 @@
 
       window.location.href = url;
     } catch (err) {
-      console.warn(
-        "Partial navigation failed, falling back to full reload",
-        err,
-      );
+      console.warn("Partial navigation failed, falling back to full reload", err);
       window.location.href = url;
     }
   }
@@ -598,9 +593,7 @@
     }
 
     const appLinks = Array.from(
-      document.querySelectorAll(
-        "[data-app-href], [data-nav-link], [data-sidebar-link]",
-      ),
+      document.querySelectorAll("[data-app-href], [data-nav-link], [data-sidebar-link]"),
     );
 
     appLinks.forEach((link) => {
@@ -656,10 +649,7 @@
         }
 
         let menuWidth = menu.offsetWidth || 220;
-        menuWidth = Math.min(
-          menuWidth,
-          window.innerWidth - viewportPadding * 2,
-        );
+        menuWidth = Math.min(menuWidth, window.innerWidth - viewportPadding * 2);
 
         const idealLeft = Math.round(buttonRect.right - menuWidth);
         const maxLeft = window.innerWidth - menuWidth - viewportPadding;
@@ -686,7 +676,9 @@
       };
 
       const currentRole =
-        typeof getCurrentUserData === "function" ? normalizeRole(getCurrentUserData()?.role || "user") : "user";
+        typeof getCurrentUserData === "function"
+          ? normalizeRole(getCurrentUserData()?.role || "user")
+          : "user";
 
       setDropdownRoleState(currentRole);
 
@@ -752,10 +744,7 @@
       });
 
       document.addEventListener("click", (event) => {
-        if (
-          !menuButton.contains(event.target) &&
-          !menu.contains(event.target)
-        ) {
+        if (!menuButton.contains(event.target) && !menu.contains(event.target)) {
           closeMenu();
         }
       });
@@ -814,13 +803,21 @@
     }
 
     function renderNotifications() {
-      const items = typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
+      const items =
+        typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
       const sorted = items.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       notifyList.innerHTML = sorted
         .map((item) => {
           const isUnread = !item.read;
           const time = item.createdAt ? timeAgo(item.createdAt) : "";
-          const icon = item.category === "review" ? "📝" : item.category === "billing" ? "💳" : item.category === "file" ? "📁" : "🔔";
+          const icon =
+            item.category === "review"
+              ? "📝"
+              : item.category === "billing"
+                ? "💳"
+                : item.category === "file"
+                  ? "📁"
+                  : "🔔";
 
           return `
             <li class="notification-item ${isUnread ? "unread" : ""}" tabindex="0" role="menuitem" data-notification-id="${escapeHtml(item.id)}">
@@ -866,7 +863,8 @@
 
     function activateNotificationItem(li) {
       const id = li.getAttribute("data-notification-id");
-      const items = typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
+      const items =
+        typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
       const item = items.find((x) => String(x.id) === String(id));
       if (item) item.read = true;
 
@@ -888,10 +886,14 @@
     if (clearBtn) {
       clearBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        const items = typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
+        const items =
+          typeof getCurrentUserNotifications === "function" ? getCurrentUserNotifications() : [];
         items.forEach((i) => (i.read = true));
 
-        if (typeof phMarkAllNotificationsRead === "function" && typeof getCurrentUserData === "function") {
+        if (
+          typeof phMarkAllNotificationsRead === "function" &&
+          typeof getCurrentUserData === "function"
+        ) {
           const currentUser = getCurrentUserData();
           if (currentUser) phMarkAllNotificationsRead(currentUser.id);
         }
@@ -933,9 +935,7 @@
   function setupThemeToggle() {
     const themeToggle = document.getElementById("themeToggle");
     const mobileThemeToggle = document.getElementById("mobileThemeToggle");
-    const sharedThemeToggles = Array.from(
-      document.querySelectorAll("[data-theme-toggle]"),
-    );
+    const sharedThemeToggles = Array.from(document.querySelectorAll("[data-theme-toggle]"));
     const root = document.documentElement;
 
     const getStoredTheme = () => {
@@ -984,8 +984,7 @@
 
     const storedTheme = getStoredTheme();
     const prefersDark =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
+      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
     const shouldUseDark = storedTheme ? storedTheme === "dark" : prefersDark;
 
     applyTheme(shouldUseDark, false);
@@ -1025,8 +1024,7 @@
       return;
     }
 
-    const user =
-      typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+    const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
     const role = normalizeRole(user?.role || "student");
     const navLinks = document.querySelectorAll("[data-nav-link]");
     const sidebarLinks = document.querySelectorAll("[data-sidebar-link]");
@@ -1043,7 +1041,10 @@
       const notifyCount = document.getElementById("notifyCount");
 
       if (notifyCount) {
-        const unread = user && Array.isArray(user.notifications) ? user.notifications.filter((n) => !n.read).length : 0;
+        const unread =
+          user && Array.isArray(user.notifications)
+            ? user.notifications.filter((n) => !n.read).length
+            : 0;
         if (unread > 0) {
           notifyCount.textContent = String(unread > 99 ? "99+" : unread);
           notifyCount.classList.remove("hidden");

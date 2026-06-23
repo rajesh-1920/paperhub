@@ -73,7 +73,9 @@ function getStoredAuthUsers() {
   const merged = [...getSeedAuthUsers()];
 
   list.forEach((entry) => {
-    const normalizedEmail = String(entry?.email || "").trim().toLowerCase();
+    const normalizedEmail = String(entry?.email || "")
+      .trim()
+      .toLowerCase();
     if (!normalizedEmail) {
       return;
     }
@@ -104,7 +106,9 @@ function persistAuthUsers(users) {
 }
 
 function findAuthenticatedUser(email, password) {
-  const normalizedEmail = String(email || "").trim().toLowerCase();
+  const normalizedEmail = String(email || "")
+    .trim()
+    .toLowerCase();
   const users = getStoredAuthUsers();
   const account = users.find(
     (user) => user.email === normalizedEmail && String(user.password) === String(password),
@@ -217,8 +221,8 @@ function updatePasswordStrength(e) {
   if (!strengthIndicator) return;
 
   let strength = 0;
-  let strengthText = "Very Weak";
-  let strengthClass = "weak";
+  let strengthText;
+  let strengthClass;
 
   if (password.length >= 8) strength++;
   if (/[a-z]/.test(password)) strength++;
@@ -273,7 +277,9 @@ async function handleRegister(e) {
   try {
     await delay(700);
 
-    const normalizedEmail = String(formData.email || "").trim().toLowerCase();
+    const normalizedEmail = String(formData.email || "")
+      .trim()
+      .toLowerCase();
     const users = getStoredAuthUsers();
     const alreadyExists = users.some((user) => user.email === normalizedEmail);
 
