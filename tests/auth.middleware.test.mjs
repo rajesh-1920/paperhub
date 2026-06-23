@@ -82,3 +82,26 @@ test("ownership: owner or admin can access, others cannot", () => {
   assert.equal(canAccessResource({ id: "x", role: "admin" }, file), true);
   assert.equal(canAccessResource({ id: "user-1", role: "user" }, null), false);
 });
+
+test("ownership: ACL grants access by user, role and team (and expiry)", () => {
+  const file = {
+    id: "f",
+    ownerId: "owner-1",
+    acl: [
+      { principalType: "user", principalId: "user-2", permission: "view" },
+      { principalType: "role", principalId: "officer", permission: "edit" },
+      { principalType: "team", principalId: "team-9", permission: "view" },
+      {
+        principalType: "user",
+        principalId: "user-3",
+        permission: "view",
+        expiresAt: "2000-01-01T00:00:00.000Z",
+      },
+    ],
+  };
+  assert.equal(canAccessResource({ id: "user-2", role: "user" }, file), true, "direct user grant");
+  assert.equal(canAccessResource({ id: "x", role: "officer" }, file), true, "role grant");
+  assert.equal(canAccessResource({ id: "y", role: "user" }, file, ["team-9"]), true, "team grant");
+  assert.equal(canAccessResource({ id: "user-3", role: "user" }, file), false, "expired ignored");
+  assert.equal(canAccessResource({ id: "z", role: "user" }, file), false, "no grant");
+});

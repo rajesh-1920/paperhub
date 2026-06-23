@@ -1,6 +1,14 @@
 import { Router } from "express";
 import { readDataset } from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
+import { canAccessResource } from "../auth/ownership.js";
+
+// Teams the user belongs to (for team-scoped ACL grants).
+function teamsForUser(dataset, userId) {
+  return (dataset.teams || [])
+    .filter((t) => (t.members || []).some((m) => m.userId === userId))
+    .map((t) => t.id);
+}
 
 // File query routes. Mounted at /api/files. Owner-scoped (admins see all),
 // server-authoritative — the client cannot widen its own visibility.
@@ -10,11 +18,16 @@ export function filesRouter() {
   // GET /api/files/search?q=&folderId=&status=&tag=&sort=&dir=&page=&pageSize=
   router.get("/search", requireAuth, async (req, res) => {
     const dataset = await readDataset();
-    const isAdmin = req.user.role === "admin";
+    const teamIds = teamsForUser(dataset, req.user.id);
+    const sharedOnly = req.query.shared === "1" || req.query.shared === "true";
 
-    let files = (dataset.files || []).filter(
-      (f) => !f.deletedAt && (isAdmin || f.ownerId === req.user.id),
-    );
+    // Owner + admin + anyone the file's ACL (user/role/team) grants access to.
+    let files = (dataset.files || []).filter((f) => {
+      if (f.deletedAt) return false;
+      if (!canAccessResource(req.user, f, teamIds)) return false;
+      if (sharedOnly) return f.ownerId !== req.user.id; // "shared with me"
+      return true;
+    });
 
     const q = String(req.query.q || "")
       .trim()

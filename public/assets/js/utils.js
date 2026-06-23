@@ -566,6 +566,111 @@ function phCopyFile(fileId, targetFolderId = null) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Access control (ACL). Files and folders carry an acl[] of grants:
+ *   { principalType: "user"|"role"|"team", principalId, permission, grantedBy,
+ *     grantedAt, expiresAt }
+ * Enforcement is server-side (server/auth/ownership.js); these mutators just
+ * maintain the grants.
+ * ------------------------------------------------------------------------- */
+
+const PH_PERMISSIONS = ["view", "comment", "edit", "owner"];
+const PH_PRINCIPAL_TYPES = ["user", "role", "team"];
+
+function phNormalizeGrant(grant) {
+  if (!grant || !PH_PRINCIPAL_TYPES.includes(grant.principalType) || !grant.principalId) {
+    return null;
+  }
+  const permission = PH_PERMISSIONS.includes(grant.permission) ? grant.permission : "view";
+  return {
+    principalType: grant.principalType,
+    principalId: String(grant.principalId),
+    permission,
+    grantedBy:
+      grant.grantedBy ||
+      (typeof getCurrentUserData === "function" ? getCurrentUserData()?.id : null) ||
+      null,
+    grantedAt: grant.grantedAt || new Date().toISOString(),
+    expiresAt: grant.expiresAt || null,
+  };
+}
+
+function phUpsertGrant(acl, entry) {
+  const next = (acl || []).filter(
+    (g) => !(g.principalType === entry.principalType && g.principalId === entry.principalId),
+  );
+  next.push(entry);
+  return next;
+}
+
+function phGrantFileAccess(fileId, grant) {
+  const entry = phNormalizeGrant(grant);
+  if (!entry) return false;
+  const dataset = getPaperHubDataset();
+  let found = false;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (file.id === fileId) {
+        file.acl = phUpsertGrant(file.acl, entry);
+        found = true;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  if (found) persistPaperHubData();
+  return found;
+}
+
+function phRevokeFileAccess(fileId, principalType, principalId) {
+  const dataset = getPaperHubDataset();
+  let found = false;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (file.id === fileId && Array.isArray(file.acl)) {
+        file.acl = file.acl.filter(
+          (g) => !(g.principalType === principalType && g.principalId === String(principalId)),
+        );
+        found = true;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  if (found) persistPaperHubData();
+  return found;
+}
+
+function phListFileGrants(fileId) {
+  const file = (getPaperHubDataset().files || []).find((f) => f.id === fileId);
+  return file && Array.isArray(file.acl) ? file.acl : [];
+}
+
+function phGrantFolderAccess(folderId, grant) {
+  const entry = phNormalizeGrant(grant);
+  if (!entry) return false;
+  const dataset = getPaperHubDataset();
+  const folder = (dataset.folders || []).find((f) => f.id === folderId);
+  if (!folder) return false;
+  folder.acl = phUpsertGrant(folder.acl, entry);
+  persistPaperHubData();
+  return true;
+}
+
+function phRevokeFolderAccess(folderId, principalType, principalId) {
+  const dataset = getPaperHubDataset();
+  const folder = (dataset.folders || []).find((f) => f.id === folderId);
+  if (!folder || !Array.isArray(folder.acl)) return false;
+  folder.acl = folder.acl.filter(
+    (g) => !(g.principalType === principalType && g.principalId === String(principalId)),
+  );
+  persistPaperHubData();
+  return true;
+}
+
+function phListFolderGrants(folderId) {
+  const folder = (getPaperHubDataset().folders || []).find((f) => f.id === folderId);
+  return folder && Array.isArray(folder.acl) ? folder.acl : [];
+}
+
+/* ---------------------------------------------------------------------------
  * Bulk file actions (used by the multi-select toolbar). Each applies to every
  * copy of the affected files and persists once.
  * ------------------------------------------------------------------------- */
