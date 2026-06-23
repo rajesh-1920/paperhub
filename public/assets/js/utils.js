@@ -71,43 +71,39 @@ function resolveAppPath(path) {
 const PAPERHUB_DATA_URL = resolveAppPath("assets/data/paperhub-backend.json");
 
 /* ---------------------------------------------------------------------------
- * Persistent data store — a localStorage-backed, mutable overlay on top of the
- * read-only seed dataset. The whole app reads through getPaperHubDataset() and
- * writes through the ph* mutators, so user actions (upload, review decisions,
- * edits, settings) persist across page loads and reflect on every page.
- * Bump PAPERHUB_DB_VERSION whenever the seed schema/content changes to discard
- * any stale stored copy and reseed.
+ * Data store — the JSON file is the database, served and persisted by the Node
+ * backend (server/). The whole app reads through getPaperHubDataset() and
+ * writes through the ph* mutators, so every action (upload, review decisions,
+ * edits, settings) is saved to the JSON file and reflected on every page.
+ *
+ *   GET  /api/dataset  -> current dataset
+ *   PUT  /api/dataset  -> persist the dataset (server writes the JSON file)
+ *   POST /api/reset    -> restore the dataset from the pristine seed
+ *
+ * Reads/writes use synchronous XHR to preserve the app's synchronous data
+ * model. If the API is unavailable, reads fall back to the static JSON file so
+ * the UI still renders (read-only).
  * ------------------------------------------------------------------------- */
 
-const PAPERHUB_DB_STORAGE_KEY = "paperhub-db";
-const PAPERHUB_DB_VERSION_KEY = "paperhub-db-version";
-const PAPERHUB_DB_VERSION = "2.1.0";
-
-function readStoredDataset() {
-  try {
-    if (localStorage.getItem(PAPERHUB_DB_VERSION_KEY) !== PAPERHUB_DB_VERSION) {
-      return null;
-    }
-    const raw = localStorage.getItem(PAPERHUB_DB_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (error) {
-    return null;
-  }
+function paperhubApiUrl(path) {
+  // The API lives at the server root, regardless of the current page's depth.
+  return new URL(path, window.location.origin).href;
 }
 
-function fetchSeedDataset() {
-  try {
-    const request = new XMLHttpRequest();
-    request.open("GET", PAPERHUB_DATA_URL, false);
-    request.send(null);
-
-    if (request.status >= 200 && request.status < 300 && request.responseText) {
-      return JSON.parse(request.responseText);
+function fetchDatasetSync() {
+  const sources = [paperhubApiUrl("/api/dataset"), PAPERHUB_DATA_URL];
+  for (const url of sources) {
+    try {
+      const request = new XMLHttpRequest();
+      request.open("GET", url, false);
+      request.send(null);
+      if (request.status >= 200 && request.status < 300 && request.responseText) {
+        return JSON.parse(request.responseText);
+      }
+    } catch (error) {
+      /* try the next source */
     }
-  } catch (error) {
-    /* fall through to empty dataset */
   }
-
   return {};
 }
 
@@ -116,14 +112,19 @@ function getPaperHubDataset() {
     return window.__paperhubDataset;
   }
 
-  window.__paperhubDataset = readStoredDataset() || fetchSeedDataset();
+  window.__paperhubDataset = fetchDatasetSync();
   return window.__paperhubDataset;
 }
 
 function persistPaperHubData() {
   try {
-    localStorage.setItem(PAPERHUB_DB_STORAGE_KEY, JSON.stringify(getPaperHubDataset()));
-    localStorage.setItem(PAPERHUB_DB_VERSION_KEY, PAPERHUB_DB_VERSION);
+    const request = new XMLHttpRequest();
+    request.open("PUT", paperhubApiUrl("/api/dataset"), false);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.send(JSON.stringify(getPaperHubDataset()));
+    if (request.status < 200 || request.status >= 300) {
+      console.warn("Unable to persist PaperHub data: HTTP", request.status);
+    }
   } catch (error) {
     console.warn("Unable to persist PaperHub data", error);
   }
@@ -131,10 +132,11 @@ function persistPaperHubData() {
 
 function resetPaperHubData() {
   try {
-    localStorage.removeItem(PAPERHUB_DB_STORAGE_KEY);
-    localStorage.removeItem(PAPERHUB_DB_VERSION_KEY);
+    const request = new XMLHttpRequest();
+    request.open("POST", paperhubApiUrl("/api/reset"), false);
+    request.send(null);
   } catch (error) {
-    /* ignore */
+    console.warn("Unable to reset PaperHub data", error);
   }
   delete window.__paperhubDataset;
 }
