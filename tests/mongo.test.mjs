@@ -47,6 +47,20 @@ test("MongoDB backend persists a write across reads", { skip: !db }, async () =>
   assert.equal(again.users[0].name, "Mongo Test User");
 });
 
+test("MongoDB round-trips the new SaaS collections", { skip: !db }, async () => {
+  const dataset = await db.readDataset();
+  for (const key of ["folders", "shareLinks", "tags", "auditLog", "teams", "refreshTokens"]) {
+    assert.ok(Array.isArray(dataset[key]), `${key} present as an array`);
+  }
+  dataset.folders.push({ id: "folder-m", name: "Mongo Folder", parentId: null });
+  dataset.auditLog.push({ id: "evt-m", action: "test", ts: "2026-01-01T00:00:00.000Z" });
+  await db.writeDataset(dataset);
+
+  const again = await db.readDataset();
+  assert.equal(again.folders.find((f) => f.id === "folder-m")?.name, "Mongo Folder");
+  assert.equal(again.auditLog.find((e) => e.id === "evt-m")?.action, "test");
+});
+
 test("MongoDB backend reset restores the seed", { skip: !db }, async () => {
   const dataset = await db.readDataset();
   const id = dataset.users[0].id;

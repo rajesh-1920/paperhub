@@ -53,6 +53,29 @@ test("API serves the dataset and persists writes to the JSON file", async (t) =>
   assert.equal(onDisk.users[0].name, "Server Test User", "JSON file on disk updated");
 });
 
+test("dataset exposes the new SaaS collections and round-trips them", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const NEW = ["folders", "shareLinks", "tags", "auditLog", "teams", "refreshTokens"];
+  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  for (const key of NEW) {
+    assert.ok(Array.isArray(dataset[key]), `${key} is defaulted to an array`);
+  }
+
+  dataset.folders.push({ id: "folder-1", name: "Reports", parentId: null });
+  dataset.tags.push({ id: "tag-1", label: "Important", slug: "important" });
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(dataset),
+  });
+
+  const reread = await (await fetch(`${base}/api/dataset`)).json();
+  assert.equal(reread.folders[0]?.name, "Reports", "folders persisted");
+  assert.equal(reread.tags[0]?.slug, "important", "tags persisted");
+});
+
 test("API rejects an invalid dataset payload", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());

@@ -20,6 +20,20 @@ import { dirname, join } from "node:path";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..", "..");
 
+// Top-level arrays backing the file-management SaaS features. Kept identical to
+// mongoStore's ARRAY_COLLECTIONS tail. Readers default these to [] so a database
+// file written before these features existed never crashes a reader.
+const ADDITIVE_ARRAYS = ["folders", "shareLinks", "tags", "auditLog", "teams", "refreshTokens"];
+
+function withDefaults(data) {
+  for (const key of ADDITIVE_ARRAYS) {
+    if (!Array.isArray(data[key])) {
+      data[key] = [];
+    }
+  }
+  return data;
+}
+
 // Paths are resolved lazily so tests can point them at a temp copy via env.
 function dbFile() {
   return process.env.PAPERHUB_DB_FILE || join(ROOT, "public/assets/data/paperhub-backend.json");
@@ -80,7 +94,7 @@ export async function ensureDataset() {
 
 export async function readDataset() {
   await ensureDataset();
-  return JSON.parse(await readFile(dbFile(), "utf8"));
+  return withDefaults(JSON.parse(await readFile(dbFile(), "utf8")));
 }
 
 /** Atomically overwrite the database file (write temp, then rename). */

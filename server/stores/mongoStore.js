@@ -11,7 +11,21 @@ import { dirname, join } from "node:path";
 // and splits it across collections on write.
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const ARRAY_COLLECTIONS = ["authAccounts", "users", "files", "reviewQueue"];
+// Every top-level dataset array maps to its own collection. The trailing group
+// (folders…refreshTokens) backs the file-management SaaS features and must stay
+// in sync with jsonStore's ADDITIVE_ARRAYS so both backends round-trip alike.
+const ARRAY_COLLECTIONS = [
+  "authAccounts",
+  "users",
+  "files",
+  "reviewQueue",
+  "folders",
+  "shareLinks",
+  "tags",
+  "auditLog",
+  "teams",
+  "refreshTokens",
+];
 const META_ID = "singleton";
 const CONTENT_BUCKET = "fileContents";
 
