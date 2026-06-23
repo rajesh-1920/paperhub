@@ -1,0 +1,44 @@
+.table-container {
+  overflow: hidden;
+}
+
+.table-container .table-header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+}
+
+.table-container table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.table-container thead th,
+.soft-table thead th {
+  background: rgba(248, 250, 252, 0.96);
+  color: #475569;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.table-container tbody td,
+.soft-table tbody td {
+  color: #1e293b;
+}
+
+.table-container tbody tr:hover,
+.soft-table tbody tr:hover {
+  background: linear-gradient(135deg, rgba(224, 242, 254, 0.56), rgba(240, 253, 250, 0.46));
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.9rem 0 1rem;
+}

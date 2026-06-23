@@ -1,0 +1,104 @@
+<nav id="paperhubNavbar" class="ph-nav" aria-label="Main navigation">
+  <div class="ph-nav-inner">
+    <a data-app-href="index.html" class="ph-brand" aria-label="PaperHub Home">
+      <span class="ph-brand-mark">PH</span>
+      <span>
+        <span class="ph-brand-title">PaperHub</span>
+      </span>
+    </a>
+
+    <ul class="ph-nav-links" role="menubar">
+      <li><a data-nav-link data-top-nav="dashboard" data-user-dashboard-link data-roles="user,officer,admin"
+          data-app-href="pages/dashboard/user.html" class="ph-nav-link">Dashboard</a></li>
+      <li><a data-nav-link data-top-nav="files" data-roles="user,officer,admin" data-app-href="pages/file/files.html"
+          class="ph-nav-link">Files</a></li>
+      <li><a data-nav-link data-top-nav="reviews" data-roles="officer,admin"
+          data-app-href="pages/review/review-queue.html" class="ph-nav-link">Reviews</a></li>
+      <li><a data-nav-link data-top-nav="support" data-app-href="pages/support/contact.html"
+          class="ph-nav-link">Support</a></li>
+    </ul>
+
+    <div class="ph-nav-actions">
+      <a data-app-href="pages/file/upload.html" class="ph-cta-btn" aria-label="Upload document">Upload</a>
+
+      <button id="notifyBtn" type="button" class="ph-icon-btn ph-notify-btn" aria-label="Notifications"
+        aria-haspopup="true" aria-expanded="false">
+        <span aria-hidden="true">🔔</span>
+        <span class="ph-badge ph-badge-count hidden" id="notifyCount" aria-hidden="false">0</span>
+      </button>
+
+      <div id="notifyDropdown" class="ph-menu ph-notify-menu hidden" role="menu" aria-label="Notifications menu">
+        <div class="ph-menu-header">
+          <strong>Notifications</strong>
+          <button id="clearNotificationsBtn" class="ph-menu-btn">Clear</button>
+        </div>
+        <div class="ph-menu-section">
+          <ul id="notifyList" class="notifications-list"></ul>
+        </div>
+        <div class="ph-menu-divider"></div>
+      </div>
+
+      <button id="themeToggle" type="button" class="ph-icon-btn" aria-label="Toggle theme" aria-pressed="false">
+        <span data-theme-icon>◐</span>
+      </button>
+
+      <span class="ph-role-badge" data-role-badge>USER</span>
+
+      <button id="userMenuBtn" type="button" class="ph-user-btn" aria-expanded="false" aria-haspopup="true"
+        aria-label="Open user menu">
+        <span class="ph-user-avatar" data-user-initials>DU</span>
+      </button>
+
+      <button id="navbarHamburger" type="button" class="ph-icon-btn ph-mobile-toggle" aria-label="Toggle mobile menu"
+        aria-expanded="false">
+        <span>☰</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="userDropdown" class="ph-menu hidden" role="menu" aria-label="User menu">
+    <div class="ph-menu-header">
+      <div class="ph-menu-avatar" data-user-initials>DU</div>
+      <div class="ph-menu-meta">
+        <div class="ph-menu-name" data-user-name>Demo User</div>
+        <div class="ph-menu-email" data-user-email>user@example.com</div>
+        <div class="ph-menu-role" data-user-role>USER</div>
+      </div>
+    </div>
+
+    <div class="ph-menu-section">
+      <div class="ph-menu-section-label">Switch role</div>
+      <div class="ph-role-switches" role="group" aria-label="Role toggles">
+        <button type="button" class="ph-role-switch" data-switch-role="user">User</button>
+        <button type="button" class="ph-role-switch" data-switch-role="officer">Officer</button>
+        <button type="button" class="ph-role-switch" data-switch-role="admin">Admin</button>
+      </div>
+    </div>
+
+    <div class="ph-menu-section">
+      <a data-app-href="pages/profile/profile.html" class="ph-menu-link">Profile</a>
+      <a data-app-href="pages/account/settings.html" class="ph-menu-link">Settings</a>
+      <a data-user-dashboard-link data-app-href="pages/dashboard/user.html" class="ph-menu-link">Go To Dashboard</a>
+    </div>
+
+    <div class="ph-menu-divider"></div>
+    <button type="button" class="ph-menu-btn ph-menu-logout" data-sign-out>Sign Out</button>
+  </div>
+
+  <div id="mobileMenu" class="ph-mobile-menu hidden">
+    <div class="ph-mobile-menu-grid">
+      <div class="ph-role-badge ph-role-badge-mobile" data-role-badge-mobile>USER</div>
+      <a data-nav-link data-top-nav="dashboard" data-user-dashboard-link data-roles="user,officer,admin"
+        data-app-href="pages/dashboard/user.html" class="ph-mobile-link">Dashboard</a>
+      <a data-nav-link data-top-nav="files" data-roles="user,officer,admin" data-app-href="pages/file/files.html"
+        class="ph-mobile-link">Files</a>
+      <a data-nav-link data-top-nav="reviews" data-roles="officer,admin" data-app-href="pages/review/review-queue.html"
+        class="ph-mobile-link">Reviews</a>
+      <a data-nav-link data-top-nav="support" data-app-href="pages/support/contact.html"
+        class="ph-mobile-link">Support</a>
+      <a data-app-href="pages/file/upload.html" class="ph-mobile-link">Upload</a>
+      <button id="mobileThemeToggle" type="button" class="ph-menu-btn" data-theme-toggle>Toggle Theme</button>
+      <button type="button" class="ph-menu-btn" data-sign-out>Sign Out</button>
+    </div>
+  </div>
+</nav>

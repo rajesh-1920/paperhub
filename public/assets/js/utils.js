@@ -1,0 +1,933 @@
+function getElement(selector) {
+  return document.querySelector(selector);
+}
+
+function getElements(selector) {
+  return document.querySelectorAll(selector);
+}
+
+function createElement(tag, className = "", id = "") {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (id) element.id = id;
+  return element;
+}
+
+function addClass(element, className) {
+  if (element) element.classList.add(className);
+}
+
+function removeClass(element, className) {
+  if (element) element.classList.remove(className);
+}
+
+function toggleClass(element, className) {
+  if (element) element.classList.toggle(className);
+}
+
+function hasClass(element, className) {
+  return element && element.classList.contains(className);
+}
+
+function removeElement(element) {
+  if (element) element.remove();
+}
+
+function showElement(element) {
+  if (element) removeClass(element, "hidden");
+}
+
+function hideElement(element) {
+  if (element) addClass(element, "hidden");
+}
+
+function addEvent(element, event, handler) {
+  if (element) element.addEventListener(event, handler);
+}
+
+function removeEvent(element, event, handler) {
+  if (element) element.removeEventListener(event, handler);
+}
+
+const PAPERHUB_APP_BASE_URL = (() => {
+  const currentScript =
+    document.currentScript ||
+    Array.from(document.scripts || []).find((script) => script.src && script.src.includes("/assets/js/utils.js"));
+
+  if (currentScript && currentScript.src) {
+    return new URL("../../", currentScript.src).href;
+  }
+
+  return new URL("./", window.location.href).href;
+})();
+
+function resolveAppPath(path) {
+  const normalizedPath = String(path || "").replace(/^\/+/, "");
+  return new URL(normalizedPath, PAPERHUB_APP_BASE_URL).href;
+}
+
+const PAPERHUB_DATA_URL = resolveAppPath("assets/data/paperhub-backend.json");
+
+/* ---------------------------------------------------------------------------
+ * Persistent data store — a localStorage-backed, mutable overlay on top of the
+ * read-only seed dataset. The whole app reads through getPaperHubDataset() and
+ * writes through the ph* mutators, so user actions (upload, review decisions,
+ * edits, settings) persist across page loads and reflect on every page.
+ * Bump PAPERHUB_DB_VERSION whenever the seed schema/content changes to discard
+ * any stale stored copy and reseed.
+ * ------------------------------------------------------------------------- */
+
+const PAPERHUB_DB_STORAGE_KEY = "paperhub-db";
+const PAPERHUB_DB_VERSION_KEY = "paperhub-db-version";
+const PAPERHUB_DB_VERSION = "2.1.0";
+
+function readStoredDataset() {
+  try {
+    if (localStorage.getItem(PAPERHUB_DB_VERSION_KEY) !== PAPERHUB_DB_VERSION) {
+      return null;
+    }
+    const raw = localStorage.getItem(PAPERHUB_DB_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function fetchSeedDataset() {
+  try {
+    const request = new XMLHttpRequest();
+    request.open("GET", PAPERHUB_DATA_URL, false);
+    request.send(null);
+
+    if (request.status >= 200 && request.status < 300 && request.responseText) {
+      return JSON.parse(request.responseText);
+    }
+  } catch (error) {
+    /* fall through to empty dataset */
+  }
+
+  return {};
+}
+
+function getPaperHubDataset() {
+  if (window.__paperhubDataset) {
+    return window.__paperhubDataset;
+  }
+
+  window.__paperhubDataset = readStoredDataset() || fetchSeedDataset();
+  return window.__paperhubDataset;
+}
+
+function persistPaperHubData() {
+  try {
+    localStorage.setItem(PAPERHUB_DB_STORAGE_KEY, JSON.stringify(getPaperHubDataset()));
+    localStorage.setItem(PAPERHUB_DB_VERSION_KEY, PAPERHUB_DB_VERSION);
+  } catch (error) {
+    console.warn("Unable to persist PaperHub data", error);
+  }
+}
+
+function resetPaperHubData() {
+  try {
+    localStorage.removeItem(PAPERHUB_DB_STORAGE_KEY);
+    localStorage.removeItem(PAPERHUB_DB_VERSION_KEY);
+  } catch (error) {
+    /* ignore */
+  }
+  delete window.__paperhubDataset;
+}
+
+function phFindUser(userId) {
+  const dataset = getPaperHubDataset();
+  return (dataset.users || []).find((user) => user.id === userId) || null;
+}
+
+function phMapReviewToFileStatus(status) {
+  if (status === "completed" || status === "approved") return "completed";
+  if (status === "rejected") return "rejected";
+  if (status === "in-review" || status === "forwarded") return "reviewing";
+  return "pending";
+}
+
+function phAddFile(file, reviewItem) {
+  const dataset = getPaperHubDataset();
+  dataset.files = dataset.files || [];
+  dataset.files.unshift(file);
+
+  const owner = phFindUser(file.ownerId);
+  if (owner) {
+    owner.files = owner.files || [];
+    owner.files.unshift(file);
+  }
+
+  if (reviewItem) {
+    dataset.reviewQueue = dataset.reviewQueue || [];
+    dataset.reviewQueue.unshift(reviewItem);
+    if (owner) {
+      owner.reviews = owner.reviews || [];
+      owner.reviews.unshift(reviewItem);
+    }
+  }
+
+  persistPaperHubData();
+}
+
+function phUpdateFileStatus(fileId, status) {
+  const dataset = getPaperHubDataset();
+  const apply = (files) => (files || []).forEach((file) => {
+    if (file.id === fileId) file.status = status;
+  });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  persistPaperHubData();
+}
+
+function phDeleteFile(fileId) {
+  const dataset = getPaperHubDataset();
+  dataset.files = (dataset.files || []).filter((file) => file.id !== fileId);
+  (dataset.users || []).forEach((user) => {
+    user.files = (user.files || []).filter((file) => file.id !== fileId);
+  });
+  dataset.reviewQueue = (dataset.reviewQueue || []).filter((review) => review.fileId !== fileId);
+  persistPaperHubData();
+}
+
+function phUpdateUser(userId, patch) {
+  const dataset = getPaperHubDataset();
+  const user = phFindUser(userId);
+  if (user) {
+    Object.assign(user, patch);
+  }
+  const account = (dataset.authAccounts || []).find((entry) => entry.id === userId);
+  if (account) {
+    if (patch.name) account.name = patch.name;
+    if (patch.email) account.email = String(patch.email).toLowerCase();
+    if (patch.title) account.title = patch.title;
+    if (patch.role) account.role = patch.role;
+  }
+  persistPaperHubData();
+  return user;
+}
+
+function phAddUser(account, profile) {
+  const dataset = getPaperHubDataset();
+  dataset.authAccounts = dataset.authAccounts || [];
+  dataset.users = dataset.users || [];
+  dataset.authAccounts.push(account);
+  dataset.users.push(profile);
+  persistPaperHubData();
+}
+
+function phSetReviewStatus(reviewId, status) {
+  const dataset = getPaperHubDataset();
+  let fileId = null;
+  (dataset.reviewQueue || []).forEach((review) => {
+    if (review.id === reviewId) {
+      review.status = status;
+      fileId = review.fileId || fileId;
+    }
+  });
+  (dataset.users || []).forEach((user) => (user.reviews || []).forEach((review) => {
+    if (review.id === reviewId) review.status = status;
+  }));
+
+  if (fileId) {
+    const fileStatus = phMapReviewToFileStatus(status);
+    const apply = (files) => (files || []).forEach((file) => {
+      if (file.id === fileId) file.status = fileStatus;
+    });
+    apply(dataset.files);
+    (dataset.users || []).forEach((user) => apply(user.files));
+  }
+
+  persistPaperHubData();
+}
+
+function phAddReviewComment(reviewId, comment) {
+  const dataset = getPaperHubDataset();
+  const push = (review) => {
+    review.comments = review.comments || [];
+    review.comments.push(comment);
+  };
+  (dataset.reviewQueue || []).forEach((review) => {
+    if (review.id === reviewId) push(review);
+  });
+  (dataset.users || []).forEach((user) => (user.reviews || []).forEach((review) => {
+    if (review.id === reviewId) push(review);
+  }));
+  persistPaperHubData();
+}
+
+function phSetNotificationRead(userId, notificationId, read = true) {
+  const user = phFindUser(userId);
+  if (user) {
+    (user.notifications || []).forEach((notification) => {
+      if (String(notification.id) === String(notificationId)) notification.read = read;
+    });
+  }
+  persistPaperHubData();
+}
+
+function phMarkAllNotificationsRead(userId) {
+  const user = phFindUser(userId);
+  if (user) {
+    (user.notifications || []).forEach((notification) => {
+      notification.read = true;
+    });
+  }
+  persistPaperHubData();
+}
+
+function phSaveUserPreferences(userId, prefs) {
+  const user = phFindUser(userId);
+  if (user) {
+    user.preferences = Object.assign({}, user.preferences, prefs);
+    if (prefs.language) user.language = prefs.language;
+    if (prefs.timezone) user.timezone = prefs.timezone;
+  }
+  persistPaperHubData();
+}
+
+function phSetPaymentStatus(userId, status) {
+  const user = phFindUser(userId);
+  if (user && user.payment) {
+    user.payment.status = status;
+    user.payment.lastUpdated = formatDate(new Date(), "DD MMM YYYY, HH:mm");
+  }
+  persistPaperHubData();
+}
+
+function showToast(message, type = "info", duration = 3000) {
+  const container = getOrCreateToastContainer();
+  const toastId = "toast-" + Date.now();
+
+  const toastClasses = {
+    success: "bg-green-500",
+    error: "bg-red-500",
+    warning: "bg-yellow-500",
+    info: "bg-blue-500"
+  };
+
+  const toast = createElement("div", `toast ${toastClasses[type] || toastClasses.info} text-white px-4 py-3 rounded-lg shadow-lg animate-fade-in`, toastId);
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    fadeOut(toast, () => removeElement(toast));
+  }, duration);
+
+  return toastId;
+}
+
+function getOrCreateToastContainer() {
+  let container = getElement("#toast-container");
+  if (!container) {
+    container = createElement("div", "fixed top-4 right-4 z-50 flex flex-col gap-3 max-w-sm", "toast-container");
+    document.body.appendChild(container);
+  }
+  return container;
+}
+
+function showSuccess(message, duration = 3000) {
+  return showToast(message, "success", duration);
+}
+
+function showError(message, duration = 3000) {
+  return showToast(message, "error", duration);
+}
+
+function showWarning(message, duration = 3000) {
+  return showToast(message, "warning", duration);
+}
+
+function showInfo(message, duration = 3000) {
+  return showToast(message, "info", duration);
+}
+
+function fadeIn(element, duration = 300) {
+  element.style.opacity = "0";
+  element.style.transition = `opacity ${duration}ms ease-in`;
+  setTimeout(() => {
+    element.style.opacity = "1";
+  }, 10);
+}
+
+function fadeOut(element, callback, duration = 300) {
+  element.style.opacity = "1";
+  element.style.transition = `opacity ${duration}ms ease-out`;
+  element.style.opacity = "0";
+  setTimeout(() => {
+    if (callback) callback();
+  }, duration);
+}
+
+const StorageKey = {
+  USER: "paperhub-user",
+  USER_ROLE: "paperhub-user-role",
+  THEME: "paperhub-theme",
+  PREFERENCES: "paperhub-preferences",
+};
+
+function setStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (error) {
+    console.error("Storage error:", error);
+    return false;
+  }
+}
+
+function getStorage(key, defaultValue = null) {
+  try {
+    const value = localStorage.getItem(key);
+    if (value === null) {
+      return defaultValue;
+    }
+
+    try {
+      return JSON.parse(value);
+    } catch (parseError) {
+      return value;
+    }
+  } catch (error) {
+    console.error("Storage error:", error);
+    return defaultValue;
+  }
+}
+
+function removeStorage(key) {
+  try {
+    localStorage.removeItem(key);
+    return true;
+  } catch (error) {
+    console.error("Storage error:", error);
+    return false;
+  }
+}
+
+function clearStorage() {
+  try {
+    localStorage.clear();
+    return true;
+  } catch (error) {
+    console.error("Storage error:", error);
+    return false;
+  }
+}
+
+function setCurrentUser(user) {
+  setStorage(StorageKey.USER, user);
+  setStorage(StorageKey.USER_ROLE, user.role);
+}
+
+function getCurrentUser() {
+  return getStorage(StorageKey.USER);
+}
+
+function getCurrentUserRole() {
+  return getStorage(StorageKey.USER_ROLE, "user");
+}
+
+function isLoggedIn() {
+  return !!getCurrentUser();
+}
+
+function hasRole(role) {
+  const currentRole = getCurrentUserRole();
+  return typeof role === "string" ? currentRole === role : role.includes(currentRole);
+}
+
+function logout() {
+  removeStorage(StorageKey.USER);
+  removeStorage(StorageKey.USER_ROLE);
+  window.location.href = resolveAppPath("pages/auth/login.html");
+}
+
+function setTheme(isDark) {
+  const html = document.documentElement;
+  if (isDark) {
+    html.classList.add("dark");
+  } else {
+    html.classList.remove("dark");
+  }
+
+  try {
+    localStorage.setItem(StorageKey.THEME, isDark ? "dark" : "light");
+  } catch (error) {
+    console.error("Storage error:", error);
+  }
+}
+
+function getTheme() {
+  const stored = getStorage(StorageKey.THEME);
+  if (stored) return stored === "dark";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+function toggleTheme() {
+  const isDark = !getTheme();
+  setTheme(isDark);
+  return isDark;
+}
+
+function initializeTheme() {
+  const isDark = getTheme();
+  setTheme(isDark);
+}
+
+function formatDate(date, format = "MMM DD, YYYY") {
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "Invalid date";
+
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const yyyy = d.getFullYear();
+  const MM = months[d.getMonth()];
+  const DD = String(d.getDate()).padStart(2, "0");
+  const HH = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  const ss = String(d.getSeconds()).padStart(2, "0");
+
+  return format
+    .replace("YYYY", yyyy)
+    .replace("MMM", MM)
+    .replace("DD", DD)
+    .replace("HH", HH)
+    .replace("mm", mm)
+    .replace("ss", ss);
+}
+
+function formatTime(date) {
+  const d = new Date(date);
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+function timeAgo(date) {
+  const now = new Date();
+  const then = new Date(date);
+  const seconds = Math.floor((now - then) / 1000);
+
+  if (seconds < 60) return "just now";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+  if (seconds < 2592000) return `${Math.floor(seconds / 604800)}w ago`;
+  return formatDate(date);
+}
+
+function isValidEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+function isValidPassword(password) {
+  return password && password.length >= 8;
+}
+
+function isValidUrl(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function formatFileSize(bytes) {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+}
+
+function formatCurrency(amount, currency = "USD") {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency,
+  }).format(amount);
+}
+
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function debounce(func, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+}
+
+function throttle(func, limit) {
+  let inThrottle;
+  return function (...args) {
+    if (!inThrottle) {
+      func(...args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showSuccess("Copied to clipboard!");
+  }).catch(() => {
+    showError("Failed to copy to clipboard");
+  });
+}
+
+function generateId(prefix = "id") {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
+function redirect(url, delay = 0) {
+  if (delay > 0) {
+    setTimeout(() => {
+      window.location.href = url;
+    }, delay);
+  } else {
+    window.location.href = url;
+  }
+}
+
+function reloadPage() {
+  window.location.reload();
+}
+
+function goBack() {
+  window.history.back();
+}
+
+function getCurrentPage() {
+  return window.location.pathname;
+}
+
+function getQueryParam(param) {
+  const searchParams = new URLSearchParams(window.location.search);
+  return searchParams.get(param);
+}
+
+function getAllQueryParams() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const params = {};
+  for (const [key, value] of searchParams) {
+    params[key] = value;
+  }
+  return params;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initializeTheme();
+});
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    getElement,
+    getElements,
+    createElement,
+    addClass,
+    removeClass,
+    toggleClass,
+    hasClass,
+    removeElement,
+    showElement,
+    hideElement,
+    addEvent,
+    removeEvent,
+    showToast,
+    showSuccess,
+    showError,
+    showWarning,
+    showInfo,
+    fadeIn,
+    fadeOut,
+    setStorage,
+    getStorage,
+    removeStorage,
+    clearStorage,
+    setCurrentUser,
+    getCurrentUser,
+    getCurrentUserRole,
+    isLoggedIn,
+    hasRole,
+    logout,
+    setTheme,
+    getTheme,
+    toggleTheme,
+    initializeTheme,
+    formatDate,
+    formatTime,
+    timeAgo,
+    isValidEmail,
+    isValidPassword,
+    isValidUrl,
+    formatFileSize,
+    formatCurrency,
+    slugify,
+    debounce,
+    throttle,
+    delay,
+    copyToClipboard,
+    generateId,
+    apiCall,
+    redirect,
+    reloadPage,
+    goBack,
+    getCurrentPage,
+    getQueryParam,
+    getAllQueryParams,
+    getCurrentUserNotifications,
+  };
+}
+
+async function apiCall(endpoint) {
+  const delay = 500;
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
+      const mockResponses = {
+        "/api/dashboard/stats": {
+          success: true,
+          data: dataset.dashboardStats || {},
+        },
+        "/api/files": {
+          success: true,
+          data: Array.isArray(dataset.files) ? dataset.files : [],
+        },
+      };
+
+      resolve(mockResponses[endpoint] || { success: true, data: {} });
+    }, delay);
+  });
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function normalizeRole(role) {
+  const safeRole = String(role || "user").toLowerCase();
+
+  if (safeRole === "admin") return "admin";
+  if (safeRole === "teacher" || safeRole === "officer") return "officer";
+  if (safeRole === "student" || safeRole === "user") return "user";
+  return "user";
+}
+
+const PAPERHUB_DATA = getPaperHubDataset();
+
+const PAPERHUB_ROLE_STORAGE_KEY = "paperhub-role";
+const PAPERHUB_CURRENT_USER_STORAGE_KEY = "paperhub-current-user-id";
+
+const MOCK_USERS = Array.isArray(PAPERHUB_DATA.users) ? PAPERHUB_DATA.users : [];
+
+function getDashboardRole(role) {
+  return normalizeRole(role);
+}
+
+function getDashboardRouteForRole(role) {
+  const dashboardRole = getDashboardRole(role);
+  return resolveAppPath(`pages/dashboard/${dashboardRole}.html`);
+}
+
+function getDashboardRouteForUser(user) {
+  return getDashboardRouteForRole(user?.role || "user");
+}
+
+function getMockUserById(userId) {
+  const value = String(userId || "");
+  return MOCK_USERS.find((user) => user.id === value) || null;
+}
+
+function getMockUserByIdentity(user) {
+  if (!user) {
+    return null;
+  }
+
+  const id = String(user.id || "").trim();
+  const email = String(user.email || "").trim().toLowerCase();
+  const name = String(user.name || "").trim().toLowerCase();
+
+  return (
+    MOCK_USERS.find((candidate) => candidate.id === id) ||
+    MOCK_USERS.find((candidate) => String(candidate.email || "").trim().toLowerCase() === email) ||
+    MOCK_USERS.find((candidate) => String(candidate.name || "").trim().toLowerCase() === name) ||
+    null
+  );
+}
+
+function getDefaultUserForRole(role) {
+  const normalizedRole = normalizeRole(role);
+  return MOCK_USERS.find((user) => user.role === normalizedRole) || null;
+}
+
+function setStoredRole(role) {
+  const normalizedRole = normalizeRole(role);
+  try {
+    localStorage.setItem(PAPERHUB_ROLE_STORAGE_KEY, normalizedRole);
+  } catch (error) {
+    console.warn("Unable to persist role", error);
+  }
+  return normalizedRole;
+}
+
+function getStoredRole() {
+  try {
+    const storedRole = localStorage.getItem(PAPERHUB_ROLE_STORAGE_KEY);
+    if (storedRole) {
+      return normalizeRole(storedRole);
+    }
+
+    return normalizeRole(localStorage.getItem(StorageKey.USER_ROLE));
+  } catch (error) {
+    return "user";
+  }
+}
+
+function setCurrentUserById(userId) {
+  const selectedUser = getMockUserById(userId);
+  const nextUser = selectedUser || getDefaultUserForRole(getStoredRole());
+
+  if (!nextUser) {
+    return null;
+  }
+
+  try {
+    localStorage.setItem(PAPERHUB_CURRENT_USER_STORAGE_KEY, nextUser.id);
+  } catch (error) {
+    console.warn("Unable to persist current user", error);
+  }
+
+  if (typeof setCurrentUser === "function") {
+    setCurrentUser(nextUser);
+  }
+
+  setStoredRole(nextUser.role);
+  return nextUser;
+}
+
+function getCurrentUserData() {
+  const authUser = getCurrentUser();
+  if (authUser && authUser.name && authUser.email) {
+    const matchedUser = getMockUserByIdentity(authUser);
+    const datasetUser = matchedUser || getDefaultUserForRole(authUser.role);
+    if (datasetUser) {
+      if (matchedUser) {
+        return {
+          ...datasetUser,
+          ...authUser,
+          role: normalizeRole(datasetUser.role || authUser.role),
+        };
+      }
+
+      return {
+        ...datasetUser,
+        role: normalizeRole(datasetUser.role || authUser.role),
+      };
+    }
+
+    return {
+      ...authUser,
+      role: normalizeRole(authUser.role),
+    };
+  }
+
+  try {
+    const savedUserId = localStorage.getItem(PAPERHUB_CURRENT_USER_STORAGE_KEY);
+    const selectedUser = getMockUserById(savedUserId);
+    if (selectedUser) {
+      setStoredRole(selectedUser.role);
+      return selectedUser;
+    }
+  } catch (error) {
+    console.warn("Unable to read current user", error);
+  }
+
+  const fallbackUser = getDefaultUserForRole(getStoredRole());
+  if (!fallbackUser) {
+    return null;
+  }
+  setCurrentUserById(fallbackUser.id);
+  return fallbackUser;
+}
+
+function getCurrentUserFiles() {
+  return getCurrentUserData().files || [];
+}
+
+function getCurrentUserPayment() {
+  return getCurrentUserData().payment || null;
+}
+
+function getCurrentUserNotifications() {
+  const notifications = getCurrentUserData().notifications || [];
+  return Array.isArray(notifications) ? notifications : [];
+}
+
+function canAccessPathByRole(pathname, role) {
+  const path = String(pathname || "").toLowerCase();
+  const normalizedRole = normalizeRole(role);
+
+  if (path.includes("/pages/dashboard/admin.html")) {
+    return normalizedRole === "admin";
+  }
+
+  if (path.includes("/pages/dashboard/officer.html")) {
+    return normalizedRole === "officer" || normalizedRole === "admin";
+  }
+
+  if (path.includes("/pages/dashboard/user.html")) {
+    return normalizedRole === "user" || normalizedRole === "admin";
+  }
+
+  if (path.includes("/pages/review/review-queue.html")) {
+    return normalizedRole === "officer" || normalizedRole === "admin";
+  }
+
+  if (path.includes("/pages/review/review-details.html")) {
+    return true;
+  }
+
+  if (path.includes("/pages/payment/")) {
+    return normalizedRole === "user" || normalizedRole === "admin";
+  }
+
+  if (path.includes("/pages/file/upload.html")) {
+    return normalizedRole === "user";
+  }
+
+  return true;
+}
+
+function enforcePageAccess() {
+  const currentUser = getCurrentUserData();
+  const hasAccess = canAccessPathByRole(window.location.pathname, currentUser.role);
+  if (hasAccess) {
+    return true;
+  }
+
+  const redirectPath = getDashboardRouteForUser(currentUser);
+  window.location.replace(redirectPath);
+  return false;
+}

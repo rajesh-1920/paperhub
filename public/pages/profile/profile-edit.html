@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Profile - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/account.css" />
+  <link rel="stylesheet" href="../../assets/css/pages/profile-edit.css" />
+</head>
+
+<body class="account-page profile-edit-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content account-shell profile-edit-shell">
+      <div class="profile-edit-layout">
+        <section class="profile-edit-main card">
+          <form id="profileForm" class="profile-edit-form">
+            <div class="profile-edit-section-head">
+              <h2>Personal details</h2>
+              <span class="profile-edit-section-note">Public identity and contact information</span>
+            </div>
+
+            <div class="profile-edit-field-grid">
+              <div class="form-group">
+                <label for="fullName">Full name</label>
+                <input id="fullName" type="text" data-user-name />
+              </div>
+              <div class="form-group">
+                <label for="jobTitle">Job title</label>
+                <input id="jobTitle" type="text" data-user-title />
+              </div>
+              <div class="form-group">
+                <label for="emailAddress">Email address</label>
+                <input id="emailAddress" type="email" data-user-email />
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone</label>
+                <input id="phone" type="tel" data-user-phone placeholder="+1 555 555 5555" />
+              </div>
+            </div>
+
+            <div class="profile-edit-section-head">
+              <h2>Workspace preferences</h2>
+              <span class="profile-edit-section-note">Organization, language, and regional settings</span>
+            </div>
+
+            <div class="profile-edit-field-grid">
+              <div class="form-group">
+                <label for="company">Company</label>
+                <input id="company" type="text" data-user-company placeholder="Company name" />
+              </div>
+              <div class="form-group">
+                <label for="department">Department</label>
+                <select id="department" data-user-department>
+                  <option>Document Review</option>
+                  <option>Operations</option>
+                  <option>Compliance</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="timezone">Timezone</label>
+                <select id="timezone" data-user-timezone>
+                  <option>UTC +06:00</option>
+                  <option>UTC +05:30</option>
+                  <option>UTC</option>
+                  <option>America/New_York</option>
+                  <option>Europe/London</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="language">Language</label>
+                <select id="language" data-user-language>
+                  <option>English</option>
+                  <option>Spanish</option>
+                  <option>French</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="bio">Bio</label>
+              <textarea id="bio" rows="4" data-user-bio placeholder="A short bio or role description"></textarea>
+            </div>
+
+            <div class="profile-edit-toggle-row">
+              <div>
+                <h3>Two-factor authentication</h3>
+                <p>Keep this enabled to strengthen account security for sensitive documents.</p>
+              </div>
+              <label class="profile-edit-switch" for="twofactor">
+                <input id="twofactor" type="checkbox" data-user-twofactor />
+                <span>Enable</span>
+              </label>
+            </div>
+
+            <div class="profile-edit-actions">
+              <a href="profile.html" data-app-href="pages/profile/profile.html" class="btn btn-outline">Cancel</a>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+
+          <section class="profile-edit-security">
+            <div class="profile-edit-section-head">
+              <h2>Security</h2>
+              <span class="profile-edit-section-note">Update password regularly to protect your workspace</span>
+            </div>
+            <form id="passwordForm" class="profile-password-form">
+              <div class="form-group">
+                <label for="currentPassword">Current password</label>
+                <input id="currentPassword" type="password" />
+              </div>
+              <div class="profile-edit-field-grid">
+                <div class="form-group">
+                  <label for="newPassword">New password</label>
+                  <input id="newPassword" type="password" />
+                </div>
+                <div class="form-group">
+                  <label for="confirmPassword">Confirm new password</label>
+                  <input id="confirmPassword" type="password" />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-secondary">Change password</button>
+              </div>
+            </form>
+          </section>
+        </section>
+
+        <aside class="profile-edit-aside card">
+          <section class="profile-edit-profile-card">
+            <div class="profile-edit-profile-head">
+              <img src="" alt="Avatar" class="profile-avatar profile-avatar-image profile-hidden"
+                data-profile-avatar-preview />
+              <span class="profile-avatar" data-user-initials></span>
+              <div>
+                <h3 data-user-name></h3>
+                <p data-user-title></p>
+              </div>
+            </div>
+
+            <div class="profile-edit-avatar-uploader">
+              <label class="btn btn-outline w-full cursor-pointer">
+                Upload photo
+                <input id="profileAvatarUpload" type="file" accept="image/*" class="hidden" />
+              </label>
+            </div>
+
+            <ul class="profile-edit-meta-list">
+              <li><span>Plan</span><strong data-user-plan-name>Starter</strong></li>
+              <li><span>Status</span><strong data-user-plan-status>Active</strong></li>
+              <li><span>2FA</span><strong data-user-twofactor-label>Enabled</strong></li>
+            </ul>
+          </section>
+
+          <a href="profile.html" data-app-href="pages/profile/profile.html" class="btn btn-outline w-full">Back to
+            profile</a>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('profileForm');
+      if (!form) return;
+
+      const fileInput = document.getElementById('profileAvatarUpload');
+      const previewImgs = document.querySelectorAll('[data-profile-avatar-preview]');
+      const initialsEls = document.querySelectorAll('[data-user-initials]');
+      let avatarDataUrl = null;
+
+      const current = getCurrentUser() || {};
+      if (current.avatar) {
+        previewImgs.forEach((img) => {
+          img.src = current.avatar;
+          img.classList.remove('profile-hidden');
+        });
+        initialsEls.forEach((el) => el.classList.add('profile-hidden'));
+      }
+
+      fileInput?.addEventListener('change', function () {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          avatarDataUrl = String(ev.target?.result || '');
+          previewImgs.forEach((img) => {
+            img.src = avatarDataUrl;
+            img.classList.remove('profile-hidden');
+          });
+          initialsEls.forEach((el) => el.classList.add('profile-hidden'));
+        };
+        reader.readAsDataURL(file);
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const user = getCurrentUser() || {};
+
+        user.name = document.getElementById('fullName')?.value || user.name;
+        user.title = document.getElementById('jobTitle')?.value || user.title;
+        user.email = document.getElementById('emailAddress')?.value || user.email;
+        user.phone = document.getElementById('phone')?.value || user.phone;
+        user.company = document.getElementById('company')?.value || user.company;
+        user.department = document.getElementById('department')?.value || user.department;
+        user.timezone = document.getElementById('timezone')?.value || user.timezone;
+        user.language = document.getElementById('language')?.value || user.language;
+        user.bio = document.getElementById('bio')?.value || user.bio;
+        user.twoFactorEnabled = !!document.getElementById('twofactor')?.checked;
+
+        if (avatarDataUrl) {
+          user.avatar = avatarDataUrl;
+        }
+
+        setCurrentUser(user);
+
+        if (typeof phUpdateUser === 'function') {
+          const datasetUser = typeof getCurrentUserData === 'function' ? getCurrentUserData() : null;
+          const targetId = (datasetUser && datasetUser.id) || user.id;
+          if (targetId) {
+            phUpdateUser(targetId, {
+              name: user.name,
+              title: user.title,
+              email: user.email,
+              phone: user.phone,
+              company: user.company,
+              department: user.department,
+              timezone: user.timezone,
+              language: user.language,
+              bio: user.bio,
+              twoFactorEnabled: user.twoFactorEnabled,
+            });
+          }
+        }
+
+        showSuccess('Profile saved');
+        setTimeout(() => {
+          window.location.href = typeof resolveAppPath === 'function'
+            ? resolveAppPath('pages/profile/profile.html')
+            : 'profile.html';
+        }, 450);
+      });
+    });
+  </script>
+</body>
+
+</html>

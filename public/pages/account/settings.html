@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/account.css" />
+</head>
+
+<body class="account-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content account-shell">
+      <div class="account-grid">
+        <aside class="profile-summary-card card profile-side-card">
+          <div class="profile-summary-top">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" aria-hidden="true">
+                <img src="../../assets/images/avatar-placeholder.svg" alt="User avatar" class="profile-avatar-img"
+                  onerror="this.style.display='block';this.parentElement.textContent='👤'" />
+              </div>
+            </div>
+            <div class="profile-basic">
+              <h2 data-user-name>—</h2>
+              <div class="profile-email" data-user-email>—</div>
+              <div class="profile-company muted" data-user-company>—</div>
+              <div class="status-row">
+                <span class="status-badge" data-user-status>Active</span>
+                <span class="profile-role muted" data-profile-role-badge>USER</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button class="profile-action-btn" type="button">Edit profile</button>
+            <button class="profile-action-btn" type="button">Manage account</button>
+          </div>
+
+          <div class="profile-stat-grid" data-user-dashboard-stats>
+            <div class="profile-stat-card">
+              <div class="profile-stat-label">Files</div>
+              <strong data-files-count>0</strong>
+            </div>
+            <div class="profile-stat-card">
+              <div class="profile-stat-label">Reviews</div>
+              <strong data-reviews-count>0</strong>
+            </div>
+            <div class="profile-stat-card profile-detail-wide">
+              <div class="profile-stat-label">Team</div>
+              <strong data-team-size>1 member</strong>
+            </div>
+          </div>
+        </aside>
+
+        <section class="col-main">
+          <div class="card">
+            <div class="settings-tabs">
+              <div class="settings-tab-buttons" role="tablist" aria-label="Settings tabs">
+                <button role="tab" aria-selected="true" class="tab-btn" data-tab="account">⚙️ Account</button>
+                <button role="tab" aria-selected="false" class="tab-btn" data-tab="notifications">🔔
+                  Notifications</button>
+                <button role="tab" aria-selected="false" class="tab-btn" data-tab="security">🔒 Security</button>
+              </div>
+
+              <div class="settings-tab-panels">
+                <div class="settings-panel" data-panel="account">
+                  <h3>Preferences</h3>
+                  <form id="settingsForm" class="settings-form">
+                    <div class="form-grid profile-form-card">
+                      <div class="form-group">
+                        <label for="language">Language</label>
+                        <select id="language">
+                          <option>Bengali</option>
+                          <option>English</option>
+                          <option>Spanish</option>
+                          <option>French</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="timezone">Timezone</label>
+                        <select id="timezone">
+                          <option>UTC +06:00</option>
+                          <option>UTC +00:00</option>
+                          <option>UTC +05:30</option>
+                          <option>UTC -05:00</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="toggle-list">
+                      <label class="toggle-row"><span>Email notifications</span><input type="checkbox"
+                          id="settingsEmailNotif" checked /></label>
+                      <label class="toggle-row"><span>SMS alerts</span><input type="checkbox"
+                          id="settingsSmsAlerts" /></label>
+                      <label class="toggle-row"><span>Dark mode preference</span><input type="checkbox"
+                          id="settingsDarkMode" /></label>
+                    </div>
+
+                    <div class="form-actions">
+                      <button type="submit" class="btn btn-primary">Save preferences</button>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="settings-panel" data-panel="notifications" hidden>
+                  <h3>Notification rules</h3>
+                  <div class="settings-stack">
+                    <div class="settings-item">
+                      <div>
+                        <h4>Approval updates</h4>
+                        <p>Notify when a document is approved or rejected.</p>
+                      </div>
+                      <label class="toggle-row"><input type="checkbox" checked /> Enabled</label>
+                    </div>
+                    <div class="settings-item">
+                      <div>
+                        <h4>Review assignments</h4>
+                        <p>Notify officers when a new review is added.</p>
+                      </div>
+                      <label class="toggle-row"><input type="checkbox" checked /> Enabled</label>
+                    </div>
+                    <div class="settings-item">
+                      <div>
+                        <h4>Payment confirmations</h4>
+                        <p>Alert finance users after payment processing.</p>
+                      </div>
+                      <label class="toggle-row"><input type="checkbox" /> Manual</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-panel" data-panel="security" hidden>
+                  <h3>Security</h3>
+                  <div class="settings-stack">
+                    <div class="settings-item">
+                      <div>
+                        <h4>Change password</h4>
+                        <p>Update your password regularly.</p>
+                      </div>
+                      <button class="btn btn-outline btn-sm" type="button">Update</button>
+                    </div>
+                    <div class="settings-item">
+                      <div>
+                        <h4>Session timeout</h4>
+                        <p>Sessions expire after 30 minutes.</p>
+                      </div>
+                      <span class="badge badge-info">Active</span>
+                    </div>
+                    <div class="settings-item">
+                      <div>
+                        <h4>Login alerts</h4>
+                        <p>Receive alerts when new devices sign in.</p>
+                      </div>
+                      <span class="badge badge-success">On</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+        const panels = Array.from(document.querySelectorAll('.settings-panel'));
+        const STORAGE_KEY = 'paperhub-settings-active-tab';
+
+        function showPanel(name, save = true) {
+          panels.forEach((p) => (p.hidden = p.getAttribute('data-panel') !== name));
+          tabButtons.forEach((b) => b.setAttribute('aria-selected', b.getAttribute('data-tab') === name ? 'true' : 'false'));
+          if (save) localStorage.setItem(STORAGE_KEY, name);
+        }
+
+        function focusTab(index) {
+          const btn = tabButtons[index];
+          if (btn) btn.focus();
+        }
+
+        tabButtons.forEach((btn, idx) => {
+          btn.addEventListener('click', () => showPanel(btn.getAttribute('data-tab')));
+          btn.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') { focusTab((idx + 1) % tabButtons.length); }
+            if (e.key === 'ArrowLeft') { focusTab((idx - 1 + tabButtons.length) % tabButtons.length); }
+            if (e.key === 'Home') { focusTab(0); }
+            if (e.key === 'End') { focusTab(tabButtons.length - 1); }
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showPanel(btn.getAttribute('data-tab')); }
+          });
+        });
+
+        const saved = localStorage.getItem(STORAGE_KEY) || 'account';
+        showPanel(saved, false);
+      })();
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('settingsForm');
+        if (!form) return;
+
+        const user = typeof getCurrentUserData === 'function' ? getCurrentUserData() : null;
+        const prefs = (user && user.preferences) || {};
+
+        const setSelect = (id, value) => {
+          const select = document.getElementById(id);
+          if (!select || !value) return;
+          const exists = Array.from(select.options).some((opt) => opt.value === value || opt.text === value);
+          if (!exists) {
+            const opt = document.createElement('option');
+            opt.textContent = value;
+            select.insertBefore(opt, select.firstChild);
+          }
+          select.value = value;
+        };
+
+        setSelect('language', prefs.language || (user && user.language));
+        setSelect('timezone', prefs.timezone || (user && user.timezone));
+
+        const emailToggle = document.getElementById('settingsEmailNotif');
+        const smsToggle = document.getElementById('settingsSmsAlerts');
+        if (emailToggle && typeof prefs.emailNotifications === 'boolean') emailToggle.checked = prefs.emailNotifications;
+        if (smsToggle && typeof prefs.smsAlerts === 'boolean') smsToggle.checked = prefs.smsAlerts;
+
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+
+          const nextPrefs = {
+            language: document.getElementById('language')?.value,
+            timezone: document.getElementById('timezone')?.value,
+            emailNotifications: !!emailToggle?.checked,
+            smsAlerts: !!smsToggle?.checked,
+          };
+
+          if (typeof phSaveUserPreferences === 'function' && user) {
+            phSaveUserPreferences(user.id, nextPrefs);
+          }
+
+          if (typeof showSuccess === 'function') showSuccess('Settings saved successfully');
+        });
+      });
+    </script>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Review Queue - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/review-queue.css" />
+</head>
+
+<body class="review-queue-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content review-shell">
+      <section class="review-hero card">
+        <div class="review-hero-orb review-hero-orb-a" aria-hidden="true"></div>
+        <div class="review-hero-orb review-hero-orb-b" aria-hidden="true"></div>
+
+        <div class="review-hero-copy">
+          <div class="review-hero-kicker">
+            <span class="review-hero-badge">Live queue</span>
+            <span class="review-hero-status-dot" aria-hidden="true"></span>
+          </div>
+
+          <h1>Review queue</h1>
+          <p class="review-hero-text">Prioritize submissions, surface urgent items, and keep the review flow moving.
+          </p>
+
+          <div class="review-hero-controls">
+            <div class="review-hero-controls-left">
+              <div class="review-hero-search-row">
+                <div class="review-toolbar-search review-hero-search" role="search" aria-label="Search submissions">
+                  <label for="reviewSearchInput" class="review-search-label">Search documents</label>
+
+                  <div class="search-input-group">
+                    <span class="search-input-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 21l-4.35-4.35" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                        <circle cx="11" cy="11" r="6" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+                    </span>
+
+                    <input id="reviewSearchInput" type="search"
+                      placeholder="Search by document, reviewer, or department" class="review-search-input"
+                      aria-label="Search submissions" />
+
+                    <button type="button" class="search-clear" aria-label="Clear search">✕</button>
+                  </div>
+                </div>
+
+                <div class="review-hero-actions">
+                  <a href="../file/upload.html" data-app-href="pages/file/upload.html" class="btn btn-primary">New
+                    submission</a>
+                </div>
+              </div>
+
+              <div class="filter-buttons review-hero-filters" aria-label="Review filters" role="tablist">
+                <button class="filter-btn active" data-filter="all" type="button">All</button>
+                <button class="filter-btn" data-filter="high" type="button">High Priority</button>
+                <button class="filter-btn" data-filter="pending" type="button">Pending</button>
+                <button class="filter-btn" data-filter="in-review" type="button">In Review</button>
+                <button class="filter-btn" data-filter="completed" type="button">Completed</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-hero-panel">
+          <div class="review-hero-panel-title">
+            <span class="review-hero-panel-label">Queue snapshot</span>
+            <strong>At a glance</strong>
+          </div>
+
+          <div class="review-hero-stats">
+            <div class="review-metric">
+              <span>Pending</span>
+              <strong data-review-stat="pending">0</strong>
+            </div>
+            <div class="review-metric">
+              <span>In review</span>
+              <strong data-review-stat="in-review">0</strong>
+            </div>
+            <div class="review-metric review-metric-accent">
+              <span>Visible</span>
+              <strong data-review-visible-count>0</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="review-layout">
+        <section class="review-card review-table-card card">
+          <div class="table-container review-table-shell">
+            <div class="table-header">
+              <div>
+                <h2>Queue items</h2>
+                <p><span data-review-visible-count>0</span> items ready for action</p>
+              </div>
+              <span class="review-table-meta">Updated just now</span>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Submitted by</th>
+                  <th>Date</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="reviewTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/review.js"></script>
+  <script src="../../assets/js/main.js"></script>
+</body>
+
+</html>

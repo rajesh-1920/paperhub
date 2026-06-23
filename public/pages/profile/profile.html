@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - PaperHub</title>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/profile.css" />
+</head>
+
+<body class="profile-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="profile-shell">
+      <div class="profile-grid">
+        <aside class="profile-card profile-summary-panel p-6 lg:sticky lg:top-6">
+          <div class="profile-summary-top">
+            <div class="profile-summary-avatar">
+              <span class="profile-avatar" data-user-initials>DU</span>
+              <img class="profile-avatar profile-avatar-image profile-hidden" data-profile-avatar-preview
+                alt="Profile preview" />
+            </div>
+            <div class="profile-summary-meta">
+              <div class="flex items-center gap-2">
+                <h2 class="text-2xl font-bold text-slate-900" data-user-name></h2>
+                <span class="profile-role-badge" data-profile-role-badge>USER</span>
+              </div>
+              <p class="mt-1 text-sm text-slate-500" data-user-title></p>
+              <p class="mt-2 text-sm text-slate-700" data-user-email></p>
+            </div>
+          </div>
+
+          <div class="profile-summary-actions mt-4 mb-4">
+            <div class="page-header-actions">
+              <a href="profile-edit.html" data-app-href="pages/profile/profile-edit.html"
+                class="btn btn-primary profile-edit-btn" aria-label="Edit profile" title="Edit profile">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor" />
+                  <path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                    fill="currentColor" />
+                </svg>
+                <span>Edit profile</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="profile-completion" aria-hidden="false">
+            <div class="profile-completion-head">
+              <span class="text-sm font-semibold">Profile completion</span>
+              <span class="text-sm muted" data-user-profile-completion>78%</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar" style="width:78%"></div>
+            </div>
+          </div>
+
+          <div class="summary-stats mt-4">
+            <div class="stat-card">
+              <div class="stat-value" data-user-file-count>2</div>
+              <div class="stat-label">Files</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" data-dashboard-stat="pendingReviews">3</div>
+              <div class="stat-label">Pending Reviews</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" data-user-file-pending>1</div>
+              <div class="stat-label">Pending Uploads</div>
+            </div>
+          </div>
+
+          <div class="summary-quicklinks mt-5">
+            <ul class="quick-links">
+              <li><a href="../file/upload.html" data-app-href="pages/file/upload.html">Upload document</a></li>
+              <li><a href="../account/settings.html" data-app-href="pages/account/settings.html">Account
+                  settings</a></li>
+            </ul>
+          </div>
+
+          <div class="connected-apps mt-5">
+            <div class="text-sm font-semibold mb-2">Connected apps</div>
+            <ul class="connected-list" data-user-connected-apps></ul>
+          </div>
+        </aside>
+
+        <div class="space-y-4">
+          <section class="profile-card profile-section p-6">
+            <div class="profile-section-head">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Personal information</h2>
+                <p class="mt-1 text-sm text-slate-500">Your account and contact details.</p>
+              </div>
+              <button type="button" class="profile-section-toggle" data-section-toggle="personalBody"
+                aria-expanded="true">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true">
+                  <path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                <span class="sr-only">Collapse section</span>
+              </button>
+            </div>
+            <div class="profile-section-body" id="personalBody">
+              <dl class="profile-grid mt-6">
+                <div>
+                  <dt>Full name</dt>
+                  <dd data-user-name></dd>
+                </div>
+                <div>
+                  <dt>Email</dt>
+                  <dd data-user-email></dd>
+                </div>
+                <div>
+                  <dt>Phone</dt>
+                  <dd data-user-phone></dd>
+                </div>
+                <div>
+                  <dt>Address</dt>
+                  <dd data-user-address></dd>
+                </div>
+                <div>
+                  <dt>Department</dt>
+                  <dd data-user-department></dd>
+                </div>
+                <div>
+                  <dt>Language</dt>
+                  <dd data-user-language></dd>
+                </div>
+                <div>
+                  <dt>Timezone</dt>
+                  <dd data-user-timezone></dd>
+                </div>
+                <div>
+                  <dt>Joined date</dt>
+                  <dd data-user-joined-date></dd>
+                </div>
+                <div class="col-span-full profile-detail-wide">
+                  <dt>Bio</dt>
+                  <dd data-user-bio></dd>
+                </div>
+                <div class="col-span-full profile-detail-wide">
+                  <dt>Privileges</dt>
+                  <dd data-user-permissions class="profile-chip-list"></dd>
+                </div>
+              </dl>
+            </div>
+          </section>
+
+          <section class="profile-card profile-section p-6">
+            <div class="profile-section-head">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Security</h2>
+                <p class="mt-1 text-sm text-slate-500">Security status and last access information.</p>
+              </div>
+              <button type="button" class="profile-section-toggle" data-section-toggle="securityBody"
+                aria-expanded="true">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true">
+                  <path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                <span class="sr-only">Collapse section</span>
+              </button>
+            </div>
+            <div class="profile-section-body" id="securityBody">
+              <div class="mt-6 grid gap-4 md:grid-cols-3">
+                <div class="rounded-2xl border border-slate-200 bg-white/80 p-4">
+                  <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Two-factor</span>
+                  <strong class="mt-2 block text-slate-900" data-user-twofactor-label></strong>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white/80 p-4">
+                  <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Last login</span>
+                  <strong class="mt-2 block text-slate-900" data-user-last-login></strong>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white/80 p-4">
+                  <span class="block text-xs font-bold uppercase tracking-[0.12em] text-sky-600">Account status</span>
+                  <strong class="mt-2 block text-slate-900" data-user-account-status></strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="profile-card profile-section p-6">
+            <div class="profile-section-head">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Uploaded documents</h2>
+                <p class="mt-1 text-sm text-slate-500">Track the latest files in your workspace.</p>
+              </div>
+              <button type="button" class="profile-section-toggle" data-section-toggle="documentsBody"
+                aria-expanded="true">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true">
+                  <path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                <span class="sr-only">Collapse section</span>
+              </button>
+            </div>
+            <div class="profile-section-body" id="documentsBody">
+              <ul class="profile-document-list mt-6" data-user-files></ul>
+            </div>
+          </section>
+
+          <section class="profile-card profile-section p-6">
+            <div class="profile-section-head">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Recent activity</h2>
+                <p class="mt-1 text-sm text-slate-500">A concise audit trail of your latest actions.</p>
+              </div>
+              <button type="button" class="profile-section-toggle" data-section-toggle="activityBody"
+                aria-expanded="true">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true">
+                  <path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                <span class="sr-only">Collapse section</span>
+              </button>
+            </div>
+            <div class="profile-section-body" id="activityBody">
+              <ol class="profile-activity-list mt-6" data-user-activity></ol>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/profile.js"></script>
+</body>
+
+</html>

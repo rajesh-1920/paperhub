@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Support - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/contact.css" />
+</head>
+
+<body class="support-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content support-layout">
+      <section class="support-main card">
+        <div class="card-body">
+          <form id="contactForm" class="contact-form support-form">
+            <div class="support-form-grid">
+              <div class="form-group">
+                <label for="contactName">Full name</label>
+                <input id="contactName" type="text" placeholder="Your name" />
+              </div>
+              <div class="form-group">
+                <label for="contactEmail">Work email</label>
+                <input id="contactEmail" type="email" placeholder="you@company.com" />
+              </div>
+            </div>
+
+            <div class="support-form-grid support-form-grid-split">
+              <div class="form-group">
+                <label for="contactTopic">Topic</label>
+                <select id="contactTopic">
+                  <option>Product support</option>
+                  <option>Security</option>
+                  <option>Billing</option>
+                  <option>Partnership</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="contactPriority">Priority</label>
+                <select id="contactPriority">
+                  <option>Standard</option>
+                  <option>Urgent</option>
+                  <option>Security issue</option>
+                  <option>Enterprise request</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="contactMessage">Message</label>
+              <textarea id="contactMessage" rows="7"
+                placeholder="Describe the issue, what you already tried, and any deadlines or account details that matter."></textarea>
+            </div>
+
+            <div class="support-form-footer">
+              <p class="support-form-hint">Security issues and account access problems are prioritized automatically.
+              </p>
+              <button type="submit" class="btn btn-primary">Submit request</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <aside class="support-sidebar">
+        <section class="card support-info-card support-intro-card">
+          <div class="card-body">
+            <p class="support-section-kicker">Need help?</p>
+            <p class="support-section-note">
+              Submit a request using the form. For urgent security incidents, choose "Security issue" as the priority.
+            </p>
+          </div>
+        </section>
+
+        <section class="card support-info-card support-contact-card">
+          <div class="card-body">
+            <p class="support-section-kicker">Contact</p>
+            <ul class="support-list">
+              <li>
+                <strong>Email</strong>
+                <span>support@paperhub.local</span>
+              </li>
+              <li>
+                <strong>Typical response</strong>
+                <span>Usually within 1 business day</span>
+              </li>
+              <li>
+                <strong>Office hours</strong>
+                <span>Mon–Fri 09:00–18:00 UTC</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+</body>
+
+</html>

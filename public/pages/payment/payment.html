@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/payment.css" />
+</head>
+
+<body class="payment-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content account-shell">
+      <div class="kpi-grid mt-4">
+        <div class="kpi-card">
+          <div class="kpi-label">Outstanding</div>
+          <div class="kpi-value" data-kpi-outstanding></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Upcoming</div>
+          <div class="kpi-value muted" data-kpi-upcoming></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Paid (30d)</div>
+          <div class="kpi-value" data-kpi-paid></div>
+        </div>
+      </div>
+
+      <div class="payment-grid">
+        <aside class="payment-side">
+          <div class="card invoice-card">
+            <h2 class="section-title-reset">Invoice Summary</h2>
+            <div class="invoice-items" data-payment-invoice-items></div>
+
+            <div class="invoice-summary">
+              <div class="summary-row"><span>Subtotal</span><span data-payment-subtotal></span></div>
+              <div class="summary-row"><span>Tax (10%)</span><span data-payment-tax></span></div>
+              <div class="summary-row total">
+                <strong>Total Due</strong><strong data-payment-total-due></strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="card payment-methods-card">
+            <h2 class="section-title-reset">Payment Methods</h2>
+            <div class="payment-methods" data-payment-methods></div>
+            <div class="muted small mt-2" data-payment-method-note></div>
+          </div>
+        </aside>
+
+        <section class="col-main">
+          <div class="card status-card">
+            <div class="payment-status-block">
+              <div class="status-left">
+                <h2 class="section-title-reset">Payment Status</h2>
+                <p class="muted" data-payment-note></p>
+              </div>
+              <div class="status-right">
+                <div class="badge badge-warning" data-payment-status></div>
+                <button id="confirmPaymentBtn" class="btn btn-primary btn-sm hidden" type="button">Confirm
+                  payment</button>
+              </div>
+            </div>
+            <div class="alert alert-info mt-4">
+              <strong>Note:</strong> <span data-payment-approval-note></span>
+            </div>
+          </div>
+
+          <div class="card meta-card">
+            <h2 class="section-title-reset">Schedule</h2>
+            <div class="meta-grid">
+              <div class="meta-line"><strong>Last Updated</strong>
+                <div data-payment-last-updated></div>
+              </div>
+              <div class="meta-line"><strong>Next Review</strong>
+                <div data-payment-next-review></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card history-card">
+            <h2 class="section-title-reset">Payment History</h2>
+            <div class="table-container">
+              <table class="stripe">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody data-payment-history></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+</body>
+
+</html>

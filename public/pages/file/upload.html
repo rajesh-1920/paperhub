@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Document - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+  <link rel="stylesheet" href="../../assets/css/components/file.css" />
+</head>
+
+<body class="file-upload-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content">
+      <section class="file-hero card">
+        <div class="file-hero-copy">
+          <div>
+            <h1>Upload Documents</h1>
+            <p class="file-subtitle">Drop files here or click to browse — uploads are fast and secure.</p>
+          </div>
+
+          <div class="file-hero-search-wrap">
+            <div class="upload-actions">
+              <a href="/pages/file/files.html" class="btn btn-outline">Back to Files</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="file-hero-panel">
+          <div class="file-kpi-grid">
+            <div class="file-kpi-card">
+              <span>Queued</span>
+              <strong id="metaQueued">0</strong>
+            </div>
+            <div class="file-kpi-card">
+              <span>Total size</span>
+              <strong id="metaTotalSize">0 MB</strong>
+            </div>
+            <div class="file-kpi-card">
+              <span>Max upload</span>
+              <strong>50 MB</strong>
+            </div>
+            <div class="file-kpi-card">
+              <span>Accepted</span>
+              <strong>PDF, DOCX, XLSX, PNG, JPG</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="file-layout">
+        <section class="file-table-panel card">
+          <div class="upload-card">
+            <div class="upload-dropzone" id="uploadDropzone">
+              <input type="file" id="fileInput" class="hidden-input" multiple />
+              <div class="upload-icon">📁</div>
+              <div class="upload-text">Drag & drop files here</div>
+              <div class="upload-hint">or click to browse your computer</div>
+              <div class="upload-hint upload-hint-meta">Supported formats: PDF, DOCX, XLSX, PNG, JPG. Max 50MB each.
+              </div>
+            </div>
+
+            <div class="file-preview-list" id="filePreviewList"></div>
+
+            <div class="form-actions">
+              <button type="button" id="uploadBtn" class="btn btn-primary">Start upload</button>
+              <button type="button" id="clearQueue" class="btn btn-outline">Clear queue</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="file-sidebar">
+          <div class="card">
+            <h4>Upload Tips</h4>
+            <ul class="upload-tips">
+              <li>Use descriptive file names for easier reviews.</li>
+              <li>Compress images to reduce upload time.</li>
+              <li>Split very large datasets into multiple files.</li>
+            </ul>
+            <div class="meta-start"><button id="metaStartAll" class="btn btn-primary">Start All</button></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="alert alert-info">
+        <strong>Security Notice:</strong> All uploads are encrypted in transit and at rest.
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/file.js"></script>
+</body>
+
+</html>

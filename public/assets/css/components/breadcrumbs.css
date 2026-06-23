@@ -1,0 +1,52 @@
+
+.ph-breadcrumbs {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.ph-breadcrumbs a {
+  color: #64748b;
+  text-decoration: none;
+}
+
+.ph-breadcrumbs .sep {
+  color: #cbd5e1;
+}
+
+.page-meta-card {
+  min-width: 16rem;
+  max-width: 22rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.page-meta-card .meta-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: #64748b;
+}
+
+.page-layout-two-col {
+  display: grid;
+  grid-template-columns: 1fr 22rem;
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .page-layout-two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.empty-state {
+  text-align: center;
+  padding: 2.2rem 1.25rem;
+  border-radius: 1rem;
+  color: #475569;
+}

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version History - PaperHub</title>
+  <script src="../../assets/js/tailwind-setup.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/css/global.css" />
+</head>
+
+<body class="version-history-page">
+  <div id="navbar-container"></div>
+  <div id="sidebar-container"></div>
+
+  <main>
+    <div class="page-content">
+      <nav class="ph-breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">/</span>
+        <a href="/pages/file/files.html">Files</a>
+        <span class="sep">/</span>
+        <span>Version History</span>
+      </nav>
+
+      <div class="page-header">
+        <div>
+          <h1>Version History</h1>
+          <p class="file-subtitle" data-version-file-name></p>
+        </div>
+        <a href="/pages/file/files.html" class="btn btn-outline">Back to Files</a>
+      </div>
+
+      <div class="page-layout-two-col">
+        <div>
+          <div id="versionHistoryContainer" class="timeline-list card"></div>
+        </div>
+
+        <aside>
+          <div class="page-meta-card card">
+            <h4 style="margin:0 0 0.25rem;">File</h4>
+            <div class="meta-line"><span>Name</span><strong data-version-file-name></strong></div>
+            <div class="meta-line"><span>Current version</span><span data-version-current></span></div>
+            <div style="margin-top:0.6rem;"><button class="btn btn-primary">Download Current</button></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/file.js"></script>
+</body>
+
+</html>

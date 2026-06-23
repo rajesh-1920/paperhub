@@ -1,0 +1,72 @@
+/* Dark-mode and page-specific tweaks for login & register pages */
+
+/* Card container */
+.login-page .auth-card,
+.register-page .auth-card {
+  transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+html.dark .login-page .auth-card,
+html.dark .register-page .auth-card {
+  background: rgba(15, 23, 42, 0.92) !important;
+  border-color: rgba(71, 85, 105, 0.72) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 8px 22px rgba(2, 6, 23, 0.6) !important;
+}
+
+/* Headings and descriptions */
+html.dark .login-page .auth-card .font-display,
+html.dark .register-page .auth-card .font-display {
+  color: var(--text-primary);
+}
+
+html.dark .login-page .auth-card p,
+html.dark .register-page .auth-card p {
+  color: var(--text-muted);
+}
+
+/* Labels */
+html.dark .login-page label,
+html.dark .register-page label {
+  color: #cbd5e1;
+  /* slate-300 */
+}
+
+/* Inputs */
+html.dark .login-page .input,
+html.dark .register-page .input {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+html.dark .login-page .input::placeholder,
+html.dark .register-page .input::placeholder {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+/* Separators and rules */
+html.dark .login-page .bg-slate-200,
+html.dark .register-page .bg-slate-200 {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Secondary text links */
+html.dark .login-page a,
+html.dark .register-page a {
+  color: var(--accent-primary);
+}
+
+/* Password strength bar */
+html.dark #passwordStrengthBar {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-primary-2));
+}
+
+/* Ensure left promo panel remains readable on smaller screens */
+html.dark .login-page section[aria-hidden],
+html.dark .register-page section[aria-hidden] {
+  color: var(--text-primary);
+}
+
+/* Utility to target the auth card wrapper in markup */
+.auth-card {}
