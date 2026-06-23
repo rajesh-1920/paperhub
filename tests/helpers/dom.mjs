@@ -15,6 +15,91 @@ export function seedDataset() {
   return JSON.parse(SEED);
 }
 
+function findAccount(dataset, email) {
+  const lower = String(email || "").toLowerCase();
+  return (dataset.authAccounts || []).find((a) => String(a.email).toLowerCase() === lower) || null;
+}
+
+// Public projection of a user — never leaks password/passwordHash.
+function publicUser(dataset, account) {
+  if (!account) return null;
+  const profile = (dataset.users || []).find((u) => u.id === account.id) || {};
+  const merged = { ...profile, ...account };
+  delete merged.password;
+  delete merged.passwordHash;
+  return merged;
+}
+
+const mockToken = (id) => `test-token.${id}`;
+
+// Tiny in-memory stand-in for the PaperHub REST API. Understands the auth
+// endpoints and the whole-dataset routes; both the XHR and fetch stubs share
+// it so frontend tests can exercise authenticated flows without boilerplate.
+function handleApi(method, url, body, headers, ctx) {
+  const m = String(method || "GET").toUpperCase();
+  const ds = ctx.server.dataset;
+  const parse = () => {
+    try {
+      return JSON.parse(body || "{}");
+    } catch {
+      return {};
+    }
+  };
+
+  if (url.includes("/api/auth/login")) {
+    const creds = parse();
+    const account = findAccount(ds, creds.email);
+    if (!account) {
+      return { status: 401, body: JSON.stringify({ error: "Invalid credentials" }) };
+    }
+    return {
+      status: 200,
+      body: JSON.stringify({
+        ok: true,
+        token: mockToken(account.id),
+        refreshToken: `refresh.${account.id}`,
+        user: publicUser(ds, account),
+      }),
+    };
+  }
+  if (url.includes("/api/auth/register")) {
+    const p = parse();
+    const id = `user-${String(p.email || "new").split("@")[0]}`;
+    const user = { id, name: p.name || "New User", email: p.email || "", role: "user" };
+    return {
+      status: 200,
+      body: JSON.stringify({ ok: true, token: mockToken(id), refreshToken: `refresh.${id}`, user }),
+    };
+  }
+  if (url.includes("/api/auth/refresh")) {
+    return { status: 200, body: JSON.stringify({ ok: true, token: "test-token.refreshed" }) };
+  }
+  if (url.includes("/api/auth/logout")) {
+    return { status: 200, body: JSON.stringify({ ok: true }) };
+  }
+  if (url.includes("/api/auth/me")) {
+    const auth = (headers && headers.authorization) || "";
+    const id = auth.replace(/^Bearer\s+test-token\./i, "");
+    const account = (ds.authAccounts || []).find((a) => a.id === id);
+    if (!account) return { status: 401, body: JSON.stringify({ error: "Unauthenticated" }) };
+    return { status: 200, body: JSON.stringify({ user: publicUser(ds, account) }) };
+  }
+  if (m === "POST" && url.includes("/api/reset")) {
+    ctx.server.dataset = JSON.parse(SEED);
+    return { status: 200, body: JSON.stringify(ctx.server.dataset) };
+  }
+  if (m === "PUT" && url.includes("/api/dataset")) {
+    try {
+      ctx.server.dataset = JSON.parse(body);
+    } catch {
+      /* ignore malformed body */
+    }
+    return { status: 200, body: '{"ok":true}' };
+  }
+  // Default (GET /api/dataset and any other /api/* read): the current dataset.
+  return { status: 200, body: JSON.stringify(ctx.server.dataset) };
+}
+
 /**
  * Boot a page into jsdom with a working localStorage and an XHR stub that
  * returns the seed dataset, then evaluate the given browser scripts in order.
@@ -66,44 +151,54 @@ export function bootPage(
   };
   Object.defineProperty(window, "localStorage", { value: localStorage, configurable: true });
 
-  // In-memory stand-in for the Node backend's JSON-file API.
+  // In-memory stand-in for the Node backend's REST API. Records request headers
+  // (so authenticated flows can be exercised) and delegates to handleApi.
   window.XMLHttpRequest = class {
+    constructor() {
+      this._headers = {};
+    }
     open(method, requestUrl) {
       this._method = String(method || "GET").toUpperCase();
       this._url = String(requestUrl || "");
     }
-    setRequestHeader() {}
+    setRequestHeader(key, value) {
+      this._headers[String(key).toLowerCase()] = value;
+    }
     send(body) {
-      if (this._method === "POST" && this._url.includes("/api/reset")) {
-        ctx.server.dataset = JSON.parse(SEED);
-        this.status = 200;
-        this.responseText = JSON.stringify(ctx.server.dataset);
-        return;
-      }
-      if (this._method === "PUT") {
-        try {
-          ctx.server.dataset = JSON.parse(body);
-        } catch {
-          /* ignore malformed body */
-        }
-        this.status = 200;
-        this.responseText = '{"ok":true}';
-        return;
-      }
-      this.status = 200;
-      this.responseText = JSON.stringify(ctx.server.dataset);
+      const { status, body: resBody } = handleApi(
+        this._method,
+        this._url,
+        body,
+        this._headers,
+        ctx,
+      );
+      this.status = status;
+      this.responseText = resBody;
     }
   };
   window.matchMedia = () => ({ matches: false, addEventListener() {} });
   window.confirm = () => true;
-  // Component partials are fetched over the network in the browser; in tests we
-  // return empty HTML so the bootstrap path stays quiet and side-effect-free.
-  window.fetch = async () => ({
-    ok: true,
-    status: 200,
-    text: async () => "",
-    json: async () => ({}),
-  });
+  // API calls go through the in-memory backend; everything else (component
+  // partials fetched over the network) returns empty HTML so the bootstrap path
+  // stays quiet and side-effect-free.
+  window.fetch = async (input, init = {}) => {
+    const url = String(typeof input === "string" ? input : (input && input.url) || "");
+    const method = (init && init.method) || "GET";
+    const headers = {};
+    const rawHeaders = (init && init.headers) || {};
+    for (const k of Object.keys(rawHeaders)) headers[k.toLowerCase()] = rawHeaders[k];
+    if (url.includes("/api/")) {
+      const { status, body } = handleApi(method, url, init && init.body, headers, ctx);
+      return {
+        ok: status >= 200 && status < 300,
+        status,
+        text: async () => body,
+        json: async () => JSON.parse(body),
+        arrayBuffer: async () => new ArrayBuffer(0),
+      };
+    }
+    return { ok: true, status: 200, text: async () => "", json: async () => ({}) };
+  };
   window.URL.createObjectURL = () => "blob:mock";
   window.URL.revokeObjectURL = () => {};
 
