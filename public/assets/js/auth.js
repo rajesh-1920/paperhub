@@ -139,10 +139,37 @@ function getAuthPageRouteByRole(role) {
   return new URL(relativePath, window.location.href).href;
 }
 
-function persistAuthSession(user) {
-  const token = `mock-token-${Date.now()}`;
+function persistAuthSession(user, token, refreshToken) {
   setCurrentUser(user);
-  setStorage("paperhub-auth-token", token);
+  if (token) {
+    setStorage("paperhub-auth-token", token);
+  }
+  if (refreshToken) {
+    setStorage("paperhub-refresh-token", refreshToken);
+  }
+}
+
+// Call the server auth API and return { token, refreshToken, user } or throw a
+// message suitable for display.
+async function postAuth(path, payload) {
+  const response = await fetch(paperhubApiUrl(path), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || "Request failed. Please try again.");
+  }
+  return data;
+}
+
+function loginViaApi(email, password) {
+  return postAuth("/api/auth/login", { email, password });
+}
+
+function registerViaApi({ name, email, password }) {
+  return postAuth("/api/auth/register", { name, email, password });
 }
 
 function enforceAuthLightTheme() {
@@ -175,14 +202,8 @@ async function handleLogin(e) {
   submitBtn.innerHTML = '<span class="spinner"></span> Logging in...';
 
   try {
-    await delay(500);
-
-    const user = findAuthenticatedUser(formData.email, formData.password);
-    if (!user) {
-      throw new Error("Invalid email or password.");
-    }
-
-    persistAuthSession(user);
+    const { token, refreshToken, user } = await loginViaApi(formData.email, formData.password);
+    persistAuthSession(user, token, refreshToken);
     showSuccess("Login successful!");
 
     setTimeout(() => {
@@ -275,42 +296,16 @@ async function handleRegister(e) {
   submitBtn.innerHTML = '<span class="spinner"></span> Creating account...';
 
   try {
-    await delay(700);
-
-    const normalizedEmail = String(formData.email || "")
-      .trim()
-      .toLowerCase();
-    const users = getStoredAuthUsers();
-    const alreadyExists = users.some((user) => user.email === normalizedEmail);
-
-    if (alreadyExists) {
-      throw new Error("An account with this email already exists.");
-    }
-
-    const user = {
-      id: Math.random().toString(36).slice(2, 11),
+    const { token, refreshToken, user } = await registerViaApi({
       name: formData.name,
-      email: normalizedEmail,
-      role: "user",
-      title: "User",
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}`,
-    };
-
-    users.push({
-      id: user.id,
-      name: user.name,
-      email: user.email,
+      email: formData.email,
       password: formData.password,
-      role: user.role,
-      title: user.title,
     });
-    persistAuthUsers(users);
-
-    persistAuthSession(user);
+    persistAuthSession(user, token, refreshToken);
     showSuccess("Account created successfully!");
 
     setTimeout(() => {
-      window.location.href = getAuthPageRouteByRole("user");
+      window.location.href = getAuthPageRouteByRole(user.role || "user");
     }, 500);
   } catch (error) {
     showError("Registration failed: " + error.message);

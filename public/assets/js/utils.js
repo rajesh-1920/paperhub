@@ -99,6 +99,7 @@ function fetchDatasetSync() {
       // Always pull a fresh copy — a browser-cached dataset would show stale
       // counts (e.g. an upload not reflected on the dashboard).
       request.setRequestHeader("Cache-Control", "no-cache");
+      attachAuthHeader(request);
       request.send(null);
       if (request.status >= 200 && request.status < 300 && request.responseText) {
         return JSON.parse(request.responseText);
@@ -131,6 +132,7 @@ function persistPaperHubData() {
     const request = new XMLHttpRequest();
     request.open("PUT", paperhubApiUrl("/api/dataset"), false);
     request.setRequestHeader("Content-Type", "application/json");
+    attachAuthHeader(request);
     request.send(JSON.stringify(getPaperHubDataset()));
     if (request.status < 200 || request.status >= 300) {
       console.warn("Unable to persist PaperHub data: HTTP", request.status);
@@ -145,6 +147,7 @@ function resetPaperHubData() {
   try {
     const request = new XMLHttpRequest();
     request.open("POST", paperhubApiUrl("/api/reset"), false);
+    attachAuthHeader(request);
     request.send(null);
   } catch (error) {
     console.warn("Unable to reset PaperHub data", error);
@@ -540,7 +543,23 @@ const StorageKey = {
   USER_ROLE: "paperhub-user-role",
   THEME: "paperhub-theme",
   PREFERENCES: "paperhub-preferences",
+  TOKEN: "paperhub-auth-token",
+  REFRESH: "paperhub-refresh-token",
 };
+
+// The current access token (sent as a Bearer header on API calls), or "".
+function getAuthToken() {
+  const token = getStorage(StorageKey.TOKEN, "");
+  return typeof token === "string" ? token : "";
+}
+
+// Attach the bearer token to an open XHR (no-op when signed out).
+function attachAuthHeader(request) {
+  const token = getAuthToken();
+  if (token) {
+    request.setRequestHeader("Authorization", "Bearer " + token);
+  }
+}
 
 function setStorage(key, value) {
   try {
@@ -613,8 +632,22 @@ function hasRole(role) {
 }
 
 function logout() {
+  // Best-effort server-side revocation of the refresh token.
+  try {
+    const refreshToken = getStorage(StorageKey.REFRESH, "");
+    if (refreshToken) {
+      const request = new XMLHttpRequest();
+      request.open("POST", paperhubApiUrl("/api/auth/logout"), false);
+      request.setRequestHeader("Content-Type", "application/json");
+      request.send(JSON.stringify({ refreshToken }));
+    }
+  } catch (error) {
+    /* best effort — clear the local session regardless */
+  }
   removeStorage(StorageKey.USER);
   removeStorage(StorageKey.USER_ROLE);
+  removeStorage(StorageKey.TOKEN);
+  removeStorage(StorageKey.REFRESH);
   window.location.href = resolveAppPath("pages/auth/login.html");
 }
 
