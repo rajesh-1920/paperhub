@@ -565,6 +565,108 @@ function phCopyFile(fileId, targetFolderId = null) {
   return copy;
 }
 
+/* ---------------------------------------------------------------------------
+ * Tags. A normalized tags[] table referenced by file.tagIds / folder.tagIds.
+ * The legacy free-text file.tags[] is left untouched.
+ * ------------------------------------------------------------------------- */
+
+function phTagSlug(label) {
+  return String(label || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function phListTags() {
+  return getPaperHubDataset().tags || [];
+}
+
+// Create a tag, or return the existing one with the same slug (idempotent).
+function phCreateTag({ label, color = null, createdBy = null } = {}) {
+  const clean = String(label || "").trim();
+  if (!clean) return null;
+  const slug = phTagSlug(clean);
+  if (!slug) return null;
+  const dataset = getPaperHubDataset();
+  dataset.tags = dataset.tags || [];
+  const existing = dataset.tags.find((t) => t.slug === slug);
+  if (existing) return existing;
+  const tag = {
+    id: generateId("tag"),
+    label: clean,
+    slug,
+    color,
+    createdBy:
+      createdBy ||
+      (typeof getCurrentUserData === "function" ? getCurrentUserData()?.id : null) ||
+      null,
+    createdAt: new Date().toISOString(),
+  };
+  dataset.tags.push(tag);
+  persistPaperHubData();
+  return tag;
+}
+
+// Resolve a file's/folder's tagIds to tag objects.
+function phResolveTags(tagIds) {
+  const tags = getPaperHubDataset().tags || [];
+  return (tagIds || []).map((id) => tags.find((t) => t.id === id)).filter(Boolean);
+}
+
+function phTagFile(fileId, tagId) {
+  const dataset = getPaperHubDataset();
+  let found = false;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (file.id === fileId) {
+        file.tagIds = file.tagIds || [];
+        if (!file.tagIds.includes(tagId)) file.tagIds.push(tagId);
+        found = true;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  if (found) persistPaperHubData();
+  return found;
+}
+
+function phUntagFile(fileId, tagId) {
+  const dataset = getPaperHubDataset();
+  let found = false;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (file.id === fileId && Array.isArray(file.tagIds)) {
+        file.tagIds = file.tagIds.filter((t) => t !== tagId);
+        found = true;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  if (found) persistPaperHubData();
+  return found;
+}
+
+function phTagFolder(folderId, tagId) {
+  const dataset = getPaperHubDataset();
+  const folder = (dataset.folders || []).find((f) => f.id === folderId);
+  if (!folder) return false;
+  folder.tagIds = folder.tagIds || [];
+  if (!folder.tagIds.includes(tagId)) {
+    folder.tagIds.push(tagId);
+    persistPaperHubData();
+  }
+  return true;
+}
+
+function phUntagFolder(folderId, tagId) {
+  const dataset = getPaperHubDataset();
+  const folder = (dataset.folders || []).find((f) => f.id === folderId);
+  if (!folder || !Array.isArray(folder.tagIds)) return false;
+  folder.tagIds = folder.tagIds.filter((t) => t !== tagId);
+  persistPaperHubData();
+  return true;
+}
+
 function phUpdateUser(userId, patch) {
   const dataset = getPaperHubDataset();
   const user = phFindUser(userId);
