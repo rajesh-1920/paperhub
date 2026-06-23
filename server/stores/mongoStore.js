@@ -124,9 +124,25 @@ async function getBucket() {
   return new GridFSBucket(db, { bucketName: CONTENT_BUCKET });
 }
 
-// Delete any stored binary whose file id is no longer in the dataset.
+// Binary names still referenced by the dataset: each file's current binary plus
+// every version binary. Trashed (soft-deleted) files keep their record in
+// dataset.files, so their bytes are retained until an explicit purge.
+function referencedContentNames(data) {
+  const keep = new Set();
+  for (const file of data.files || []) {
+    keep.add(String(file.id));
+    for (const version of file.versions || []) {
+      if (version && version.contentRef) {
+        keep.add(String(version.contentRef));
+      }
+    }
+  }
+  return keep;
+}
+
+// Delete any GridFS binary no longer referenced by the dataset.
 async function pruneOrphanContent(data) {
-  const keep = new Set((data.files || []).map((f) => String(f.id)));
+  const keep = referencedContentNames(data);
   const bucket = await getBucket();
   const files = await bucket.find({}).toArray();
   for (const file of files) {

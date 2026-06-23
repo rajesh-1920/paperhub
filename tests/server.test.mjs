@@ -145,6 +145,39 @@ test("file content: orphaned binaries are pruned when the dataset drops the file
   );
 });
 
+test("file content: a version's binary is retained through orphan pruning", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const pdf = Buffer.from("%PDF-1.4\nversion one\n%%EOF\n");
+  // A version binary is stored under the file's versioned content ref.
+  await fetch(`${base}/api/files/file-ver__v1/content`, {
+    method: "PUT",
+    headers: { "content-type": "application/pdf" },
+    body: pdf,
+  });
+
+  // The dataset references it via the file's versions[] (no current binary).
+  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  dataset.files.push({
+    id: "file-ver",
+    name: "v.pdf",
+    status: "pending",
+    versions: [{ versionId: "v1", contentRef: "file-ver__v1" }],
+  });
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(dataset),
+  });
+
+  assert.equal(
+    (await fetch(`${base}/api/files/file-ver__v1/content`)).status,
+    200,
+    "version binary kept by the version-aware prune",
+  );
+});
+
 test("API reset restores the dataset from the seed", async (t) => {
   const { server, base, dbFile } = await startTestServer();
   t.after(() => server.close());

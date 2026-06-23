@@ -53,9 +53,26 @@ function contentPath(id) {
   return join(uploadsDir(), `${safeId(id)}.pdf`);
 }
 
-// Delete any stored binary whose file id is no longer in the dataset.
+// The set of binary filenames still referenced by the dataset: each file's
+// current binary, plus every version binary it points at. Trashed files keep
+// their record in dataset.files (soft delete), so their binaries are retained
+// here too — only a hard purge removes the record and frees the bytes.
+function referencedContentNames(data) {
+  const keep = new Set();
+  for (const file of data.files || []) {
+    keep.add(`${safeId(file.id)}.pdf`);
+    for (const version of file.versions || []) {
+      if (version && version.contentRef) {
+        keep.add(`${safeId(version.contentRef)}.pdf`);
+      }
+    }
+  }
+  return keep;
+}
+
+// Delete any stored binary no longer referenced by the dataset.
 async function pruneOrphanContent(data) {
-  const keep = new Set((data.files || []).map((f) => `${safeId(f.id)}.pdf`));
+  const keep = referencedContentNames(data);
   let names;
   try {
     names = await readdir(uploadsDir());
