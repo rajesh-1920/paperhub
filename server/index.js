@@ -14,6 +14,7 @@ import {
 } from "./db.js";
 import { authRouter } from "./routes/auth.js";
 import { assertAuthConfig } from "./config.js";
+import { sanitizeDataset, preserveServerSecrets } from "./auth/users.js";
 
 const ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
 const PDF_MAGIC = Buffer.from("%PDF");
@@ -36,23 +37,27 @@ export function createApp() {
   app.use("/api/auth", authRouter());
 
   // Read the whole dataset. Never cache it — the frontend re-fetches after
-  // every mutation and must always see the latest counts.
+  // every mutation and must always see the latest counts. Credentials and
+  // refresh tokens are stripped: they never leave the server.
   app.get("/api/dataset", async (req, res) => {
     try {
       res.setHeader("Cache-Control", "no-store");
-      res.json(await readDataset());
+      res.json(sanitizeDataset(await readDataset()));
     } catch {
       res.status(500).json({ error: "Unable to read dataset" });
     }
   });
 
   // Persist the whole dataset (the frontend store posts the mutated dataset).
+  // The client never holds credentials/refresh tokens, so they are restored
+  // from the current dataset to prevent a round-tripped PUT from wiping them.
   app.put("/api/dataset", async (req, res) => {
     if (!isValidDataset(req.body)) {
       return res.status(400).json({ error: "Invalid dataset payload" });
     }
     try {
-      await writeDataset(req.body);
+      const current = await readDataset();
+      await writeDataset(preserveServerSecrets(req.body, current));
       res.json({ ok: true });
     } catch {
       res.status(500).json({ error: "Unable to write dataset" });

@@ -25,26 +25,9 @@ test("officer Quick Approve approves the highest-priority pending review (and sy
   );
 });
 
-test("change password updates the account and the new password authenticates", () => {
-  const { window } = bootPage(
-    "public/pages/profile/profile-edit.html",
-    ["utils.js", "main.js", "auth.js"],
-    "user",
-  );
-  const id = "user-mahmud.hasan";
-  assert.equal(window.phGetAccountPassword(id), "user01");
-
-  assert.equal(window.phChangePassword(id, "newpass123"), true);
-  assert.equal(window.phGetAccountPassword(id), "newpass123");
-
-  const authed = window.findAuthenticatedUser("mahmud.hasan@paperhub.edu.bd", "newpass123");
-  assert.ok(authed && authed.id === id, "logs in with the new password");
-  assert.equal(
-    window.findAuthenticatedUser("mahmud.hasan@paperhub.edu.bd", "user01"),
-    null,
-    "old password no longer works",
-  );
-});
+// Password change is now server-authoritative (POST /api/auth/change-password,
+// covered in server.test.mjs); the browser no longer holds or compares
+// credentials, so the former client-side test was removed.
 
 test("restore (phTouchFile) bumps updatedAt in every copy of the file", () => {
   const { window } = bootPage("public/pages/dashboard/user.html", ["utils.js"], "user");

@@ -26,6 +26,38 @@ export function findAccountByEmail(dataset, email) {
   return (dataset.authAccounts || []).find((a) => String(a.email).toLowerCase() === lower) || null;
 }
 
+// Projection of the whole dataset that is safe to send to a client: account
+// credentials stripped, and the server-only refreshTokens never leave.
+export function sanitizeDataset(dataset) {
+  return {
+    ...dataset,
+    authAccounts: (dataset.authAccounts || []).map(sanitizeAccount),
+    refreshTokens: [],
+  };
+}
+
+// The client never receives credentials or refresh tokens, so a round-tripped
+// whole-dataset PUT must not wipe them: restore each account's stored
+// credentials (by id) and keep the server's refreshTokens untouched.
+export function preserveServerSecrets(incoming, current) {
+  const byId = new Map((current.authAccounts || []).map((a) => [a.id, a]));
+  const authAccounts = (incoming.authAccounts || []).map((acc) => {
+    const existing = byId.get(acc.id);
+    if (!existing) {
+      return acc; // a brand-new account (e.g. admin-added) keeps its own fields
+    }
+    const restored = { ...acc };
+    if (!restored.passwordHash && existing.passwordHash) {
+      restored.passwordHash = existing.passwordHash;
+    }
+    if (!restored.passwordHash && !restored.password && existing.password != null) {
+      restored.password = existing.password;
+    }
+    return restored;
+  });
+  return { ...incoming, authAccounts, refreshTokens: current.refreshTokens || [] };
+}
+
 // A fresh, fully-shaped user profile for a new account, so dashboards and the
 // file UI render without special-casing. Mirrors the client buildNewUserProfile.
 export function buildUserProfile(account, todayIso = new Date().toISOString().slice(0, 10)) {

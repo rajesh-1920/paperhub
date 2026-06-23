@@ -432,20 +432,9 @@ function phSetPaymentStatus(userId, status) {
   persistPaperHubData();
 }
 
-function phGetAccountPassword(userId) {
-  const dataset = getPaperHubDataset();
-  const account = (dataset.authAccounts || []).find((entry) => entry.id === userId);
-  return account ? account.password : null;
-}
-
-function phChangePassword(userId, newPassword) {
-  const dataset = getPaperHubDataset();
-  const account = (dataset.authAccounts || []).find((entry) => entry.id === userId);
-  if (!account) return false;
-  account.password = String(newPassword);
-  persistPaperHubData();
-  return true;
-}
+// Password changes go through POST /api/auth/change-password
+// (changePasswordViaApi) — credentials are never stored or compared in the
+// browser.
 
 // Mark a file as freshly updated (used by "Restore version"); bumps it to the
 // top of the most-recent ordering everywhere it appears.
@@ -559,6 +548,26 @@ function attachAuthHeader(request) {
   if (token) {
     request.setRequestHeader("Authorization", "Bearer " + token);
   }
+}
+
+// Rotate the signed-in user's password through the server (credentials never
+// live in the browser). Resolves on success, throws a displayable message.
+async function changePasswordViaApi(currentPassword, newPassword) {
+  const headers = { "Content-Type": "application/json" };
+  const token = getAuthToken();
+  if (token) {
+    headers.Authorization = "Bearer " + token;
+  }
+  const response = await fetch(paperhubApiUrl("/api/auth/change-password"), {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || "Could not change password");
+  }
+  return data;
 }
 
 function setStorage(key, value) {

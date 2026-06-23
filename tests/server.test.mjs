@@ -63,7 +63,7 @@ async function login(base, email, password) {
 }
 
 test("auth: login issues tokens, refresh renews, bad creds rejected", async (t) => {
-  const { server, base } = await startTestServer();
+  const { server, base, dbFile } = await startTestServer();
   t.after(() => server.close());
 
   // Wrong password and unknown email are both 401 (no user enumeration).
@@ -79,9 +79,17 @@ test("auth: login issues tokens, refresh renews, bad creds rejected", async (t) 
   assert.equal(body.user.password, undefined, "no plaintext leaks");
   assert.equal(body.user.passwordHash, undefined, "no hash leaks");
 
-  // The legacy plaintext password is migrated to a hash on first login.
-  const dataset = await (await fetch(`${base}/api/dataset`)).json();
-  const account = dataset.authAccounts.find((a) => a.email === "rajesh.biswas@paperhub.com.bd");
+  // Reads never leak credentials or refresh tokens.
+  const exposed = await (await fetch(`${base}/api/dataset`)).json();
+  assert.ok(
+    exposed.authAccounts.every((a) => a.password === undefined && a.passwordHash === undefined),
+    "credentials stripped from dataset reads",
+  );
+  assert.deepEqual(exposed.refreshTokens, [], "refresh tokens never leave the server");
+
+  // The legacy plaintext password was migrated to a hash (verified on disk).
+  const onDisk = JSON.parse(await readFile(dbFile, "utf8"));
+  const account = onDisk.authAccounts.find((a) => a.email === "rajesh.biswas@paperhub.com.bd");
   assert.ok(account.passwordHash, "password hashed on login");
   assert.equal(account.password, undefined, "plaintext removed");
 
@@ -157,6 +165,73 @@ test("auth: register creates a first-class user and auto-logs-in", async (t) => 
     (await login(base, "new@paperhub.test", "longenough1")).status,
     200,
     "can log in with the new credentials",
+  );
+});
+
+test("auth: change-password rotates the password and old one stops working", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const first = await (await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")).json();
+
+  const change = (body, bearer) =>
+    fetch(`${base}/api/auth/change-password`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(bearer ? { authorization: `Bearer ${bearer}` } : {}),
+      },
+      body: JSON.stringify(body),
+    });
+
+  assert.equal(
+    (await change({ currentPassword: "user01", newPassword: "newpass12" })).status,
+    401,
+    "requires auth",
+  );
+  assert.equal(
+    (await change({ currentPassword: "wrong", newPassword: "newpass12" }, first.token)).status,
+    401,
+    "wrong current password rejected",
+  );
+
+  const ok = await change({ currentPassword: "user01", newPassword: "newpass12" }, first.token);
+  assert.equal(ok.status, 200);
+
+  assert.equal(
+    (await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")).status,
+    401,
+    "old password fails",
+  );
+  assert.equal(
+    (await login(base, "mahmud.hasan@paperhub.edu.bd", "newpass12")).status,
+    200,
+    "new password works",
+  );
+});
+
+test("dataset PUT preserves server-only credentials it never sent to the client", async (t) => {
+  const { server, base, dbFile } = await startTestServer();
+  t.after(() => server.close());
+
+  // Log in to migrate an account to a hash, then round-trip the (credential-less)
+  // dataset back via PUT and confirm the hash survives.
+  await login(base, "mahmud.hasan@paperhub.edu.bd", "user01");
+  const exposed = await (await fetch(`${base}/api/dataset`)).json();
+  exposed.users[0].name = "Renamed Via PUT";
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(exposed),
+  });
+
+  const onDisk = JSON.parse(await readFile(dbFile, "utf8"));
+  const account = onDisk.authAccounts.find((a) => a.email === "mahmud.hasan@paperhub.edu.bd");
+  assert.ok(account.passwordHash, "passwordHash preserved through a round-tripped PUT");
+  assert.equal(
+    (await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")).status,
+    200,
+    "still logs in",
   );
 });
 

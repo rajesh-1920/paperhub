@@ -1,5 +1,3 @@
-const AUTH_USERS_STORAGE_KEY = "paperhub-auth-users";
-
 function getFormDataSafe(form) {
   const data = {};
   const formData = new FormData(form);
@@ -53,80 +51,9 @@ function validateRegisterData(formData) {
   return errors;
 }
 
-function getSeedAuthUsers() {
-  const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : null;
-  const authAccounts = Array.isArray(dataset?.authAccounts) ? dataset.authAccounts : [];
-
-  return authAccounts.map((account) => ({
-    id: account.id,
-    name: account.name,
-    email: String(account.email || "").toLowerCase(),
-    password: account.password,
-    role: account.role,
-    title: account.title,
-  }));
-}
-
-function getStoredAuthUsers() {
-  const savedUsers = getStorage(AUTH_USERS_STORAGE_KEY, []);
-  const list = Array.isArray(savedUsers) ? savedUsers : [];
-  const merged = [...getSeedAuthUsers()];
-
-  list.forEach((entry) => {
-    const normalizedEmail = String(entry?.email || "")
-      .trim()
-      .toLowerCase();
-    if (!normalizedEmail) {
-      return;
-    }
-
-    const existingIndex = merged.findIndex((user) => user.email === normalizedEmail);
-    const normalizedEntry = {
-      id: entry.id || Math.random().toString(36).slice(2, 11),
-      name: entry.name || "PaperHub User",
-      email: normalizedEmail,
-      password: String(entry.password || ""),
-      role: entry.role || "user",
-      title: entry.title || "User",
-    };
-
-    if (existingIndex >= 0) {
-      merged[existingIndex] = normalizedEntry;
-      return;
-    }
-
-    merged.push(normalizedEntry);
-  });
-
-  return merged;
-}
-
-function persistAuthUsers(users) {
-  setStorage(AUTH_USERS_STORAGE_KEY, users);
-}
-
-function findAuthenticatedUser(email, password) {
-  const normalizedEmail = String(email || "")
-    .trim()
-    .toLowerCase();
-  const users = getStoredAuthUsers();
-  const account = users.find(
-    (user) => user.email === normalizedEmail && String(user.password) === String(password),
-  );
-
-  if (!account) {
-    return null;
-  }
-
-  return {
-    id: account.id,
-    name: account.name,
-    email: account.email,
-    role: account.role,
-    title: account.title,
-    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(account.name)}`,
-  };
-}
+// Authentication is server-authoritative: login/registration/password-change go
+// through /api/auth/* (see loginViaApi/registerViaApi and changePasswordViaApi).
+// The browser never holds or compares credentials.
 
 function getAuthPageRouteByRole(role) {
   const roleRoutes = {

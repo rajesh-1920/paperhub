@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import { readDataset, writeDataset } from "../db.js";
 import { verifyPassword, hashPassword } from "../auth/passwords.js";
 import { publicUser, findAccountByEmail, buildUserProfile } from "../auth/users.js";
+import { requireAuth } from "../middleware/auth.js";
 import {
   signAccessToken,
   createRefreshToken,
@@ -138,6 +139,41 @@ export function authRouter() {
     }
 
     res.json({ ok: true, token: signAccessToken(account) });
+  });
+
+  // POST /api/auth/change-password — the signed-in user rotates their password.
+  router.post("/change-password", requireAuth, async (req, res) => {
+    const { currentPassword, newPassword } = req.body || {};
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: "Current and new password are required" });
+    }
+    if (String(newPassword).length < 8) {
+      return res.status(400).json({ error: "New password must be at least 8 characters" });
+    }
+
+    const dataset = await readDataset();
+    const account = (dataset.authAccounts || []).find((a) => a.id === req.user.id);
+    if (!account) {
+      return res.status(404).json({ error: "Account not found" });
+    }
+    const ok = account.passwordHash
+      ? await verifyPassword(currentPassword, account.passwordHash)
+      : String(account.password) === String(currentPassword);
+    if (!ok) {
+      return res.status(401).json({ error: "Current password is incorrect" });
+    }
+
+    account.passwordHash = await hashPassword(newPassword);
+    delete account.password;
+    // Revoke this user's other sessions so a changed password takes effect.
+    (dataset.refreshTokens || []).forEach((t) => {
+      if (t.userId === account.id) {
+        t.revoked = true;
+      }
+    });
+    await writeDataset(dataset);
+
+    res.json({ ok: true });
   });
 
   // POST /api/auth/logout — revoke a refresh token.
