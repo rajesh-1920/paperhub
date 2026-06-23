@@ -38,21 +38,34 @@ Because of this, ESLint runs with `no-undef`/`no-unused-vars` disabled for
 `public/assets/js/**` (cross-file references and the global "exported" API would
 otherwise look like errors). See `eslint.config.js` for the rationale.
 
-## Data: the JSON file is the database
+## Data: pluggable storage behind one REST contract
 
-`public/assets/data/paperhub-backend.json` **is the database**. The Node backend
-(`server/`) owns it and the frontend reads/writes it through a REST API:
+The Node backend (`server/`) owns the database and the frontend reads/writes it
+through a REST API:
 
-| Method & path      | Purpose                                           |
-| ------------------ | ------------------------------------------------- |
-| `GET /api/dataset` | return the current dataset                        |
-| `PUT /api/dataset` | overwrite the dataset (atomic temp-file + rename) |
-| `POST /api/reset`  | restore the dataset from `server/seed.json`       |
+| Method & path      | Purpose                                     |
+| ------------------ | ------------------------------------------- |
+| `GET /api/dataset` | return the current dataset                  |
+| `PUT /api/dataset` | overwrite the dataset                       |
+| `POST /api/reset`  | restore the dataset from `server/seed.json` |
 
-- `server/db.js` validates payloads, serializes writes through an in-process
-  lock, and writes atomically (write a temp file, then `rename`) so a crash or
-  concurrent request can't corrupt the file. Paths are overridable via
-  `PAPERHUB_DB_FILE` / `PAPERHUB_SEED_FILE` (the tests point them at a temp copy).
+`server/db.js` is a **façade over two interchangeable stores**, chosen at call
+time by `MONGODB_URI`:
+
+- **`server/stores/jsonStore.js`** (default, and the CI/test fallback) —
+  `public/assets/data/paperhub-backend.json` is the database. Writes are
+  serialized through an in-process lock and written atomically (temp file +
+  `rename`). Paths are overridable via `PAPERHUB_DB_FILE` / `PAPERHUB_SEED_FILE`.
+- **`server/stores/mongoStore.js`** (when `MONGODB_URI` is set) — each dataset
+  array maps to a MongoDB collection (`users`, `files`, `reviewQueue`,
+  `authAccounts`) plus a `meta` document. The store **assembles** the dataset on
+  read (projecting out Mongo's `_id`) and **splits** it across collections on
+  write, so the `/api/dataset` contract — and therefore the entire frontend — is
+  unchanged. `npm run db:up` starts MongoDB in Docker; `npm run db:migrate` seeds
+  it from `server/seed.json`.
+
+Because both stores expose the same `ensureDataset/readDataset/writeDataset/
+resetDataset` interface, switching databases touches nothing outside `server/`.
 
 On the frontend, the data layer keeps its synchronous model but talks to the API:
 
@@ -103,11 +116,13 @@ seed), then evaluates the browser scripts so tests call the page functions
 exactly as the browser would (`runScripts: "outside-only"` + `window.eval`).
 This is why the tests assert on `window.*` globals rather than importing modules.
 
-Coverage: the persistence layer (`store.test.mjs`), dynamic rendering
-(`render.test.mjs`), end-to-end flows (`flows.test.mjs`), confirmed-bug
+Coverage: the persistence layer (`store.test.mjs`), cross-collection status sync
+(`sync.test.mjs`), dynamic rendering (`render.test.mjs`), end-to-end flows
+(`flows.test.mjs`), enabled actions (`actions.test.mjs`), confirmed-bug
 regressions (`regressions.test.mjs`), output-escaping/validation
-(`security.test.mjs`), seed integrity (`seed.test.mjs`), and the backend API
-(`server.test.mjs`, which exercises GET/PUT/reset against a temp JSON file).
+(`security.test.mjs`), seed integrity (`seed.test.mjs`), the backend API over the
+JSON store (`server.test.mjs`), and the MongoDB store against an in-memory mongod
+(`mongo.test.mjs`, which skips if the binary is unavailable).
 
 ## Build & deploy
 

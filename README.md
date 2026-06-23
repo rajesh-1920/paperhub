@@ -25,7 +25,21 @@ npm run dev        # start the server with --watch on http://localhost:8000
 # or: npm run serve
 ```
 
-Then open http://localhost:8000.
+Then open http://localhost:8000. By default the database is the JSON file — no
+extra setup needed.
+
+### Optional: use MongoDB (via Docker)
+
+```bash
+npm run db:up                          # start MongoDB in Docker (mongo:7)
+cp .env.example .env                   # contains MONGODB_URI=mongodb://localhost:27017
+npm run db:migrate                     # seed MongoDB from server/seed.json
+npm run dev                            # server now logs "database: MongoDB (paperhub)"
+# when done: npm run db:down
+```
+
+The storage backend is chosen automatically: **MongoDB when `MONGODB_URI` is set,
+the JSON file otherwise.** Nothing else in the app changes.
 
 ### Demo logins
 
@@ -66,7 +80,9 @@ The backend (`server/`) exposes a tiny REST API backed by the JSON file:
 paperhub/
 ├── server/                     # Node/Express backend
 │   ├── index.js                # REST API + static hosting
-│   ├── db.js                   # atomic read/write of the JSON database
+│   ├── db.js                   # storage façade (picks the backend)
+│   ├── stores/                 # jsonStore (file) + mongoStore (MongoDB)
+│   ├── migrate.js              # seed the configured database
 │   └── seed.json               # pristine dataset used by /api/reset
 ├── public/                     # frontend, served by the backend
 │   ├── index.html
