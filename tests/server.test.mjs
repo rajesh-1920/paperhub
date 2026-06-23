@@ -255,6 +255,37 @@ test("dataset PUT preserves server-only credentials it never sent to the client"
   );
 });
 
+test("auth: events are recorded to the audit log (and not exposed to clients)", async (t) => {
+  const { server, base, dbFile } = await startTestServer();
+  t.after(() => server.close());
+
+  await login(base, "rajesh.biswas@paperhub.com.bd", "admin01"); // success
+  await login(base, "rajesh.biswas@paperhub.com.bd", "wrong-pass"); // failure
+
+  const onDisk = JSON.parse(await readFile(dbFile, "utf8"));
+  const actions = onDisk.auditLog.map((e) => e.action);
+  assert.ok(actions.includes("auth.login"), "successful login audited");
+  assert.ok(actions.includes("auth.login_failed"), "failed login audited");
+
+  const exposed = await (await fetch(`${base}/api/dataset`)).json();
+  assert.deepEqual(exposed.auditLog, [], "audit log is not exposed in dataset reads");
+});
+
+test("auth: repeated login attempts are rate limited", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  let limited = false;
+  for (let i = 0; i < 40; i++) {
+    const res = await login(base, "rajesh.biswas@paperhub.com.bd", "wrong-pass");
+    if (res.status === 429) {
+      limited = true;
+      break;
+    }
+  }
+  assert.ok(limited, "too many login attempts eventually return 429");
+});
+
 test("dataset exposes the new SaaS collections and round-trips them", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());

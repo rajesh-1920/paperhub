@@ -27,12 +27,14 @@ export function findAccountByEmail(dataset, email) {
 }
 
 // Projection of the whole dataset that is safe to send to a client: account
-// credentials stripped, and the server-only refreshTokens never leave.
+// credentials stripped, and the server-only refreshTokens/auditLog never leave
+// (the audit log is exposed later through a dedicated, admin-scoped API).
 export function sanitizeDataset(dataset) {
   return {
     ...dataset,
     authAccounts: (dataset.authAccounts || []).map(sanitizeAccount),
     refreshTokens: [],
+    auditLog: [],
   };
 }
 
@@ -55,7 +57,12 @@ export function preserveServerSecrets(incoming, current) {
     }
     return restored;
   });
-  return { ...incoming, authAccounts, refreshTokens: current.refreshTokens || [] };
+  return {
+    ...incoming,
+    authAccounts,
+    refreshTokens: current.refreshTokens || [],
+    auditLog: current.auditLog || [],
+  };
 }
 
 // A fresh, fully-shaped user profile for a new account, so dashboards and the

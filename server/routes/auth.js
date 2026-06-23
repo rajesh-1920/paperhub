@@ -4,6 +4,10 @@ import { readDataset, writeDataset } from "../db.js";
 import { verifyPassword, hashPassword } from "../auth/passwords.js";
 import { publicUser, findAccountByEmail, buildUserProfile } from "../auth/users.js";
 import { requireAuth } from "../middleware/auth.js";
+import { rateLimit } from "../middleware/rateLimit.js";
+import { recordAudit } from "../auth/audit.js";
+
+const LOGIN_MAX = Number(process.env.AUTH_LOGIN_MAX || 10);
 import {
   signAccessToken,
   createRefreshToken,
@@ -45,39 +49,57 @@ export function authRouter() {
   const router = Router();
 
   // POST /api/auth/login — verify credentials, issue access + refresh tokens.
-  router.post("/login", async (req, res) => {
-    const { email, password } = req.body || {};
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
-    }
-
-    const dataset = await readDataset();
-    const account = findAccountByEmail(dataset, email);
-    if (!account) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
-
-    let ok = false;
-    if (account.passwordHash) {
-      ok = await verifyPassword(password, account.passwordHash);
-    } else if (account.password != null) {
-      // Legacy plaintext account: verify, then migrate to a hash on success.
-      // The whole dataset is persisted below (with the new refresh token).
-      ok = String(account.password) === String(password);
-      if (ok) {
-        account.passwordHash = await hashPassword(password);
-        delete account.password;
+  router.post(
+    "/login",
+    rateLimit({ max: LOGIN_MAX, message: "Too many login attempts. Please try again later." }),
+    async (req, res) => {
+      const { email, password } = req.body || {};
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
       }
-    }
-    if (!ok) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
 
-    const session = issueSession(dataset, account);
-    await writeDataset(dataset);
+      const dataset = await readDataset();
+      const account = findAccountByEmail(dataset, email);
 
-    res.json({ ok: true, ...session, user: publicUser(dataset, account) });
-  });
+      let ok = false;
+      if (account) {
+        if (account.passwordHash) {
+          ok = await verifyPassword(password, account.passwordHash);
+        } else if (account.password != null) {
+          // Legacy plaintext account: verify, then migrate to a hash on success.
+          ok = String(account.password) === String(password);
+          if (ok) {
+            account.passwordHash = await hashPassword(password);
+            delete account.password;
+          }
+        }
+      }
+
+      if (!ok) {
+        recordAudit(dataset, {
+          action: "auth.login_failed",
+          actorId: account ? account.id : null,
+          actorName: account ? account.name : null,
+          metadata: { email: String(email).toLowerCase() },
+          ip: req.ip,
+        });
+        await writeDataset(dataset);
+        return res.status(401).json({ error: "Invalid email or password" });
+      }
+
+      recordAudit(dataset, {
+        action: "auth.login",
+        actorId: account.id,
+        actorName: account.name,
+        actorRole: account.role,
+        ip: req.ip,
+      });
+      const session = issueSession(dataset, account);
+      await writeDataset(dataset);
+
+      res.json({ ok: true, ...session, user: publicUser(dataset, account) });
+    },
+  );
 
   // POST /api/auth/register — self-service signup. Always creates a "user"
   // account (privileged roles are admin-provisioned), persisted to BOTH
@@ -111,6 +133,13 @@ export function authRouter() {
     dataset.users = dataset.users || [];
     dataset.authAccounts.push(account);
     dataset.users.push(buildUserProfile(account));
+    recordAudit(dataset, {
+      action: "auth.register",
+      actorId: account.id,
+      actorName: account.name,
+      actorRole: account.role,
+      ip: req.ip,
+    });
 
     const session = issueSession(dataset, account);
     await writeDataset(dataset);
@@ -171,6 +200,13 @@ export function authRouter() {
         t.revoked = true;
       }
     });
+    recordAudit(dataset, {
+      action: "auth.password_changed",
+      actorId: account.id,
+      actorName: account.name,
+      actorRole: account.role,
+      ip: req.ip,
+    });
     await writeDataset(dataset);
 
     res.json({ ok: true });
@@ -184,6 +220,7 @@ export function authRouter() {
       const record = (dataset.refreshTokens || []).find((t) => t.id === id);
       if (record && !record.revoked) {
         record.revoked = true;
+        recordAudit(dataset, { action: "auth.logout", actorId: record.userId, ip: req.ip });
         await writeDataset(dataset);
       }
     }
