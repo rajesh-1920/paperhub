@@ -159,6 +159,13 @@
                       </div>
                       <span class="badge badge-success">On</span>
                     </div>
+                    <div class="settings-item">
+                      <div>
+                        <h4>Reset demo data</h4>
+                        <p>Clear locally saved changes and restore the original sample dataset.</p>
+                      </div>
+                      <button id="resetDemoDataBtn" class="btn btn-outline btn-sm" type="button">Reset</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -245,6 +252,18 @@
 
           if (typeof showSuccess === 'function') showSuccess('Settings saved successfully');
         });
+
+        const resetBtn = document.getElementById('resetDemoDataBtn');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', function () {
+            if (!window.confirm('Reset all locally saved data back to the original sample dataset?')) return;
+            if (typeof resetPaperHubData === 'function') resetPaperHubData();
+            if (typeof showSuccess === 'function') showSuccess('Demo data reset');
+            setTimeout(function () {
+              window.location.reload();
+            }, 500);
+          });
+        }
       });
     </script>
 

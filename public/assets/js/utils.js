@@ -52,7 +52,9 @@ function removeEvent(element, event, handler) {
 const PAPERHUB_APP_BASE_URL = (() => {
   const currentScript =
     document.currentScript ||
-    Array.from(document.scripts || []).find((script) => script.src && script.src.includes("/assets/js/utils.js"));
+    Array.from(document.scripts || []).find(
+      (script) => script.src && script.src.includes("/assets/js/utils.js"),
+    );
 
   if (currentScript && currentScript.src) {
     return new URL("../../", currentScript.src).href;
@@ -149,6 +151,28 @@ function phMapReviewToFileStatus(status) {
   return "pending";
 }
 
+// Allowlists and limits guard the mutators against malformed input (e.g. an
+// out-of-range status, an oversized name, or an empty comment) before anything
+// is written to the persistent store.
+const PH_REVIEW_STATUSES = [
+  "pending",
+  "in-review",
+  "completed",
+  "rejected",
+  "approved",
+  "forwarded",
+];
+const PH_FILE_STATUSES = ["pending", "reviewing", "completed", "rejected"];
+const PH_MAX_NAME_LENGTH = 255;
+const PH_MAX_COMMENT_LENGTH = 2000;
+
+function phSanitizeName(name) {
+  // Strip ASCII control characters (incl. NUL) then clamp length.
+  // eslint-disable-next-line no-control-regex
+  const stripped = String(name || "").replace(/[\u0000-\u001f\u007f]/g, "");
+  return stripped.slice(0, PH_MAX_NAME_LENGTH);
+}
+
 function phAddFile(file, reviewItem) {
   const dataset = getPaperHubDataset();
   dataset.files = dataset.files || [];
@@ -173,10 +197,12 @@ function phAddFile(file, reviewItem) {
 }
 
 function phUpdateFileStatus(fileId, status) {
+  if (!PH_FILE_STATUSES.includes(status)) return;
   const dataset = getPaperHubDataset();
-  const apply = (files) => (files || []).forEach((file) => {
-    if (file.id === fileId) file.status = status;
-  });
+  const apply = (files) =>
+    (files || []).forEach((file) => {
+      if (file.id === fileId) file.status = status;
+    });
   apply(dataset.files);
   (dataset.users || []).forEach((user) => apply(user.files));
   persistPaperHubData();
@@ -219,6 +245,7 @@ function phAddUser(account, profile) {
 }
 
 function phSetReviewStatus(reviewId, status) {
+  if (!PH_REVIEW_STATUSES.includes(status)) return;
   const dataset = getPaperHubDataset();
   let fileId = null;
   (dataset.reviewQueue || []).forEach((review) => {
@@ -227,15 +254,18 @@ function phSetReviewStatus(reviewId, status) {
       fileId = review.fileId || fileId;
     }
   });
-  (dataset.users || []).forEach((user) => (user.reviews || []).forEach((review) => {
-    if (review.id === reviewId) review.status = status;
-  }));
+  (dataset.users || []).forEach((user) =>
+    (user.reviews || []).forEach((review) => {
+      if (review.id === reviewId) review.status = status;
+    }),
+  );
 
   if (fileId) {
     const fileStatus = phMapReviewToFileStatus(status);
-    const apply = (files) => (files || []).forEach((file) => {
-      if (file.id === fileId) file.status = fileStatus;
-    });
+    const apply = (files) =>
+      (files || []).forEach((file) => {
+        if (file.id === fileId) file.status = fileStatus;
+      });
     apply(dataset.files);
     (dataset.users || []).forEach((user) => apply(user.files));
   }
@@ -244,17 +274,22 @@ function phSetReviewStatus(reviewId, status) {
 }
 
 function phAddReviewComment(reviewId, comment) {
+  const text = String(comment?.text || "").trim();
+  if (!text) return;
+  const safeComment = { ...comment, text: text.slice(0, PH_MAX_COMMENT_LENGTH) };
   const dataset = getPaperHubDataset();
   const push = (review) => {
     review.comments = review.comments || [];
-    review.comments.push(comment);
+    review.comments.push(safeComment);
   };
   (dataset.reviewQueue || []).forEach((review) => {
     if (review.id === reviewId) push(review);
   });
-  (dataset.users || []).forEach((user) => (user.reviews || []).forEach((review) => {
-    if (review.id === reviewId) push(review);
-  }));
+  (dataset.users || []).forEach((user) =>
+    (user.reviews || []).forEach((review) => {
+      if (review.id === reviewId) push(review);
+    }),
+  );
   persistPaperHubData();
 }
 
@@ -305,10 +340,14 @@ function showToast(message, type = "info", duration = 3000) {
     success: "bg-green-500",
     error: "bg-red-500",
     warning: "bg-yellow-500",
-    info: "bg-blue-500"
+    info: "bg-blue-500",
   };
 
-  const toast = createElement("div", `toast ${toastClasses[type] || toastClasses.info} text-white px-4 py-3 rounded-lg shadow-lg animate-fade-in`, toastId);
+  const toast = createElement(
+    "div",
+    `toast ${toastClasses[type] || toastClasses.info} text-white px-4 py-3 rounded-lg shadow-lg animate-fade-in`,
+    toastId,
+  );
   toast.textContent = message;
 
   container.appendChild(toast);
@@ -323,7 +362,15 @@ function showToast(message, type = "info", duration = 3000) {
 function getOrCreateToastContainer() {
   let container = getElement("#toast-container");
   if (!container) {
-    container = createElement("div", "fixed top-4 right-4 z-50 flex flex-col gap-3 max-w-sm", "toast-container");
+    container = createElement(
+      "div",
+      "fixed top-4 right-4 z-50 flex flex-col gap-3 max-w-sm",
+      "toast-container",
+    );
+    // Announce toasts to assistive tech as they appear.
+    container.setAttribute("role", "status");
+    container.setAttribute("aria-live", "polite");
+    container.setAttribute("aria-atomic", "true");
     document.body.appendChild(container);
   }
   return container;
@@ -481,7 +528,20 @@ function formatDate(date, format = "MMM DD, YYYY") {
   const d = new Date(date);
   if (isNaN(d.getTime())) return "Invalid date";
 
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const yyyy = d.getFullYear();
   const MM = months[d.getMonth()];
   const DD = String(d.getDate()).padStart(2, "0");
@@ -537,11 +597,12 @@ function isValidUrl(url) {
 }
 
 function formatFileSize(bytes) {
-  if (bytes === 0) return "0 Bytes";
+  const value = Math.max(0, Number(bytes) || 0);
+  if (value === 0) return "0 Bytes";
   const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  const i = Math.max(0, Math.min(sizes.length - 1, Math.floor(Math.log(value) / Math.log(k))));
+  return Math.round((value / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
 
 function formatCurrency(amount, currency = "USD") {
@@ -580,15 +641,18 @@ function throttle(func, limit) {
 }
 
 function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    showSuccess("Copied to clipboard!");
-  }).catch(() => {
-    showError("Failed to copy to clipboard");
-  });
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      showSuccess("Copied to clipboard!");
+    })
+    .catch(() => {
+      showError("Failed to copy to clipboard");
+    });
 }
 
 function generateId(prefix = "id") {
@@ -635,66 +699,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeTheme();
 });
 
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    getElement,
-    getElements,
-    createElement,
-    addClass,
-    removeClass,
-    toggleClass,
-    hasClass,
-    removeElement,
-    showElement,
-    hideElement,
-    addEvent,
-    removeEvent,
-    showToast,
-    showSuccess,
-    showError,
-    showWarning,
-    showInfo,
-    fadeIn,
-    fadeOut,
-    setStorage,
-    getStorage,
-    removeStorage,
-    clearStorage,
-    setCurrentUser,
-    getCurrentUser,
-    getCurrentUserRole,
-    isLoggedIn,
-    hasRole,
-    logout,
-    setTheme,
-    getTheme,
-    toggleTheme,
-    initializeTheme,
-    formatDate,
-    formatTime,
-    timeAgo,
-    isValidEmail,
-    isValidPassword,
-    isValidUrl,
-    formatFileSize,
-    formatCurrency,
-    slugify,
-    debounce,
-    throttle,
-    delay,
-    copyToClipboard,
-    generateId,
-    apiCall,
-    redirect,
-    reloadPage,
-    goBack,
-    getCurrentPage,
-    getQueryParam,
-    getAllQueryParams,
-    getCurrentUserNotifications,
-  };
-}
-
 async function apiCall(endpoint) {
   const delay = 500;
 
@@ -722,7 +726,7 @@ function escapeHtml(value) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
+    .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
 
@@ -735,12 +739,16 @@ function normalizeRole(role) {
   return "user";
 }
 
-const PAPERHUB_DATA = getPaperHubDataset();
-
 const PAPERHUB_ROLE_STORAGE_KEY = "paperhub-role";
 const PAPERHUB_CURRENT_USER_STORAGE_KEY = "paperhub-current-user-id";
 
-const MOCK_USERS = Array.isArray(PAPERHUB_DATA.users) ? PAPERHUB_DATA.users : [];
+// Always read users from the live dataset so additions (admin add-user) and
+// any array replacement by the ph* mutators are reflected, including after
+// SPA-style navigation. Capturing the array once would go stale.
+function getMockUsers() {
+  const dataset = getPaperHubDataset();
+  return Array.isArray(dataset.users) ? dataset.users : [];
+}
 
 function getDashboardRole(role) {
   return normalizeRole(role);
@@ -757,7 +765,7 @@ function getDashboardRouteForUser(user) {
 
 function getMockUserById(userId) {
   const value = String(userId || "");
-  return MOCK_USERS.find((user) => user.id === value) || null;
+  return getMockUsers().find((user) => user.id === value) || null;
 }
 
 function getMockUserByIdentity(user) {
@@ -766,20 +774,34 @@ function getMockUserByIdentity(user) {
   }
 
   const id = String(user.id || "").trim();
-  const email = String(user.email || "").trim().toLowerCase();
-  const name = String(user.name || "").trim().toLowerCase();
+  const email = String(user.email || "")
+    .trim()
+    .toLowerCase();
+  const name = String(user.name || "")
+    .trim()
+    .toLowerCase();
 
   return (
-    MOCK_USERS.find((candidate) => candidate.id === id) ||
-    MOCK_USERS.find((candidate) => String(candidate.email || "").trim().toLowerCase() === email) ||
-    MOCK_USERS.find((candidate) => String(candidate.name || "").trim().toLowerCase() === name) ||
+    getMockUsers().find((candidate) => candidate.id === id) ||
+    getMockUsers().find(
+      (candidate) =>
+        String(candidate.email || "")
+          .trim()
+          .toLowerCase() === email,
+    ) ||
+    getMockUsers().find(
+      (candidate) =>
+        String(candidate.name || "")
+          .trim()
+          .toLowerCase() === name,
+    ) ||
     null
   );
 }
 
 function getDefaultUserForRole(role) {
   const normalizedRole = normalizeRole(role);
-  return MOCK_USERS.find((user) => user.role === normalizedRole) || null;
+  return getMockUsers().find((user) => user.role === normalizedRole) || null;
 }
 
 function setStoredRole(role) {
@@ -873,16 +895,18 @@ function getCurrentUserData() {
 }
 
 function getCurrentUserFiles() {
-  return getCurrentUserData().files || [];
+  const user = getCurrentUserData();
+  return user && Array.isArray(user.files) ? user.files : [];
 }
 
 function getCurrentUserPayment() {
-  return getCurrentUserData().payment || null;
+  const user = getCurrentUserData();
+  return user ? user.payment || null : null;
 }
 
 function getCurrentUserNotifications() {
-  const notifications = getCurrentUserData().notifications || [];
-  return Array.isArray(notifications) ? notifications : [];
+  const user = getCurrentUserData();
+  return user && Array.isArray(user.notifications) ? user.notifications : [];
 }
 
 function canAccessPathByRole(pathname, role) {

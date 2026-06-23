@@ -1,7 +1,3 @@
-const REVIEW_DATA = (typeof getPaperHubDataset === "function" && Array.isArray(getPaperHubDataset().reviewQueue))
-  ? getPaperHubDataset().reviewQueue
-  : [];
-
 let activeReview = null;
 let activeQueueItems = [];
 let activeQueueFilter = "all";
@@ -20,6 +16,12 @@ function initReviewQueuePage() {
 function initReviewDetailsPage() {
   const reviewId = new URLSearchParams(window.location.search).get("id");
   activeReview = getReviewById(reviewId);
+
+  if (!activeReview) {
+    renderReviewNotFound(reviewId);
+    return;
+  }
+
   renderReviewDetails(activeReview);
   if (canManageReview()) {
     setupReviewActions();
@@ -27,28 +29,65 @@ function initReviewDetailsPage() {
   }
 }
 
+// Read fresh from the live dataset every call: the ph* mutators replace the
+// reviewQueue array (e.g. phDeleteFile filters it), so a captured reference
+// would go stale across SPA navigation.
 function getReviewData() {
-  return REVIEW_DATA.slice();
+  const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
+  return Array.isArray(dataset.reviewQueue) ? dataset.reviewQueue.slice() : [];
 }
 
 function getReviewById(reviewId) {
-  const reviews = getReviewData();
-  return reviews.find((review) => review.id === reviewId) || reviews[0];
+  if (!reviewId) return null;
+  return getReviewData().find((review) => review.id === reviewId) || null;
+}
+
+function renderReviewNotFound(reviewId) {
+  const container = getElement("#reviewDetailsContent");
+  const statusLabel = getElement("[data-review-status-label]");
+  const accessNote = getElement("[data-review-access-note]");
+  const actionBar = getElement("[data-review-action-bar]");
+
+  if (statusLabel) statusLabel.textContent = "Not found";
+  if (accessNote) accessNote.textContent = "This review is no longer available.";
+  if (actionBar) actionBar.classList.add("hidden");
+
+  if (container) {
+    const queueHref =
+      typeof resolveAppPath === "function"
+        ? resolveAppPath("pages/review/review-queue.html")
+        : "review-queue.html";
+    container.innerHTML = `
+      <section class="review-detail-panel card">
+        <div class="review-empty-state">
+          <strong>Review not found</strong>
+          <span>${escapeHtml(
+            reviewId ? `No review matches "${reviewId}".` : "No review was requested.",
+          )} It may have been completed or removed.</span>
+          <div style="margin-top:1rem;">
+            <a href="${queueHref}" data-app-href="pages/review/review-queue.html" class="btn btn-primary">Back to queue</a>
+          </div>
+        </div>
+      </section>
+    `;
+  }
 }
 
 function setupReviewQueueInteractions() {
   const searchInput = getElement("#reviewSearchInput");
   addEvent(searchInput, "input", () => {
-    activeQueueSearch = String(searchInput?.value || "").trim().toLowerCase();
+    activeQueueSearch = String(searchInput?.value || "")
+      .trim()
+      .toLowerCase();
     renderReviewQueue();
   });
 
-  const clearBtn = getElement('.search-clear');
+  const clearBtn = getElement(".search-clear");
   if (clearBtn && searchInput) {
-    addEvent(clearBtn, 'click', (e) => {
+    addEvent(clearBtn, "click", (e) => {
       e.preventDefault();
-      searchInput.value = '';
-      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+      searchInput.value = "";
+      searchInput.dispatchEvent(new Event("input", { bubbles: true }));
       searchInput.focus();
     });
   }
@@ -134,7 +173,9 @@ function renderQueueInsights(visibleReviews) {
     const pendingCount = activeQueueItems.filter((review) => review.status === "pending").length;
     const inReviewCount = activeQueueItems.filter((review) => review.status === "in-review").length;
     const highCount = activeQueueItems.filter((review) => review.priority === "high").length;
-    const completedCount = activeQueueItems.filter((review) => review.status === "completed").length;
+    const completedCount = activeQueueItems.filter(
+      (review) => review.status === "completed",
+    ).length;
 
     insightGrid.innerHTML = `
       <div class="review-insight-card">
@@ -181,16 +222,15 @@ function renderQueueInsights(visibleReviews) {
 
 function getQueueFocusItems(visibleReviews) {
   const source = visibleReviews.length > 0 ? visibleReviews : activeQueueItems;
-  const sorted = source
-    .slice()
-    .sort((left, right) => {
-      const priorityOrder = getPrioritySortWeight(right.priority) - getPrioritySortWeight(left.priority);
-      if (priorityOrder !== 0) {
-        return priorityOrder;
-      }
+  const sorted = source.slice().sort((left, right) => {
+    const priorityOrder =
+      getPrioritySortWeight(right.priority) - getPrioritySortWeight(left.priority);
+    if (priorityOrder !== 0) {
+      return priorityOrder;
+    }
 
-      return new Date(left.submittedDate).getTime() - new Date(right.submittedDate).getTime();
-    });
+    return new Date(left.submittedDate).getTime() - new Date(right.submittedDate).getTime();
+  });
 
   const nextItem = sorted[0];
   const pendingHigh = activeQueueItems.filter(
@@ -347,8 +387,8 @@ function renderReviewDetails(review) {
         </div>
         <div class="comments-list review-comment-list">
           ${review.comments
-        .map(
-          (comment) => `
+            .map(
+              (comment) => `
                 <div class="comment-item review-comment-item">
                   <div class="comment-header">
                     <div>
@@ -360,13 +400,13 @@ function renderReviewDetails(review) {
                   <p>${escapeHtml(comment.text)}</p>
                 </div>
               `,
-        )
-        .join("")}
+            )
+            .join("")}
         </div>
 
         <div class="comment-form">
           <label class="sr-only" for="reviewComment">Add a review comment</label>
-          <textarea id="reviewComment" placeholder="Add your comment..." class="form-control" rows="4"></textarea>
+          <textarea id="reviewComment" placeholder="Add your comment..." class="form-control" rows="4" maxlength="2000"></textarea>
           <button id="addReviewCommentBtn" type="button" class="btn btn-primary btn-sm">Add Comment</button>
         </div>
       </section>
@@ -431,15 +471,17 @@ function renderReviewDetails(review) {
               </div>
               <div class="review-document-page">
                 <div class="review-document-heading">${escapeHtml(review.documentName)}</div>
-                ${review.content
-        ? `<pre class="review-document-content">${escapeHtml(review.content)}</pre>`
-        : `<div class="review-document-lines">
+                ${
+                  review.content
+                    ? `<pre class="review-document-content">${escapeHtml(review.content)}</pre>`
+                    : `<div class="review-document-lines">
                   <span></span>
                   <span></span>
                   <span></span>
                   <span></span>
                   <span></span>
-                </div>`}
+                </div>`
+                }
                 <div class="review-document-callout">
                   <strong>Why this is under review</strong>
                   <p>${escapeHtml(reviewReason)}</p>
@@ -457,25 +499,25 @@ function renderReviewDetails(review) {
             </div>
             <div class="review-tag-list">
               ${review.tags
-        .map((tag) => `<span class="review-tag">${escapeHtml(tag)}</span>`)
-        .join("")}
+                .map((tag) => `<span class="review-tag">${escapeHtml(tag)}</span>`)
+                .join("")}
             </div>
             <div class="review-highlight-list">
               ${review.highlights
-        .map(
-          (item) => `
+                .map(
+                  (item) => `
                 <div class="review-highlight-item">
                   <span class="review-highlight-dot"></span>
                   <span>${escapeHtml(item)}</span>
                 </div>
               `,
-        )
-        .join("")}
+                )
+                .join("")}
             </div>
             <ul class="review-checklist">
               ${review.checklist
-        .map(
-          (item) => `
+                .map(
+                  (item) => `
                 <li class="${item.done ? "is-done" : "is-open"}">
                   <span></span>
                   <div>
@@ -484,8 +526,8 @@ function renderReviewDetails(review) {
                   </div>
                 </li>
               `,
-        )
-        .join("")}
+                )
+                .join("")}
             </ul>
           </section>
         </section>
@@ -532,8 +574,8 @@ function renderReviewDetails(review) {
             </div>
             <div class="review-trail">
               ${reviewTrailItems
-        .map(
-          (item, index) => `
+                .map(
+                  (item, index) => `
                 <div class="review-trail-item">
                   <span>${escapeHtml(String(index + 1))}</span>
                   <div>
@@ -542,8 +584,8 @@ function renderReviewDetails(review) {
                   </div>
                 </div>
               `,
-        )
-        .join("")}
+                )
+                .join("")}
             </div>
           </section>
 
@@ -552,7 +594,6 @@ function renderReviewDetails(review) {
       </div>
     `;
   }
-
 }
 
 function buildReviewTrailItems(review, openChecklistCount) {
@@ -642,9 +683,10 @@ function handleReviewAction(action) {
   showSuccess(`Document ${action} successfully`);
 
   setTimeout(() => {
-    window.location.href = typeof resolveAppPath === "function"
-      ? resolveAppPath("pages/review/review-queue.html")
-      : "review-queue.html";
+    window.location.href =
+      typeof resolveAppPath === "function"
+        ? resolveAppPath("pages/review/review-queue.html")
+        : "review-queue.html";
   }, 900);
 }
 
@@ -670,23 +712,28 @@ function addComment() {
     text: commentText,
   };
 
-  if (activeReview) {
-    activeReview.comments.push(comment);
-    if (typeof phAddReviewComment === "function") {
-      phAddReviewComment(activeReview.id, comment);
-    }
+  // phAddReviewComment writes to the live dataset review (the same object
+  // activeReview now references), so it is the single source of truth — pushing
+  // to activeReview.comments here as well would duplicate the comment.
+  let stored = comment;
+  if (activeReview && typeof phAddReviewComment === "function") {
+    phAddReviewComment(activeReview.id, comment);
+    // Render the persisted comment (validated/length-capped) so the DOM matches
+    // exactly what a reload would show.
+    const comments = activeReview.comments || [];
+    stored = comments[comments.length - 1] || comment;
   }
 
   const commentCard = createElement("div", "comment-item review-comment-item animate-slide-in-up");
   commentCard.innerHTML = `
     <div class="comment-header">
       <div>
-        <strong>${escapeHtml(comment.author)}</strong>
-        <span>${escapeHtml(comment.role)}</span>
+        <strong>${escapeHtml(stored.author)}</strong>
+        <span>${escapeHtml(stored.role)}</span>
       </div>
       <span class="comment-date">Just now</span>
     </div>
-    <p>${escapeHtml(comment.text)}</p>
+    <p>${escapeHtml(stored.text)}</p>
   `;
 
   commentsList.appendChild(commentCard);
@@ -695,17 +742,23 @@ function addComment() {
 }
 
 function getInitials(name) {
-  return String(name || "U")
-    .split(" ")
-    .filter(Boolean)
-    .map((part) => part.charAt(0))
-    .join("")
-    .slice(0, 2)
-    .toUpperCase() || "U";
+  return (
+    String(name || "U")
+      .split(" ")
+      .filter(Boolean)
+      .map((part) => part.charAt(0))
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "U"
+  );
 }
 
 function formatPriorityLabel(priority) {
-  return String(priority || "").charAt(0).toUpperCase() + String(priority || "").slice(1);
+  return (
+    String(priority || "")
+      .charAt(0)
+      .toUpperCase() + String(priority || "").slice(1)
+  );
 }
 
 function formatStatusLabel(status) {
@@ -713,7 +766,11 @@ function formatStatusLabel(status) {
     return "In Review";
   }
 
-  return String(status || "").charAt(0).toUpperCase() + String(status || "").slice(1);
+  return (
+    String(status || "")
+      .charAt(0)
+      .toUpperCase() + String(status || "").slice(1)
+  );
 }
 
 function getPrioritySortWeight(priority) {

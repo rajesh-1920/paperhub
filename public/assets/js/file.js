@@ -251,11 +251,14 @@ async function handleUpload() {
   }
 
   if (uploadedCount === fileEntries.length) {
-    showSuccess(`${uploadedCount} file${uploadedCount === 1 ? "" : "s"} uploaded and sent for review`);
+    showSuccess(
+      `${uploadedCount} file${uploadedCount === 1 ? "" : "s"} uploaded and sent for review`,
+    );
     setTimeout(() => {
-      window.location.href = typeof resolveAppPath === "function"
-        ? resolveAppPath("pages/file/files.html")
-        : "/pages/file/files.html";
+      window.location.href =
+        typeof resolveAppPath === "function"
+          ? resolveAppPath("pages/file/files.html")
+          : "/pages/file/files.html";
     }, 1000);
   }
 }
@@ -277,9 +280,10 @@ function persistUploadedFile(file) {
   const nowIso = new Date().toISOString();
   const id = typeof generateId === "function" ? generateId("file") : `file-${Date.now()}`;
 
+  const safeName = typeof phSanitizeName === "function" ? phSanitizeName(file.name) : file.name;
   const newFile = {
     id,
-    name: file.name,
+    name: safeName,
     size: Number(file.size || 0),
     sizeLabel: formatFileSize(Number(file.size || 0)),
     uploadedAt: nowIso,
@@ -326,7 +330,11 @@ function persistUploadedFile(file) {
       { label: "Approval chain confirmed", done: false },
     ],
     comments: [],
-    highlights: [`${newFile.fileType} • 1 page`, newFile.description, "Tracked in the PaperHub review queue"],
+    highlights: [
+      `${newFile.fileType} • 1 page`,
+      newFile.description,
+      "Tracked in the PaperHub review queue",
+    ],
   };
 
   phAddFile(newFile, reviewItem);
@@ -391,7 +399,9 @@ function setupFileDetailsInteractions() {
   const importBtn = getElement("#importCsvBtn");
 
   addEvent(searchInput, "input", () => {
-    filePageSearch = String(searchInput?.value || "").trim().toLowerCase();
+    filePageSearch = String(searchInput?.value || "")
+      .trim()
+      .toLowerCase();
     renderFileTable();
   });
 
@@ -549,7 +559,8 @@ function renderFileTable() {
 function getFilteredAndSortedFiles(files) {
   const filtered = files.filter((file) => {
     const normalizedStatus = String(file.status || "").toLowerCase();
-    const matchesStatus = filePageStatusFilter === "all" || normalizedStatus === filePageStatusFilter;
+    const matchesStatus =
+      filePageStatusFilter === "all" || normalizedStatus === filePageStatusFilter;
     const searchIndex = `${file.name || ""} ${normalizedStatus}`.toLowerCase();
     const matchesSearch = !filePageSearch || searchIndex.includes(filePageSearch);
     return matchesStatus && matchesSearch;
@@ -670,7 +681,10 @@ function updateMetaPanel(file) {
   const currentUser = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
   setText("#metaSelected", file ? file.name : "—");
   setText("#metaOwner", file?.ownerName || currentUser?.name || "PaperHub User");
-  setText("#metaType", file?.fileType || (file ? getFileExtension(file.name).toUpperCase() + " Document" : "—"));
+  setText(
+    "#metaType",
+    file?.fileType || (file ? getFileExtension(file.name).toUpperCase() + " Document" : "—"),
+  );
   setText("#metaPages", file?.pageCount ? String(file.pageCount) : "—");
   setText("#metaStatus", file ? formatFileStatusLabel(file.status) : "—");
   setText("#metaUpdated", file ? formatDate(file.updatedAt || file.uploadedAt) : "—");
@@ -679,7 +693,9 @@ function updateMetaPanel(file) {
   const tagsEl = getElement("#metaTags");
   if (tagsEl) {
     const tags = Array.isArray(file?.tags) ? file.tags : [];
-    tagsEl.innerHTML = tags.map((tag) => `<span class="file-meta-tag">${escapeHtml(tag)}</span>`).join("");
+    tagsEl.innerHTML = tags
+      .map((tag) => `<span class="file-meta-tag">${escapeHtml(tag)}</span>`)
+      .join("");
   }
 
   renderFileContent(file);
@@ -703,9 +719,7 @@ function renderFileContent(file) {
     meta.textContent = `${file.fileType || "Document"} • ${file.pageCount || 1} page${file.pageCount === 1 ? "" : "s"} • ${sizeLabel}`;
   }
 
-  body.textContent = file.content
-    ? String(file.content)
-    : "No stored content for this document.";
+  body.textContent = file.content ? String(file.content) : "No stored content for this document.";
 }
 
 function syncStatusChip(status) {
@@ -800,7 +814,10 @@ function loadVersionHistory() {
     const versions = files.slice(0, 3).map((file, index) => {
       const versionNumber = files.length - index;
       const versionDate = file.uploadedAt ? new Date(file.uploadedAt) : null;
-      const fileSize = typeof formatFileSize === "function" ? formatFileSize(file.size || 0) : `${Math.round((file.size || 0) / 1024)} KB`;
+      const fileSize =
+        typeof formatFileSize === "function"
+          ? formatFileSize(file.size || 0)
+          : `${Math.round((file.size || 0) / 1024)} KB`;
 
       return {
         version: `v${versionNumber}.0`,
@@ -821,7 +838,7 @@ function loadVersionHistory() {
             <h4 class="version-title">${version.version}</h4>
             <p class="version-meta">
               <span class="version-date">${formatDate(version.date)}</span>
-              <span class="version-author">by ${version.author}</span>
+              <span class="version-author">by ${escapeHtml(version.author)}</span>
             </p>
           </div>
           <div class="version-actions">
@@ -830,8 +847,8 @@ function loadVersionHistory() {
             ${index === 0 ? "" : '<button class="btn btn-sm btn-outline">Restore</button>'}
           </div>
         </div>
-        <p class="version-changes">${version.changes}</p>
-        <p class="version-size">File size: ${version.size}</p>
+        <p class="version-changes">${escapeHtml(version.changes)}</p>
+        <p class="version-size">File size: ${escapeHtml(version.size)}</p>
         ${index < versions.length - 1 ? '<div class="version-divider"></div>' : ""}
       `;
       fragment.appendChild(versionItem);

@@ -3,7 +3,9 @@ const COMPONENT_CACHE_KEY = "paperhub-component-cache";
 const PAPERHUB_MAIN_APP_BASE_URL = (() => {
   const currentScript =
     document.currentScript ||
-    Array.from(document.scripts || []).find((script) => script.src && script.src.includes("/assets/js/main.js"));
+    Array.from(document.scripts || []).find(
+      (script) => script.src && script.src.includes("/assets/js/main.js"),
+    );
 
   if (currentScript && currentScript.src) {
     return new URL("../../", currentScript.src).href;
@@ -232,7 +234,11 @@ function applyCurrentUserPageData() {
   const rejectedFiles = files.filter((file) => file.status === "rejected").length;
   const pendingFiles =
     Number(user.dashboard?.stats?.pendingReview ?? user.dashboard?.stats?.pendingReviews ?? 0) ||
-    (Array.isArray(user.reviews) ? user.reviews.filter((review) => review.status === "pending" || review.status === "in-review").length : 0);
+    (Array.isArray(user.reviews)
+      ? user.reviews.filter(
+          (review) => review.status === "pending" || review.status === "in-review",
+        ).length
+      : 0);
 
   applyText("[data-user-file-count]", files.length);
   applyText("[data-user-file-approved]", approvedFiles);
@@ -271,7 +277,9 @@ function applyCurrentUserPageData() {
     container.innerHTML = files
       .slice(0, 5)
       .map((file) => {
-        const uploadedAt = file.uploadedAt ? new Date(file.uploadedAt).toLocaleDateString() : "Recently";
+        const uploadedAt = file.uploadedAt
+          ? new Date(file.uploadedAt).toLocaleDateString()
+          : "Recently";
         const statusLabel = String(file.status || "pending");
 
         return `
@@ -336,7 +344,6 @@ function applyCurrentUserPageData() {
   }
 }
 
-
 function phPill(label, variant) {
   return `<span class="accent-pill pill-${variant}">${escapeHtml(label)}</span>`;
 }
@@ -344,7 +351,8 @@ function phPill(label, variant) {
 function phStatusVariant(status) {
   const value = String(status || "").toLowerCase();
   if (["completed", "approved", "active", "settled"].includes(value)) return "emerald";
-  if (["reviewing", "in-review", "pending", "pending approval", "revision"].includes(value)) return "amber";
+  if (["reviewing", "in-review", "pending", "pending approval", "revision"].includes(value))
+    return "amber";
   if (["rejected", "failed", "overdue"].includes(value)) return "rose";
   return "slate";
 }
@@ -391,7 +399,10 @@ function phTimeAgo(iso) {
 }
 
 function phFileEmoji(name) {
-  const ext = String(name || "").split(".").pop().toLowerCase();
+  const ext = String(name || "")
+    .split(".")
+    .pop()
+    .toLowerCase();
   if (ext === "pdf") return "📄";
   if (ext === "doc" || ext === "docx") return "📝";
   if (ext === "xls" || ext === "xlsx") return "📊";
@@ -429,17 +440,26 @@ function renderDashboard(user) {
     setStat("totalUsers", allUsers.length);
     setStat("documents", allFiles.length);
     setStat("approved", allFiles.filter((file) => file.status === "completed").length);
-    setStat("alerts", allFiles.filter((file) => file.status === "pending" || file.status === "reviewing").length);
+    setStat(
+      "alerts",
+      allFiles.filter((file) => file.status === "pending" || file.status === "reviewing").length,
+    );
     renderAdminDashboard(allUsers, allFiles, queue, dataset);
   } else if (role === "officer") {
-    setStat("pendingReviews", queue.filter((item) => item.status === "pending" || item.status === "in-review").length);
+    setStat(
+      "pendingReviews",
+      queue.filter((item) => item.status === "pending" || item.status === "in-review").length,
+    );
     setStat("approved", queue.filter((item) => item.status === "completed").length);
     setStat("rejected", queue.filter((item) => item.status === "rejected").length);
     setStat("assignedStudents", new Set(queue.map((item) => item.submittedBy)).size);
     renderOfficerDashboard(queue);
   } else {
     setStat("totalSubmissions", userFiles.length);
-    setStat("pendingReview", userFiles.filter((file) => file.status === "reviewing" || file.status === "pending").length);
+    setStat(
+      "pendingReview",
+      userFiles.filter((file) => file.status === "reviewing" || file.status === "pending").length,
+    );
     setStat("approved", userFiles.filter((file) => file.status === "completed").length);
     setStat("rejected", userFiles.filter((file) => file.status === "rejected").length);
     renderUserDashboard(user, userFiles);
@@ -447,7 +467,8 @@ function renderDashboard(user) {
 }
 
 function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
-  const emptyRow = (cols, message) => `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
+  const emptyRow = (cols, message) =>
+    `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
 
   const userRows = allUsers
     .map(
@@ -480,13 +501,33 @@ function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
   phRenderInto("[data-admin-pending]", pendingRows || emptyRow(3, "Queue is clear"));
 
   const palettes = [
-    { border: "border-emerald-100", bg: "bg-emerald-50", head: "text-emerald-900", body: "text-emerald-700", foot: "text-emerald-600" },
-    { border: "border-blue-100", bg: "bg-blue-50", head: "text-blue-900", body: "text-blue-700", foot: "text-blue-600" },
-    { border: "border-sky-100", bg: "bg-sky-50", head: "text-sky-900", body: "text-sky-700", foot: "text-sky-600" },
+    {
+      border: "border-emerald-100",
+      bg: "bg-emerald-50",
+      head: "text-emerald-900",
+      body: "text-emerald-700",
+      foot: "text-emerald-600",
+    },
+    {
+      border: "border-blue-100",
+      bg: "bg-blue-50",
+      head: "text-blue-900",
+      body: "text-blue-700",
+      foot: "text-blue-600",
+    },
+    {
+      border: "border-sky-100",
+      bg: "bg-sky-50",
+      head: "text-sky-900",
+      body: "text-sky-700",
+      foot: "text-sky-600",
+    },
   ];
   const activity = allFiles
     .slice()
-    .sort((left, right) => new Date(right.uploadedAt).getTime() - new Date(left.uploadedAt).getTime())
+    .sort(
+      (left, right) => new Date(right.uploadedAt).getTime() - new Date(left.uploadedAt).getTime(),
+    )
     .slice(0, 4)
     .map((file, index) => {
       const palette = palettes[index % palettes.length];
@@ -579,13 +620,22 @@ function setupAdminUserManagement() {
       showSuccess(`Updated ${name}`);
     } else {
       const dataset = getPaperHubDataset();
-      const exists = (dataset.authAccounts || []).some((entry) => String(entry.email).toLowerCase() === email);
+      const exists = (dataset.authAccounts || []).some(
+        (entry) => String(entry.email).toLowerCase() === email,
+      );
       if (exists) {
         showError("An account with this email already exists");
         return;
       }
       const newId = `${role}-${slugify(name)}-${Date.now().toString(36)}`;
-      const account = { id: newId, name, email, password: field("adminUserPassword").value || "user01", role, title };
+      const account = {
+        id: newId,
+        name,
+        email,
+        password: field("adminUserPassword").value || "user01",
+        role,
+        title,
+      };
       phAddUser(account, buildNewUserProfile(account));
       showSuccess(`Added ${name}`);
     }
@@ -614,10 +664,19 @@ function buildNewUserProfile(account) {
     bio: "New PaperHub account.",
     accountStatus: "Active",
     twoFactorEnabled: account.role !== "user",
-    plan: { name: "Starter", cycle: "Billed yearly", renewal: "", seats: "1 seat", status: "Active" },
+    plan: {
+      name: "Starter",
+      cycle: "Billed yearly",
+      renewal: "",
+      seats: "1 seat",
+      status: "Active",
+    },
     connectedApps: [],
     permissions: [],
-    dashboard: { description: "", stats: { totalSubmissions: 0, pendingReview: 0, approved: 0, rejected: 0 } },
+    dashboard: {
+      description: "",
+      stats: { totalSubmissions: 0, pendingReview: 0, approved: 0, rejected: 0 },
+    },
     files: [],
     reviews: [],
     payment: { status: "Settled", totalDue: "BDT 0.00", lastUpdated: "", nextReview: "" },
@@ -626,7 +685,8 @@ function buildNewUserProfile(account) {
 }
 
 function renderOfficerDashboard(queue) {
-  const emptyRow = (cols, message) => `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
+  const emptyRow = (cols, message) =>
+    `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
 
   const pendingRows = queue
     .filter((item) => item.status === "pending" || item.status === "in-review")
@@ -648,7 +708,10 @@ function renderOfficerDashboard(queue) {
     .filter((item) => item.status === "completed")
     .slice(0, 5)
     .map((item) => {
-      const note = item.comments && item.comments.length ? item.comments[item.comments.length - 1].text : item.summary;
+      const note =
+        item.comments && item.comments.length
+          ? item.comments[item.comments.length - 1].text
+          : item.summary;
       return `
         <tr>
           <td class="font-semibold">${escapeHtml(item.submittedBy)}</td>
@@ -661,16 +724,37 @@ function renderOfficerDashboard(queue) {
     .join("");
   phRenderInto("[data-officer-activity]", activityRows || emptyRow(5, "No recent decisions"));
 
-  const highPending = queue.filter((item) => item.priority === "high" && (item.status === "pending" || item.status === "in-review")).length;
-  phSetText("[data-officer-highlight]", `High-priority queue: ${highPending} file${highPending === 1 ? "" : "s"}`);
+  const highPending = queue.filter(
+    (item) =>
+      item.priority === "high" && (item.status === "pending" || item.status === "in-review"),
+  ).length;
+  phSetText(
+    "[data-officer-highlight]",
+    `High-priority queue: ${highPending} file${highPending === 1 ? "" : "s"}`,
+  );
+
+  // Point the hero "Latest Review" link at a real review so it never lands on
+  // the not-found state (the static markup carries no ?id=).
+  const latest = queue[0];
+  document.querySelectorAll("[data-officer-latest-review]").forEach((link) => {
+    link.setAttribute(
+      "href",
+      latest
+        ? `../review/review-details.html?id=${encodeURIComponent(latest.id)}`
+        : "../review/review-queue.html",
+    );
+  });
 }
 
 function renderUserDashboard(user, userFiles) {
-  const emptyRow = (cols, message) => `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
+  const emptyRow = (cols, message) =>
+    `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
 
   const submissionRows = userFiles
     .slice()
-    .sort((left, right) => new Date(right.uploadedAt).getTime() - new Date(left.uploadedAt).getTime())
+    .sort(
+      (left, right) => new Date(right.uploadedAt).getTime() - new Date(left.uploadedAt).getTime(),
+    )
     .slice(0, 5)
     .map(
       (file) => `
@@ -693,14 +777,22 @@ function renderUserDashboard(user, userFiles) {
   });
   phSetText("[data-user-health-label]", `${percent}%`);
 
-  const pending = userFiles.filter((file) => file.status === "reviewing" || file.status === "pending");
+  const pending = userFiles.filter(
+    (file) => file.status === "reviewing" || file.status === "pending",
+  );
   const nextFile = pending[0];
   if (nextFile) {
     phSetText("[data-user-nextstep-title]", `Follow up on ${nextFile.name}`);
-    phSetText("[data-user-nextstep-note]", `You have ${pending.length} submission${pending.length === 1 ? "" : "s"} awaiting officer review.`);
+    phSetText(
+      "[data-user-nextstep-note]",
+      `You have ${pending.length} submission${pending.length === 1 ? "" : "s"} awaiting officer review.`,
+    );
   } else {
     phSetText("[data-user-nextstep-title]", "You're all caught up");
-    phSetText("[data-user-nextstep-note]", "Every submission has been reviewed. Upload a new document any time.");
+    phSetText(
+      "[data-user-nextstep-note]",
+      "Every submission has been reviewed. Upload a new document any time.",
+    );
   }
 }
 
@@ -735,16 +827,16 @@ function renderPaymentPage(user) {
     const items = files.slice(0, 4);
     invoiceItems.innerHTML = items.length
       ? items
-        .map((file, index) => {
-          const amount = deriveAmount(file, index);
-          return `
+          .map((file, index) => {
+            const amount = deriveAmount(file, index);
+            return `
               <div class="invoice-item">
                 <span>${escapeHtml(file.name)}</span>
                 <span>${escapeHtml(formatCurrency(amount))}</span>
               </div>
             `;
-        })
-        .join("")
+          })
+          .join("")
       : `
         <div class="invoice-item">
           <span>No active invoices</span>
@@ -753,21 +845,45 @@ function renderPaymentPage(user) {
       `;
   }
 
-  const subtotal = files.slice(0, 4).reduce((sum, file, index) => sum + deriveAmount(file, index), 0);
+  const subtotal = files
+    .slice(0, 4)
+    .reduce((sum, file, index) => sum + deriveAmount(file, index), 0);
   const tax = Math.round(subtotal * 0.1);
-  const total = payment.totalDue && typeof payment.totalDue === "string" && payment.totalDue.includes("BDT")
-    ? payment.totalDue
-    : formatCurrency(subtotal + tax);
+  const total =
+    payment.totalDue && typeof payment.totalDue === "string" && payment.totalDue.includes("BDT")
+      ? payment.totalDue
+      : formatCurrency(subtotal + tax);
 
   applyText("[data-payment-subtotal]", formatCurrency(subtotal));
   applyText("[data-payment-tax]", formatCurrency(tax));
   applyText("[data-payment-total-due]", total);
   applyText("[data-kpi-outstanding]", total);
-  applyText("[data-kpi-upcoming]", formatCurrency(reviews.filter((review) => review.status === "pending" || review.status === "in-review").length * 250));
+  applyText(
+    "[data-kpi-upcoming]",
+    formatCurrency(
+      reviews.filter((review) => review.status === "pending" || review.status === "in-review")
+        .length * 250,
+    ),
+  );
   applyText("[data-kpi-paid]", formatCurrency(notifications.length * 325));
-  applyText("[data-payment-note]", user.role === "user" ? "Payments unlock automatically after document approval is complete." : "This account does not have an active payment lock.");
-  applyText("[data-payment-approval-note]", user.role === "user" ? "Approval usually takes 1-2 business days." : "No approval delay applies to this account.");
-  applyText("[data-payment-method-note]", user.role === "user" ? "Linked to the current Bangladesh student workspace." : "This account uses platform-level billing.");
+  applyText(
+    "[data-payment-note]",
+    user.role === "user"
+      ? "Payments unlock automatically after document approval is complete."
+      : "This account does not have an active payment lock.",
+  );
+  applyText(
+    "[data-payment-approval-note]",
+    user.role === "user"
+      ? "Approval usually takes 1-2 business days."
+      : "No approval delay applies to this account.",
+  );
+  applyText(
+    "[data-payment-method-note]",
+    user.role === "user"
+      ? "Linked to the current Bangladesh student workspace."
+      : "This account uses platform-level billing.",
+  );
 
   const paymentMethods = document.querySelector("[data-payment-methods]");
   if (paymentMethods) {
@@ -793,9 +909,18 @@ function renderPaymentPage(user) {
     paymentHistory.innerHTML = entries
       .map((review, index) => {
         const amount = formatCurrency(deriveAmount(files[index] || { size: 0 }, index));
-        const statusLabel = review.status === "completed" ? "Completed" : review.status === "pending" ? "Pending" : "Processing";
+        const statusLabel =
+          review.status === "completed"
+            ? "Completed"
+            : review.status === "pending"
+              ? "Pending"
+              : "Processing";
         const historyDate = review.submittedDate
-          ? new Date(review.submittedDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+          ? new Date(review.submittedDate).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })
           : "Recent";
 
         return `

@@ -1,0 +1,14 @@
+# Security headers for static hosts that read a `_headers` file
+# (Netlify, Cloudflare Pages). The local `http-server` used in development does
+# NOT apply these — see SECURITY.md. `frame-ancestors`, in particular, only
+# works as a real response header, not via a <meta> tag.
+#
+# Note: `script-src` includes 'unsafe-inline' because this demo still uses a few
+# inline <script> blocks and event handlers. Externalising those is tracked in
+# SECURITY.md as the path to a strict `script-src 'self'`.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
