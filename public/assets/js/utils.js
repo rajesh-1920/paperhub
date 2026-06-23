@@ -128,6 +128,7 @@ function persistPaperHubData() {
   } catch (error) {
     console.warn("Unable to persist PaperHub data", error);
   }
+  notifyPaperHubChange();
 }
 
 function resetPaperHubData() {
@@ -139,6 +140,41 @@ function resetPaperHubData() {
     console.warn("Unable to reset PaperHub data", error);
   }
   delete window.__paperhubDataset;
+  notifyPaperHubChange();
+}
+
+/* ---------------------------------------------------------------------------
+ * Live sync. Every write fires a `paperhub:change` event; the current page
+ * registers a refresh via setPaperHubRefresh() so a status change re-renders
+ * the open view immediately — no reload needed.
+ * ------------------------------------------------------------------------- */
+
+function notifyPaperHubChange() {
+  if (typeof window === "undefined") return;
+  try {
+    window.dispatchEvent(new CustomEvent("paperhub:change"));
+  } catch (error) {
+    /* CustomEvent unavailable — ignore */
+  }
+}
+
+function setPaperHubRefresh(refresh) {
+  if (typeof window !== "undefined") {
+    window.__paperhubRefresh = typeof refresh === "function" ? refresh : null;
+  }
+}
+
+if (typeof window !== "undefined" && !window.__paperhubSyncBound) {
+  window.__paperhubSyncBound = true;
+  window.addEventListener("paperhub:change", () => {
+    if (typeof window.__paperhubRefresh === "function") {
+      try {
+        window.__paperhubRefresh();
+      } catch (error) {
+        console.warn("PaperHub refresh failed", error);
+      }
+    }
+  });
 }
 
 function phFindUser(userId) {
@@ -151,6 +187,74 @@ function phMapReviewToFileStatus(status) {
   if (status === "rejected") return "rejected";
   if (status === "in-review" || status === "forwarded") return "reviewing";
   return "pending";
+}
+
+function phMapFileToReviewStatus(status) {
+  if (status === "completed") return "completed";
+  if (status === "rejected") return "rejected";
+  if (status === "reviewing") return "in-review";
+  return "pending";
+}
+
+/* ---------------------------------------------------------------------------
+ * Cross-collection synchronization.
+ * A document lives in dataset.files AND its owner's user.files; its review
+ * lives in dataset.reviewQueue AND the owner's user.reviews. After a JSON round
+ * trip these are separate objects, so a status change must touch every copy and
+ * keep the file and its linked review consistent in BOTH directions, so the
+ * change shows up the same on every page (files list, review queue/details,
+ * dashboards).
+ * ------------------------------------------------------------------------- */
+
+function phApplyFileStatus(dataset, fileId, fileStatus) {
+  (dataset.files || []).forEach((file) => {
+    if (file.id === fileId) file.status = fileStatus;
+  });
+  (dataset.users || []).forEach((user) =>
+    (user.files || []).forEach((file) => {
+      if (file.id === fileId) file.status = fileStatus;
+    }),
+  );
+}
+
+function phApplyReviewStatus(dataset, reviewId, reviewStatus) {
+  (dataset.reviewQueue || []).forEach((review) => {
+    if (review.id === reviewId) review.status = reviewStatus;
+  });
+  (dataset.users || []).forEach((user) =>
+    (user.reviews || []).forEach((review) => {
+      if (review.id === reviewId) review.status = reviewStatus;
+    }),
+  );
+}
+
+// Resolve the file <-> review link from whichever id is known.
+function phResolveLink(dataset, { fileId, reviewId }) {
+  const queue = dataset.reviewQueue || [];
+  let fid = fileId || null;
+  let rid = reviewId || null;
+  if (rid && !fid) {
+    const match = queue.find((review) => review.id === rid);
+    fid = (match && match.fileId) || fid;
+  }
+  if (fid && !rid) {
+    const match = queue.find((review) => review.fileId === fid);
+    rid = (match && match.id) || rid;
+  }
+  return { fid, rid };
+}
+
+// Keep the aggregate dashboard counters in step with the files.
+function phRecomputeDashboardStats(dataset) {
+  const files = dataset.files || [];
+  dataset.dashboardStats = dataset.dashboardStats || {};
+  dataset.dashboardStats.totalDocuments = files.length;
+  dataset.dashboardStats.pendingReview = files.filter(
+    (file) => file.status === "pending" || file.status === "reviewing",
+  ).length;
+  dataset.dashboardStats.processedDocuments = files.filter(
+    (file) => file.status === "completed",
+  ).length;
 }
 
 // Allowlists and limits guard the mutators against malformed input (e.g. an
@@ -195,18 +299,17 @@ function phAddFile(file, reviewItem) {
     }
   }
 
+  phRecomputeDashboardStats(dataset);
   persistPaperHubData();
 }
 
 function phUpdateFileStatus(fileId, status) {
   if (!PH_FILE_STATUSES.includes(status)) return;
   const dataset = getPaperHubDataset();
-  const apply = (files) =>
-    (files || []).forEach((file) => {
-      if (file.id === fileId) file.status = status;
-    });
-  apply(dataset.files);
-  (dataset.users || []).forEach((user) => apply(user.files));
+  const { fid, rid } = phResolveLink(dataset, { fileId });
+  if (fid) phApplyFileStatus(dataset, fid, status);
+  if (rid) phApplyReviewStatus(dataset, rid, phMapFileToReviewStatus(status));
+  phRecomputeDashboardStats(dataset);
   persistPaperHubData();
 }
 
@@ -217,6 +320,7 @@ function phDeleteFile(fileId) {
     user.files = (user.files || []).filter((file) => file.id !== fileId);
   });
   dataset.reviewQueue = (dataset.reviewQueue || []).filter((review) => review.fileId !== fileId);
+  phRecomputeDashboardStats(dataset);
   persistPaperHubData();
 }
 
@@ -249,29 +353,10 @@ function phAddUser(account, profile) {
 function phSetReviewStatus(reviewId, status) {
   if (!PH_REVIEW_STATUSES.includes(status)) return;
   const dataset = getPaperHubDataset();
-  let fileId = null;
-  (dataset.reviewQueue || []).forEach((review) => {
-    if (review.id === reviewId) {
-      review.status = status;
-      fileId = review.fileId || fileId;
-    }
-  });
-  (dataset.users || []).forEach((user) =>
-    (user.reviews || []).forEach((review) => {
-      if (review.id === reviewId) review.status = status;
-    }),
-  );
-
-  if (fileId) {
-    const fileStatus = phMapReviewToFileStatus(status);
-    const apply = (files) =>
-      (files || []).forEach((file) => {
-        if (file.id === fileId) file.status = fileStatus;
-      });
-    apply(dataset.files);
-    (dataset.users || []).forEach((user) => apply(user.files));
-  }
-
+  const { fid, rid } = phResolveLink(dataset, { reviewId });
+  if (rid) phApplyReviewStatus(dataset, rid, status);
+  if (fid) phApplyFileStatus(dataset, fid, phMapReviewToFileStatus(status));
+  phRecomputeDashboardStats(dataset);
   persistPaperHubData();
 }
 

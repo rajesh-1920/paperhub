@@ -76,6 +76,32 @@ async function initApp() {
   initNavbar();
   applyCurrentUserPageData();
   initPageSpecificForms();
+
+  if (typeof setPaperHubRefresh === "function") {
+    setPaperHubRefresh(paperhubSyncRefresh);
+  }
+}
+
+// Re-render every dynamic surface on the current page after a data change, so a
+// status update reflects everywhere at once (files list, review queue/details,
+// dashboards) without a reload.
+function paperhubSyncRefresh() {
+  const body = document.body;
+  try {
+    if (body.classList.contains("review-queue-page") && typeof refreshReviewQueue === "function") {
+      refreshReviewQueue();
+    } else if (
+      body.classList.contains("review-details-page") &&
+      typeof refreshReviewDetails === "function"
+    ) {
+      refreshReviewDetails();
+    } else if (body.classList.contains("file-details-page") && typeof loadFileList === "function") {
+      loadFileList();
+    }
+  } catch (error) {
+    console.warn("Page refresh failed", error);
+  }
+  applyCurrentUserPageData();
 }
 
 function ensureStyles(styles) {

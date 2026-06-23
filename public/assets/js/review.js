@@ -29,6 +29,21 @@ function initReviewDetailsPage() {
   }
 }
 
+// Re-render hooks used by the live-sync bus (main.js paperhubSyncRefresh).
+function refreshReviewQueue() {
+  activeQueueItems = getReviewData();
+  renderReviewQueue();
+}
+
+function refreshReviewDetails() {
+  if (!activeReview) return;
+  const fresh = getReviewById(activeReview.id);
+  if (fresh) {
+    activeReview = fresh;
+    renderReviewDetails(fresh);
+  }
+}
+
 // Read fresh from the live dataset every call: the ph* mutators replace the
 // reviewQueue array (e.g. phDeleteFile filters it), so a captured reference
 // would go stale across SPA navigation.
