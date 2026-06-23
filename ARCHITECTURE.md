@@ -2,15 +2,17 @@
 
 PaperHub is a multi-page document-management app: a plain HTML + Tailwind +
 vanilla-JavaScript frontend (no framework, no bundler) served by a small
-Node/Express backend that uses a JSON file as its database. This document
-explains how the moving parts fit together.
+Node/Express backend that uses a JSON file — or MongoDB — as its database. This
+document explains how the moving parts fit together.
 
 ## High-level shape
 
 ```
 server/
 ├── index.js               Express app: REST API + static hosting
-├── db.js                  atomic read/write of the JSON database
+├── db.js                  storage façade (JSON file or MongoDB)
+├── stores/                jsonStore.js + mongoStore.js
+├── migrate.js             seed the configured database
 └── seed.json              pristine dataset used by POST /api/reset
 public/
 ├── index.html              Landing page
