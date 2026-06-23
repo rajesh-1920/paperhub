@@ -14,6 +14,7 @@ import {
 } from "./db.js";
 import { authRouter } from "./routes/auth.js";
 import { filesRouter } from "./routes/files.js";
+import { shareRouter } from "./routes/share.js";
 import { assertAuthConfig } from "./config.js";
 import { sanitizeDataset, preserveServerSecrets } from "./auth/users.js";
 import { requireAuth, authorize } from "./middleware/auth.js";
@@ -40,6 +41,9 @@ export function createApp() {
 
   // File queries (search). Other /api/files/:id/* routes are defined below.
   app.use("/api/files", filesRouter());
+
+  // Shareable links (create / list / revoke / resolve / serve).
+  app.use("/api/share", shareRouter());
 
   // Read the whole dataset. Never cache it — the frontend re-fetches after
   // every mutation and must always see the latest counts. Credentials and

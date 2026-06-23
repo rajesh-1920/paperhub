@@ -35,6 +35,8 @@ export function sanitizeDataset(dataset) {
     authAccounts: (dataset.authAccounts || []).map(sanitizeAccount),
     refreshTokens: [],
     auditLog: [],
+    // Share-link tokens/hashes are secrets — fetched per-user via /api/share/mine.
+    shareLinks: [],
   };
 }
 
@@ -62,6 +64,7 @@ export function preserveServerSecrets(incoming, current) {
     authAccounts,
     refreshTokens: current.refreshTokens || [],
     auditLog: current.auditLog || [],
+    shareLinks: current.shareLinks || [],
   };
 }
 

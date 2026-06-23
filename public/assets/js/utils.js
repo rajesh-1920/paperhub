@@ -670,6 +670,44 @@ function phListFolderGrants(folderId) {
   return folder && Array.isArray(folder.acl) ? folder.acl : [];
 }
 
+// --- Shareable links (server-side; tokens never live in the dataset read) ---
+
+async function phShareApi(method, path, body) {
+  const headers = { "Content-Type": "application/json" };
+  const token = getAuthToken();
+  if (token) headers.Authorization = "Bearer " + token;
+  const response = await fetch(paperhubApiUrl(path), {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || "Share request failed");
+  }
+  return data;
+}
+
+function createShareLinkViaApi(resourceType, resourceId, options = {}) {
+  return phShareApi("POST", "/api/share", { resourceType, resourceId, ...options });
+}
+
+function revokeShareLinkViaApi(token) {
+  return phShareApi("DELETE", `/api/share/${encodeURIComponent(token)}`);
+}
+
+function listMyShareLinksViaApi() {
+  return phShareApi("GET", "/api/share/mine");
+}
+
+// Absolute URL a recipient opens to view a shared resource.
+function shareLinkUrl(token) {
+  return new URL(
+    `/pages/share/view.html?token=${encodeURIComponent(token)}`,
+    window.location.origin,
+  ).href;
+}
+
 /* ---------------------------------------------------------------------------
  * Bulk file actions (used by the multi-select toolbar). Each applies to every
  * copy of the affected files and persists once.

@@ -327,6 +327,56 @@ test("search: includes files shared via an ACL grant (shared=1 excludes own)", a
   );
 });
 
+test("share: create, resolve, password-protect, revoke", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const { token: userToken, user } = await (
+    await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")
+  ).json();
+  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const ownFile = ds.files.find((f) => f.ownerId === user.id);
+
+  // Create a share link for an owned file.
+  const created = await fetch(`${base}/api/share`, {
+    method: "POST",
+    headers: { "content-type": "application/json", ...bearer(userToken) },
+    body: JSON.stringify({ resourceType: "file", resourceId: ownFile.id, permission: "view" }),
+  });
+  assert.equal(created.status, 201);
+  const { token: shareToken } = await created.json();
+  assert.ok(shareToken);
+
+  // Resolve it publicly (no auth) — and shareLinks never leak in the dataset.
+  const resolved = await (await fetch(`${base}/api/share/${shareToken}`)).json();
+  assert.equal(resolved.resource.id, ownFile.id);
+  assert.deepEqual((await (await fetch(`${base}/api/dataset`)).json()).shareLinks, []);
+
+  // /mine lists it without leaking the password hash.
+  const mine = await (await fetch(`${base}/api/share/mine`, { headers: bearer(userToken) })).json();
+  assert.ok(mine.items.some((l) => l.token === shareToken));
+  assert.ok(mine.items.every((l) => l.passwordHash === undefined));
+
+  // A password-protected link rejects the wrong password.
+  const locked = await (
+    await fetch(`${base}/api/share`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...bearer(userToken) },
+      body: JSON.stringify({ resourceType: "file", resourceId: ownFile.id, password: "secret12" }),
+    })
+  ).json();
+  assert.equal((await fetch(`${base}/api/share/${locked.token}`)).status, 401, "password required");
+  assert.equal(
+    (await fetch(`${base}/api/share/${locked.token}?password=secret12`)).status,
+    200,
+    "correct password resolves",
+  );
+
+  // Revoke makes it 404.
+  await fetch(`${base}/api/share/${shareToken}`, { method: "DELETE", headers: bearer(userToken) });
+  assert.equal((await fetch(`${base}/api/share/${shareToken}`)).status, 404, "revoked link gone");
+});
+
 test("auth: events are recorded to the audit log (and not exposed to clients)", async (t) => {
   const { server, base, dbFile } = await startTestServer();
   t.after(() => server.close());
