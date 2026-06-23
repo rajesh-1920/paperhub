@@ -18,7 +18,7 @@ import { filesRouter } from "./routes/files.js";
 import { shareRouter } from "./routes/share.js";
 import { auditRouter } from "./routes/audit.js";
 import { assertAuthConfig } from "./config.js";
-import { sanitizeDataset, preserveServerSecrets } from "./auth/users.js";
+import { sanitizeDataset, applyDatasetWritePolicy } from "./auth/users.js";
 import { requireAuth, authorize } from "./middleware/auth.js";
 import { wouldExceedQuota } from "./quota.js";
 
@@ -72,7 +72,7 @@ export function createApp() {
     }
     try {
       const current = await readDataset();
-      await writeDataset(preserveServerSecrets(req.body, current));
+      await writeDataset(applyDatasetWritePolicy(req.body, current, req.user));
       res.json({ ok: true });
     } catch {
       res.status(500).json({ error: "Unable to write dataset" });

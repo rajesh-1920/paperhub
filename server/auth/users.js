@@ -68,6 +68,41 @@ export function preserveServerSecrets(incoming, current) {
   };
 }
 
+// Authorization policy for the legacy whole-dataset PUT. Admins may write
+// anything (minus the always-preserved secrets). A non-admin caller may only
+// change their OWN slice: their role can't be escalated, accounts are left as
+// the server has them, and other users' files/folders are taken from the
+// current dataset so they can't be altered or deleted. (Scoped endpoints are
+// the long-term replacement; this caps the blast radius until then.)
+export function applyDatasetWritePolicy(incoming, current, user) {
+  const result = preserveServerSecrets(incoming, current);
+  if (!user || user.role === "admin") {
+    return result;
+  }
+
+  // Accounts are admin-managed; non-admins can't change any of them via the PUT.
+  result.authAccounts = current.authAccounts || [];
+
+  // Other users are immutable; the caller may edit their own profile but cannot
+  // change their own role (no self-escalation).
+  result.users = (current.users || []).map((u) => {
+    if (u.id !== user.id) return u;
+    const incomingSelf = (incoming.users || []).find((x) => x.id === user.id);
+    return incomingSelf ? { ...incomingSelf, role: u.role } : u;
+  });
+
+  // Other users' files/folders are immutable to a non-admin; only their own
+  // come from the incoming payload.
+  const ownSlice = (key) => [
+    ...(current[key] || []).filter((x) => x.ownerId !== user.id),
+    ...(incoming[key] || []).filter((x) => x.ownerId === user.id),
+  ];
+  result.files = ownSlice("files");
+  result.folders = ownSlice("folders");
+
+  return result;
+}
+
 // A fresh, fully-shaped user profile for a new account, so dashboards and the
 // file UI render without special-casing. Mirrors the client buildNewUserProfile.
 export function buildUserProfile(account, todayIso = new Date().toISOString().slice(0, 10)) {

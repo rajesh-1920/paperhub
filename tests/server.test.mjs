@@ -484,6 +484,53 @@ test("auth: repeated login attempts are rate limited", async (t) => {
   assert.ok(limited, "too many login attempts eventually return 429");
 });
 
+test("write policy: a non-admin can't escalate roles or write others' data", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const { token, user } = await (
+    await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")
+  ).json();
+  const ds = await (await fetch(`${base}/api/dataset`)).json();
+
+  ds.users.find((u) => u.id === user.id).role = "admin"; // attempt self-escalation
+  ds.files.push({ id: "file-inject", name: "x.pdf", ownerId: "ghost-user" }); // others' file
+  const ownFile = ds.files.find((f) => f.ownerId === user.id);
+  ownFile.name = "My Renamed.pdf"; // own file (allowed)
+
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", ...bearer(token) },
+    body: JSON.stringify(ds),
+  });
+
+  const after = await (await fetch(`${base}/api/dataset`)).json();
+  assert.equal(after.users.find((u) => u.id === user.id).role, "user", "no self-escalation");
+  assert.ok(!after.files.some((f) => f.id === "file-inject"), "can't add a file owned by another");
+  assert.equal(
+    after.files.find((f) => f.id === ownFile.id).name,
+    "My Renamed.pdf",
+    "own file change persisted",
+  );
+});
+
+test("write policy: an admin may change a user's role", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const adminToken = await tokenFor(base);
+  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const someUser = ds.users.find((u) => u.role === "user");
+  someUser.role = "officer";
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", ...bearer(adminToken) },
+    body: JSON.stringify(ds),
+  });
+  const after = await (await fetch(`${base}/api/dataset`)).json();
+  assert.equal(after.users.find((u) => u.id === someUser.id).role, "officer", "admin changed role");
+});
+
 test("dataset exposes the new SaaS collections and round-trips them", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());
