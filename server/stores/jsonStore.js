@@ -1,4 +1,14 @@
-import { readFile, writeFile, rename, copyFile, access, mkdir, unlink } from "node:fs/promises";
+import {
+  readFile,
+  writeFile,
+  rename,
+  copyFile,
+  access,
+  mkdir,
+  unlink,
+  rm,
+  readdir,
+} from "node:fs/promises";
 import { constants } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -22,9 +32,27 @@ function uploadsDir() {
 }
 
 // Keep file ids confined to a safe, flat filename (no path traversal).
+function safeId(id) {
+  return String(id).replace(/[^a-zA-Z0-9_-]/g, "");
+}
 function contentPath(id) {
-  const safe = String(id).replace(/[^a-zA-Z0-9_-]/g, "");
-  return join(uploadsDir(), `${safe}.pdf`);
+  return join(uploadsDir(), `${safeId(id)}.pdf`);
+}
+
+// Delete any stored binary whose file id is no longer in the dataset.
+async function pruneOrphanContent(data) {
+  const keep = new Set((data.files || []).map((f) => `${safeId(f.id)}.pdf`));
+  let names;
+  try {
+    names = await readdir(uploadsDir());
+  } catch {
+    return; // no uploads dir yet
+  }
+  for (const name of names) {
+    if (name.endsWith(".pdf") && !keep.has(name)) {
+      await unlink(join(uploadsDir(), name)).catch(() => {});
+    }
+  }
 }
 
 // Serialize writes so two concurrent requests can never interleave or corrupt
@@ -62,23 +90,31 @@ export function writeDataset(data) {
     const tmp = `${file}.${process.pid}.tmp`;
     await writeFile(tmp, JSON.stringify(data, null, 2) + "\n", "utf8");
     await rename(tmp, file);
+    await pruneOrphanContent(data);
     return data;
   });
 }
 
-/** Restore the database file from the pristine seed. */
+/** Restore the database file from the pristine seed (and drop stored binaries). */
 export function resetDataset() {
   return withLock(async () => {
     await copyFile(seedFile(), dbFile());
+    await rm(uploadsDir(), { recursive: true, force: true });
     return JSON.parse(await readFile(dbFile(), "utf8"));
   });
 }
 
 // --- File binaries (the actual uploaded PDF bytes) -------------------------
 
-export async function writeFileContent(id, buffer) {
-  await mkdir(uploadsDir(), { recursive: true });
-  await writeFile(contentPath(id), buffer);
+export function writeFileContent(id, buffer) {
+  // Serialized + atomic so concurrent writes to the same id can't corrupt it.
+  return withLock(async () => {
+    await mkdir(uploadsDir(), { recursive: true });
+    const path = contentPath(id);
+    const tmp = `${path}.${process.pid}.tmp`;
+    await writeFile(tmp, buffer);
+    await rename(tmp, path);
+  });
 }
 
 export async function readFileContent(id) {

@@ -232,9 +232,21 @@ async function handleUpload() {
           statusEl.style.color = "var(--success)";
         }
         const record = persistUploadedFile(file);
-        if (record) {
-          await uploadFileBinary(record.id, file);
+        const stored = record ? await uploadFileBinary(record.id, file) : false;
+        if (!record || !stored) {
+          // Roll back the metadata record so there is no entry pointing at
+          // missing bytes (which would 404 on view/download).
+          if (record && typeof phDeleteFile === "function") {
+            phDeleteFile(record.id);
+          }
+          if (statusEl) {
+            statusEl.textContent = "Upload failed";
+            statusEl.style.color = "var(--danger)";
+          }
+          showError(`Could not store ${file.name} — please try again`);
+          continue;
         }
+
         addClass(filePreview, "file-preview-success");
         uploadedCount++;
 

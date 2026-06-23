@@ -104,6 +104,7 @@ export function createApp() {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", "inline");
       res.setHeader("Cache-Control", "no-store");
+      res.setHeader("X-Content-Type-Options", "nosniff");
       res.send(buffer);
     } catch {
       res.status(500).json({ error: "Unable to read file" });

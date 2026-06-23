@@ -89,6 +89,33 @@ test("file content: stores and serves real PDF bytes, rejects non-PDF", async (t
   assert.equal(missing.status, 404, "unknown file content is 404");
 });
 
+test("file content: orphaned binaries are pruned when the dataset drops the file", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const pdf = Buffer.from("%PDF-1.4\norphan\n%%EOF\n");
+  await fetch(`${base}/api/files/file-orphan/content`, {
+    method: "PUT",
+    headers: { "content-type": "application/pdf" },
+    body: pdf,
+  });
+  assert.equal((await fetch(`${base}/api/files/file-orphan/content`)).status, 200, "stored");
+
+  // Persist a dataset that does not reference file-orphan.
+  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(dataset),
+  });
+
+  assert.equal(
+    (await fetch(`${base}/api/files/file-orphan/content`)).status,
+    404,
+    "orphan binary pruned",
+  );
+});
+
 test("API reset restores the dataset from the seed", async (t) => {
   const { server, base, dbFile } = await startTestServer();
   t.after(() => server.close());

@@ -68,6 +68,16 @@ test("MongoDB stores and serves file binaries via GridFS", { skip: !db }, async 
   assert.equal(await db.readFileContent("file-gridfs"), null, "deleted content is gone");
 });
 
+test("MongoDB prunes orphaned GridFS binaries on dataset write", { skip: !db }, async () => {
+  await db.writeFileContent("file-orphan-m", Buffer.from("%PDF-1.4\norphan\n%%EOF\n"));
+  assert.ok(await db.readFileContent("file-orphan-m"), "stored");
+
+  // The current dataset does not reference file-orphan-m.
+  await db.writeDataset(await db.readDataset());
+
+  assert.equal(await db.readFileContent("file-orphan-m"), null, "orphan pruned on write");
+});
+
 after(async () => {
   if (closeMongo) await closeMongo();
   if (mem) await mem.stop();

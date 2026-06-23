@@ -92,11 +92,13 @@ export function writeDataset(data) {
       },
       { upsert: true },
     );
+    await pruneOrphanContent(data);
     return data;
   });
 }
 
 export async function resetDataset() {
+  // writeDataset(seed) prunes orphaned binaries (the seed has no files).
   await writeDataset(await readSeed());
   return readDataset();
 }
@@ -108,14 +110,29 @@ async function getBucket() {
   return new GridFSBucket(db, { bucketName: CONTENT_BUCKET });
 }
 
-export async function writeFileContent(id, buffer) {
+// Delete any stored binary whose file id is no longer in the dataset.
+async function pruneOrphanContent(data) {
+  const keep = new Set((data.files || []).map((f) => String(f.id)));
   const bucket = await getBucket();
-  await deleteFileContent(id); // replace any existing version
-  await new Promise((resolve, reject) => {
-    const stream = bucket.openUploadStream(String(id));
-    stream.on("error", reject);
-    stream.on("finish", resolve);
-    stream.end(buffer);
+  const files = await bucket.find({}).toArray();
+  for (const file of files) {
+    if (!keep.has(file.filename)) {
+      await bucket.delete(file._id);
+    }
+  }
+}
+
+export function writeFileContent(id, buffer) {
+  // Serialized so concurrent writes to the same id can't interleave.
+  return withLock(async () => {
+    const bucket = await getBucket();
+    await deleteFileContent(id); // replace any existing version
+    await new Promise((resolve, reject) => {
+      const stream = bucket.openUploadStream(String(id));
+      stream.on("error", reject);
+      stream.on("finish", resolve);
+      stream.end(buffer);
+    });
   });
 }
 
