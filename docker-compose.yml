@@ -17,6 +17,13 @@ services:
       MONGODB_URI: mongodb://mongo:27017
       MONGODB_DB: paperhub
       PORT: "8000"
+      # Override these via a .env file or your shell. The defaults are for local
+      # demos only — set strong random secrets (and NODE_ENV=production) in prod.
+      JWT_SECRET: ${JWT_SECRET:-paperhub-local-demo-secret-change-me-please}
+      REFRESH_SECRET: ${REFRESH_SECRET:-paperhub-local-demo-refresh-change-me-please}
+      ACCESS_TTL: ${ACCESS_TTL:-15m}
+      REFRESH_TTL: ${REFRESH_TTL:-7d}
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
     ports:
       - "8000:8000"
     depends_on:

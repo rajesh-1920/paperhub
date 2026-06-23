@@ -13,6 +13,10 @@ jobs:
   build:
     name: Lint, test & build
     runs-on: ubuntu-latest
+    env:
+      # Fixed, non-secret test values so the auth code has a signing key in CI.
+      JWT_SECRET: ci-test-jwt-secret-not-for-production
+      REFRESH_SECRET: ci-test-refresh-secret-not-for-production
     strategy:
       matrix:
         node-version: [20.x, 22.x]
