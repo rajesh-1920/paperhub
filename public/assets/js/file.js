@@ -262,6 +262,9 @@ async function handleUpload() {
 
         addClass(filePreview, "file-preview-success");
         uploadedCount++;
+        if (typeof logActivityViaApi === "function") {
+          logActivityViaApi("file.upload", { resourceId: record.id, resourceName: file.name });
+        }
 
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (error) {
@@ -668,6 +671,9 @@ async function shareSelectedFile() {
   if (typeof createShareLinkViaApi !== "function") return;
   try {
     const { token } = await createShareLinkViaApi("file", file.id, { permission: "view" });
+    if (typeof logActivityViaApi === "function") {
+      logActivityViaApi("share.create", { resourceId: file.id, resourceName: file.name });
+    }
     const url = typeof shareLinkUrl === "function" ? shareLinkUrl(token) : token;
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -762,6 +768,9 @@ function deleteSelectedFile() {
 
   if (typeof phTrashFile === "function") {
     phTrashFile(file.id);
+  }
+  if (typeof logActivityViaApi === "function") {
+    logActivityViaApi("file.trash", { resourceId: file.id, resourceName: file.name });
   }
 
   selectedFileId = null;

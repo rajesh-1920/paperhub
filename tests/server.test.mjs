@@ -432,6 +432,43 @@ test("auth: events are recorded to the audit log (and not exposed to clients)", 
   assert.deepEqual(exposed.auditLog, [], "audit log is not exposed in dataset reads");
 });
 
+test("audit: POST records an actor-stamped event; GET is scoped by role", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const { token: userToken, user } = await (
+    await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")
+  ).json();
+
+  // The server stamps the actor — a forged actorId in the body is ignored.
+  const posted = await fetch(`${base}/api/audit`, {
+    method: "POST",
+    headers: { "content-type": "application/json", ...bearer(userToken) },
+    body: JSON.stringify({ action: "file.upload", resourceName: "x.pdf", actorId: "someone-else" }),
+  });
+  assert.equal(posted.status, 201);
+
+  // The user sees their own event.
+  const mine = await (await fetch(`${base}/api/audit`, { headers: bearer(userToken) })).json();
+  const entry = mine.items.find((e) => e.action === "file.upload");
+  assert.ok(entry, "own event listed");
+  assert.equal(entry.actorId, user.id, "actor stamped from the token, not the body");
+
+  // Another user does not see it; the admin does.
+  const otherToken = await tokenFor(base, "rajdip.roy@paperhub.com.bd", "officer01");
+  const other = await (await fetch(`${base}/api/audit`, { headers: bearer(otherToken) })).json();
+  assert.ok(!other.items.some((e) => e.actorId === user.id), "users only see their own events");
+
+  const adminToken = await tokenFor(base);
+  const all = await (await fetch(`${base}/api/audit`, { headers: bearer(adminToken) })).json();
+  assert.ok(
+    all.items.some((e) => e.actorId === user.id),
+    "admin sees all events",
+  );
+
+  assert.equal((await fetch(`${base}/api/audit`)).status, 401, "audit read requires auth");
+});
+
 test("auth: repeated login attempts are rate limited", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());

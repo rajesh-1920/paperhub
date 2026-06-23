@@ -165,6 +165,27 @@ function handleApi(method, url, body, headers, ctx) {
       };
     }
   }
+  if (url.includes("/api/audit")) {
+    if (m === "POST") {
+      const b = parse();
+      ds.auditLog = ds.auditLog || [];
+      ds.auditLog.push({
+        id: `evt-${ds.auditLog.length + 1}`,
+        ts: "2026-01-01T00:00:00.000Z",
+        action: b.action,
+        actorId: "me",
+        actorName: "Me",
+        resourceId: b.resourceId || null,
+        resourceName: b.resourceName || null,
+      });
+      return { status: 201, body: JSON.stringify({ ok: true }) };
+    }
+    const items = (ds.auditLog || []).slice().reverse();
+    return {
+      status: 200,
+      body: JSON.stringify({ items, total: items.length, page: 1, pageSize: 50 }),
+    };
+  }
   if (m === "POST" && url.includes("/api/reset")) {
     ctx.server.dataset = JSON.parse(SEED);
     return { status: 200, body: JSON.stringify(ctx.server.dataset) };

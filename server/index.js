@@ -16,6 +16,7 @@ import {
 import { authRouter } from "./routes/auth.js";
 import { filesRouter } from "./routes/files.js";
 import { shareRouter } from "./routes/share.js";
+import { auditRouter } from "./routes/audit.js";
 import { assertAuthConfig } from "./config.js";
 import { sanitizeDataset, preserveServerSecrets } from "./auth/users.js";
 import { requireAuth, authorize } from "./middleware/auth.js";
@@ -46,6 +47,9 @@ export function createApp() {
 
   // Shareable links (create / list / revoke / resolve / serve).
   app.use("/api/share", shareRouter());
+
+  // Audit / activity log (read + record).
+  app.use("/api/audit", auditRouter());
 
   // Read the whole dataset. Never cache it — the frontend re-fetches after
   // every mutation and must always see the latest counts. Credentials and

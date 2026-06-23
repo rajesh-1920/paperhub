@@ -803,6 +803,33 @@ function listMyShareLinksViaApi() {
   return phShareApi("GET", "/api/share/mine");
 }
 
+// Record a user action in the server-side audit log (best-effort, non-blocking).
+// The server stamps the verified actor; the client only supplies the action.
+function logActivityViaApi(action, details = {}) {
+  try {
+    const headers = { "Content-Type": "application/json" };
+    const token = getAuthToken();
+    if (token) headers.Authorization = "Bearer " + token;
+    fetch(paperhubApiUrl("/api/audit"), {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ action, ...details }),
+    }).catch(() => {});
+  } catch (error) {
+    /* activity logging is best-effort */
+  }
+}
+
+function listActivityViaApi(params = {}) {
+  const qs = new URLSearchParams(params).toString();
+  const headers = {};
+  const token = getAuthToken();
+  if (token) headers.Authorization = "Bearer " + token;
+  return fetch(paperhubApiUrl(`/api/audit${qs ? `?${qs}` : ""}`), { headers }).then((r) =>
+    r.ok ? r.json() : { items: [], total: 0 },
+  );
+}
+
 // Absolute URL a recipient opens to view a shared resource.
 function shareLinkUrl(token) {
   return new URL(

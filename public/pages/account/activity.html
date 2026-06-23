@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity · PaperHub</title>
+    <link rel="stylesheet" href="/assets/css/tailwind.css" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components/file.css" />
+  </head>
+  <body class="activity-page paperhub-app">
+    <div id="navbar-container"></div>
+    <div class="app-shell">
+      <div id="sidebar-container"></div>
+      <main class="app-main">
+        <section class="card">
+          <div class="file-table-meta">
+            <h1 style="margin: 0">Activity</h1>
+          </div>
+          <p class="muted">A record of recent account and document activity.</p>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Item</th>
+                  <th>By</th>
+                  <th>When</th>
+                </tr>
+              </thead>
+              <tbody id="activityLogBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="footer-container"></div>
+    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/navbar.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/activity.js"></script>
+  </body>
+</html>
