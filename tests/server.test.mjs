@@ -365,6 +365,34 @@ test("file content: stores and serves real PDF bytes, rejects non-PDF", async (t
   assert.equal(missing.status, 404, "unknown file content is 404");
 });
 
+test("file content: copy duplicates the binary to a new id (auth required)", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const token = await tokenFor(base);
+  const pdf = Buffer.from("%PDF-1.4\ncopy me\n%%EOF\n");
+  await fetch(`${base}/api/files/file-src/content`, {
+    method: "PUT",
+    headers: { "content-type": "application/pdf", ...bearer(token) },
+    body: pdf,
+  });
+
+  const copy = (body, withAuth) =>
+    fetch(`${base}/api/files/file-src/copy`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...(withAuth ? bearer(token) : {}) },
+      body: JSON.stringify(body),
+    });
+
+  assert.equal((await copy({ targetId: "file-dst" }, false)).status, 401, "requires auth");
+
+  const res = await copy({ targetId: "file-dst" }, true);
+  assert.equal(res.status, 200);
+
+  const got = Buffer.from(await (await fetch(`${base}/api/files/file-dst/content`)).arrayBuffer());
+  assert.ok(got.equals(pdf), "duplicated bytes are identical");
+});
+
 test("file content: orphaned binaries are pruned when the dataset drops the file", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());

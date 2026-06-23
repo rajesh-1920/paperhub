@@ -139,6 +139,25 @@ export function createApp() {
     }
   });
 
+  // Duplicate a file's stored bytes to a new id (backs "copy file").
+  app.post("/api/files/:id/copy", requireAuth, async (req, res) => {
+    const { id } = req.params;
+    const targetId = String((req.body || {}).targetId || "");
+    if (!ID_PATTERN.test(id) || !ID_PATTERN.test(targetId)) {
+      return res.status(400).json({ error: "Invalid file id" });
+    }
+    try {
+      const buffer = await readFileContent(id);
+      if (!buffer) {
+        return res.status(404).json({ error: "Source content not found" });
+      }
+      await writeFileContent(targetId, buffer);
+      res.json({ ok: true, id: targetId });
+    } catch {
+      res.status(500).json({ error: "Unable to copy file" });
+    }
+  });
+
   app.use(express.static(PUBLIC_DIR, { extensions: ["html"] }));
 
   return app;

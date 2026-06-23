@@ -461,6 +461,110 @@ function phDeleteFolder(folderId) {
   return true;
 }
 
+// Rename a file across every copy (global list, owner's list, review queue).
+function phRenameFile(fileId, newName) {
+  const clean = String(newName || "").trim();
+  if (!clean) return false;
+  const dataset = getPaperHubDataset();
+  const now = new Date().toISOString();
+  let found = false;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (file.id === fileId) {
+        file.name = clean;
+        file.updatedAt = now;
+        found = true;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  const renameReview = (list) =>
+    (list || []).forEach((review) => {
+      if (review.fileId === fileId) review.documentName = clean;
+    });
+  renameReview(dataset.reviewQueue);
+  (dataset.users || []).forEach((user) => renameReview(user.reviews));
+  if (found) persistPaperHubData();
+  return found;
+}
+
+// Move a file into a folder (null = root) across every copy.
+function phMoveFile(fileId, folderId = null) {
+  const dataset = getPaperHubDataset();
+  const now = new Date().toISOString();
+  let found = false;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (file.id === fileId) {
+        file.folderId = folderId || null;
+        file.updatedAt = now;
+        found = true;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  if (found) persistPaperHubData();
+  return found;
+}
+
+// Synchronously duplicate a file's stored bytes to a new id (server-side copy).
+function copyFileContentSync(srcId, destId) {
+  try {
+    const request = new XMLHttpRequest();
+    request.open("POST", paperhubApiUrl(`/api/files/${encodeURIComponent(srcId)}/copy`), false);
+    request.setRequestHeader("Content-Type", "application/json");
+    attachAuthHeader(request);
+    request.send(JSON.stringify({ targetId: destId }));
+    if (request.status === 401 && refreshAccessTokenSync()) {
+      return copyFileContentSync(srcId, destId);
+    }
+    return request.status >= 200 && request.status < 300;
+  } catch (error) {
+    return false;
+  }
+}
+
+function phCopyName(name) {
+  const value = String(name || "file");
+  const dot = value.lastIndexOf(".");
+  if (dot > 0) {
+    return `${value.slice(0, dot)} (copy)${value.slice(dot)}`;
+  }
+  return `${value} (copy)`;
+}
+
+// Duplicate a file (new id + duplicated binary) into a target folder.
+function phCopyFile(fileId, targetFolderId = null) {
+  const dataset = getPaperHubDataset();
+  const source = (dataset.files || []).find((file) => file.id === fileId);
+  if (!source) return null;
+  const now = new Date().toISOString();
+  const newId = generateId("file");
+  const copy = {
+    ...source,
+    id: newId,
+    name: phCopyName(source.name),
+    folderId: targetFolderId !== undefined ? targetFolderId : (source.folderId ?? null),
+    uploadedAt: now,
+    updatedAt: now,
+  };
+  if (source.hasContent) {
+    copyFileContentSync(fileId, newId);
+  }
+  dataset.files = dataset.files || [];
+  dataset.files.unshift(copy);
+  const owner = phFindUser(source.ownerId);
+  if (owner) {
+    owner.files = owner.files || [];
+    owner.files.unshift(copy);
+  }
+  if (typeof phRecomputeDashboardStats === "function") {
+    phRecomputeDashboardStats(dataset);
+  }
+  persistPaperHubData();
+  return copy;
+}
+
 function phUpdateUser(userId, patch) {
   const dataset = getPaperHubDataset();
   const user = phFindUser(userId);
