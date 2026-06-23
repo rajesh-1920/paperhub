@@ -13,6 +13,7 @@ import {
   deleteFileContent,
 } from "./db.js";
 import { authRouter } from "./routes/auth.js";
+import { filesRouter } from "./routes/files.js";
 import { assertAuthConfig } from "./config.js";
 import { sanitizeDataset, preserveServerSecrets } from "./auth/users.js";
 import { requireAuth, authorize } from "./middleware/auth.js";
@@ -36,6 +37,9 @@ export function createApp() {
 
   // Authentication (login / refresh / logout).
   app.use("/api/auth", authRouter());
+
+  // File queries (search). Other /api/files/:id/* routes are defined below.
+  app.use("/api/files", filesRouter());
 
   // Read the whole dataset. Never cache it — the frontend re-fetches after
   // every mutation and must always see the latest counts. Credentials and

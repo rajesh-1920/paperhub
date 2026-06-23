@@ -255,6 +255,42 @@ test("dataset PUT preserves server-only credentials it never sent to the client"
   );
 });
 
+test("search: owner-scoped, filtered, sorted and paginated", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  assert.equal((await fetch(`${base}/api/files/search`)).status, 401, "requires auth");
+
+  const { token, user } = await (
+    await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")
+  ).json();
+  const search = (qs) => fetch(`${base}/api/files/search?${qs}`, { headers: bearer(token) });
+
+  const all = await (await search("pageSize=5")).json();
+  assert.ok(all.total > 0, "the user has files");
+  assert.ok(all.items.length <= 5, "page size respected");
+  assert.ok(
+    all.items.every((f) => f.ownerId === user.id),
+    "owner-scoped",
+  );
+  assert.equal(all.page, 1);
+  assert.ok(all.pages >= 1);
+
+  // A text query never widens the result set.
+  const term = all.items[0].name.slice(0, 4);
+  const q = await (await search(`q=${encodeURIComponent(term)}`)).json();
+  assert.ok(q.total >= 1 && q.total <= all.total);
+
+  // Sort by name ascending.
+  const byName = await (await search("sort=name&dir=asc&pageSize=100")).json();
+  const names = byName.items.map((f) => f.name);
+  assert.deepEqual(
+    names,
+    [...names].sort((a, b) => a.localeCompare(b)),
+    "sorted by name asc",
+  );
+});
+
 test("auth: events are recorded to the audit log (and not exposed to clients)", async (t) => {
   const { server, base, dbFile } = await startTestServer();
   t.after(() => server.close());
