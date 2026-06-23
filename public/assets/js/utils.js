@@ -933,6 +933,78 @@ function phDeleteFiles(ids) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Trash. Deleting a file soft-deletes it (deletedAt/deletedBy) — the record and
+ * its binary are retained until an explicit purge. Search/active views exclude
+ * deletedAt; phListTrash surfaces them for restore or permanent deletion.
+ * ------------------------------------------------------------------------- */
+
+function phTrashFiles(ids, deletedBy) {
+  const set = new Set(ids || []);
+  if (!set.size) return 0;
+  const dataset = getPaperHubDataset();
+  const now = new Date().toISOString();
+  const by =
+    deletedBy ||
+    (typeof getCurrentUserData === "function" ? getCurrentUserData()?.id : null) ||
+    null;
+  let count = 0;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (set.has(file.id) && !file.deletedAt) {
+        file.deletedAt = now;
+        file.deletedBy = by;
+        count++;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  if (typeof phRecomputeDashboardStats === "function") phRecomputeDashboardStats(dataset);
+  persistPaperHubData();
+  return count;
+}
+
+function phTrashFile(fileId, deletedBy) {
+  return phTrashFiles([fileId], deletedBy) > 0;
+}
+
+function phRestoreFile(fileId) {
+  const dataset = getPaperHubDataset();
+  let found = false;
+  const apply = (list) =>
+    (list || []).forEach((file) => {
+      if (file.id === fileId && file.deletedAt) {
+        delete file.deletedAt;
+        delete file.deletedBy;
+        file.updatedAt = new Date().toISOString();
+        found = true;
+      }
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  if (found) {
+    if (typeof phRecomputeDashboardStats === "function") phRecomputeDashboardStats(dataset);
+    persistPaperHubData();
+  }
+  return found;
+}
+
+function phListTrash(ownerId) {
+  return (getPaperHubDataset().files || []).filter(
+    (f) => f.deletedAt && (!ownerId || f.ownerId === ownerId),
+  );
+}
+
+// Permanently remove files. The record is dropped (its binary is reclaimed by
+// the server's orphan prune on the next write).
+function phPurgeFiles(ids) {
+  return phDeleteFiles(ids);
+}
+
+function phPurgeFile(fileId) {
+  return phDeleteFiles([fileId]);
+}
+
+/* ---------------------------------------------------------------------------
  * Tags. A normalized tags[] table referenced by file.tagIds / folder.tagIds.
  * The legacy free-text file.tags[] is left untouched.
  * ------------------------------------------------------------------------- */

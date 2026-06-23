@@ -31,11 +31,8 @@ test("bulk UI: selecting rows shows the toolbar and deletes them", async () => {
   document
     .getElementById("fileBulkDelete")
     .dispatchEvent(new window.Event("click", { bubbles: true }));
-  assert.equal(
-    window.getPaperHubDataset().files.some((f) => f.id === id),
-    false,
-    "selected file deleted from the dataset",
-  );
+  const trashed = window.getPaperHubDataset().files.find((f) => f.id === id);
+  assert.ok(trashed && trashed.deletedAt, "selected file moved to Trash (soft-deleted)");
 });
 
 test("bulk: move/tag/delete apply to every copy and persist once", () => {

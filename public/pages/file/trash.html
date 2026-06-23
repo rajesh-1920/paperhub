@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trash · PaperHub</title>
+    <link rel="stylesheet" href="/assets/css/tailwind.css" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components/file.css" />
+  </head>
+  <body class="trash-page paperhub-app">
+    <div id="navbar-container"></div>
+    <div class="app-shell">
+      <div id="sidebar-container"></div>
+      <main class="app-main">
+        <section class="card">
+          <div class="file-table-meta">
+            <h1 style="margin: 0">Trash</h1>
+            <span id="trashCount" class="muted">Loading…</span>
+          </div>
+          <p class="muted">
+            Deleted files are kept here until you restore them or delete them permanently.
+          </p>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Document Name</th>
+                  <th>Size</th>
+                  <th>Deleted</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="trashTableBody"></tbody>
+            </table>
+          </div>
+          <div id="trashEmptyState" class="card empty-state" style="display: none">
+            <h3>Trash is empty</h3>
+            <p class="file-subtitle">Files you delete will appear here.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="footer-container"></div>
+    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/navbar.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/file.js"></script>
+  </body>
+</html>

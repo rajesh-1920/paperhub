@@ -554,10 +554,10 @@ function setupBulkActions() {
 
   addEvent(getElement("#fileBulkDelete"), "click", () => {
     if (!filePageSelected.size) return;
-    if (!window.confirm(`Delete ${filePageSelected.size} selected file(s)?`)) return;
-    phDeleteFiles([...filePageSelected]);
+    if (!window.confirm(`Move ${filePageSelected.size} selected file(s) to Trash?`)) return;
+    phTrashFiles([...filePageSelected]);
     clearBulkSelection();
-    showSuccess("Deleted selected files");
+    showSuccess("Moved selected files to Trash");
     loadFileList();
   });
 
@@ -744,20 +744,17 @@ function deleteSelectedFile() {
     return;
   }
 
-  if (!confirm(`Delete "${file.name}"? This cannot be undone.`)) {
+  if (!confirm(`Move "${file.name}" to Trash?`)) {
     return;
   }
 
-  if (typeof phDeleteFile === "function") {
-    phDeleteFile(file.id);
-  }
-  if (file.hasContent) {
-    deleteFileBinary(file.id);
+  if (typeof phTrashFile === "function") {
+    phTrashFile(file.id);
   }
 
   selectedFileId = null;
   loadFileList();
-  showSuccess(`Deleted ${file.name}`);
+  showSuccess(`Moved ${file.name} to Trash`);
 }
 
 async function loadFileList() {
@@ -765,7 +762,11 @@ async function loadFileList() {
   if (!fileTableBody) return;
 
   try {
-    const currentFiles = typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : null;
+    const ownedFiles = typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : null;
+    // The active list hides trashed (soft-deleted) files — they live in Trash.
+    const currentFiles = Array.isArray(ownedFiles)
+      ? ownedFiles.filter((f) => !f.deletedAt)
+      : ownedFiles;
     const response =
       currentFiles && currentFiles.length > 0
         ? { success: true, data: currentFiles }
@@ -1066,6 +1067,63 @@ function setText(selector, value) {
   }
 }
 
+function initTrashPage() {
+  loadTrash();
+}
+
+function loadTrash() {
+  const container = getElement("#trashTableBody");
+  if (!container) return;
+  const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+  const trashed = typeof phListTrash === "function" ? phListTrash(user?.id) : [];
+  const emptyState = getElement("#trashEmptyState");
+
+  container.innerHTML = "";
+  if (!trashed.length) {
+    if (emptyState) emptyState.style.display = "block";
+    const count = getElement("#trashCount");
+    if (count) count.textContent = "Trash is empty";
+    return;
+  }
+  if (emptyState) emptyState.style.display = "none";
+  const count = getElement("#trashCount");
+  if (count)
+    count.textContent = `${trashed.length} item${trashed.length === 1 ? "" : "s"} in Trash`;
+
+  const fragment = document.createDocumentFragment();
+  trashed.forEach((file) => {
+    const row = createElement("tr", "file-row");
+    row.innerHTML = `
+      <td>
+        <div class="file-cell">
+          <span class="file-type-icon">${escapeHtml(getFileIconByName(file.name))}</span>
+          <span class="file-name-cell">${escapeHtml(file.name || "Untitled")}</span>
+        </div>
+      </td>
+      <td>${formatFileSize(Number(file.size || 0))}</td>
+      <td>${formatDate(file.deletedAt)}</td>
+      <td>
+        <div class="file-actions">
+          <button class="btn btn-sm btn-outline" data-trash-act="restore">Restore</button>
+          <button class="btn btn-sm btn-danger" data-trash-act="purge">Delete forever</button>
+        </div>
+      </td>`;
+    addEvent(row.querySelector('[data-trash-act="restore"]'), "click", () => {
+      if (typeof phRestoreFile === "function") phRestoreFile(file.id);
+      showSuccess(`Restored ${file.name}`);
+      loadTrash();
+    });
+    addEvent(row.querySelector('[data-trash-act="purge"]'), "click", () => {
+      if (!window.confirm(`Permanently delete "${file.name}"? This cannot be undone.`)) return;
+      if (typeof phPurgeFile === "function") phPurgeFile(file.id);
+      showSuccess(`Permanently deleted ${file.name}`);
+      loadTrash();
+    });
+    fragment.appendChild(row);
+  });
+  container.appendChild(fragment);
+}
+
 function initVersionHistoryPage() {
   loadVersionHistory();
 }
@@ -1163,5 +1221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initFileDetailsPage();
   } else if (document.body.classList.contains("version-history-page")) {
     initVersionHistoryPage();
+  } else if (document.body.classList.contains("trash-page")) {
+    initTrashPage();
   }
 });
