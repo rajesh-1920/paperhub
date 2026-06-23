@@ -25,3 +25,43 @@ export function findAccountByEmail(dataset, email) {
   const lower = String(email || "").toLowerCase();
   return (dataset.authAccounts || []).find((a) => String(a.email).toLowerCase() === lower) || null;
 }
+
+// A fresh, fully-shaped user profile for a new account, so dashboards and the
+// file UI render without special-casing. Mirrors the client buildNewUserProfile.
+export function buildUserProfile(account, todayIso = new Date().toISOString().slice(0, 10)) {
+  return {
+    id: account.id,
+    name: account.name,
+    email: account.email,
+    role: account.role,
+    title: account.title || "User",
+    department: account.department || "General",
+    lastLogin: "Just now",
+    joinedDate: todayIso,
+    address: "Bangladesh",
+    company: "PaperHub Bangladesh",
+    phone: "",
+    timezone: "UTC +06:00",
+    language: "Bengali",
+    bio: "New PaperHub account.",
+    accountStatus: "Active",
+    twoFactorEnabled: account.role !== "user",
+    plan: {
+      name: "Starter",
+      cycle: "Billed yearly",
+      renewal: "",
+      seats: "1 seat",
+      status: "Active",
+    },
+    connectedApps: [],
+    permissions: [],
+    dashboard: {
+      description: "",
+      stats: { totalSubmissions: 0, pendingReview: 0, approved: 0, rejected: 0 },
+    },
+    files: [],
+    reviews: [],
+    payment: { status: "Settled", totalDue: "BDT 0.00", lastUpdated: "", nextReview: "" },
+    notifications: [],
+  };
+}

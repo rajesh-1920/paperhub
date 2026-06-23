@@ -108,6 +108,58 @@ test("auth: login issues tokens, refresh renews, bad creds rejected", async (t) 
   assert.equal(afterLogout.status, 401, "revoked refresh token rejected");
 });
 
+test("auth: register creates a first-class user and auto-logs-in", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const register = (body) =>
+    fetch(`${base}/api/auth/register`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+  assert.equal(
+    (await register({ name: "New", email: "new@paperhub.test", password: "short" })).status,
+    400,
+    "weak password rejected",
+  );
+
+  const res = await register({
+    name: "New Person",
+    email: "New@PaperHub.test",
+    password: "longenough1",
+  });
+  assert.equal(res.status, 201);
+  const body = await res.json();
+  assert.ok(body.token && body.refreshToken, "auto-logged-in");
+  assert.equal(body.user.role, "user", "self-signup is always a user");
+  assert.equal(body.user.email, "new@paperhub.test", "email normalized");
+  assert.equal(body.user.passwordHash, undefined);
+
+  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  assert.ok(
+    dataset.authAccounts.some((a) => a.email === "new@paperhub.test"),
+    "account persisted",
+  );
+  assert.ok(
+    dataset.users.some((u) => u.email === "new@paperhub.test"),
+    "first-class user profile",
+  );
+
+  assert.equal(
+    (await register({ name: "Dup", email: "new@paperhub.test", password: "longenough1" })).status,
+    409,
+    "duplicate email rejected",
+  );
+
+  assert.equal(
+    (await login(base, "new@paperhub.test", "longenough1")).status,
+    200,
+    "can log in with the new credentials",
+  );
+});
+
 test("dataset exposes the new SaaS collections and round-trips them", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());

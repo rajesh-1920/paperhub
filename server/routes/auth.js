@@ -1,13 +1,43 @@
 import { Router } from "express";
+import crypto from "node:crypto";
 import { readDataset, writeDataset } from "../db.js";
 import { verifyPassword, hashPassword } from "../auth/passwords.js";
-import { publicUser, findAccountByEmail } from "../auth/users.js";
+import { publicUser, findAccountByEmail, buildUserProfile } from "../auth/users.js";
 import {
   signAccessToken,
   createRefreshToken,
   hashRefreshSecret,
   splitRefreshToken,
 } from "../auth/tokens.js";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function slugify(value) {
+  return (
+    String(value || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 32) || "user"
+  );
+}
+
+// Create + record a refresh token for an account and return the token pair.
+// The caller persists the dataset (the refresh record is pushed onto it).
+function issueSession(dataset, account) {
+  const refresh = createRefreshToken();
+  const now = Date.now();
+  dataset.refreshTokens = dataset.refreshTokens || [];
+  dataset.refreshTokens.push({
+    id: refresh.id,
+    userId: account.id,
+    tokenHash: refresh.tokenHash,
+    createdAt: new Date(now).toISOString(),
+    expiresAt: new Date(now + refresh.ttlMs).toISOString(),
+    revoked: false,
+  });
+  return { token: signAccessToken(account), refreshToken: refresh.token };
+}
 
 // Authentication routes. Mounted at /api/auth.
 export function authRouter() {
@@ -42,25 +72,49 @@ export function authRouter() {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const refresh = createRefreshToken();
-    const now = Date.now();
-    dataset.refreshTokens = dataset.refreshTokens || [];
-    dataset.refreshTokens.push({
-      id: refresh.id,
-      userId: account.id,
-      tokenHash: refresh.tokenHash,
-      createdAt: new Date(now).toISOString(),
-      expiresAt: new Date(now + refresh.ttlMs).toISOString(),
-      revoked: false,
-    });
+    const session = issueSession(dataset, account);
     await writeDataset(dataset);
 
-    res.json({
-      ok: true,
-      token: signAccessToken(account),
-      refreshToken: refresh.token,
-      user: publicUser(dataset, account),
-    });
+    res.json({ ok: true, ...session, user: publicUser(dataset, account) });
+  });
+
+  // POST /api/auth/register — self-service signup. Always creates a "user"
+  // account (privileged roles are admin-provisioned), persisted to BOTH
+  // authAccounts and users so the account is first-class, then auto-logged-in.
+  router.post("/register", async (req, res) => {
+    const { name, email, password } = req.body || {};
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Name, email and password are required" });
+    }
+    if (!EMAIL_RE.test(String(email))) {
+      return res.status(400).json({ error: "A valid email is required" });
+    }
+    if (String(password).length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters" });
+    }
+
+    const dataset = await readDataset();
+    if (findAccountByEmail(dataset, email)) {
+      return res.status(409).json({ error: "An account with this email already exists" });
+    }
+
+    const account = {
+      id: `user-${slugify(String(email).split("@")[0] || name)}-${crypto.randomBytes(4).toString("hex")}`,
+      name: String(name).trim(),
+      email: String(email).toLowerCase(),
+      passwordHash: await hashPassword(password),
+      role: "user",
+      title: "User",
+    };
+    dataset.authAccounts = dataset.authAccounts || [];
+    dataset.users = dataset.users || [];
+    dataset.authAccounts.push(account);
+    dataset.users.push(buildUserProfile(account));
+
+    const session = issueSession(dataset, account);
+    await writeDataset(dataset);
+
+    res.status(201).json({ ok: true, ...session, user: publicUser(dataset, account) });
   });
 
   // POST /api/auth/refresh — exchange a valid refresh token for a new access token.
