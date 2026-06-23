@@ -19,6 +19,7 @@ import { shareRouter } from "./routes/share.js";
 import { assertAuthConfig } from "./config.js";
 import { sanitizeDataset, preserveServerSecrets } from "./auth/users.js";
 import { requireAuth, authorize } from "./middleware/auth.js";
+import { wouldExceedQuota } from "./quota.js";
 
 const ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
 const PDF_MAGIC = Buffer.from("%PDF");
@@ -105,6 +106,9 @@ export function createApp() {
         return res.status(415).json({ error: "Only PDF files are accepted" });
       }
       try {
+        if (wouldExceedQuota(await readDataset(), id, body.length)) {
+          return res.status(413).json({ error: "Storage quota exceeded" });
+        }
         await writeFileContent(id, body);
         res.json({ ok: true, size: body.length });
       } catch {
@@ -186,6 +190,9 @@ export function createApp() {
         return res.status(415).json({ error: "Only PDF files are accepted" });
       }
       try {
+        if (wouldExceedQuota(await readDataset(), id, body.length)) {
+          return res.status(413).json({ error: "Storage quota exceeded" });
+        }
         const versionId = `v${crypto.randomBytes(6).toString("hex")}`;
         const contentRef = `${id}__${versionId}`;
         await writeFileContent(contentRef, body); // archive this version

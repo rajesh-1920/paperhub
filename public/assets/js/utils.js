@@ -994,6 +994,27 @@ function phListTrash(ownerId) {
   );
 }
 
+// Storage usage for a user: bytes used by non-trashed owned files vs the limit
+// (user.storage.limitBytes, else meta.quotaDefaults.limitBytes, else 100 MB).
+function phStorageUsage(userId) {
+  const dataset = getPaperHubDataset();
+  const owner = (dataset.users || []).find((u) => u.id === userId);
+  const files = (dataset.files || []).filter((f) => f.ownerId === userId && !f.deletedAt);
+  const usedBytes = files.reduce((sum, f) => sum + Number(f.size || 0), 0);
+  const limitBytes = Number(
+    owner && owner.storage && owner.storage.limitBytes != null
+      ? owner.storage.limitBytes
+      : (dataset.meta && dataset.meta.quotaDefaults && dataset.meta.quotaDefaults.limitBytes) ||
+          100 * 1024 * 1024,
+  );
+  return {
+    usedBytes,
+    limitBytes,
+    fileCount: files.length,
+    percent: limitBytes ? Math.min(100, Math.round((usedBytes / limitBytes) * 100)) : 0,
+  };
+}
+
 // Permanently remove files. The record is dropped (its binary is reclaimed by
 // the server's orphan prune on the next write).
 function phPurgeFiles(ids) {

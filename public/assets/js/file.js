@@ -211,6 +211,18 @@ async function handleUpload() {
 
   uploadBtn.disabled = true;
 
+  // Storage-quota pre-check (the server is the authoritative gate).
+  const queuedBytes = fileEntries.reduce((sum, e) => sum + Number(e.file?.size || 0), 0);
+  const quotaUser = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+  if (quotaUser && typeof phStorageUsage === "function") {
+    const usage = phStorageUsage(quotaUser.id);
+    if (usage.usedBytes + queuedBytes > usage.limitBytes) {
+      showError("Not enough storage to upload these files. Free up space first.");
+      uploadBtn.disabled = false;
+      return;
+    }
+  }
+
   let uploadedCount = 0;
 
   try {

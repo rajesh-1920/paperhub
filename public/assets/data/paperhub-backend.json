@@ -3,7 +3,10 @@
     "name": "PaperHub Bangladesh Demo Backend",
     "version": "2.1.0",
     "generatedAt": "2026-06-09T00:00:00.000Z",
-    "description": "Three-person PaperHub dataset (admin Rajesh Biswas, officer Rajdip Roy, user Mahmud Hasan). Every other record is a fully-detailed file including its document content."
+    "description": "Three-person PaperHub dataset (admin Rajesh Biswas, officer Rajdip Roy, user Mahmud Hasan). Every other record is a fully-detailed file including its document content.",
+    "quotaDefaults": {
+      "limitBytes": 104857600
+    }
   },
   "authAccounts": [
     {

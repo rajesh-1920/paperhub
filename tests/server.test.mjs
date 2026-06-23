@@ -554,6 +554,32 @@ test("file content: copy duplicates the binary to a new id (auth required)", asy
   assert.ok(got.equals(pdf), "duplicated bytes are identical");
 });
 
+test("quota: uploading beyond a user's storage limit is rejected (413)", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const { token, user } = await (
+    await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")
+  ).json();
+
+  // Give the user a tiny limit and register a target file they own.
+  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  ds.users.find((u) => u.id === user.id).storage = { limitBytes: 10 };
+  ds.files.push({ id: "file-quota", name: "q.pdf", ownerId: user.id, size: 5 });
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", ...bearer(token) },
+    body: JSON.stringify(ds),
+  });
+
+  const res = await fetch(`${base}/api/files/file-quota/content`, {
+    method: "PUT",
+    headers: { "content-type": "application/pdf", ...bearer(token) },
+    body: Buffer.from("%PDF-1.4\nthis exceeds ten bytes easily\n%%EOF\n"),
+  });
+  assert.equal(res.status, 413, "over-quota upload rejected");
+});
+
 test("file versions: a new version archives bytes and becomes the current content", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());
