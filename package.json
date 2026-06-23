@@ -8,11 +8,11 @@
     "node": ">=18"
   },
   "scripts": {
-    "dev": "http-server public -c-1 -o",
-    "serve": "http-server public -p 8000",
+    "start": "node server/index.js",
+    "serve": "node server/index.js",
+    "dev": "node --watch server/index.js",
     "build:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --watch",
-    "start": "npm run watch:css & npm run serve",
     "test": "node --test",
     "test:watch": "node --test --watch",
     "lint": "eslint .",
@@ -25,7 +25,6 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.5.0",
     "globals": "^17.7.0",
-    "http-server": "^14.1.1",
     "jsdom": "^29.1.1",
     "prettier": "^3.8.4",
     "tailwindcss": "^3.4.17"
@@ -47,5 +46,8 @@
   "bugs": {
     "url": "https://github.com/rajesh-1920/paperhub/issues"
   },
-  "homepage": "https://github.com/rajesh-1920/paperhub#readme"
+  "homepage": "https://github.com/rajesh-1920/paperhub#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }

@@ -39,9 +39,9 @@ export default [
     },
   },
 
-  // Node ESM (tests + ESM config files).
+  // Node ESM (server + tests + ESM config files).
   {
-    files: ["tests/**/*.mjs", "eslint.config.js"],
+    files: ["server/**/*.js", "tests/**/*.mjs", "eslint.config.js"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
