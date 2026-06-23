@@ -1079,88 +1079,77 @@ function loadVersionHistory() {
   try {
     const currentUser = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
     const files = Array.isArray(currentUser?.files) ? currentUser.files : [];
-    const latestFile = files[0] || null;
+    const wantedId = new URLSearchParams(window.location.search).get("id");
+    const file = (wantedId && files.find((f) => f.id === wantedId)) || files[0] || null;
 
-    if (!latestFile) {
+    const setEmpty = () => {
       historyContainer.innerHTML = `
         <div class="empty-state">
           <h3>No version history yet</h3>
-          <p>Your dataset does not contain any file versions for the current user.</p>
-        </div>
-      `;
-      document.querySelectorAll("[data-version-file-name]").forEach((element) => {
-        element.textContent = "";
-      });
-      document.querySelectorAll("[data-version-current]").forEach((element) => {
-        element.textContent = "";
-      });
-      return;
-    }
+          <p>Upload a document (and new versions of it) to build up its history.</p>
+        </div>`;
+      document.querySelectorAll("[data-version-file-name]").forEach((el) => (el.textContent = ""));
+      document.querySelectorAll("[data-version-current]").forEach((el) => (el.textContent = ""));
+    };
 
-    document.querySelectorAll("[data-version-file-name]").forEach((element) => {
-      element.textContent = latestFile.name || "";
+    if (!file) return setEmpty();
+
+    // Newest first.
+    const versions = (typeof phListVersions === "function" ? phListVersions(file.id) : [])
+      .slice()
+      .reverse();
+    if (!versions.length) return setEmpty();
+
+    const currentId =
+      file.currentVersion || versions[0].versionId || versions[0].contentRef || null;
+    const labelOf = (v) => v.versionLabel || `v${v.number}`;
+
+    document.querySelectorAll("[data-version-file-name]").forEach((el) => {
+      el.textContent = file.name || "";
     });
-    document.querySelectorAll("[data-version-current]").forEach((element) => {
-      element.textContent = "v" + Math.max(files.length, 1) + ".0";
-    });
-
-    const versions = files.slice(0, 3).map((file, index) => {
-      const versionNumber = files.length - index;
-      const versionDate = file.uploadedAt ? new Date(file.uploadedAt) : null;
-      const fileSize =
-        typeof formatFileSize === "function"
-          ? formatFileSize(file.size || 0)
-          : `${Math.round((file.size || 0) / 1024)} KB`;
-
-      return {
-        version: `v${versionNumber}.0`,
-        date: versionDate ? versionDate.toISOString().slice(0, 10) : "",
-        author: currentUser.name,
-        changes: `${file.name} updated from the Bangladesh dataset`,
-        size: fileSize,
-        file,
-      };
+    document.querySelectorAll("[data-version-current]").forEach((el) => {
+      const cur = versions.find((v) => v.versionId === currentId) || versions[0];
+      el.textContent = cur ? labelOf(cur) : "";
     });
 
     const fragment = document.createDocumentFragment();
-
-    versions.forEach((version, index) => {
+    versions.forEach((version) => {
+      const isCurrent = version.versionId === currentId;
       const versionItem = createElement("div", "version-item");
       versionItem.innerHTML = `
         <div class="version-header">
           <div class="version-info">
-            <h4 class="version-title">${version.version}</h4>
+            <h4 class="version-title">${escapeHtml(labelOf(version))}${isCurrent ? " (current)" : ""}</h4>
             <p class="version-meta">
-              <span class="version-date">${formatDate(version.date)}</span>
-              <span class="version-author">by ${escapeHtml(version.author)}</span>
+              <span class="version-date">${formatDate(version.uploadedAt)}</span>
+              <span class="version-author">by ${escapeHtml(version.uploadedByName || currentUser.name || "")}</span>
             </p>
           </div>
           <div class="version-actions">
             <button class="btn btn-sm btn-outline" data-version-act="view">View</button>
             <button class="btn btn-sm btn-outline" data-version-act="download">Download</button>
-            ${index === 0 ? "" : '<button class="btn btn-sm btn-outline" data-version-act="restore">Restore</button>'}
+            ${isCurrent ? "" : '<button class="btn btn-sm btn-outline" data-version-act="restore">Restore</button>'}
           </div>
         </div>
-        <p class="version-changes">${escapeHtml(version.changes)}</p>
-        <p class="version-size">File size: ${escapeHtml(version.size)}</p>
-        ${index < versions.length - 1 ? '<div class="version-divider"></div>' : ""}
+        <p class="version-changes">${escapeHtml(version.changeNote || "Updated document")}</p>
+        <p class="version-size">File size: ${escapeHtml(version.sizeLabel || formatFileSize(version.size || 0))}</p>
       `;
 
+      const versionRef = { id: version.contentRef || file.id, name: file.name, hasContent: true };
       addEvent(versionItem.querySelector('[data-version-act="view"]'), "click", () =>
-        viewFileContent(version.file),
+        viewFileContent(versionRef),
       );
       addEvent(versionItem.querySelector('[data-version-act="download"]'), "click", () =>
-        downloadFile(version.file),
+        downloadFile(versionRef),
       );
       addEvent(versionItem.querySelector('[data-version-act="restore"]'), "click", () => {
-        if (typeof phTouchFile === "function") phTouchFile(version.file.id);
-        showSuccess(`Restored ${version.version} of ${version.file.name}`);
+        if (typeof phRestoreVersion === "function") phRestoreVersion(file.id, version.versionId);
+        showSuccess(`Restored ${labelOf(version)} of ${file.name}`);
         loadVersionHistory();
       });
 
       fragment.appendChild(versionItem);
     });
-
     historyContainer.appendChild(fragment);
   } catch (error) {
     showError("Failed to load version history");

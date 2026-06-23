@@ -27,12 +27,14 @@ test("version history escapes a malicious file name (no XSS injection)", () => {
     ownerName: user.name,
     uploadedAt: new Date().toISOString(),
     size: 1024,
+    hasContent: true,
   });
 
   window.loadVersionHistory();
-  const container = document.getElementById("versionHistoryContainer");
-  assert.equal(container.querySelectorAll("img").length, 0, "no injected <img> element");
-  assert.match(container.innerHTML, /&lt;img/, "payload rendered as escaped text");
+  // The malicious name must never be parsed into a live element.
+  assert.equal(document.querySelectorAll("img").length, 0, "no injected <img> element");
+  const nameEl = document.querySelector("[data-version-file-name]");
+  assert.ok(nameEl && nameEl.textContent.includes("<img"), "name rendered as literal text");
 });
 
 test("phSetReviewStatus ignores invalid status values", () => {

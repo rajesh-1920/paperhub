@@ -48,3 +48,25 @@ test("versions: adding a version updates history and currentVersion across copie
   assert.equal(ownerCopy().currentVersion, "vabc", "owner copy got the new current version");
   assert.equal(ownerCopy().versionCount, globalCopy.versionCount);
 });
+
+test("versions: restore points currentVersion back to an older version", () => {
+  const { window } = boot();
+  const target = dualCopiedFile(window);
+  window.phAddFileVersion(target.id, { versionId: "v1x", size: 100 });
+  window.phAddFileVersion(target.id, { versionId: "v2x", size: 200 });
+  assert.equal(
+    window.getPaperHubDataset().files.find((f) => f.id === target.id).currentVersion,
+    "v2x",
+  );
+
+  assert.equal(window.phRestoreVersion(target.id, "v1x"), true);
+  const file = window.getPaperHubDataset().files.find((f) => f.id === target.id);
+  assert.equal(file.currentVersion, "v1x");
+  assert.equal(file.size, 100, "size restored from the version");
+
+  const ownerCopy = window
+    .getPaperHubDataset()
+    .users.flatMap((u) => u.files || [])
+    .find((f) => f.id === target.id);
+  assert.equal(ownerCopy.currentVersion, "v1x", "owner copy restored too");
+});

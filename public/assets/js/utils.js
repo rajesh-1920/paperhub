@@ -634,6 +634,40 @@ function phAddFileVersion(fileId, meta = {}) {
   return found;
 }
 
+// Revert a file to an earlier version: copy that version's archived binary back
+// to the live content and point currentVersion at it (history is unchanged).
+function phRestoreVersion(fileId, versionId) {
+  const dataset = getPaperHubDataset();
+  const file = (dataset.files || []).find((f) => f.id === fileId);
+  if (!file) return false;
+  const version = (file.versions || []).find((v) => v.versionId === versionId);
+  if (!version) return false;
+
+  if (
+    version.contentRef &&
+    version.contentRef !== fileId &&
+    typeof copyFileContentSync === "function"
+  ) {
+    copyFileContentSync(version.contentRef, fileId);
+  }
+  const now = new Date().toISOString();
+  const apply = (list) =>
+    (list || []).forEach((f) => {
+      if (f.id !== fileId) return;
+      f.currentVersion = versionId;
+      if (version.size) {
+        f.size = version.size;
+        f.sizeLabel = version.sizeLabel || formatFileSize(version.size);
+      }
+      f.updatedAt = now;
+      f.hasContent = true;
+    });
+  apply(dataset.files);
+  (dataset.users || []).forEach((user) => apply(user.files));
+  persistPaperHubData();
+  return true;
+}
+
 /* ---------------------------------------------------------------------------
  * Access control (ACL). Files and folders carry an acl[] of grants:
  *   { principalType: "user"|"role"|"team", principalId, permission, grantedBy,
