@@ -552,6 +552,14 @@
           ) {
             initVersionHistoryPage();
           }
+
+          if (body.classList.contains("trash-page") && typeof initTrashPage === "function") {
+            initTrashPage();
+          }
+
+          if (body.classList.contains("activity-page") && typeof loadActivityLog === "function") {
+            loadActivityLog();
+          }
         };
 
         runPageInitializer();

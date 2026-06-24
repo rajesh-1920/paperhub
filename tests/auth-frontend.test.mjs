@@ -31,6 +31,30 @@ test("frontend registration goes through the API", async () => {
   assert.equal(data.user.role, "user");
 });
 
+test("session: a write that stays 401 clears the session (no silent failure)", () => {
+  const { window } = bootPage("public/pages/dashboard/user.html", ["utils.js"], "user");
+  window.setStorage("paperhub-auth-token", "stale-token");
+  window.setStorage("paperhub-refresh-token", ""); // can't be refreshed
+  window.setStorage("paperhub-user", { id: "u", role: "user" });
+
+  // Force the dataset PUT to come back 401.
+  const Real = window.XMLHttpRequest;
+  window.XMLHttpRequest = class extends Real {
+    send(body) {
+      super.send(body);
+      if (this._url.includes("/api/dataset") && this._method === "PUT") {
+        this.status = 401;
+        this.responseText = '{"error":"unauthorized"}';
+      }
+    }
+  };
+
+  window.persistPaperHubData();
+
+  assert.equal(window.getStorage("paperhub-auth-token"), null, "token cleared on dead session");
+  assert.equal(window.getStorage("paperhub-user"), null, "session cleared so a re-login is forced");
+});
+
 test("signed-in dataset requests carry the bearer token", () => {
   const { window } = boot();
   window.setStorage("paperhub-auth-token", "tok-xyz");

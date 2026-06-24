@@ -127,9 +127,37 @@ function refreshPaperHubDataset() {
   return getPaperHubDataset();
 }
 
+// When a write fails auth and the token can't be refreshed, the session is
+// dead (e.g. a stale pre-auth token). Clear it and send the user to log in so
+// they get a working token, instead of writes failing silently.
+function handleSessionExpired() {
+  try {
+    if (/\/pages\/auth\//.test(window.location.pathname || "")) return;
+  } catch (error) {
+    return;
+  }
+  if (window.__paperhubSessionExpiring) return;
+  window.__paperhubSessionExpiring = true;
+  removeStorage(StorageKey.USER);
+  removeStorage(StorageKey.USER_ROLE);
+  removeStorage(StorageKey.TOKEN);
+  removeStorage(StorageKey.REFRESH);
+  try {
+    if (typeof showError === "function") {
+      showError("Your session has expired — please sign in again.");
+    }
+  } catch (error) {
+    /* toast unavailable */
+  }
+  try {
+    window.location.href = resolveAppPath("pages/auth/login.html");
+  } catch (error) {
+    /* navigation unavailable */
+  }
+}
+
 // Send a synchronous, authenticated request; on a 401 refresh the access token
-// once and retry, so a write never silently fails just because the short-lived
-// access token expired mid-session.
+// once and retry. If it's still unauthorized, the session is dead → re-login.
 function sendAuthedSync(method, url, { body = null, contentType = null } = {}) {
   const send = () => {
     const request = new XMLHttpRequest();
@@ -144,6 +172,9 @@ function sendAuthedSync(method, url, { body = null, contentType = null } = {}) {
   let request = send();
   if (request.status === 401 && refreshAccessTokenSync()) {
     request = send();
+  }
+  if (request.status === 401) {
+    handleSessionExpired();
   }
   return request;
 }
