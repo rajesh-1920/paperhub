@@ -1251,6 +1251,48 @@ function phAddUser(account, profile) {
   persistPaperHubData();
 }
 
+// Permanently remove a user: their auth account and profile, plus everything
+// they own (files, folders, review-queue items, share links) so no orphaned
+// records are left pointing at a user that no longer exists. Also scrubs the
+// removed user's files/reviews from any OTHER user's embedded copies (e.g. an
+// officer's review list). Returns true if a matching user/account was removed.
+function phRemoveUser(userId) {
+  if (!userId) return false;
+  const dataset = getPaperHubDataset();
+  const existed =
+    (dataset.users || []).some((u) => u.id === userId) ||
+    (dataset.authAccounts || []).some((a) => a.id === userId);
+  if (!existed) return false;
+
+  const ownedFileIds = new Set(
+    (dataset.files || []).filter((f) => f.ownerId === userId).map((f) => f.id),
+  );
+
+  dataset.authAccounts = (dataset.authAccounts || []).filter((a) => a.id !== userId);
+  dataset.users = (dataset.users || []).filter((u) => u.id !== userId);
+  dataset.files = (dataset.files || []).filter((f) => f.ownerId !== userId);
+  dataset.folders = (dataset.folders || []).filter((f) => f.ownerId !== userId);
+  dataset.reviewQueue = (dataset.reviewQueue || []).filter((r) => !ownedFileIds.has(r.fileId));
+  dataset.shareLinks = (dataset.shareLinks || []).filter(
+    (s) => s.createdBy !== userId && !ownedFileIds.has(s.fileId),
+  );
+
+  // Drop any lingering references to the removed user's files from the
+  // remaining users' embedded file/review copies.
+  (dataset.users || []).forEach((user) => {
+    if (Array.isArray(user.files)) {
+      user.files = user.files.filter((f) => !ownedFileIds.has(f.id));
+    }
+    if (Array.isArray(user.reviews)) {
+      user.reviews = user.reviews.filter((r) => !ownedFileIds.has(r.fileId));
+    }
+  });
+
+  if (typeof phRecomputeDashboardStats === "function") phRecomputeDashboardStats(dataset);
+  persistPaperHubData();
+  return true;
+}
+
 function phSetReviewStatus(reviewId, status) {
   if (!PH_REVIEW_STATUSES.includes(status)) return;
   const dataset = getPaperHubDataset();

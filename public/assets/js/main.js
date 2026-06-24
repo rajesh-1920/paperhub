@@ -510,6 +510,7 @@ function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
   const emptyRow = (cols, message) =>
     `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
 
+  const me = typeof getCurrentUserData === "function" ? getCurrentUserData()?.id : null;
   const userRows = allUsers
     .map(
       (account) => `
@@ -518,7 +519,14 @@ function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
           <td>${phPill(phRoleLabel(account.role), phRoleVariant(account.role))}</td>
           <td>${phPill(account.accountStatus || "Active", (account.accountStatus || "Active") === "Active" ? "emerald" : "rose")}</td>
           <td>${escapeHtml(formatDate(account.joinedDate))}</td>
-          <td><button type="button" data-admin-edit data-user-id="${escapeHtml(account.id)}" class="font-semibold text-teal-700 hover:text-teal-800 transition-colors">Edit</button></td>
+          <td>
+            <button type="button" data-admin-edit data-user-id="${escapeHtml(account.id)}" class="font-semibold text-teal-700 hover:text-teal-800 transition-colors">Edit</button>
+            ${
+              account.id === me
+                ? ""
+                : `<button type="button" data-admin-remove data-user-id="${escapeHtml(account.id)}" data-user-name="${escapeHtml(account.name)}" class="font-semibold text-rose-600 hover:text-rose-700 transition-colors" style="margin-left:0.75rem;">Remove</button>`
+            }
+          </td>
         </tr>`,
     )
     .join("");
@@ -665,6 +673,34 @@ function setupAdminUserManagement() {
     if (!editButton) return;
     const account = phFindUser(editButton.getAttribute("data-user-id"));
     if (account) openModal("edit", account);
+  });
+
+  document.addEventListener("click", (event) => {
+    const removeButton = event.target.closest("[data-admin-remove]");
+    if (!removeButton) return;
+    const id = removeButton.getAttribute("data-user-id");
+    const name = removeButton.getAttribute("data-user-name") || "this user";
+    const me = typeof getCurrentUserData === "function" ? getCurrentUserData()?.id : null;
+    if (id === me) {
+      showError("You cannot remove your own account.");
+      return;
+    }
+    if (
+      !window.confirm(
+        `Remove ${name}? This permanently deletes the account and all of their files.`,
+      )
+    ) {
+      return;
+    }
+    if (typeof phRemoveUser === "function" && phRemoveUser(id)) {
+      if (typeof logActivityViaApi === "function") {
+        logActivityViaApi("user.remove", { resourceId: id, resourceName: name });
+      }
+      showSuccess(`Removed ${name}`);
+      applyCurrentUserPageData();
+    } else {
+      showError("Could not remove that user.");
+    }
   });
 
   form.addEventListener("submit", (event) => {
