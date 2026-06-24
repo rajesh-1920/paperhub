@@ -76,7 +76,10 @@ export function preserveServerSecrets(incoming, current) {
 // the long-term replacement; this caps the blast radius until then.)
 export function applyDatasetWritePolicy(incoming, current, user) {
   const result = preserveServerSecrets(incoming, current);
-  if (!user || user.role === "admin") {
+  // Staff (admins and officers) legitimately edit cross-user data — officers
+  // approve/reject other users' documents, admins manage everything. Only the
+  // regular "user" role is constrained to their own slice.
+  if (!user || user.role === "admin" || user.role === "officer") {
     return result;
   }
 

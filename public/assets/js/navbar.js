@@ -25,9 +25,11 @@
     fileDetails: ["/pages/file/files.html"],
     fileUpload: ["/pages/file/upload.html"],
     fileHistory: ["/pages/file/version-history.html"],
+    trash: ["/pages/file/trash.html"],
     reviews: TOP_NAV_ROUTE_GROUPS.reviews,
     profile: ["/pages/profile/profile.html", "/pages/profile/profile-edit.html"],
     settings: ["/pages/account/settings.html"],
+    activity: ["/pages/account/activity.html"],
     billing: ["/pages/payment/payment.html"],
     support: TOP_NAV_ROUTE_GROUPS.support,
   };

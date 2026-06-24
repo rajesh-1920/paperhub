@@ -514,6 +514,36 @@ test("write policy: a non-admin can't escalate roles or write others' data", asy
   );
 });
 
+test("write policy: an officer may update another user's file (review flow)", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  const { token, user: officer } = await (
+    await login(base, "rajdip.roy@paperhub.com.bd", "officer01")
+  ).json();
+  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const target = ds.files.find((f) => f.ownerId && f.ownerId !== officer.id);
+  target.status = "completed";
+  // mirror to the owner's embedded copy, like the review mutators do
+  const owner = ds.users.find((u) => u.id === target.ownerId);
+  (owner.files || []).forEach((f) => {
+    if (f.id === target.id) f.status = "completed";
+  });
+
+  await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", ...bearer(token) },
+    body: JSON.stringify(ds),
+  });
+
+  const after = await (await fetch(`${base}/api/dataset`)).json();
+  assert.equal(
+    after.files.find((f) => f.id === target.id).status,
+    "completed",
+    "officer's review decision persisted (not reverted by the write policy)",
+  );
+});
+
 test("write policy: an admin may change a user's role", async (t) => {
   const { server, base } = await startTestServer();
   t.after(() => server.close());
