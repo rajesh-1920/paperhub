@@ -1,6 +1,8 @@
 // Helpers for turning an internal authAccount into a safe, client-facing user
 // object. Credentials (password / passwordHash) must never leave the server.
 
+import { canAccessResource } from "./ownership.js";
+
 export function sanitizeAccount(account) {
   if (!account) {
     return account;
@@ -38,6 +40,57 @@ export function sanitizeDataset(dataset) {
     // Share-link tokens/hashes are secrets — fetched per-user via /api/share/mine.
     shareLinks: [],
   };
+}
+
+function teamIdsForUser(dataset, userId) {
+  return (dataset.teams || [])
+    .filter((team) => (team.members || []).some((member) => member.userId === userId))
+    .map((team) => team.id);
+}
+
+// A minimal public view of a user other than the viewer: enough to render a
+// name/role label, with no email, payment, notifications, or embedded files.
+function minimalUser(user) {
+  if (!user) return user;
+  return {
+    id: user.id,
+    name: user.name,
+    role: user.role,
+    department: user.department,
+    title: user.title,
+    accountStatus: user.accountStatus,
+    joinedDate: user.joinedDate,
+  };
+}
+
+// Per-viewer projection of the (already credential-sanitized) dataset, so a
+// regular user can't read every other user's files and personal data:
+//   - admin / officer: full view (they legitimately work across all users).
+//   - regular user: only files/folders they can access and their own review
+//     items; every OTHER user is reduced to a minimal public profile and the
+//     account list is withheld (admin-only data).
+//   - no viewer (logged out): a structural shell only — no files/users at all.
+export function projectDatasetForViewer(dataset, viewer) {
+  const sanitized = sanitizeDataset(dataset);
+  if (!viewer) {
+    return { ...sanitized, files: [], folders: [], reviewQueue: [], users: [], authAccounts: [] };
+  }
+  if (viewer.role === "admin" || viewer.role === "officer") {
+    return sanitized;
+  }
+
+  const teamIds = teamIdsForUser(dataset, viewer.id);
+  const files = (sanitized.files || []).filter((file) => canAccessResource(viewer, file, teamIds));
+  const accessibleFileIds = new Set(files.map((file) => file.id));
+  const folders = (sanitized.folders || []).filter((folder) => folder.ownerId === viewer.id);
+  const reviewQueue = (sanitized.reviewQueue || []).filter((review) =>
+    accessibleFileIds.has(review.fileId),
+  );
+  const users = (sanitized.users || []).map((user) =>
+    user.id === viewer.id ? user : minimalUser(user),
+  );
+
+  return { ...sanitized, files, folders, reviewQueue, users, authAccounts: [] };
 }
 
 // The client never receives credentials or refresh tokens, so a round-tripped

@@ -30,7 +30,7 @@ test("API serves the dataset and persists writes to the JSON file", async (t) =>
   const { server, base, dbFile } = await startTestServer();
   t.after(() => server.close());
 
-  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  const dataset = await dumpDataset(base);
   assert.ok(Array.isArray(dataset.users) && dataset.users.length > 0, "GET returns the dataset");
 
   // Writes require authentication.
@@ -55,7 +55,7 @@ test("API serves the dataset and persists writes to the JSON file", async (t) =>
   });
   assert.equal(put.status, 200, "PUT accepted");
 
-  const rereadRes = await fetch(`${base}/api/dataset`);
+  const rereadRes = await fetch(`${base}/api/dataset`, { headers: bearer(token) });
   assert.equal(
     rereadRes.headers.get("cache-control"),
     "no-store",
@@ -82,6 +82,13 @@ async function tokenFor(base, email = "rajesh.biswas@paperhub.com.bd", password 
 }
 const bearer = (token) => ({ authorization: `Bearer ${token}` });
 
+// GET /api/dataset is now scoped to the caller, so inspecting full server state
+// in a test requires authentication. Default to the seed admin (full view).
+async function dumpDataset(base, token) {
+  const t = token || (await tokenFor(base));
+  return (await fetch(`${base}/api/dataset`, { headers: bearer(t) })).json();
+}
+
 test("auth: login issues tokens, refresh renews, bad creds rejected", async (t) => {
   const { server, base, dbFile } = await startTestServer();
   t.after(() => server.close());
@@ -100,7 +107,7 @@ test("auth: login issues tokens, refresh renews, bad creds rejected", async (t) 
   assert.equal(body.user.passwordHash, undefined, "no hash leaks");
 
   // Reads never leak credentials or refresh tokens.
-  const exposed = await (await fetch(`${base}/api/dataset`)).json();
+  const exposed = await dumpDataset(base);
   assert.ok(
     exposed.authAccounts.every((a) => a.password === undefined && a.passwordHash === undefined),
     "credentials stripped from dataset reads",
@@ -165,7 +172,7 @@ test("auth: register creates a first-class user and auto-logs-in", async (t) => 
   assert.equal(body.user.email, "new@paperhub.test", "email normalized");
   assert.equal(body.user.passwordHash, undefined);
 
-  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  const dataset = await dumpDataset(base);
   assert.ok(
     dataset.authAccounts.some((a) => a.email === "new@paperhub.test"),
     "account persisted",
@@ -237,7 +244,7 @@ test("dataset PUT preserves server-only credentials it never sent to the client"
   // Log in to migrate an account to a hash, then round-trip the (credential-less)
   // dataset back via PUT and confirm the hash survives.
   const { token } = await (await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")).json();
-  const exposed = await (await fetch(`${base}/api/dataset`)).json();
+  const exposed = await dumpDataset(base);
   exposed.users[0].name = "Renamed Via PUT";
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
@@ -296,7 +303,7 @@ test("search: a team-scoped ACL grant gives team members access", async (t) => {
   t.after(() => server.close());
 
   const adminToken = await tokenFor(base);
-  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const ds = await dumpDataset(base);
   const officer = ds.users.find((u) => u.role === "officer");
   const file = ds.files.find((f) => f.ownerId !== officer.id);
   ds.teams.push({
@@ -335,7 +342,7 @@ test("search: includes files shared via an ACL grant (shared=1 excludes own)", a
   t.after(() => server.close());
 
   const adminToken = await tokenFor(base);
-  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const ds = await dumpDataset(base);
   const officer = ds.users.find((u) => u.role === "officer");
   const someFile = ds.files.find((f) => f.ownerId !== officer.id);
   someFile.acl = [
@@ -373,7 +380,7 @@ test("share: create, resolve, password-protect, revoke", async (t) => {
   const { token: userToken, user } = await (
     await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")
   ).json();
-  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const ds = await dumpDataset(base);
   const ownFile = ds.files.find((f) => f.ownerId === user.id);
 
   // Create a share link for an owned file.
@@ -389,7 +396,7 @@ test("share: create, resolve, password-protect, revoke", async (t) => {
   // Resolve it publicly (no auth) — and shareLinks never leak in the dataset.
   const resolved = await (await fetch(`${base}/api/share/${shareToken}`)).json();
   assert.equal(resolved.resource.id, ownFile.id);
-  assert.deepEqual((await (await fetch(`${base}/api/dataset`)).json()).shareLinks, []);
+  assert.deepEqual((await dumpDataset(base)).shareLinks, []);
 
   // /mine lists it without leaking the password hash.
   const mine = await (await fetch(`${base}/api/share/mine`, { headers: bearer(userToken) })).json();
@@ -428,7 +435,7 @@ test("auth: events are recorded to the audit log (and not exposed to clients)", 
   assert.ok(actions.includes("auth.login"), "successful login audited");
   assert.ok(actions.includes("auth.login_failed"), "failed login audited");
 
-  const exposed = await (await fetch(`${base}/api/dataset`)).json();
+  const exposed = await dumpDataset(base);
   assert.deepEqual(exposed.auditLog, [], "audit log is not exposed in dataset reads");
 });
 
@@ -491,7 +498,7 @@ test("write policy: a non-admin can't escalate roles or write others' data", asy
   const { token, user } = await (
     await login(base, "mahmud.hasan@paperhub.edu.bd", "user01")
   ).json();
-  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const ds = await dumpDataset(base);
 
   ds.users.find((u) => u.id === user.id).role = "admin"; // attempt self-escalation
   ds.files.push({ id: "file-inject", name: "x.pdf", ownerId: "ghost-user" }); // others' file
@@ -504,7 +511,7 @@ test("write policy: a non-admin can't escalate roles or write others' data", asy
     body: JSON.stringify(ds),
   });
 
-  const after = await (await fetch(`${base}/api/dataset`)).json();
+  const after = await dumpDataset(base);
   assert.equal(after.users.find((u) => u.id === user.id).role, "user", "no self-escalation");
   assert.ok(!after.files.some((f) => f.id === "file-inject"), "can't add a file owned by another");
   assert.equal(
@@ -521,7 +528,7 @@ test("write policy: an officer may update another user's file (review flow)", as
   const { token, user: officer } = await (
     await login(base, "rajdip.roy@paperhub.com.bd", "officer01")
   ).json();
-  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const ds = await dumpDataset(base);
   const target = ds.files.find((f) => f.ownerId && f.ownerId !== officer.id);
   target.status = "completed";
   // mirror to the owner's embedded copy, like the review mutators do
@@ -536,7 +543,7 @@ test("write policy: an officer may update another user's file (review flow)", as
     body: JSON.stringify(ds),
   });
 
-  const after = await (await fetch(`${base}/api/dataset`)).json();
+  const after = await dumpDataset(base);
   assert.equal(
     after.files.find((f) => f.id === target.id).status,
     "completed",
@@ -549,7 +556,7 @@ test("write policy: an admin may change a user's role", async (t) => {
   t.after(() => server.close());
 
   const adminToken = await tokenFor(base);
-  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const ds = await dumpDataset(base);
   const someUser = ds.users.find((u) => u.role === "user");
   someUser.role = "officer";
   await fetch(`${base}/api/dataset`, {
@@ -557,7 +564,7 @@ test("write policy: an admin may change a user's role", async (t) => {
     headers: { "content-type": "application/json", ...bearer(adminToken) },
     body: JSON.stringify(ds),
   });
-  const after = await (await fetch(`${base}/api/dataset`)).json();
+  const after = await dumpDataset(base);
   assert.equal(after.users.find((u) => u.id === someUser.id).role, "officer", "admin changed role");
 });
 
@@ -566,7 +573,7 @@ test("dataset exposes the new SaaS collections and round-trips them", async (t) 
   t.after(() => server.close());
 
   const NEW = ["folders", "shareLinks", "tags", "auditLog", "teams", "refreshTokens"];
-  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  const dataset = await dumpDataset(base);
   for (const key of NEW) {
     assert.ok(Array.isArray(dataset[key]), `${key} is defaulted to an array`);
   }
@@ -579,7 +586,7 @@ test("dataset exposes the new SaaS collections and round-trips them", async (t) 
     body: JSON.stringify(dataset),
   });
 
-  const reread = await (await fetch(`${base}/api/dataset`)).json();
+  const reread = await dumpDataset(base);
   assert.equal(reread.folders[0]?.name, "Reports", "folders persisted");
   assert.equal(reread.tags[0]?.slug, "important", "tags persisted");
 });
@@ -677,7 +684,7 @@ test("quota: uploading beyond a user's storage limit is rejected (413)", async (
   ).json();
 
   // Give the user a tiny limit and register a target file they own.
-  const ds = await (await fetch(`${base}/api/dataset`)).json();
+  const ds = await dumpDataset(base);
   ds.users.find((u) => u.id === user.id).storage = { limitBytes: 10 };
   ds.files.push({ id: "file-quota", name: "q.pdf", ownerId: user.id, size: 5 });
   await fetch(`${base}/api/dataset`, {
@@ -735,7 +742,9 @@ test("file versions: a new version archives bytes and becomes the current conten
   assert.ok(current.equals(v2), "current content updated to the new version");
 
   // The archived version is byte-identical and survives a dataset prune.
-  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  // Reuse the existing token: a fresh login would write the dataset (refresh
+  // token) and prune the not-yet-referenced version binary out from under us.
+  const dataset = await dumpDataset(base, token);
   dataset.files.push({ id: "file-v", name: "v.pdf", versions: [{ versionId, contentRef }] });
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
@@ -762,7 +771,7 @@ test("file content: orphaned binaries are pruned when the dataset drops the file
   assert.equal((await fetch(`${base}/api/files/file-orphan/content`)).status, 200, "stored");
 
   // Persist a dataset that does not reference file-orphan.
-  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  const dataset = await dumpDataset(base);
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
     headers: { "content-type": "application/json", ...bearer(token) },
@@ -790,7 +799,8 @@ test("file content: a version's binary is retained through orphan pruning", asyn
   });
 
   // The dataset references it via the file's versions[] (no current binary).
-  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  // Reuse the existing token (a fresh login would prune this binary early).
+  const dataset = await dumpDataset(base, token);
   dataset.files.push({
     id: "file-ver",
     name: "v.pdf",
@@ -815,7 +825,7 @@ test("API reset restores the dataset from the seed", async (t) => {
   t.after(() => server.close());
 
   const adminToken = await tokenFor(base);
-  const dataset = await (await fetch(`${base}/api/dataset`)).json();
+  const dataset = await dumpDataset(base);
   dataset.users[0].name = "Temporarily Changed";
   await fetch(`${base}/api/dataset`, {
     method: "PUT",
@@ -839,4 +849,95 @@ test("API reset restores the dataset from the seed", async (t) => {
 
   const onDisk = JSON.parse(await readFile(dbFile, "utf8"));
   assert.notEqual(onDisk.users[0].name, "Temporarily Changed", "file restored on disk");
+});
+
+test("security: the raw runtime DB is never served as a static file", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+
+  // The JSON store lives under public/assets/data, but it holds credentials and
+  // tokens — it must not be downloadable as a static asset.
+  assert.equal(
+    (await fetch(`${base}/assets/data/paperhub-backend.json`)).status,
+    404,
+    "the runtime DB file is blocked",
+  );
+  assert.equal(
+    (await fetch(`${base}/assets/data/anything.json`)).status,
+    404,
+    "the data dir is blocked",
+  );
+  // Other static assets and the access-controlled API still work.
+  assert.equal(
+    (await fetch(`${base}/assets/js/utils.js`)).status,
+    200,
+    "other static assets served",
+  );
+  assert.equal((await fetch(`${base}/api/dataset`)).status, 200, "dataset reachable via the API");
+});
+
+test("privacy: GET /api/dataset is scoped to the caller", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+  const get = (tok) =>
+    fetch(`${base}/api/dataset`, tok ? { headers: bearer(tok) } : {}).then((r) => r.json());
+
+  // Guest: a bare shell — no files, users, or accounts.
+  const guest = await get(null);
+  assert.equal((guest.files || []).length, 0, "guest sees no files");
+  assert.equal((guest.users || []).length, 0, "guest sees no users");
+  assert.equal((guest.authAccounts || []).length, 0, "guest sees no accounts");
+
+  // Regular user: only their own files; other users reduced to public profiles.
+  const userTok = await tokenFor(base, "mahmud.hasan@paperhub.edu.bd", "user01");
+  const u = await get(userTok);
+  assert.ok((u.files || []).length > 0, "user sees their own files");
+  assert.ok(
+    (u.files || []).every((f) => f.ownerId === "user-mahmud.hasan"),
+    "user sees ONLY their own files",
+  );
+  assert.equal((u.authAccounts || []).length, 0, "account list withheld from a regular user");
+  const otherUser = (u.users || []).find((x) => x.id !== "user-mahmud.hasan");
+  assert.ok(otherUser, "other users still listed for name labels");
+  assert.equal(otherUser.email, undefined, "other users' email/PII stripped");
+  assert.equal((otherUser.files || []).length, 0, "other users' files not embedded");
+  const self = (u.users || []).find((x) => x.id === "user-mahmud.hasan");
+  assert.ok(self && self.email, "the viewer's own record stays complete");
+
+  // Staff: full cross-user visibility.
+  const offTok = await tokenFor(base, "rajdip.roy@paperhub.com.bd", "officer01");
+  const o = await get(offTok);
+  assert.ok(
+    (o.files || []).some((f) => f.ownerId !== "officer-rajdip.roy"),
+    "officer sees other users' files",
+  );
+  const adminTok = await tokenFor(base, "rajesh.biswas@paperhub.com.bd", "admin01");
+  const a = await get(adminTok);
+  assert.ok((a.authAccounts || []).length > 0, "admin sees the account list");
+});
+
+test("privacy: a regular user's scoped PUT does not erase other users' data", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+  const userTok = await tokenFor(base, "mahmud.hasan@paperhub.edu.bd", "user01");
+  const adminTok = await tokenFor(base, "rajesh.biswas@paperhub.com.bd", "admin01");
+
+  const scoped = await fetch(`${base}/api/dataset`, { headers: bearer(userTok) }).then((r) =>
+    r.json(),
+  );
+  const put = await fetch(`${base}/api/dataset`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", ...bearer(userTok) },
+    body: JSON.stringify(scoped),
+  });
+  assert.equal(put.status, 200, "scoped PUT accepted");
+
+  const full = await fetch(`${base}/api/dataset`, { headers: bearer(adminTok) }).then((r) =>
+    r.json(),
+  );
+  assert.equal((full.users || []).length, 3, "all users preserved after the scoped PUT");
+  assert.ok(
+    (full.files || []).some((f) => f.ownerId === "officer-rajdip.roy"),
+    "another user's files preserved",
+  );
 });

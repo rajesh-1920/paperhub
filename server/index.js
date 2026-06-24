@@ -18,8 +18,8 @@ import { filesRouter } from "./routes/files.js";
 import { shareRouter } from "./routes/share.js";
 import { auditRouter } from "./routes/audit.js";
 import { assertAuthConfig } from "./config.js";
-import { sanitizeDataset, applyDatasetWritePolicy } from "./auth/users.js";
-import { requireAuth, authorize } from "./middleware/auth.js";
+import { sanitizeDataset, applyDatasetWritePolicy, projectDatasetForViewer } from "./auth/users.js";
+import { requireAuth, authorize, optionalAuth } from "./middleware/auth.js";
 import { wouldExceedQuota } from "./quota.js";
 import { countPdfPages } from "./pdf.js";
 
@@ -55,10 +55,12 @@ export function createApp() {
   // Read the whole dataset. Never cache it — the frontend re-fetches after
   // every mutation and must always see the latest counts. Credentials and
   // refresh tokens are stripped: they never leave the server.
-  app.get("/api/dataset", async (req, res) => {
+  app.get("/api/dataset", optionalAuth, async (req, res) => {
     try {
       res.setHeader("Cache-Control", "no-store");
-      res.json(sanitizeDataset(await readDataset()));
+      // Scope the dataset to the caller: a regular user only sees files/users
+      // they're entitled to; staff see everything; a guest sees a bare shell.
+      res.json(projectDatasetForViewer(await readDataset(), req.user));
     } catch {
       res.status(500).json({ error: "Unable to read dataset" });
     }
@@ -214,6 +216,16 @@ export function createApp() {
       }
     },
   );
+
+  // SECURITY: the JSON-file store keeps the live database under
+  // public/assets/data/ so the client can fall back to it read-only. But that
+  // file holds credentials and tokens, and public/ is served statically — so a
+  // raw GET would hand out the whole DB (including password hashes). Block any
+  // request for assets/data/* before the static handler can serve it. The
+  // dataset is available only via the access-controlled /api/dataset endpoint.
+  app.use("/assets/data", (req, res) => {
+    res.status(404).json({ error: "Not found" });
+  });
 
   app.use(express.static(PUBLIC_DIR, { extensions: ["html"] }));
 
