@@ -644,3 +644,99 @@ html.dark .file-content-text {
   width: 2.25rem;
   text-align: center;
 }
+
+/* File preview modal (big popup PDF/document preview) */
+.file-preview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5vh 2vw;
+}
+.file-preview-modal.hidden {
+  display: none;
+}
+.file-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.66);
+  backdrop-filter: blur(2px);
+}
+.file-preview-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(1040px, 96vw);
+  height: 92vh;
+  background: #fff;
+  border-radius: 0.9rem;
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.45);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.file-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1.1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+.file-preview-titles {
+  min-width: 0;
+}
+.file-preview-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-preview-subtitle {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+.file-preview-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.file-preview-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: #475569;
+  padding: 0.25rem 0.55rem;
+  border-radius: 0.4rem;
+}
+.file-preview-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.file-preview-body {
+  flex: 1;
+  min-height: 0;
+  background: #f8fafc;
+}
+.file-preview-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.file-preview-text {
+  margin: 0;
+  padding: 1.25rem 1.4rem;
+  height: 100%;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #0f172a;
+}

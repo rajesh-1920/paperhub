@@ -140,6 +140,25 @@
     </div>
   </main>
 
+  <div id="filePreviewModal" class="file-preview-modal hidden" role="dialog" aria-modal="true"
+    aria-labelledby="filePreviewTitle">
+    <div class="file-preview-backdrop" data-preview-close></div>
+    <div class="file-preview-dialog" role="document">
+      <header class="file-preview-header">
+        <div class="file-preview-titles">
+          <h3 id="filePreviewTitle">Document preview</h3>
+          <span class="file-preview-subtitle" id="filePreviewMeta"></span>
+        </div>
+        <div class="file-preview-tools">
+          <button type="button" class="btn btn-sm btn-outline" id="filePreviewOpenTab">Open in tab</button>
+          <button type="button" class="btn btn-sm btn-primary" id="filePreviewDownload">Download</button>
+          <button type="button" class="file-preview-close" data-preview-close aria-label="Close preview">✕</button>
+        </div>
+      </header>
+      <div class="file-preview-body" id="filePreviewBody"></div>
+    </div>
+  </div>
+
   <div id="footer-container"></div>
 
   <script src="../../assets/js/utils.js"></script>

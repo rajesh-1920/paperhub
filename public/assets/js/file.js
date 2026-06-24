@@ -541,6 +541,7 @@ async function simulateUpload(progressElement) {
 function initFileDetailsPage() {
   setupFileDetailsInteractions();
   setupBulkActions();
+  setupFilePreview();
   loadFileList();
 }
 
@@ -665,16 +666,7 @@ function setupFileDetailsInteractions() {
     });
   });
 
-  addEvent(getElement("#metaPreviewBtn"), "click", () => {
-    const file = getSelectedFile();
-    if (!file) {
-      showWarning("Select a file first");
-      return;
-    }
-    renderFileContent(file);
-    const card = getElement(".file-content-card");
-    if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  });
+  addEvent(getElement("#metaPreviewBtn"), "click", () => openFilePreview(getSelectedFile()));
 
   addEvent(getElement("#metaDownloadBtn"), "click", () => downloadFile(getSelectedFile()));
   addEvent(getElement("#metaShareBtn"), "click", shareSelectedFile);
@@ -708,6 +700,85 @@ async function shareSelectedFile() {
   } catch (error) {
     showError(error.message || "Could not create a share link");
   }
+}
+
+// The file currently shown in the preview modal (used by its Download / Open
+// buttons).
+let previewedFile = null;
+
+function setupFilePreview() {
+  const modal = getElement("#filePreviewModal");
+  if (!modal || modal.dataset.bound === "true") {
+    return;
+  }
+  modal.dataset.bound = "true";
+
+  getElements("[data-preview-close]").forEach((el) => addEvent(el, "click", closeFilePreview));
+  addEvent(getElement("#filePreviewDownload"), "click", () => {
+    if (previewedFile) downloadFile(previewedFile);
+  });
+  addEvent(getElement("#filePreviewOpenTab"), "click", () => {
+    if (previewedFile && previewedFile.hasContent) {
+      window.open(fileContentUrl(previewedFile), "_blank");
+    }
+  });
+  addEvent(document, "keydown", (event) => {
+    if (event.key === "Escape" && !modal.classList.contains("hidden")) {
+      closeFilePreview();
+    }
+  });
+}
+
+// Open a large modal showing the document: the real PDF embedded in an iframe
+// for uploaded files, or the stored text for legacy/demo records.
+function openFilePreview(file) {
+  if (!file) {
+    showWarning("Select a file first");
+    return;
+  }
+  const modal = getElement("#filePreviewModal");
+  if (!modal) {
+    viewFileContent(file); // fallback if the modal markup isn't present
+    return;
+  }
+  previewedFile = file;
+
+  const title = getElement("#filePreviewTitle");
+  const meta = getElement("#filePreviewMeta");
+  const body = getElement("#filePreviewBody");
+  if (title) title.textContent = file.name || "Document preview";
+  if (meta) {
+    const sizeLabel = file.sizeLabel || formatFileSize(Number(file.size || 0));
+    const pages = file.pageCount || 1;
+    meta.textContent = `${file.fileType || "Document"} • ${pages} page${pages === 1 ? "" : "s"} • ${sizeLabel}`;
+  }
+  if (body) {
+    if (file.hasContent) {
+      body.innerHTML = `<iframe class="file-preview-frame" src="${escapeHtml(fileContentUrl(file))}" title="${escapeHtml(file.name || "")}"></iframe>`;
+    } else {
+      const text = file.content || `No stored content for "${file.name || "this document"}".`;
+      body.innerHTML = `<pre class="file-preview-text">${escapeHtml(text)}</pre>`;
+    }
+  }
+
+  const openTab = getElement("#filePreviewOpenTab");
+  if (openTab) openTab.classList.toggle("hidden", !file.hasContent);
+
+  // Portal to <body> so the overlay escapes the dashboard's stacking context.
+  if (modal.parentElement !== document.body) {
+    document.body.appendChild(modal);
+  }
+  modal.classList.remove("hidden");
+}
+
+function closeFilePreview() {
+  const modal = getElement("#filePreviewModal");
+  if (!modal) return;
+  modal.classList.add("hidden");
+  // Drop the iframe so the PDF stops loading/rendering in the background.
+  const body = getElement("#filePreviewBody");
+  if (body) body.innerHTML = "";
+  previewedFile = null;
 }
 
 function viewFileContent(file) {
@@ -948,9 +1019,7 @@ function createFileRow(file) {
 
     const action = actionButton.getAttribute("data-action");
     if (action === "view") {
-      renderFileContent(file);
-      const card = getElement(".file-content-card");
-      if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      openFilePreview(file);
       return;
     }
 
