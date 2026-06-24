@@ -808,32 +808,33 @@ async function loadFileList() {
   if (!fileTableBody) return;
 
   try {
-    const ownedFiles = typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : null;
-    // The active list hides trashed (soft-deleted) files — they live in Trash.
-    const currentFiles = Array.isArray(ownedFiles)
-      ? ownedFiles.filter((f) => !f.deletedAt)
-      : ownedFiles;
-    const response =
-      currentFiles && currentFiles.length > 0
-        ? { success: true, data: currentFiles }
-        : await apiCall("/api/files");
+    const ownedFiles = typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : [];
+    // The files page shows ONLY the signed-in user's own, non-trashed files.
+    // Trashed (soft-deleted) files live in Trash. An empty result must render the
+    // empty state — we must NOT fall back to a global list, or deleting your last
+    // file (or select-all + delete) would make every file reappear, which reads
+    // as "delete isn't working".
+    const currentFiles = Array.isArray(ownedFiles) ? ownedFiles.filter((f) => !f.deletedAt) : [];
 
-    if (response.success && response.data) {
-      filePageItems = response.data.map((file, index) => ({
-        ...file,
-        _id: `${file.name || "file"}-${index}`,
-      }));
+    filePageItems = currentFiles.map((file, index) => ({
+      ...file,
+      _id: `${file.name || "file"}-${index}`,
+    }));
 
-      if (!selectedFileId && filePageItems.length) {
-        selectedFileId = filePageItems[0]._id;
-      }
-
-      syncStatusChip(filePageStatusFilter);
-      renderFileTable();
-      updateFileStats(filePageItems);
-      updateStorageHealth(filePageItems);
-      updateMetaPanel(getSelectedFile());
+    // Drop a stale selection (e.g. the selected file was just deleted) and fall
+    // back to the first remaining file so the meta panel stays in sync.
+    if (selectedFileId && !filePageItems.some((file) => file._id === selectedFileId)) {
+      selectedFileId = null;
     }
+    if (!selectedFileId && filePageItems.length) {
+      selectedFileId = filePageItems[0]._id;
+    }
+
+    syncStatusChip(filePageStatusFilter);
+    renderFileTable();
+    updateFileStats(filePageItems);
+    updateStorageHealth(filePageItems);
+    updateMetaPanel(getSelectedFile());
   } catch (error) {
     showError("Failed to load files");
   }
