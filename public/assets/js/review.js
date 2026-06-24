@@ -124,18 +124,20 @@ function renderReviewQueue() {
     return;
   }
 
-  // Decided documents (approved -> completed, or rejected) leave the active
-  // queue once an officer/admin acts on them; they live under the "Decided" tab.
+  // A decided document (approved -> completed, or rejected) leaves the review
+  // queue entirely once an officer/admin acts on it: it never appears under any
+  // filter on this page. The decision lives on the document's status.
   const isActionable = (item) => item.status === "pending" || item.status === "in-review";
-  const isDecided = (item) => item.status === "completed" || item.status === "rejected";
 
   const filteredReviews = activeQueueItems.filter((review) => {
+    if (!isActionable(review)) {
+      return false;
+    }
     const matchesFilter =
-      (activeQueueFilter === "all" && isActionable(review)) ||
-      (activeQueueFilter === "high" && review.priority === "high" && isActionable(review)) ||
+      activeQueueFilter === "all" ||
+      (activeQueueFilter === "high" && review.priority === "high") ||
       (activeQueueFilter === "pending" && review.status === "pending") ||
-      (activeQueueFilter === "in-review" && review.status === "in-review") ||
-      (activeQueueFilter === "decided" && isDecided(review));
+      (activeQueueFilter === "in-review" && review.status === "in-review");
 
     const searchIndex = [
       review.documentName,

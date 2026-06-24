@@ -9,27 +9,41 @@ const boot = () =>
     "officer",
   );
 
-test("review queue: approving a document moves it out of the active queue into Decided", () => {
+// Text of the rendered queue under a given filter.
+function bodyFor(window, document, filter) {
+  const btn = document.querySelector(`[data-filter="${filter}"]`);
+  if (btn) btn.click();
+  else window.refreshReviewQueue();
+  return document.getElementById("reviewTableBody").textContent;
+}
+
+test("review queue: an approved document disappears from every queue view", () => {
   const { window, document } = boot();
   window.initReviewQueuePage();
-  const body = () => document.getElementById("reviewTableBody").textContent;
 
   const review = window.getPaperHubDataset().reviewQueue.find((r) => r.status === "pending");
   assert.ok(review, "fixture has a pending review");
-  assert.ok(body().includes(review.documentName), "pending review is in the active queue");
+  assert.ok(
+    document.getElementById("reviewTableBody").textContent.includes(review.documentName),
+    "pending review is in the queue",
+  );
 
   window.phSetReviewStatus(review.id, "completed"); // officer approves
   window.refreshReviewQueue();
-  assert.ok(!body().includes(review.documentName), "approved review left the active queue");
 
-  document.querySelector('[data-filter="decided"]').click();
-  assert.ok(body().includes(review.documentName), "approved review appears under Decided");
+  for (const filter of ["all", "high", "pending", "in-review"]) {
+    assert.ok(
+      !bodyFor(window, document, filter).includes(review.documentName),
+      `approved review is gone from the "${filter}" view`,
+    );
+  }
+  // There is no "decided" tab to surface it.
+  assert.equal(document.querySelector('[data-filter="decided"]'), null);
 });
 
-test("review queue: rejecting a document also removes it from the active queue", () => {
+test("review queue: a rejected document also disappears from every queue view", () => {
   const { window, document } = boot();
   window.initReviewQueuePage();
-  const body = () => document.getElementById("reviewTableBody").textContent;
 
   const review = window
     .getPaperHubDataset()
@@ -37,9 +51,10 @@ test("review queue: rejecting a document also removes it from the active queue",
   assert.ok(review, "fixture has an actionable review");
 
   window.phSetReviewStatus(review.id, "rejected"); // officer rejects
-  window.refreshReviewQueue();
-  assert.ok(!body().includes(review.documentName), "rejected review left the active queue");
-
-  document.querySelector('[data-filter="decided"]').click();
-  assert.ok(body().includes(review.documentName), "rejected review appears under Decided");
+  for (const filter of ["all", "pending", "in-review"]) {
+    assert.ok(
+      !bodyFor(window, document, filter).includes(review.documentName),
+      `rejected review is gone from the "${filter}" view`,
+    );
+  }
 });
