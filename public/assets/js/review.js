@@ -344,6 +344,9 @@ function renderReviewDetails(review) {
   }
 
   const privilegedReview = canManageReview();
+  // A decided document is final — it has left the queue, so no further
+  // approve/reject/forward is offered (defends the deep-link / notification path).
+  const isDecided = review.status === "completed" || review.status === "rejected";
   const reviewReason = review.reviewReason || review.summary;
   const openChecklistCount = review.checklist.filter((item) => !item.done).length;
   const reviewTrailItems = buildReviewTrailItems(review, openChecklistCount);
@@ -360,13 +363,15 @@ function renderReviewDetails(review) {
   }
 
   if (accessNote) {
-    accessNote.textContent = privilegedReview
-      ? "Document ready for decision"
-      : "View-only access for this file.";
+    accessNote.textContent = !privilegedReview
+      ? "View-only access for this file."
+      : isDecided
+        ? `Decision recorded — ${formatStatusLabel(review.status)}`
+        : "Document ready for decision";
   }
 
   if (actionBar) {
-    actionBar.classList.toggle("hidden", !privilegedReview);
+    actionBar.classList.toggle("hidden", !privilegedReview || isDecided);
   }
 
   if (heroMetaContainer) {
@@ -671,6 +676,14 @@ function setupReviewCommentAction() {
 }
 
 function handleReviewAction(action) {
+  // A terminal decision can't be changed — the document has left the queue.
+  if (activeReview && (activeReview.status === "completed" || activeReview.status === "rejected")) {
+    showWarning(
+      `This document was already ${formatStatusLabel(activeReview.status).toLowerCase()}.`,
+    );
+    return;
+  }
+
   const comment = getElement("#reviewComment")?.value || "";
 
   if (!comment && (action === "rejected" || action === "forwarded")) {
