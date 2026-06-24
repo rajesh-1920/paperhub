@@ -244,7 +244,8 @@ async function handleUpload() {
           statusEl.textContent = "Uploaded successfully";
           statusEl.style.color = "var(--success)";
         }
-        const record = persistUploadedFile(file);
+        const pageCount = await countPdfPagesFromFile(file);
+        const record = persistUploadedFile(file, pageCount);
         const stored = record ? await uploadFileBinary(record.id, file) : false;
         if (!record || !stored) {
           // Roll back the metadata record so there is no entry pointing at
@@ -288,7 +289,23 @@ async function handleUpload() {
   }
 }
 
-function persistUploadedFile(file) {
+// Best-effort PDF page count from the raw bytes. Uses the page-tree /Count and
+// the number of /Type /Page objects (latin1 so byte values survive), taking the
+// larger; falls back to 1 if the file can't be read or parsed.
+async function countPdfPagesFromFile(file) {
+  try {
+    if (!file || typeof file.arrayBuffer !== "function") return 1;
+    const text = new TextDecoder("latin1").decode(await file.arrayBuffer());
+    const pageObjects = (text.match(/\/Type\s*\/Page(?![sA-Za-z])/g) || []).length;
+    const counts = [...text.matchAll(/\/Count\s+(\d+)/g)].map((m) => Number(m[1]));
+    const maxCount = counts.length ? Math.max(...counts) : 0;
+    return Math.max(pageObjects, maxCount, 1);
+  } catch (error) {
+    return 1;
+  }
+}
+
+function persistUploadedFile(file, pageCount = 1) {
   if (typeof phAddFile !== "function") {
     return;
   }
@@ -323,7 +340,7 @@ function persistUploadedFile(file) {
     fileType: getFileTypeLabel(extension),
     extension,
     mimeType: "application/pdf",
-    pageCount: 1,
+    pageCount: Number(pageCount) || 1,
     version: "v1.0",
     tags: ["Upload", "Bangladesh"],
     description: `Uploaded by ${user.name} via PaperHub.`,
@@ -344,7 +361,7 @@ function persistUploadedFile(file) {
     department: newFile.department,
     reviewer: reviewerName,
     dueDate: "Today",
-    pageCount: 1,
+    pageCount: Number(pageCount) || 1,
     tags: newFile.tags,
     summary: newFile.summary,
     reviewReason: newFile.summary,
