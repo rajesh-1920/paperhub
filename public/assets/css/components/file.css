@@ -644,3 +644,73 @@ html.dark .file-content-text {
   width: 2.25rem;
   text-align: center;
 }
+
+/* Folder management panel (files page sidebar) */
+.folder-create-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.folder-create-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+.folder-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.folder-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.5rem;
+  transition: background 0.15s ease;
+}
+.folder-item:hover {
+  background: var(--surface-muted, #f1f5f9);
+}
+.folder-item.active {
+  background: var(--surface-muted, #eef2ff);
+}
+.folder-open {
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text, #0f172a);
+  padding: 0;
+}
+.folder-item.active .folder-open {
+  font-weight: 600;
+  color: var(--primary, #0d9488);
+}
+.folder-count {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: var(--surface-muted, #f1f5f9);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+}
+.folder-act {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+}
+.folder-act:hover {
+  opacity: 1;
+}

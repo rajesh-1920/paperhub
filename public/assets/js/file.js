@@ -17,6 +17,7 @@ let filePageFilteredItems = [];
 let filePageSearch = "";
 let filePageStatusFilter = "all";
 let filePageSortBy = "recent";
+let filePageFolderFilter = null; // null = all folders; otherwise a folder id
 let selectedFileId = null;
 const filePageSelected = new Set();
 
@@ -541,6 +542,7 @@ async function simulateUpload(progressElement) {
 function initFileDetailsPage() {
   setupFileDetailsInteractions();
   setupBulkActions();
+  setupFolderManagement();
   loadFileList();
 }
 
@@ -614,6 +616,99 @@ function populateBulkFolders() {
     folders
       .map((f) => `<option value="${escapeHtml(f.id)}">${escapeHtml(f.path || f.name)}</option>`)
       .join("");
+}
+
+// Folder panel: create, list (with per-folder counts), filter, rename, delete.
+function renderFolders() {
+  const list = getElement("#folderList");
+  if (!list) return;
+  const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+  const folders = typeof phListFolders === "function" ? phListFolders(user?.id) : [];
+  const owned = (typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : []).filter(
+    (f) => !f.deletedAt,
+  );
+  const countFor = (id) => owned.filter((f) => (f.folderId || null) === id).length;
+
+  const row = (id, label, count, withActions) => `
+    <li class="folder-item${filePageFolderFilter === id ? " active" : ""}">
+      <button type="button" class="folder-open" data-folder-open="${escapeHtml(id || "")}">${escapeHtml(label)}</button>
+      <span class="folder-count">${count}</span>
+      ${
+        withActions
+          ? `<button type="button" class="folder-act" data-folder-rename="${escapeHtml(id)}" aria-label="Rename folder" title="Rename">✎</button>
+             <button type="button" class="folder-act" data-folder-delete="${escapeHtml(id)}" aria-label="Delete folder" title="Delete">🗑</button>`
+          : ""
+      }
+    </li>`;
+
+  list.innerHTML =
+    row(null, "All files", owned.length, false) +
+    folders.map((folder) => row(folder.id, folder.name, countFor(folder.id), true)).join("");
+}
+
+function setupFolderManagement() {
+  const form = getElement("#folderCreateForm");
+  const input = getElement("#folderNameInput");
+  if (form && form.dataset.bound !== "true") {
+    form.dataset.bound = "true";
+    addEvent(form, "submit", (event) => {
+      event.preventDefault();
+      const name = String(input?.value || "").trim();
+      if (!name) {
+        showWarning("Enter a folder name");
+        return;
+      }
+      const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+      if (typeof phAddFolder === "function") phAddFolder({ name, ownerId: user?.id });
+      if (input) input.value = "";
+      renderFolders();
+      populateBulkFolders();
+      showSuccess(`Created folder "${name}"`);
+    });
+  }
+
+  const list = getElement("#folderList");
+  if (list && list.dataset.bound !== "true") {
+    list.dataset.bound = "true";
+    addEvent(list, "click", (event) => {
+      const renameBtn = event.target.closest("[data-folder-rename]");
+      const deleteBtn = event.target.closest("[data-folder-delete]");
+      const openBtn = event.target.closest("[data-folder-open]");
+
+      if (renameBtn) {
+        const id = renameBtn.getAttribute("data-folder-rename");
+        const folder = typeof phGetFolder === "function" ? phGetFolder(id) : null;
+        const next = window.prompt("Rename folder", folder?.name || "");
+        if (next && next.trim() && typeof phRenameFolder === "function") {
+          phRenameFolder(id, next.trim());
+          renderFolders();
+          populateBulkFolders();
+          showSuccess("Folder renamed");
+        }
+        return;
+      }
+      if (deleteBtn) {
+        const id = deleteBtn.getAttribute("data-folder-delete");
+        const folder = typeof phGetFolder === "function" ? phGetFolder(id) : null;
+        if (
+          !window.confirm(`Delete folder "${folder?.name || ""}"? Files inside move to its parent.`)
+        ) {
+          return;
+        }
+        if (typeof phDeleteFolder === "function") phDeleteFolder(id);
+        if (filePageFolderFilter === id) filePageFolderFilter = null;
+        populateBulkFolders();
+        loadFileList(); // re-renders the table + folder panel
+        showSuccess("Folder deleted");
+        return;
+      }
+      if (openBtn) {
+        const id = openBtn.getAttribute("data-folder-open") || "";
+        filePageFolderFilter = id || null;
+        loadFileList();
+      }
+    });
+  }
 }
 
 function refreshBulkUI() {
@@ -814,7 +909,12 @@ async function loadFileList() {
     // empty state — we must NOT fall back to a global list, or deleting your last
     // file (or select-all + delete) would make every file reappear, which reads
     // as "delete isn't working".
-    const currentFiles = Array.isArray(ownedFiles) ? ownedFiles.filter((f) => !f.deletedAt) : [];
+    const activeFiles = Array.isArray(ownedFiles) ? ownedFiles.filter((f) => !f.deletedAt) : [];
+    // Narrow to the selected folder when a folder filter is active.
+    const currentFiles =
+      filePageFolderFilter === null
+        ? activeFiles
+        : activeFiles.filter((f) => (f.folderId || null) === filePageFolderFilter);
 
     filePageItems = currentFiles.map((file, index) => ({
       ...file,
@@ -835,6 +935,7 @@ async function loadFileList() {
     updateFileStats(filePageItems);
     updateStorageHealth(filePageItems);
     updateMetaPanel(getSelectedFile());
+    renderFolders();
   } catch (error) {
     showError("Failed to load files");
   }

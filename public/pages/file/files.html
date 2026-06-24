@@ -140,6 +140,16 @@
             </div>
           </div>
 
+          <div class="card file-folders-card">
+            <h4>Folders</h4>
+            <form id="folderCreateForm" class="folder-create-form">
+              <input id="folderNameInput" type="text" maxlength="60" placeholder="New folder name"
+                aria-label="New folder name" />
+              <button type="submit" class="btn btn-sm btn-primary">Add</button>
+            </form>
+            <ul id="folderList" class="folder-list"></ul>
+          </div>
+
           <div class="card file-content-card">
             <h4>Document Content</h4>
             <p class="file-subtitle" id="fileContentMeta">Select a file to read its contents.</p>
