@@ -55,4 +55,9 @@ test("admin toolkit 'Manage Users' opens the add-user modal", () => {
   assert.ok(modal.classList.contains("hidden"), "modal starts hidden");
   document.querySelector('[data-admin-action="add-user"]').click();
   assert.ok(!modal.classList.contains("hidden"), "modal opens");
+  assert.equal(
+    modal.parentElement,
+    document.body,
+    "modal is portaled to <body> so the fixed navbar can't cover it",
+  );
 });

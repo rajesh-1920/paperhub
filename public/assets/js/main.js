@@ -622,6 +622,15 @@ function setupAdminUserManagement() {
     field("adminUserStatus").value = account ? account.accountStatus || "Active" : "Active";
     if (passwordField) passwordField.hidden = isEdit;
     if (statusField) statusField.hidden = !isEdit;
+    // Portal the modal to <body> so it escapes the dashboard main's stacking
+    // context (z-index:1, below the fixed navbar) and overlays the whole page.
+    // Drop any stale copy left from a previous SPA visit first.
+    document.querySelectorAll("#adminUserModal").forEach((el) => {
+      if (el !== modal) el.remove();
+    });
+    if (modal.parentElement !== document.body) {
+      document.body.appendChild(modal);
+    }
     modal.classList.remove("hidden");
   };
 
