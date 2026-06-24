@@ -246,7 +246,13 @@ async function handleUpload() {
         }
         const pageCount = await countPdfPagesFromFile(file);
         const record = persistUploadedFile(file, pageCount);
-        const stored = record ? await uploadFileBinary(record.id, file) : false;
+        const result = record ? await uploadFileBinary(record.id, file) : null;
+        const stored = Boolean(result);
+        // The server re-parses the bytes (handles compressed PDFs the client
+        // heuristic can't) — trust its page count when it returns one.
+        if (record && result && result.pages && typeof phSetFilePageCount === "function") {
+          phSetFilePageCount(record.id, result.pages);
+        }
         if (!record || !stored) {
           // Roll back the metadata record so there is no entry pointing at
           // missing bytes (which would 404 on view/download).
@@ -440,9 +446,11 @@ async function uploadFileBinary(id, file) {
     ) {
       response = await doPut();
     }
-    return response.ok;
+    if (!response.ok) return null;
+    // Body carries the server-parsed page count: { ok, size, pages }.
+    return await response.json().catch(() => ({ ok: true }));
   } catch (error) {
-    return false;
+    return null;
   }
 }
 

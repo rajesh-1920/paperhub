@@ -21,6 +21,7 @@ import { assertAuthConfig } from "./config.js";
 import { sanitizeDataset, applyDatasetWritePolicy } from "./auth/users.js";
 import { requireAuth, authorize } from "./middleware/auth.js";
 import { wouldExceedQuota } from "./quota.js";
+import { countPdfPages } from "./pdf.js";
 
 const ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
 const PDF_MAGIC = Buffer.from("%PDF");
@@ -114,7 +115,7 @@ export function createApp() {
           return res.status(413).json({ error: "Storage quota exceeded" });
         }
         await writeFileContent(id, body);
-        res.json({ ok: true, size: body.length });
+        res.json({ ok: true, size: body.length, pages: countPdfPages(body) });
       } catch {
         res.status(500).json({ error: "Unable to store file" });
       }
@@ -201,7 +202,13 @@ export function createApp() {
         const contentRef = `${id}__${versionId}`;
         await writeFileContent(contentRef, body); // archive this version
         await writeFileContent(id, body); // becomes the current content
-        res.json({ ok: true, versionId, contentRef, size: body.length });
+        res.json({
+          ok: true,
+          versionId,
+          contentRef,
+          size: body.length,
+          pages: countPdfPages(body),
+        });
       } catch {
         res.status(500).json({ error: "Unable to store version" });
       }

@@ -401,6 +401,30 @@ function phDeleteFile(fileId) {
   persistPaperHubData();
 }
 
+// Stamp a file's real page count (from the server's PDF parse) onto every copy:
+// the global file list, the owner's file list, and any matching review item.
+function phSetFilePageCount(fileId, pageCount) {
+  const pages = Number(pageCount) || 1;
+  if (!fileId || pages < 1) return false;
+  const dataset = getPaperHubDataset();
+  let found = false;
+  const setOnFile = (file) => {
+    if (file && file.id === fileId) {
+      file.pageCount = pages;
+      found = true;
+    }
+  };
+  (dataset.files || []).forEach(setOnFile);
+  (dataset.users || []).forEach((user) => (user.files || []).forEach(setOnFile));
+  const setOnReview = (review) => {
+    if (review && review.fileId === fileId) review.pageCount = pages;
+  };
+  (dataset.reviewQueue || []).forEach(setOnReview);
+  (dataset.users || []).forEach((user) => (user.reviews || []).forEach(setOnReview));
+  if (found) persistPaperHubData();
+  return found;
+}
+
 /* ---------------------------------------------------------------------------
  * Folders. Owner-scoped hierarchy with a materialized `path` for breadcrumbs
  * and search. Files reference a folder via file.folderId (null = root).

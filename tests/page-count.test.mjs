@@ -41,3 +41,20 @@ test("page count: an uploaded file stores its real page count", () => {
   const review = window.getPaperHubDataset().reviewQueue.find((r) => r.fileId === record.id);
   assert.equal(review.pageCount, 7, "review item carries the same page count");
 });
+
+test("page count: the server's count is stamped onto every copy of the file", () => {
+  const { window } = boot();
+  const record = window.persistUploadedFile({ name: "memo.pdf", size: 1000 }, 1);
+  assert.equal(record.pageCount, 1, "starts at the client estimate");
+
+  // Server re-parsed the bytes and reported 9 pages.
+  assert.equal(window.phSetFilePageCount(record.id, 9), true);
+
+  const dataset = window.getPaperHubDataset();
+  assert.equal(dataset.files.find((f) => f.id === record.id).pageCount, 9, "global file copy");
+  assert.equal(
+    dataset.reviewQueue.find((r) => r.fileId === record.id).pageCount,
+    9,
+    "review item copy",
+  );
+});
