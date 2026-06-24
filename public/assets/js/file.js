@@ -729,7 +729,6 @@ function setupFileDetailsInteractions() {
   const searchInput = getElement("#fileSearchInput");
   const statusFilter = getElement("#fileStatusFilter");
   const sortSelect = getElement("#fileSortSelect");
-  const importBtn = getElement("#importCsvBtn");
 
   addEvent(searchInput, "input", () => {
     filePageSearch = String(searchInput?.value || "")
@@ -759,10 +758,6 @@ function setupFileDetailsInteractions() {
       syncStatusChip(nextFilter);
       renderFileTable();
     });
-  });
-
-  addEvent(importBtn, "click", () => {
-    showInfo("CSV import is coming soon.");
   });
 
   addEvent(getElement("#metaPreviewBtn"), "click", () => {
