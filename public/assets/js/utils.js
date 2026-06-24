@@ -285,6 +285,22 @@ function phRecomputeDashboardStats(dataset) {
   dataset.dashboardStats.processedDocuments = files.filter(
     (file) => file.status === "completed",
   ).length;
+
+  // Keep each user's embedded dashboard.stats in sync with their own (active,
+  // non-trashed) files, so non-dashboard pages that render user.dashboard.stats
+  // — settings, profile — never show stale numbers.
+  (dataset.users || []).forEach((user) => {
+    const owned = (user.files || []).filter((file) => !file.deletedAt);
+    if (!user.dashboard) user.dashboard = { description: "", stats: {} };
+    if (!user.dashboard.stats) user.dashboard.stats = {};
+    const stats = user.dashboard.stats;
+    stats.totalSubmissions = owned.length;
+    stats.pendingReview = owned.filter(
+      (file) => file.status === "pending" || file.status === "reviewing",
+    ).length;
+    stats.approved = owned.filter((file) => file.status === "completed").length;
+    stats.rejected = owned.filter((file) => file.status === "rejected").length;
+  });
 }
 
 // Allowlists and limits guard the mutators against malformed input (e.g. an

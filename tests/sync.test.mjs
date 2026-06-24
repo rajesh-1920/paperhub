@@ -61,6 +61,30 @@ test("status mutations keep dashboardStats counts in sync", () => {
   );
 });
 
+test("per-user embedded dashboard.stats stay in sync (settings/profile pages)", () => {
+  const { window } = bootPage(USER_PAGE, ["utils.js"], "user");
+  const user = window.getPaperHubDataset().users.find((u) => u.role === "user");
+  const activeCount = () =>
+    window
+      .getPaperHubDataset()
+      .users.find((u) => u.id === user.id)
+      .files.filter((f) => !f.deletedAt).length;
+  const embedded = () =>
+    window.getPaperHubDataset().users.find((u) => u.id === user.id).dashboard.stats
+      .totalSubmissions;
+
+  const start = activeCount();
+
+  window.phAddFile(
+    { id: "file-sync", name: "new.pdf", status: "pending", ownerId: user.id, ownerName: user.name },
+    { id: "file-sync-r", fileId: "file-sync", documentName: "new.pdf" },
+  );
+  assert.equal(embedded(), start + 1, "upload updates the embedded count");
+
+  window.phTrashFile("file-sync");
+  assert.equal(embedded(), start, "trashing updates the embedded count");
+});
+
 test("paperhub:change fires on every write and triggers the registered refresh", () => {
   const { window } = bootPage(USER_PAGE, ["utils.js"], "user");
   let refreshed = 0;

@@ -268,7 +268,7 @@ function applyCurrentUserPageData() {
       .join("");
   });
 
-  const files = Array.isArray(user.files) ? user.files : [];
+  const files = (Array.isArray(user.files) ? user.files : []).filter((file) => !file.deletedAt);
   const approvedFiles = files.filter((file) => file.status === "completed").length;
   const rejectedFiles = files.filter((file) => file.status === "rejected").length;
   const pendingFiles =
@@ -467,7 +467,8 @@ function renderDashboard(user) {
   const allUsers = Array.isArray(dataset.users) ? dataset.users : [];
   const queue = Array.isArray(dataset.reviewQueue) ? dataset.reviewQueue : [];
   const role = normalizeRole(user.role);
-  const userFiles = Array.isArray(user.files) ? user.files : [];
+  // Active (non-trashed) files only, matching the synced embedded stats.
+  const userFiles = (Array.isArray(user.files) ? user.files : []).filter((f) => !f.deletedAt);
 
   const setStat = (key, value) => {
     document.querySelectorAll(`[data-dashboard-stat="${key}"]`).forEach((node) => {
