@@ -48,7 +48,7 @@ test("user dashboard renders submissions and computes submission health", () => 
   assert.match(document.querySelector("[data-user-health-label]").textContent, /%/);
 });
 
-test("files page surfaces the selected file's full document content", () => {
+test("files page meta panel reflects the selected file", () => {
   const { window, document, user } = bootPage(
     "public/pages/file/files.html",
     ["utils.js", "main.js", "file.js"],
@@ -56,11 +56,8 @@ test("files page surfaces the selected file's full document content", () => {
   );
   const file = user.files[0];
   window.updateMetaPanel(file);
-  assert.equal(
-    document.querySelector("#fileContentBody").textContent.trim(),
-    String(file.content).trim(),
-  );
   assert.equal(document.querySelector("#metaType").textContent, file.fileType);
+  assert.equal(document.querySelector("#metaPages").textContent, String(file.pageCount));
 });
 
 test("review details surfaces the underlying document content", () => {

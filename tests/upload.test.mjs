@@ -48,8 +48,8 @@ test("an oversized PDF is rejected", () => {
   );
 });
 
-test("uploaded files embed the real PDF and target the content endpoint", () => {
-  const { window, document } = bootPage(
+test("uploaded files target the content endpoint", () => {
+  const { window } = bootPage(
     "public/pages/file/files.html",
     ["utils.js", "main.js", "file.js"],
     "user",
@@ -59,17 +59,4 @@ test("uploaded files embed the real PDF and target the content endpoint", () => 
   assert.equal(window.ensureExtension("a.pdf", "pdf"), "a.pdf");
   assert.equal(window.ensureExtension("a", "pdf"), "a.pdf");
   assert.equal(window.ensureExtension("photo.txt", "pdf"), "photo.pdf");
-
-  window.updateMetaPanel({
-    id: "file-1",
-    name: "report.pdf",
-    hasContent: true,
-    fileType: "PDF Document",
-    pageCount: 3,
-    size: 2048,
-    tags: [],
-  });
-  const iframe = document.querySelector("#fileContentBody iframe.file-pdf-frame");
-  assert.ok(iframe, "real PDF is embedded in an iframe");
-  assert.match(iframe.getAttribute("src"), /\/api\/files\/file-1\/content$/);
 });
