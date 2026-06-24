@@ -246,25 +246,57 @@
     });
   }
 
-  function switchUserRole(role) {
+  // Demo credentials for the seed accounts. Switching roles performs a real
+  // re-login so the JWT identity matches the role — without it, the server
+  // would still authorize as the original account and silently revert writes.
+  const DEMO_ROLE_ACCOUNTS = {
+    user: { email: "mahmud.hasan@paperhub.edu.bd", password: "user01" },
+    officer: { email: "rajdip.roy@paperhub.com.bd", password: "officer01" },
+    admin: { email: "rajesh.biswas@paperhub.com.bd", password: "admin01" },
+  };
+
+  async function switchUserRole(role) {
     const normalizedRole = normalizeRole(role);
-
-    if (typeof getDefaultUserForRole !== "function" || typeof setCurrentUserById !== "function") {
+    const creds = DEMO_ROLE_ACCOUNTS[normalizedRole];
+    if (!creds || typeof paperhubApiUrl !== "function") {
       return;
     }
 
-    const nextUser = getDefaultUserForRole(normalizedRole);
-    if (!nextUser) {
-      return;
+    try {
+      const response = await fetch(paperhubApiUrl("/api/auth/login"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(creds),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.token) {
+        if (typeof showError === "function") {
+          showError(data.error || "Could not switch role");
+        }
+        return;
+      }
+
+      // Persist a real session: identity and token now belong to the new role.
+      if (typeof setCurrentUser === "function") setCurrentUser(data.user);
+      if (typeof setStorage === "function") {
+        setStorage("paperhub-auth-token", data.token);
+        setStorage("paperhub-refresh-token", data.refreshToken);
+      }
+      try {
+        delete window.__paperhubDataset;
+        window.__paperhubSessionExpiring = false;
+      } catch (error) {
+        /* ignore */
+      }
+
+      const nextDashboard =
+        typeof getDashboardRouteForRole === "function"
+          ? getDashboardRouteForRole(normalizedRole)
+          : resolveLink(`pages/dashboard/${normalizedRole}.html`);
+      window.location.href = nextDashboard;
+    } catch (error) {
+      if (typeof showError === "function") showError("Could not switch role");
     }
-
-    setCurrentUserById(nextUser.id);
-    const nextDashboard =
-      typeof getDashboardRouteForRole === "function"
-        ? getDashboardRouteForRole(normalizedRole)
-        : resolveLink(`pages/dashboard/${normalizedRole}.html`);
-
-    window.location.href = nextDashboard;
   }
 
   function applyDynamicMeta() {
