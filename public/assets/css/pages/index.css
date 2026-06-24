@@ -98,9 +98,10 @@
 .hero-visual-top {
   border-bottom: 1px solid rgba(203, 213, 225, 0.72);
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.8rem 1rem;
 }
 
 .hero-eyebrow {
@@ -113,9 +114,9 @@
 }
 
 .hero-panel-title {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  margin: 0.35rem 0 0;
+  margin: 0.2rem 0 0;
 }
 
 .hero-health {
@@ -155,8 +156,8 @@
 
 .hero-visual-body {
   display: grid;
-  gap: 0.78rem;
-  padding: 1rem;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem 1rem;
 }
 
 .hero-metric-row {
@@ -168,8 +169,8 @@
 .hero-metric {
   background: linear-gradient(135deg, #f8fafc 0%, rgba(248, 250, 252, 0.5) 100%);
   border: 1px solid rgba(203, 213, 225, 0.5);
-  border-radius: 1rem;
-  padding: 0.9rem;
+  border-radius: 0.9rem;
+  padding: 0.7rem 0.8rem;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -203,10 +204,10 @@
 }
 
 .hero-metric-value {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  line-height: 1.2;
-  margin: 0.3rem 0 0;
+  line-height: 1.15;
+  margin: 0.2rem 0 0;
   background: linear-gradient(135deg, #0284c7, #0f766e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -230,20 +231,20 @@
 .hero-role-lanes {
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.7));
   border: 1px solid rgba(203, 213, 225, 0.5);
-  border-radius: 1rem;
+  border-radius: 0.9rem;
   display: grid;
-  gap: 0.6rem;
-  padding: 0.9rem;
+  gap: 0.4rem;
+  padding: 0.7rem;
 }
 
 .hero-role-row {
   align-items: center;
   border: 1px solid rgba(203, 213, 225, 0.4);
-  border-radius: 0.875rem;
+  border-radius: 0.75rem;
   display: flex;
   gap: 0.75rem;
   justify-content: space-between;
-  padding: 0.6rem 0.7rem;
+  padding: 0.5rem 0.7rem;
   background: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.7));
   transition: all 0.2s ease;
 }
@@ -301,8 +302,8 @@
 .hero-queue {
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.7));
   border: 1px solid rgba(203, 213, 225, 0.5);
-  border-radius: 1rem;
-  padding: 0.95rem;
+  border-radius: 0.9rem;
+  padding: 0.75rem;
 }
 
 .hero-queue-head {
@@ -310,7 +311,7 @@
   display: flex;
   justify-content: space-between;
   gap: 0.8rem;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.55rem;
 }
 
 .hero-queue-title {
@@ -328,14 +329,14 @@
 }
 
 .hero-ticket {
-  align-items: flex-start;
+  align-items: center;
   border: 1.5px solid rgba(202, 138, 4, 0.4);
-  border-radius: 0.875rem;
+  border-radius: 0.75rem;
   background: linear-gradient(135deg, rgba(254, 252, 232, 0.9), rgba(254, 243, 199, 0.7));
   display: flex;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.75rem 0.85rem;
+  padding: 0.6rem 0.8rem;
   transition: all 0.2s ease;
 }
 
