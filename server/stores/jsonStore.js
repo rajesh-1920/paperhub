@@ -44,6 +44,9 @@ function seedFile() {
 function uploadsDir() {
   return process.env.PAPERHUB_UPLOAD_DIR || join(HERE, "..", "uploads");
 }
+function seedAssetsDir() {
+  return process.env.PAPERHUB_SEED_ASSETS || join(HERE, "..", "seed-assets");
+}
 
 // Keep file ids confined to a safe, flat filename (no path traversal).
 function safeId(id) {
@@ -98,13 +101,46 @@ function withLock(task) {
   return run;
 }
 
+// Copy the bundled demo PDFs into the uploads dir so a freshly seeded database
+// ships with viewable file binaries. Only assets referenced by the seeded
+// dataset are copied, existing binaries are never overwritten, and a custom
+// seed (tests set PAPERHUB_SEED_FILE) brings its own content so we skip ours.
+async function seedContent() {
+  if (process.env.PAPERHUB_SEED_FILE) return;
+  let names;
+  try {
+    names = await readdir(seedAssetsDir());
+  } catch {
+    return; // no bundled assets
+  }
+  let data;
+  try {
+    data = JSON.parse(await readFile(dbFile(), "utf8"));
+  } catch {
+    return;
+  }
+  const referenced = referencedContentNames(data);
+  await mkdir(uploadsDir(), { recursive: true });
+  for (const name of names) {
+    if (!name.endsWith(".pdf") || !referenced.has(name)) continue;
+    const dest = join(uploadsDir(), name);
+    try {
+      await access(dest, constants.F_OK);
+    } catch {
+      await copyFile(join(seedAssetsDir(), name), dest);
+    }
+  }
+}
+
 /** Create the live database file from the seed if it does not exist yet. */
 export async function ensureDataset() {
   const file = dbFile();
   try {
     await access(file, constants.F_OK);
   } catch {
+    await mkdir(dirname(file), { recursive: true });
     await copyFile(seedFile(), file);
+    await seedContent();
   }
   return file;
 }
@@ -131,6 +167,7 @@ export function resetDataset() {
   return withLock(async () => {
     await copyFile(seedFile(), dbFile());
     await rm(uploadsDir(), { recursive: true, force: true });
+    await seedContent();
     return JSON.parse(await readFile(dbFile(), "utf8"));
   });
 }

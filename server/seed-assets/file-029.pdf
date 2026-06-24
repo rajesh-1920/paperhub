@@ -1,0 +1,49 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1208 >>
+stream
+BT /F1 16 Tf 50 800 Td (Incident-Response-Plan.pdf) Tj ET
+BT /F1 10 Tf 50 772 Td (Incident-Response-Plan.pdf) Tj ET
+BT /F1 10 Tf 50 758 Td (Department: Platform Administration) Tj ET
+BT /F1 10 Tf 50 744 Td (Owner: Rajesh Biswas Status: completed) Tj ET
+BT /F1 10 Tf 50 730 Td (Reviewer: Rajdip Roy Uploaded: 2026-06-02) Tj ET
+BT /F1 10 Tf 50 716 Td () Tj ET
+BT /F1 10 Tf 50 702 Td (INCIDENT RESPONSE PLAN \(v2\)) Tj ET
+BT /F1 10 Tf 50 688 Td () Tj ET
+BT /F1 10 Tf 50 674 Td (Severity Levels) Tj ET
+BT /F1 10 Tf 50 660 Td (SEV-1: Data breach or full outage - notify admin within 15 minutes.) Tj ET
+BT /F1 10 Tf 50 646 Td (SEV-2: Partial outage - notify within 1 hour.) Tj ET
+BT /F1 10 Tf 50 632 Td (SEV-3: Degraded performance - handle within the business day.) Tj ET
+BT /F1 10 Tf 50 618 Td () Tj ET
+BT /F1 10 Tf 50 604 Td (Escalation Chain: Officer -> Platform Administrator \(Rajesh Biswas\) -> Vendor.) Tj ET
+BT /F1 10 Tf 50 590 Td (Communication: Status page + email to affected users.) Tj ET
+BT /F1 10 Tf 50 576 Td (Post-Incident: Root-cause report within 72 hours.) Tj ET
+BT /F1 10 Tf 50 562 Td () Tj ET
+BT /F1 10 Tf 50 548 Td (Owner: Rajesh Biswas, Platform Administrator Effective: 15 May 2026) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001500 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1570
+%%EOF

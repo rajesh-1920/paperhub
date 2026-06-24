@@ -1,0 +1,47 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1098 >>
+stream
+BT /F1 16 Tf 50 800 Td (Data-Retention-Guidelines.docx) Tj ET
+BT /F1 10 Tf 50 772 Td (Data-Retention-Guidelines.docx) Tj ET
+BT /F1 10 Tf 50 758 Td (Department: Platform Administration) Tj ET
+BT /F1 10 Tf 50 744 Td (Owner: Rajesh Biswas Status: reviewing) Tj ET
+BT /F1 10 Tf 50 730 Td (Reviewer: Rajdip Roy Uploaded: 2026-06-27) Tj ET
+BT /F1 10 Tf 50 716 Td () Tj ET
+BT /F1 10 Tf 50 702 Td (DATA RETENTION GUIDELINES \(DRAFT\)) Tj ET
+BT /F1 10 Tf 50 688 Td () Tj ET
+BT /F1 10 Tf 50 674 Td (- Identity documents: retain 5 years after account closure.) Tj ET
+BT /F1 10 Tf 50 660 Td (- Financial proofs: retain 7 years per audit requirement.) Tj ET
+BT /F1 10 Tf 50 646 Td (- Academic records: retain for the lifetime of the account.) Tj ET
+BT /F1 10 Tf 50 632 Td (- Review logs: retain 3 years.) Tj ET
+BT /F1 10 Tf 50 618 Td (- Deleted documents: purged from backups within 30 days.) Tj ET
+BT /F1 10 Tf 50 604 Td () Tj ET
+BT /F1 10 Tf 50 590 Td (All retention is subject to Bangladesh data-protection requirements.) Tj ET
+BT /F1 10 Tf 50 576 Td (Author: Rajesh Biswas Status: Under legal review) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001390 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1460
+%%EOF

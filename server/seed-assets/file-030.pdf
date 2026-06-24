@@ -1,0 +1,47 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1026 >>
+stream
+BT /F1 16 Tf 50 800 Td (Account-Onboarding-Checklist.docx) Tj ET
+BT /F1 10 Tf 50 772 Td (Account-Onboarding-Checklist.docx) Tj ET
+BT /F1 10 Tf 50 758 Td (Department: Platform Administration) Tj ET
+BT /F1 10 Tf 50 744 Td (Owner: Rajesh Biswas Status: pending) Tj ET
+BT /F1 10 Tf 50 730 Td (Reviewer: Rajdip Roy Uploaded: 2026-06-03) Tj ET
+BT /F1 10 Tf 50 716 Td () Tj ET
+BT /F1 10 Tf 50 702 Td (ACCOUNT ONBOARDING CHECKLIST) Tj ET
+BT /F1 10 Tf 50 688 Td () Tj ET
+BT /F1 10 Tf 50 674 Td ([ ] Verify applicant identity \(NID + birth registration\)) Tj ET
+BT /F1 10 Tf 50 660 Td ([ ] Assign correct role \(user / officer / admin\)) Tj ET
+BT /F1 10 Tf 50 646 Td ([ ] Enforce 2FA for privileged roles) Tj ET
+BT /F1 10 Tf 50 632 Td ([ ] Issue welcome email with dashboard guide) Tj ET
+BT /F1 10 Tf 50 618 Td ([ ] Set storage quota per plan) Tj ET
+BT /F1 10 Tf 50 604 Td ([ ] Record onboarding in the audit log) Tj ET
+BT /F1 10 Tf 50 590 Td () Tj ET
+BT /F1 10 Tf 50 576 Td (Prepared by: Rajesh Biswas Status: Awaiting sign-off) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001318 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1388
+%%EOF

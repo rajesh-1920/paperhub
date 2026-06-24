@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1447 >>
+stream
+BT /F1 16 Tf 50 800 Td (User-Access-Control-Policy.pdf) Tj ET
+BT /F1 10 Tf 50 772 Td (User-Access-Control-Policy.pdf) Tj ET
+BT /F1 10 Tf 50 758 Td (Department: Platform Administration) Tj ET
+BT /F1 10 Tf 50 744 Td (Owner: Rajesh Biswas Status: completed) Tj ET
+BT /F1 10 Tf 50 730 Td (Reviewer: Rajdip Roy Uploaded: 2026-06-25) Tj ET
+BT /F1 10 Tf 50 716 Td () Tj ET
+BT /F1 10 Tf 50 702 Td (USER ACCESS CONTROL POLICY \(v3\)) Tj ET
+BT /F1 10 Tf 50 688 Td () Tj ET
+BT /F1 10 Tf 50 674 Td (1. Roles) Tj ET
+BT /F1 10 Tf 50 660 Td (- User: upload documents, track submissions, access own payments.) Tj ET
+BT /F1 10 Tf 50 646 Td (- Officer: review/verify documents, manage the review queue.) Tj ET
+BT /F1 10 Tf 50 632 Td (- Admin: full platform governance, analytics, and policy.) Tj ET
+BT /F1 10 Tf 50 618 Td () Tj ET
+BT /F1 10 Tf 50 604 Td (2. Principle of Least Privilege) Tj ET
+BT /F1 10 Tf 50 590 Td (Each account receives only the permissions required for its role.) Tj ET
+BT /F1 10 Tf 50 576 Td () Tj ET
+BT /F1 10 Tf 50 562 Td (3. Authentication) Tj ET
+BT /F1 10 Tf 50 548 Td (Two-factor authentication is mandatory for officer and admin accounts.) Tj ET
+BT /F1 10 Tf 50 534 Td () Tj ET
+BT /F1 10 Tf 50 520 Td (4. Audit) Tj ET
+BT /F1 10 Tf 50 506 Td (All privileged actions are logged and reviewed monthly.) Tj ET
+BT /F1 10 Tf 50 492 Td () Tj ET
+BT /F1 10 Tf 50 478 Td (Owner: Rajesh Biswas, Platform Administrator Effective: 01 June 2026) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001739 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1809
+%%EOF

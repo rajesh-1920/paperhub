@@ -1,5 +1,5 @@
 import { MongoClient, GridFSBucket } from "mongodb";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -32,6 +32,9 @@ const CONTENT_BUCKET = "fileContents";
 function seedFile() {
   return process.env.PAPERHUB_SEED_FILE || join(HERE, "..", "seed.json");
 }
+function seedAssetsDir() {
+  return process.env.PAPERHUB_SEED_ASSETS || join(HERE, "..", "seed-assets");
+}
 
 let clientPromise = null;
 async function getDb() {
@@ -59,12 +62,36 @@ async function readSeed() {
   return JSON.parse(await readFile(seedFile(), "utf8"));
 }
 
+// Load the bundled demo PDFs into GridFS so a freshly seeded database ships with
+// viewable binaries. Mirrors jsonStore.seedContent: referenced-only, no
+// overwrite, and skipped for a custom seed (tests set PAPERHUB_SEED_FILE).
+async function seedContent() {
+  if (process.env.PAPERHUB_SEED_FILE) return;
+  let names;
+  try {
+    names = await readdir(seedAssetsDir());
+  } catch {
+    return; // no bundled assets
+  }
+  const referenced = referencedContentNames(await readSeed());
+  const bucket = await getBucket();
+  for (const name of names) {
+    if (!name.endsWith(".pdf")) continue;
+    const id = name.slice(0, -4);
+    if (!referenced.has(id)) continue;
+    const existing = await bucket.find({ filename: String(id) }).toArray();
+    if (existing.length) continue;
+    await writeFileContent(id, await readFile(join(seedAssetsDir(), name)));
+  }
+}
+
 /** Seed the database the first time it is used (no meta document yet). */
 export async function ensureDataset() {
   const db = await getDb();
   const meta = await db.collection("meta").findOne({ _id: META_ID });
   if (!meta) {
     await writeDataset(await readSeed());
+    await seedContent();
   }
 }
 
@@ -112,8 +139,10 @@ export function writeDataset(data) {
 }
 
 export async function resetDataset() {
-  // writeDataset(seed) prunes orphaned binaries (the seed has no files).
+  // writeDataset(seed) prunes binaries no longer referenced; seedContent then
+  // restores the bundled demo binaries for the seed's files.
   await writeDataset(await readSeed());
+  await seedContent();
   return readDataset();
 }
 

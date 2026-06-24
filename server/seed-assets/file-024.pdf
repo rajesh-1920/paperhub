@@ -1,0 +1,60 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1854 >>
+stream
+BT /F1 16 Tf 50 800 Td (Platform-Usage-Analytics-Q2-2026.pdf) Tj ET
+BT /F1 10 Tf 50 772 Td (Platform-Usage-Analytics-Q2-2026.pdf) Tj ET
+BT /F1 10 Tf 50 758 Td (Department: Platform Administration) Tj ET
+BT /F1 10 Tf 50 744 Td (Owner: Rajesh Biswas Status: completed) Tj ET
+BT /F1 10 Tf 50 730 Td (Reviewer: Rajdip Roy Uploaded: 2026-06-24) Tj ET
+BT /F1 10 Tf 50 716 Td () Tj ET
+BT /F1 10 Tf 50 702 Td (PAPERHUB BANGLADESH - PLATFORM USAGE ANALYTICS \(Q2 2026\)) Tj ET
+BT /F1 10 Tf 50 688 Td (Prepared by: Rajesh Biswas, Platform Administrator) Tj ET
+BT /F1 10 Tf 50 674 Td () Tj ET
+BT /F1 10 Tf 50 660 Td (Key Metrics) Tj ET
+BT /F1 10 Tf 50 646 Td (Total documents on platform ........... 180) Tj ET
+BT /F1 10 Tf 50 632 Td (Documents processed this quarter ...... 104) Tj ET
+BT /F1 10 Tf 50 618 Td (Pending review ........................ 16) Tj ET
+BT /F1 10 Tf 50 604 Td (Total payments collected .............. BDT 24,50,000) Tj ET
+BT /F1 10 Tf 50 590 Td () Tj ET
+BT /F1 10 Tf 50 576 Td (Engagement) Tj ET
+BT /F1 10 Tf 50 562 Td (Active daily users .................... steady) Tj ET
+BT /F1 10 Tf 50 548 Td (Avg uploads per active user ........... 6.0) Tj ET
+BT /F1 10 Tf 50 534 Td (Peak upload window .................... 08:00-11:00 \(Asia/Dhaka\)) Tj ET
+BT /F1 10 Tf 50 520 Td () Tj ET
+BT /F1 10 Tf 50 506 Td (Reliability) Tj ET
+BT /F1 10 Tf 50 492 Td (Platform uptime ....................... 99.95%) Tj ET
+BT /F1 10 Tf 50 478 Td (Failed upload rate .................... 0.4%) Tj ET
+BT /F1 10 Tf 50 464 Td () Tj ET
+BT /F1 10 Tf 50 450 Td (Action Items) Tj ET
+BT /F1 10 Tf 50 436 Td (- Expand storage quota ahead of the admission season.) Tj ET
+BT /F1 10 Tf 50 422 Td (- Add automated NID pre-checks \(per review officer recommendation\).) Tj ET
+BT /F1 10 Tf 50 408 Td () Tj ET
+BT /F1 10 Tf 50 394 Td (Signed: Rajesh Biswas Date: 30 June 2026) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000002146 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2216
+%%EOF
