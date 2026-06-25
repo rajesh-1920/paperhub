@@ -41,6 +41,8 @@ md.renderer.rules.heading_open = (tokens, idx, options, env, self) => {
 let body = md.render(readFileSync(SRC, "utf8"));
 // Tag figure/table captions (emitted as <p><em>Figure …</em></p>) for styling.
 body = body.replace(/<p><em>((?:Figure|Table)[^<]*)<\/em><\/p>/g, '<p class="caption">$1</p>');
+// Compact, hanging-indent reference list so all entries fit on one page.
+body = body.replace(/<p>(\[\d+\]\s)/g, '<p class="ref">$1');
 
 const css = `
   @page {
@@ -95,7 +97,8 @@ const css = `
 
   img { max-width: 100%; max-height: 170mm; display: block; margin: 8pt auto 2pt; border: 1px solid #e2e8f0; border-radius: 4px; }
   .caption { text-align: center; font-style: italic; font-size: 9pt; color: #475569; margin: 0 0 12pt; }
-  .theend { text-align: center; font-weight: bold; margin-top: 22pt; }
+  .ref { font-size: 8.7pt; line-height: 1.34; margin: 0 0 3.4pt; padding-left: 20pt; text-indent: -20pt; text-align: left; }
+  .theend { text-align: center; font-weight: bold; margin-top: 14pt; }
 `;
 
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>${css}</style></head><body>${body}</body></html>`;
