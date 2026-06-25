@@ -880,7 +880,16 @@ async function loadFileList() {
     // empty state — we must NOT fall back to a global list, or deleting your last
     // file (or select-all + delete) would make every file reappear, which reads
     // as "delete isn't working".
-    const currentFiles = Array.isArray(ownedFiles) ? ownedFiles.filter((f) => !f.deletedAt) : [];
+    //
+    // A file is trashed if EITHER its embedded (user.files) copy OR its global
+    // (dataset.files) copy carries deletedAt. Cross-checking the global set makes
+    // a delete stick even if the two copies ever fall out of sync — so a deleted
+    // file can never linger here while also sitting in Trash.
+    const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
+    const trashedIds = new Set((dataset.files || []).filter((f) => f.deletedAt).map((f) => f.id));
+    const currentFiles = Array.isArray(ownedFiles)
+      ? ownedFiles.filter((f) => !f.deletedAt && !trashedIds.has(f.id))
+      : [];
 
     filePageItems = currentFiles.map((file, index) => ({
       ...file,

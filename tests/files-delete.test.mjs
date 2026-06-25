@@ -68,3 +68,21 @@ test("files: the page links to the Trash so deleted files are findable", () => {
   assert.ok(link, "a Trash link is present in the files-page header");
   assert.match(link.getAttribute("href"), /\/pages\/file\/trash\.html$/);
 });
+
+test("files: a file trashed only in the global store still leaves the list (desync guard)", () => {
+  const { window, document } = boot();
+  const before = document.querySelectorAll("#fileTableBody tr").length;
+  const victim = window.getCurrentUserFiles().filter((f) => !f.deletedAt)[0];
+
+  // Simulate a copy desync: mark ONLY the global dataset.files copy as trashed,
+  // leaving the embedded user.files copy without deletedAt.
+  window.getPaperHubDataset().files.find((f) => f.id === victim.id).deletedAt =
+    "2026-01-01T00:00:00.000Z";
+  window.loadFileList();
+
+  const rendered = [...document.querySelectorAll("#fileTableBody .file-name-cell")].map(
+    (n) => n.textContent,
+  );
+  assert.ok(!rendered.includes(victim.name), "globally-trashed file does not linger on the page");
+  assert.equal(document.querySelectorAll("#fileTableBody tr").length, before - 1);
+});
