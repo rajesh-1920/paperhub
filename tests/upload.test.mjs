@@ -60,3 +60,56 @@ test("uploaded files target the content endpoint", () => {
   assert.equal(window.ensureExtension("a", "pdf"), "a.pdf");
   assert.equal(window.ensureExtension("photo.txt", "pdf"), "photo.pdf");
 });
+
+test("upload: a batch with one failed file still opens the files page", async () => {
+  const { window } = bootPage(
+    "public/pages/file/upload.html",
+    ["utils.js", "main.js", "file.js"],
+    "user",
+  );
+
+  // Detect the post-upload redirect (navigation itself is a no-op in jsdom).
+  let redirected = false;
+  const origResolve = window.resolveAppPath;
+  window.resolveAppPath = (p) => {
+    if (String(p).includes("file/files.html")) redirected = true;
+    return origResolve(p);
+  };
+
+  // Fail the SECOND file's binary upload (simulating e.g. a rejected file).
+  const origFetch = window.fetch;
+  let contentPuts = 0;
+  window.fetch = (url, opts) => {
+    if (String(url).includes("/content") && opts && opts.method === "PUT") {
+      contentPuts += 1;
+      if (contentPuts === 2) {
+        return Promise.resolve({
+          ok: false,
+          status: 415,
+          json: async () => ({ error: "Only PDF files are accepted" }),
+        });
+      }
+    }
+    return origFetch(url, opts);
+  };
+
+  window.initFileUploadPage();
+  const before = window.getCurrentUserFiles().filter((f) => !f.deletedAt).length;
+  const mk = (name) => ({
+    name,
+    size: 18,
+    type: "application/pdf",
+    lastModified: 1,
+    arrayBuffer: async () => new TextEncoder().encode("%PDF-1.4\nx").buffer,
+  });
+  window.handleFiles([mk("good.pdf"), mk("bad.pdf")]);
+  await window.handleUpload();
+  await new Promise((r) => setTimeout(r, 1200)); // let the redirect timer fire
+
+  assert.ok(redirected, "navigates to the files page even though one file failed");
+  assert.equal(
+    window.getCurrentUserFiles().filter((f) => !f.deletedAt).length,
+    before + 1,
+    "the successful file is persisted (the failed one rolled back)",
+  );
+});

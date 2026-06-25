@@ -286,10 +286,18 @@ async function handleUpload() {
     uploadBtn.disabled = false;
   }
 
-  if (uploadedCount === fileEntries.length) {
+  // Open the files page whenever at least one file went through — previously the
+  // redirect only fired if EVERY file succeeded, so a single failure stranded the
+  // user on the upload page and the uploaded files "never reached" the list.
+  if (uploadedCount > 0) {
+    const failed = fileEntries.length - uploadedCount;
     showSuccess(
-      `${uploadedCount} file${uploadedCount === 1 ? "" : "s"} uploaded and sent for review`,
+      failed > 0
+        ? `${uploadedCount} of ${fileEntries.length} uploaded — opening your files…`
+        : `${uploadedCount} file${uploadedCount === 1 ? "" : "s"} uploaded and sent for review`,
     );
+    // Clear the queue so a return visit doesn't re-upload the same files.
+    uploadState.clear();
     setTimeout(() => {
       window.location.href =
         typeof resolveAppPath === "function"
