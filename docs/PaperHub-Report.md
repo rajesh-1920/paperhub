@@ -250,10 +250,6 @@ _Figure 9: Officer review queue — prioritised submissions awaiting an approve/
 
 _Figure 10: Upload page (drag-and-drop, unlimited size)._
 
-![Mobile responsive layout](assets/ui-mobile.png)
-
-_Figure 11: Responsive layout on a mobile viewport._
-
 ## 11. Future Plans
 
 Several capabilities are implemented; the following remain planned extensions:
