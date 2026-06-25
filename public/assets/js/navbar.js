@@ -596,21 +596,23 @@
           }
         };
 
-        runPageInitializer();
-
-        if (typeof applyCurrentUserPageData === "function") {
-          applyCurrentUserPageData();
-        }
-
-        const sidebarLinks = document.querySelectorAll("[data-sidebar-link]");
-        const nextPathname = new URL(url, window.location.href).pathname;
-
+        // Update the address bar BEFORE running the page initializers, so a page
+        // that reads window.location.search (e.g. review-details's ?id=<id>) sees
+        // the new URL rather than the previous page's — otherwise it can't find
+        // the resource and wrongly renders an empty/not-found state.
         if (replaceState) {
           history.replaceState({ url }, "", url);
         } else {
           history.pushState({ url }, "", url);
         }
 
+        runPageInitializer();
+
+        if (typeof applyCurrentUserPageData === "function") {
+          applyCurrentUserPageData();
+        }
+
+        const nextPathname = new URL(url, window.location.href).pathname;
         syncNavigationState(nextPathname);
 
         applyDynamicMeta();
