@@ -1,4 +1,6 @@
-const MAX_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
+// Effectively unlimited — kept only as a sane guard matching the server's
+// request-body cap so the client gives a friendly message instead of a raw 413.
+const MAX_UPLOAD_SIZE_BYTES = 2 * 1024 * 1024 * 1024;
 const FILE_ICON_MAP = {
   "application/pdf": "📄",
   "application/msword": "📝",
@@ -105,7 +107,7 @@ function handleFiles(files) {
 
 function validateFile(file) {
   if (file.size > MAX_UPLOAD_SIZE_BYTES) {
-    showError(`File ${file.name} exceeds the 50MB limit`);
+    showError(`File ${file.name} is too large to upload`);
     return false;
   }
 

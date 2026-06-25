@@ -40,11 +40,23 @@ test("a non-PDF renamed to .pdf is rejected (MIME mismatch)", () => {
   assert.equal(window.validateFile({ name: "spoof.pdf", size: 1000, type: "image/png" }), false);
 });
 
-test("an oversized PDF is rejected", () => {
+test("uploads are unlimited (large PDFs accepted; only an absurd size is guarded)", () => {
   const { window } = boot();
+  // A 60 MB PDF used to be rejected by the old 50 MB cap — now allowed.
   assert.equal(
     window.validateFile({ name: "big.pdf", size: 60 * 1024 * 1024, type: "application/pdf" }),
+    true,
+    "a 60 MB PDF is accepted (no practical size limit)",
+  );
+  // Only an absurd >2 GB file is still guarded (matches the server body cap).
+  assert.equal(
+    window.validateFile({
+      name: "huge.pdf",
+      size: 3 * 1024 * 1024 * 1024,
+      type: "application/pdf",
+    }),
     false,
+    "a >2 GB file is still rejected",
   );
 });
 

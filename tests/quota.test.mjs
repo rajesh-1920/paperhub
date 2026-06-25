@@ -37,3 +37,14 @@ test("quota (client): phStorageUsage reports used/limit/percent", () => {
   assert.equal(usage.fileCount, 1);
   assert.equal(usage.percent, 25);
 });
+
+test("quota: unlimited by default when no explicit limit is configured", () => {
+  const dataset = { users: [{ id: "u1" }], files: [{ id: "a", ownerId: "u1", size: 5_000_000 }] };
+  // No user.storage and no meta.quotaDefaults -> the default is unlimited.
+  assert.equal(quotaLimitFor(dataset, "u1"), Number.MAX_SAFE_INTEGER, "default limit is unlimited");
+  assert.equal(
+    wouldExceedQuota(dataset, "a", 100 * 1024 * 1024 * 1024),
+    false,
+    "adding 100 GB is allowed when no limit is set",
+  );
+});

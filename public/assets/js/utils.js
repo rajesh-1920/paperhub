@@ -1092,8 +1092,9 @@ function phListTrash(ownerId) {
   );
 }
 
-// Storage usage for a user: bytes used by non-trashed owned files vs the limit
-// (user.storage.limitBytes, else meta.quotaDefaults.limitBytes, else 100 MB).
+// Storage usage for a user: bytes used by non-trashed owned files vs the limit.
+// Unlimited by default (Number.MAX_SAFE_INTEGER) — only an explicit
+// user.storage.limitBytes or meta.quotaDefaults.limitBytes caps the user.
 function phStorageUsage(userId) {
   const dataset = getPaperHubDataset();
   const owner = (dataset.users || []).find((u) => u.id === userId);
@@ -1103,7 +1104,7 @@ function phStorageUsage(userId) {
     owner && owner.storage && owner.storage.limitBytes != null
       ? owner.storage.limitBytes
       : (dataset.meta && dataset.meta.quotaDefaults && dataset.meta.quotaDefaults.limitBytes) ||
-          100 * 1024 * 1024,
+          Number.MAX_SAFE_INTEGER,
   );
   return {
     usedBytes,

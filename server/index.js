@@ -44,7 +44,7 @@ const PUBLIC_DIR = join(HERE, "..", "public");
 export function createApp() {
   const app = express();
   app.disable("x-powered-by");
-  app.use(express.json({ limit: "8mb" }));
+  app.use(express.json({ limit: "256mb" }));
 
   app.get("/api/health", (req, res) => res.json({ ok: true }));
 
@@ -105,7 +105,7 @@ export function createApp() {
   app.put(
     "/api/files/:id/content",
     requireAuth,
-    express.raw({ type: "application/pdf", limit: "55mb" }),
+    express.raw({ type: "application/pdf", limit: "2gb" }),
     async (req, res) => {
       const { id } = req.params;
       const body = req.body;
@@ -191,7 +191,7 @@ export function createApp() {
   app.post(
     "/api/files/:id/versions",
     requireAuth,
-    express.raw({ type: "application/pdf", limit: "55mb" }),
+    express.raw({ type: "application/pdf", limit: "2gb" }),
     async (req, res) => {
       const { id } = req.params;
       const body = req.body;

@@ -1,7 +1,9 @@
 // Per-user storage quota helpers. A user's limit comes from their own
 // storage.limitBytes, else meta.quotaDefaults.limitBytes, else a default.
 
-export const DEFAULT_QUOTA_BYTES = 100 * 1024 * 1024; // 100 MB
+// Unlimited by default: a user is only capped if an admin sets an explicit
+// per-user storage.limitBytes or meta.quotaDefaults.limitBytes.
+export const DEFAULT_QUOTA_BYTES = Number.MAX_SAFE_INTEGER;
 
 export function quotaLimitFor(dataset, ownerId) {
   const owner = (dataset.users || []).find((u) => u.id === ownerId);
