@@ -12,6 +12,9 @@ export function authConfig(env = process.env) {
     accessTtl: env.ACCESS_TTL || "3650d",
     refreshTtl: env.REFRESH_TTL || "3650d",
     bcryptRounds: Number(env.BCRYPT_ROUNDS || 12),
+    // OAuth client id for "Sign in with Google". Empty = feature disabled; the
+    // login page hides the button and POST /api/auth/google returns 501.
+    googleClientId: env.GOOGLE_CLIENT_ID || "",
   };
 }
 

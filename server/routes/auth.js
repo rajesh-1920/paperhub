@@ -6,6 +6,8 @@ import { publicUser, findAccountByEmail, buildUserProfile } from "../auth/users.
 import { requireAuth } from "../middleware/auth.js";
 import { rateLimit } from "../middleware/rateLimit.js";
 import { recordAudit } from "../auth/audit.js";
+import { authConfig } from "../config.js";
+import { verifyGoogleIdToken } from "../auth/google.js";
 
 const LOGIN_MAX = Number(process.env.AUTH_LOGIN_MAX || 10);
 import {
@@ -98,6 +100,74 @@ export function authRouter() {
       await writeDataset(dataset);
 
       res.json({ ok: true, ...session, user: publicUser(dataset, account) });
+    },
+  );
+
+  // GET /api/auth/providers — which external sign-in methods are configured, so
+  // the login page can show/hide the "Sign in with Google" button. The client id
+  // is public (it is embedded in the browser flow anyway).
+  router.get("/providers", (req, res) => {
+    const { googleClientId } = authConfig();
+    res.json({ google: Boolean(googleClientId), googleClientId: googleClientId || null });
+  });
+
+  // POST /api/auth/google — verify a Google ID token, then find-or-create the
+  // matching account and issue our own access + refresh tokens.
+  router.post(
+    "/google",
+    rateLimit({ max: LOGIN_MAX, message: "Too many sign-in attempts. Please try again later." }),
+    async (req, res) => {
+      if (!authConfig().googleClientId) {
+        return res.status(501).json({ error: "Google sign-in is not configured" });
+      }
+
+      let profile;
+      try {
+        profile = await verifyGoogleIdToken((req.body || {}).credential);
+      } catch {
+        return res.status(401).json({ error: "Could not verify your Google sign-in" });
+      }
+
+      const dataset = await readDataset();
+      let account = findAccountByEmail(dataset, profile.email);
+      const created = !account;
+
+      if (!account) {
+        account = {
+          id: `user-${slugify(profile.email.split("@")[0])}-${crypto.randomBytes(4).toString("hex")}`,
+          name: profile.name,
+          email: profile.email,
+          role: "user",
+          title: "User",
+          provider: "google",
+          googleId: profile.sub,
+        };
+        dataset.authAccounts = dataset.authAccounts || [];
+        dataset.users = dataset.users || [];
+        dataset.authAccounts.push(account);
+        dataset.users.push(buildUserProfile(account));
+      } else {
+        // Link Google to an existing (e.g. password) account with the same email.
+        account.googleId = account.googleId || profile.sub;
+        account.provider = account.provider || "google";
+      }
+
+      recordAudit(dataset, {
+        action: created ? "auth.google_register" : "auth.google_login",
+        actorId: account.id,
+        actorName: account.name,
+        actorRole: account.role,
+        ip: req.ip,
+      });
+
+      const session = issueSession(dataset, account);
+      await writeDataset(dataset);
+
+      res.status(created ? 201 : 200).json({
+        ok: true,
+        ...session,
+        user: publicUser(dataset, account),
+      });
     },
   );
 
