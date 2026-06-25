@@ -34,6 +34,7 @@
             <button type="button" class="file-chip" data-status-chip="completed">Completed</button>
             <button type="button" class="file-chip" data-status-chip="reviewing">Reviewing</button>
             <button type="button" class="file-chip" data-status-chip="pending">Pending</button>
+            <button type="button" class="file-chip" data-status-chip="rejected">Rejected</button>
           </div>
 
           <div class="file-hero-search-wrap">
@@ -72,6 +73,7 @@
               <option value="reviewing">Reviewing</option>
               <option value="pending">Pending</option>
               <option value="completed">Completed</option>
+              <option value="rejected">Rejected</option>
             </select>
             <select id="fileSortSelect" class="file-status-filter" aria-label="Sort files">
               <option value="recent">Newest first</option>
@@ -103,6 +105,7 @@
                 <tr>
                   <th class="file-select-col"><input type="checkbox" id="fileSelectAll" aria-label="Select all files" /></th>
                   <th>Document Name</th>
+                  <th>Owner</th>
                   <th>Size</th>
                   <th>Status</th>
                   <th>Uploaded</th>
@@ -127,6 +130,7 @@
             <p class="file-meta-empty" id="metaEmpty">Select a file to see its details.</p>
             <div class="file-meta-body hidden" id="metaBody">
               <p class="file-meta-name" id="metaName">—</p>
+              <div class="meta-line"><span>Owner</span><span id="metaOwner">—</span></div>
               <div class="meta-line"><span>Type</span><span id="metaType">—</span></div>
               <div class="meta-line"><span>Size</span><span id="metaSize">—</span></div>
               <div class="meta-line"><span>Pages</span><span id="metaPages">—</span></div>

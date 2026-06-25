@@ -220,6 +220,11 @@
   color: #075985;
 }
 
+.file-status-pill.status-rejected {
+  background: rgba(254, 226, 226, 0.92);
+  color: #b91c1c;
+}
+
 .file-sidebar {
   display: grid;
   gap: 1rem;
@@ -416,7 +421,8 @@ html.dark .file-row.is-selected {
 
 html.dark .file-status-pill.status-completed,
 html.dark .file-status-pill.status-reviewing,
-html.dark .file-status-pill.status-pending {
+html.dark .file-status-pill.status-pending,
+html.dark .file-status-pill.status-rejected {
   background: rgba(255, 255, 255, 0.03) !important;
   border-color: rgba(255, 255, 255, 0.03) !important;
   color: #e8eaec !important;
@@ -523,6 +529,11 @@ html.dark .file-status-pill.status-reviewing {
 html.dark .file-status-pill.status-pending {
   background: rgba(14, 165, 233, 0.1) !important;
   color: #bfe9ff !important;
+}
+
+html.dark .file-status-pill.status-rejected {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #f7b6b6 !important;
 }
 
 html.dark .file-type-icon {

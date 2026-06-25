@@ -593,23 +593,25 @@ function setupBulkActions() {
   });
 
   addEvent(getElement("#fileBulkMove"), "click", () => {
-    if (!filePageSelected.size) return;
+    const ids = selectedMutableIds();
+    if (!ids.length) return warnNoMutableSelection();
     const folderId = getElement("#fileBulkFolder")?.value || null;
-    phMoveFiles([...filePageSelected], folderId || null);
+    phMoveFiles(ids, folderId || null);
     clearBulkSelection();
     showSuccess("Moved selected files");
     loadFileList();
   });
 
   addEvent(getElement("#fileBulkTagBtn"), "click", () => {
-    if (!filePageSelected.size) return;
+    const ids = selectedMutableIds();
+    if (!ids.length) return warnNoMutableSelection();
     const label = String(getElement("#fileBulkTag")?.value || "").trim();
     if (!label) {
       showWarning("Enter a tag name");
       return;
     }
     const tag = typeof phCreateTag === "function" ? phCreateTag({ label }) : null;
-    if (tag) phTagFiles([...filePageSelected], tag.id);
+    if (tag) phTagFiles(ids, tag.id);
     const input = getElement("#fileBulkTag");
     if (input) input.value = "";
     clearBulkSelection();
@@ -618,15 +620,31 @@ function setupBulkActions() {
   });
 
   addEvent(getElement("#fileBulkDelete"), "click", () => {
-    if (!filePageSelected.size) return;
-    if (!window.confirm(`Move ${filePageSelected.size} selected file(s) to Trash?`)) return;
-    phTrashFiles([...filePageSelected]);
+    const ids = selectedMutableIds();
+    if (!ids.length) return warnNoMutableSelection();
+    if (!window.confirm(`Move ${ids.length} selected file(s) to Trash?`)) return;
+    phTrashFiles(ids);
     clearBulkSelection();
     showSuccess("Moved selected files to Trash");
     loadFileList();
   });
 
   populateBulkFolders();
+}
+
+// The subset of the current selection the signed-in user may actually change
+// (their own files, or anything if they're staff). Bulk actions on a shared
+// file list must drop other people's files so we never fire a write the server
+// would silently reject.
+function selectedMutableIds() {
+  const byId = new Map();
+  filePageItems.forEach((f) => byId.set(f.id || f._id, f));
+  return [...filePageSelected].filter((id) => canMutateFile(byId.get(id)));
+}
+
+function warnNoMutableSelection() {
+  if (!filePageSelected.size) return;
+  showWarning("You can only modify your own files");
 }
 
 function populateBulkFolders() {
@@ -702,6 +720,10 @@ async function shareSelectedFile() {
   const file = getSelectedFile();
   if (!file || !file.id) {
     showWarning("Select a file first");
+    return;
+  }
+  if (!canMutateFile(file)) {
+    showWarning("You can only share your own files");
     return;
   }
   if (typeof createShareLinkViaApi !== "function") return;
@@ -876,6 +898,10 @@ function deleteSelectedFile() {
     showWarning("Select a file first");
     return;
   }
+  if (!canMutateFile(file)) {
+    showWarning("You can only delete your own files");
+    return;
+  }
 
   if (!confirm(`Move "${file.name}" to Trash?`)) {
     return;
@@ -898,22 +924,14 @@ async function loadFileList() {
   if (!fileTableBody) return;
 
   try {
-    const ownedFiles = typeof getCurrentUserFiles === "function" ? getCurrentUserFiles() : [];
-    // The files page shows ONLY the signed-in user's own, non-trashed files.
-    // Trashed (soft-deleted) files live in Trash. An empty result must render the
-    // empty state — we must NOT fall back to a global list, or deleting your last
-    // file (or select-all + delete) would make every file reappear, which reads
-    // as "delete isn't working".
-    //
-    // A file is trashed if EITHER its embedded (user.files) copy OR its global
-    // (dataset.files) copy carries deletedAt. Cross-checking the global set makes
-    // a delete stick even if the two copies ever fall out of sync — so a deleted
-    // file can never linger here while also sitting in Trash.
+    // The files page is a shared document space: every user sees ALL files (all
+    // owners, every status — approved, rejected, pending). Trashed (soft-deleted)
+    // files live in Trash and are excluded here. The server still controls who
+    // can mutate what; this is the read view.
     const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
-    const trashedIds = new Set((dataset.files || []).filter((f) => f.deletedAt).map((f) => f.id));
-    const currentFiles = Array.isArray(ownedFiles)
-      ? ownedFiles.filter((f) => !f.deletedAt && !trashedIds.has(f.id))
-      : [];
+    const currentFiles = (Array.isArray(dataset.files) ? dataset.files : []).filter(
+      (f) => !f.deletedAt,
+    );
 
     filePageItems = currentFiles.map((file, index) => ({
       ...file,
@@ -1009,6 +1027,26 @@ function getFilteredAndSortedFiles(files) {
   });
 }
 
+// Resolve a human owner label for a file. Files created in-app carry ownerName;
+// for older/seed records we look the owner up in the dataset's user list.
+function resolveOwnerName(file) {
+  if (file && file.ownerName) return file.ownerName;
+  const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
+  const owner = (dataset.users || []).find((u) => u.id === (file && file.ownerId));
+  return (owner && owner.name) || "Unknown";
+}
+
+// Everyone can browse every file, but only the owner — or staff (officer/admin)
+// — may delete or share one. This mirrors the server's write policy so the UI
+// never offers an action the backend would reject.
+function canMutateFile(file) {
+  if (!file) return false;
+  const isStaff = typeof hasRole === "function" && hasRole(["officer", "admin"]);
+  if (isStaff) return true;
+  const me = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
+  return Boolean(me && file.ownerId && me.id === file.ownerId);
+}
+
 function createFileRow(file) {
   const row = createElement("tr", "file-row");
   row.setAttribute("data-file-id", file._id);
@@ -1029,6 +1067,7 @@ function createFileRow(file) {
         </div>
       </div>
     </td>
+    <td>${escapeHtml(resolveOwnerName(file))}</td>
     <td>${formatFileSize(Number(file.size || 0))}</td>
     <td><span class="file-status-pill status-${escapeHtml(normalizeFileStatus(file.status))}">${escapeHtml(formatFileStatusLabel(file.status))}</span></td>
     <td>${formatDate(file.uploadedAt)}</td>
@@ -1121,6 +1160,7 @@ function updateMetaPanel(file) {
     nameEl.textContent = file.name || "Untitled";
     nameEl.setAttribute("title", file.name || "");
   }
+  setText("#metaOwner", resolveOwnerName(file));
   setText("#metaType", file.fileType || `${getFileExtension(file.name).toUpperCase()} Document`);
   setText("#metaSize", file.sizeLabel || formatFileSize(Number(file.size || 0)));
   setText("#metaPages", file.pageCount ? String(file.pageCount) : "—");
@@ -1140,6 +1180,14 @@ function updateMetaPanel(file) {
       .map((tag) => `<span class="file-meta-tag">${escapeHtml(tag)}</span>`)
       .join("");
   }
+
+  // Preview/Download are open to everyone; Share/Delete only to the owner or
+  // staff, matching the server's write policy.
+  const mutable = canMutateFile(file);
+  const shareBtn = getElement("#metaShareBtn");
+  const deleteBtn = getElement("#metaDeleteBtn");
+  if (shareBtn) shareBtn.classList.toggle("hidden", !mutable);
+  if (deleteBtn) deleteBtn.classList.toggle("hidden", !mutable);
 }
 
 function syncStatusChip(status) {

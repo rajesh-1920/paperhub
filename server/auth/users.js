@@ -1,8 +1,6 @@
 // Helpers for turning an internal authAccount into a safe, client-facing user
 // object. Credentials (password / passwordHash) must never leave the server.
 
-import { canAccessResource } from "./ownership.js";
-
 export function sanitizeAccount(account) {
   if (!account) {
     return account;
@@ -42,12 +40,6 @@ export function sanitizeDataset(dataset) {
   };
 }
 
-function teamIdsForUser(dataset, userId) {
-  return (dataset.teams || [])
-    .filter((team) => (team.members || []).some((member) => member.userId === userId))
-    .map((team) => team.id);
-}
-
 // A minimal public view of a user other than the viewer: enough to render a
 // name/role label, with no email, payment, notifications, or embedded files.
 function minimalUser(user) {
@@ -63,12 +55,12 @@ function minimalUser(user) {
   };
 }
 
-// Per-viewer projection of the (already credential-sanitized) dataset, so a
-// regular user can't read every other user's files and personal data:
-//   - admin / officer: full view (they legitimately work across all users).
-//   - regular user: only files/folders they can access and their own review
-//     items; every OTHER user is reduced to a minimal public profile and the
-//     account list is withheld (admin-only data).
+// Per-viewer projection of the (already credential-sanitized) dataset.
+//   - admin / officer: full view.
+//   - regular user: every file and its review status is visible (this is a
+//     shared document space), but other users' personal data stays private —
+//     their profiles are reduced to a public name/role, the account list is
+//     withheld, and folders stay personal to the viewer.
 //   - no viewer (logged out): a structural shell only — no files/users at all.
 export function projectDatasetForViewer(dataset, viewer) {
   const sanitized = sanitizeDataset(dataset);
@@ -79,18 +71,14 @@ export function projectDatasetForViewer(dataset, viewer) {
     return sanitized;
   }
 
-  const teamIds = teamIdsForUser(dataset, viewer.id);
-  const files = (sanitized.files || []).filter((file) => canAccessResource(viewer, file, teamIds));
-  const accessibleFileIds = new Set(files.map((file) => file.id));
+  // Files and review items are shared with everyone; only PII/accounts/folders
+  // are kept private.
   const folders = (sanitized.folders || []).filter((folder) => folder.ownerId === viewer.id);
-  const reviewQueue = (sanitized.reviewQueue || []).filter((review) =>
-    accessibleFileIds.has(review.fileId),
-  );
   const users = (sanitized.users || []).map((user) =>
     user.id === viewer.id ? user : minimalUser(user),
   );
 
-  return { ...sanitized, files, folders, reviewQueue, users, authAccounts: [] };
+  return { ...sanitized, folders, users, authAccounts: [] };
 }
 
 // The client never receives credentials or refresh tokens, so a round-tripped
@@ -153,8 +141,26 @@ export function applyDatasetWritePolicy(incoming, current, user) {
     ...(current[key] || []).filter((x) => x.ownerId !== user.id),
     ...(incoming[key] || []).filter((x) => x.ownerId === user.id),
   ];
-  result.files = ownSlice("files");
   result.folders = ownSlice("folders");
+
+  // Review power (approve/reject) belongs to officers/admins only. A non-staff
+  // user may upload, rename, move and trash their OWN files, but cannot change
+  // any file's review status: existing files keep the server's status, and a
+  // brand-new upload can't arrive pre-decided.
+  const undecide = (s) => (s === "completed" || s === "rejected" ? "pending" : s);
+  const currentFileById = new Map((current.files || []).map((f) => [f.id, f]));
+  result.files = ownSlice("files").map((f) => {
+    const cur = currentFileById.get(f.id);
+    return cur ? { ...f, status: cur.status } : { ...f, status: undecide(f.status) };
+  });
+
+  // The review queue is server-owned for non-staff: every existing item is kept
+  // exactly as stored; only new (pending) items for their own uploads pass.
+  const currentReviewIds = new Set((current.reviewQueue || []).map((r) => r.id));
+  const newReviews = (incoming.reviewQueue || [])
+    .filter((r) => !currentReviewIds.has(r.id))
+    .map((r) => ({ ...r, status: undecide(r.status) }));
+  result.reviewQueue = [...(current.reviewQueue || []), ...newReviews];
 
   return result;
 }

@@ -888,19 +888,29 @@ test("privacy: GET /api/dataset is scoped to the caller", async (t) => {
   assert.equal((guest.users || []).length, 0, "guest sees no users");
   assert.equal((guest.authAccounts || []).length, 0, "guest sees no accounts");
 
-  // Regular user: only their own files; other users reduced to public profiles.
+  // Regular user: PaperHub is a shared document space, so a regular user sees
+  // EVERY file (all owners, all statuses). Other users' PII/accounts stay
+  // private — their profiles are reduced to a public name/role label.
   const userTok = await tokenFor(base, "mahmud.hasan@paperhub.edu.bd", "user01");
   const u = await get(userTok);
-  assert.ok((u.files || []).length > 0, "user sees their own files");
+  assert.ok((u.files || []).length > 0, "user sees files");
   assert.ok(
-    (u.files || []).every((f) => f.ownerId === "user-mahmud.hasan"),
-    "user sees ONLY their own files",
+    (u.files || []).some((f) => f.ownerId === "user-mahmud.hasan"),
+    "user sees their own files",
+  );
+  assert.ok(
+    (u.files || []).some((f) => f.ownerId !== "user-mahmud.hasan"),
+    "user also sees other users' files (shared document space)",
   );
   assert.equal((u.authAccounts || []).length, 0, "account list withheld from a regular user");
   const otherUser = (u.users || []).find((x) => x.id !== "user-mahmud.hasan");
   assert.ok(otherUser, "other users still listed for name labels");
   assert.equal(otherUser.email, undefined, "other users' email/PII stripped");
-  assert.equal((otherUser.files || []).length, 0, "other users' files not embedded");
+  assert.equal(
+    (otherUser.files || []).length,
+    0,
+    "other users' files not embedded in their profile",
+  );
   const self = (u.users || []).find((x) => x.id === "user-mahmud.hasan");
   assert.ok(self && self.email, "the viewer's own record stays complete");
 
