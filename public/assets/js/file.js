@@ -247,10 +247,10 @@ async function handleUpload() {
         const pageCount = await countPdfPagesFromFile(file);
         const record = persistUploadedFile(file, pageCount);
         const result = record ? await uploadFileBinary(record.id, file) : null;
-        const stored = Boolean(result);
+        const stored = Boolean(result && result.ok);
         // The server re-parses the bytes (handles compressed PDFs the client
         // heuristic can't) — trust its page count when it returns one.
-        if (record && result && result.pages && typeof phSetFilePageCount === "function") {
+        if (stored && result.pages && typeof phSetFilePageCount === "function") {
           phSetFilePageCount(record.id, result.pages);
         }
         if (!record || !stored) {
@@ -263,7 +263,11 @@ async function handleUpload() {
             statusEl.textContent = "Upload failed";
             statusEl.style.color = "var(--danger)";
           }
-          showError(`Could not store ${file.name} — please try again`);
+          showError(
+            result && result.error
+              ? `${file.name}: ${result.error}`
+              : `Could not store ${file.name} — please try again`,
+          );
           continue;
         }
 
@@ -446,11 +450,21 @@ async function uploadFileBinary(id, file) {
     ) {
       response = await doPut();
     }
-    if (!response.ok) return null;
+    if (!response.ok) {
+      // Surface the server's reason (e.g. "Only PDF files are accepted",
+      // "Storage quota exceeded") so the user sees why the upload failed.
+      const err = await response.json().catch(() => ({}));
+      return {
+        ok: false,
+        status: response.status,
+        error: err.error || `Upload failed (HTTP ${response.status})`,
+      };
+    }
     // Body carries the server-parsed page count: { ok, size, pages }.
-    return await response.json().catch(() => ({ ok: true }));
+    const body = await response.json().catch(() => ({}));
+    return { ok: true, pages: body.pages, size: body.size };
   } catch (error) {
-    return null;
+    return { ok: false, error: "Network error during upload" };
   }
 }
 

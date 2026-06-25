@@ -26,6 +26,14 @@ import { countPdfPages } from "./pdf.js";
 const ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
 const PDF_MAGIC = Buffer.from("%PDF");
 
+// The %PDF header is not always at byte 0: a UTF-8 BOM or leading whitespace can
+// precede it, and the PDF spec only requires it within the first 1024 bytes.
+// Scan that window instead of demanding an exact prefix, so valid PDFs aren't
+// wrongly rejected on upload.
+function looksLikePdf(buffer) {
+  return Buffer.isBuffer(buffer) && buffer.subarray(0, 1024).indexOf(PDF_MAGIC) !== -1;
+}
+
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(HERE, "..", "public");
 
@@ -109,7 +117,7 @@ export function createApp() {
           .status(400)
           .json({ error: "Expected a PDF body (Content-Type: application/pdf)" });
       }
-      if (!body.subarray(0, 4).equals(PDF_MAGIC)) {
+      if (!looksLikePdf(body)) {
         return res.status(415).json({ error: "Only PDF files are accepted" });
       }
       try {
@@ -193,7 +201,7 @@ export function createApp() {
       if (!Buffer.isBuffer(body) || body.length === 0) {
         return res.status(400).json({ error: "Expected a PDF body" });
       }
-      if (!body.subarray(0, 4).equals(PDF_MAGIC)) {
+      if (!looksLikePdf(body)) {
         return res.status(415).json({ error: "Only PDF files are accepted" });
       }
       try {

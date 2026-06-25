@@ -941,3 +941,30 @@ test("privacy: a regular user's scoped PUT does not erase other users' data", as
     "another user's files preserved",
   );
 });
+
+test("file content: accepts a PDF whose %PDF header follows a BOM/whitespace", async (t) => {
+  const { server, base } = await startTestServer();
+  t.after(() => server.close());
+  const token = await tokenFor(base, "mahmud.hasan@paperhub.edu.bd", "user01");
+  const put = (buf) =>
+    fetch(`${base}/api/files/file-lenient/content`, {
+      method: "PUT",
+      headers: { "content-type": "application/pdf", ...bearer(token) },
+      body: buf,
+    });
+
+  // Real PDFs may carry a leading newline or UTF-8 BOM before %PDF — accept them.
+  assert.equal((await put(Buffer.from("\n%PDF-1.4\nx\n%%EOF"))).status, 200, "leading newline ok");
+  assert.equal(
+    (await put(Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), Buffer.from("%PDF-1.4\nx")])))
+      .status,
+    200,
+    "BOM-prefixed ok",
+  );
+  // Something that is genuinely not a PDF is still rejected.
+  assert.equal(
+    (await put(Buffer.from("this is plain text, definitely not a pdf"))).status,
+    415,
+    "non-PDF rejected",
+  );
+});
