@@ -125,3 +125,46 @@ test("upload: a batch with one failed file still opens the files page", async ()
     "the successful file is persisted (the failed one rolled back)",
   );
 });
+
+test("upload: a failed binary upload leaves no trace (files AND reviews)", async () => {
+  const { window } = bootPage(
+    "public/pages/file/upload.html",
+    ["utils.js", "main.js", "file.js"],
+    "user",
+  );
+  const origFetch = window.fetch;
+  window.fetch = (url, opts) => {
+    if (String(url).includes("/content") && opts && opts.method === "PUT") {
+      return Promise.resolve({
+        ok: false,
+        status: 415,
+        json: async () => ({ error: "Only PDF files are accepted" }),
+      });
+    }
+    return origFetch(url, opts);
+  };
+  window.initFileUploadPage();
+  const mk = (name) => ({
+    name,
+    size: 18,
+    type: "application/pdf",
+    lastModified: 1,
+    arrayBuffer: async () => new TextEncoder().encode("%PDF-1.4\nx").buffer,
+  });
+  window.handleFiles([mk("rollback.pdf")]);
+  await window.handleUpload();
+  await new Promise((r) => setTimeout(r, 150));
+
+  const ds = window.getPaperHubDataset();
+  const has = (arr, key, val) => (arr || []).some((x) => x[key] === val);
+  assert.ok(!has(ds.files, "name", "rollback.pdf"), "not in global files");
+  assert.ok(
+    !ds.users.flatMap((u) => u.files || []).some((f) => f.name === "rollback.pdf"),
+    "not in user.files",
+  );
+  assert.ok(!has(ds.reviewQueue, "documentName", "rollback.pdf"), "not in reviewQueue");
+  assert.ok(
+    !ds.users.flatMap((u) => u.reviews || []).some((r) => r.documentName === "rollback.pdf"),
+    "not lingering in user.reviews",
+  );
+});

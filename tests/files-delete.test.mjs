@@ -86,3 +86,25 @@ test("files: a file trashed only in the global store still leaves the list (desy
   assert.ok(!rendered.includes(victim.name), "globally-trashed file does not linger on the page");
   assert.equal(document.querySelectorAll("#fileTableBody tr").length, before - 1);
 });
+
+test("files: a file present only in the global list (owned by me) still shows", () => {
+  const { window, document } = boot();
+  const uid = window.getCurrentUserData().id;
+  // Desync: add to dataset.files only, NOT the embedded user.files.
+  window.getPaperHubDataset().files.unshift({
+    id: "ghost-1",
+    name: "ZZZ-ghost.pdf",
+    ownerId: uid,
+    status: "pending",
+    size: 100,
+  });
+  assert.ok(
+    window.getCurrentUserFiles().some((f) => f.id === "ghost-1"),
+    "global-only owned file is surfaced by getCurrentUserFiles",
+  );
+  window.loadFileList();
+  const names = [...document.querySelectorAll("#fileTableBody .file-name-cell")].map(
+    (n) => n.textContent,
+  );
+  assert.ok(names.includes("ZZZ-ghost.pdf"), "and it renders on the files page");
+});

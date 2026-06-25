@@ -395,6 +395,11 @@ function phDeleteFile(fileId) {
   dataset.files = (dataset.files || []).filter((file) => file.id !== fileId);
   (dataset.users || []).forEach((user) => {
     user.files = (user.files || []).filter((file) => file.id !== fileId);
+    // Drop the matching review too, so a removed/rolled-back file can't keep
+    // lingering on the review side while being gone from the files list.
+    if (Array.isArray(user.reviews)) {
+      user.reviews = user.reviews.filter((review) => review.fileId !== fileId);
+    }
   });
   dataset.reviewQueue = (dataset.reviewQueue || []).filter((review) => review.fileId !== fileId);
   phRecomputeDashboardStats(dataset);
@@ -2020,7 +2025,20 @@ function getCurrentUserData() {
 
 function getCurrentUserFiles() {
   const user = getCurrentUserData();
-  return user && Array.isArray(user.files) ? user.files : [];
+  if (!user) return [];
+  // The global dataset.files is the source of truth — an upload always lands
+  // there (phAddFile writes it unconditionally), whereas the embedded user.files
+  // copy is only updated when the owner is resolved. Union the two by id so a
+  // freshly uploaded file can never go missing from the files page.
+  const byId = new Map();
+  if (Array.isArray(user.files)) {
+    user.files.forEach((file) => byId.set(file.id, file));
+  }
+  const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
+  (dataset.files || []).forEach((file) => {
+    if (file.ownerId === user.id) byId.set(file.id, file);
+  });
+  return [...byId.values()];
 }
 
 function getCurrentUserPayment() {
