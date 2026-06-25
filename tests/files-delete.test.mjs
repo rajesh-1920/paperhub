@@ -61,3 +61,10 @@ test("files: meta-panel delete of the selected file removes exactly that row", (
     "the deleted file is no longer active",
   );
 });
+
+test("files: the page links to the Trash so deleted files are findable", () => {
+  const { document } = boot();
+  const link = document.querySelector('.file-trash-link[data-app-href="pages/file/trash.html"]');
+  assert.ok(link, "a Trash link is present in the files-page header");
+  assert.match(link.getAttribute("href"), /\/pages\/file\/trash\.html$/);
+});

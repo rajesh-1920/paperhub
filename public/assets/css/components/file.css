@@ -740,3 +740,15 @@ html.dark .file-content-text {
   line-height: 1.55;
   color: #0f172a;
 }
+
+/* Files-page header Trash link */
+.file-hero-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.file-trash-link {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
