@@ -1,5 +1,7 @@
 <div class="cover">
 
+<img class="cover-emblem" src="assets/pstu-logo.png" alt="Patuakhali Science and Technology University logo" />
+
 <div class="cover-univ">Patuakhali Science and Technology University</div>
 <div class="cover-fac">Faculty of Computer Science and Engineering</div>
 
@@ -21,9 +23,9 @@
 <tr><th>Submitted from,</th><th>Submitted to,</th></tr>
 <tr>
 <td>
-<strong>Md. Sharafat Karim</strong><br/>
-<strong>ID</strong> : 2102024,<br/>
-<strong>Reg</strong> : 10151,<br/>
+<strong>Rajesh Biswas</strong><br/>
+<strong>ID</strong> : 2002060,<br/>
+<strong>Reg</strong> : 09577,<br/>
 <strong>Semester</strong> : 6<br/>
 (Level-3, Semester-2)
 </td>

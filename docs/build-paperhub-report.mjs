@@ -53,12 +53,13 @@ const css = `
 
   /* ---- Cover ---- */
   .cover { page: cover; page-break-after: always; text-align: center; }
-  .cover-univ { font-size: 20pt; font-weight: bold; margin-top: 8mm; }
-  .cover-fac { font-size: 13pt; margin-top: 2mm; }
-  .cover-rule { border: none; border-top: 1.5px solid #334155; margin: 6mm 0; }
+  .cover-emblem { width: 30mm; height: auto; border: none; border-radius: 0; margin: 0 auto 3mm; display: block; }
+  .cover-univ { font-size: 19pt; font-weight: bold; margin-top: 0; }
+  .cover-fac { font-size: 12.5pt; margin-top: 2mm; }
+  .cover-rule { border: none; border-top: 1.5px solid #334155; margin: 4mm 0; }
   .cover-course { font-size: 15pt; font-weight: bold; }
   .cover-rep { font-size: 13pt; margin-top: 2mm; }
-  .cover-logo { font-size: 34pt; font-weight: bold; color: #0f766e; letter-spacing: 1px; margin: 16mm 0; }
+  .cover-logo { font-size: 32pt; font-weight: bold; color: #0f766e; letter-spacing: 1px; margin: 9mm 0; }
   .cover-title { font-size: 12pt; text-align: left; }
   .cover-date { font-size: 11pt; text-align: left; margin-bottom: 5mm; }
   table.cover-table { width: 100%; border-collapse: collapse; margin-top: 4mm; font-size: 10pt; }
