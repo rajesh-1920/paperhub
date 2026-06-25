@@ -48,16 +48,33 @@ test("user dashboard renders submissions and computes submission health", () => 
   assert.match(document.querySelector("[data-user-health-label]").textContent, /%/);
 });
 
-test("files page meta panel reflects the selected file", () => {
+test("files page meta panel reflects the selected file (with empty state)", () => {
   const { window, document, user } = bootPage(
     "public/pages/file/files.html",
     ["utils.js", "main.js", "file.js"],
     "user",
   );
+  const empty = document.querySelector("#metaEmpty");
+  const body = document.querySelector("#metaBody");
+
+  // No selection -> placeholder shown, details hidden.
+  window.updateMetaPanel(null);
+  assert.ok(!empty.classList.contains("hidden"), "placeholder shown when nothing selected");
+  assert.ok(body.classList.contains("hidden"), "details hidden when nothing selected");
+
+  // Select a file -> details shown and populated.
   const file = user.files[0];
   window.updateMetaPanel(file);
+  assert.ok(empty.classList.contains("hidden"), "placeholder hidden once a file is selected");
+  assert.ok(!body.classList.contains("hidden"), "details shown");
+  assert.equal(document.querySelector("#metaName").textContent, file.name);
   assert.equal(document.querySelector("#metaType").textContent, file.fileType);
   assert.equal(document.querySelector("#metaPages").textContent, String(file.pageCount));
+  assert.ok(document.querySelector("#metaSize").textContent.length > 0, "size shown");
+
+  // Clearing the selection returns to the empty state.
+  window.updateMetaPanel(null);
+  assert.ok(body.classList.contains("hidden"), "details hidden again after clearing");
 });
 
 test("review details surfaces the underlying document content", () => {

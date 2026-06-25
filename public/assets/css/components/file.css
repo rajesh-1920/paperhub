@@ -752,3 +752,21 @@ html.dark .file-content-text {
   flex-shrink: 0;
   white-space: nowrap;
 }
+
+/* Selected-file details panel */
+.file-meta-empty {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+.file-meta-name {
+  margin: 0 0 0.7rem;
+  font-weight: 600;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: #0f172a;
+  word-break: break-word;
+}
+.file-meta-body #metaDescription {
+  margin-top: 0.65rem;
+}

@@ -1080,58 +1080,42 @@ function updateStorageHealth(files) {
 }
 
 function updateMetaPanel(file) {
-  const currentUser = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
-  setText("#metaSelected", file ? file.name : "—");
-  setText("#metaOwner", file?.ownerName || currentUser?.name || "PaperHub User");
-  setText(
-    "#metaType",
-    file?.fileType || (file ? getFileExtension(file.name).toUpperCase() + " Document" : "—"),
-  );
-  setText("#metaPages", file?.pageCount ? String(file.pageCount) : "—");
-  setText("#metaStatus", file ? formatFileStatusLabel(file.status) : "—");
-  setText("#metaUpdated", file ? formatDate(file.updatedAt || file.uploadedAt) : "—");
-  setText("#metaDescription", file?.description || "");
+  const empty = getElement("#metaEmpty");
+  const body = getElement("#metaBody");
+
+  // No selection: show the placeholder, hide the details + actions.
+  if (!file) {
+    if (empty) empty.classList.remove("hidden");
+    if (body) body.classList.add("hidden");
+    return;
+  }
+  if (empty) empty.classList.add("hidden");
+  if (body) body.classList.remove("hidden");
+
+  const nameEl = getElement("#metaName");
+  if (nameEl) {
+    nameEl.textContent = file.name || "Untitled";
+    nameEl.setAttribute("title", file.name || "");
+  }
+  setText("#metaType", file.fileType || `${getFileExtension(file.name).toUpperCase()} Document`);
+  setText("#metaSize", file.sizeLabel || formatFileSize(Number(file.size || 0)));
+  setText("#metaPages", file.pageCount ? String(file.pageCount) : "—");
+  setText("#metaStatus", formatFileStatusLabel(file.status));
+  setText("#metaUpdated", formatDate(file.updatedAt || file.uploadedAt));
+
+  const desc = getElement("#metaDescription");
+  if (desc) {
+    desc.textContent = file.description || "";
+    desc.classList.toggle("hidden", !file.description);
+  }
 
   const tagsEl = getElement("#metaTags");
   if (tagsEl) {
-    const tags = Array.isArray(file?.tags) ? file.tags : [];
+    const tags = Array.isArray(file.tags) ? file.tags : [];
     tagsEl.innerHTML = tags
       .map((tag) => `<span class="file-meta-tag">${escapeHtml(tag)}</span>`)
       .join("");
   }
-
-  renderFileContent(file);
-}
-
-function renderFileContent(file) {
-  const meta = getElement("#fileContentMeta");
-  const body = getElement("#fileContentBody");
-  if (!body) {
-    return;
-  }
-
-  if (!file) {
-    if (meta) meta.textContent = "Select a file to read its contents.";
-    body.innerHTML = "";
-    return;
-  }
-
-  if (meta) {
-    const sizeLabel = file.sizeLabel || formatFileSize(Number(file.size || 0));
-    meta.textContent = `${file.fileType || "Document"} • ${file.pageCount || 1} page${file.pageCount === 1 ? "" : "s"} • ${sizeLabel}`;
-  }
-
-  // Real uploaded PDF — embed the actual document so the full PDF is visible.
-  if (file.hasContent) {
-    body.innerHTML = `<iframe class="file-pdf-frame" src="${escapeHtml(fileContentUrl(file))}" title="${escapeHtml(file.name)}"></iframe>`;
-    return;
-  }
-
-  // Legacy/demo record — show the stored text.
-  const pre = createElement("pre", "file-content-text");
-  pre.textContent = file.content ? String(file.content) : "No stored content for this document.";
-  body.innerHTML = "";
-  body.appendChild(pre);
 }
 
 function syncStatusChip(status) {
