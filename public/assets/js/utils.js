@@ -1502,6 +1502,11 @@ function refreshAccessTokenSync() {
       const data = JSON.parse(request.responseText || "{}");
       if (data.token) {
         setStorage(StorageKey.TOKEN, data.token);
+        // If the server ever rotates the refresh token, keep the new one so the
+        // next refresh doesn't fail on a stale token.
+        if (data.refreshToken) {
+          setStorage(StorageKey.REFRESH, data.refreshToken);
+        }
         return true;
       }
     }

@@ -7,8 +7,10 @@ export function authConfig(env = process.env) {
   return {
     jwtSecret: env.JWT_SECRET || "dev-insecure-jwt-secret-change-me",
     refreshSecret: env.REFRESH_SECRET || env.JWT_SECRET || "dev-insecure-refresh-secret-change-me",
-    accessTtl: env.ACCESS_TTL || "15m",
-    refreshTtl: env.REFRESH_TTL || "7d",
+    // Long-lived by default so a signed-in user stays logged in until they
+    // explicitly log out (set ACCESS_TTL / REFRESH_TTL to shorten for prod).
+    accessTtl: env.ACCESS_TTL || "3650d",
+    refreshTtl: env.REFRESH_TTL || "3650d",
     bcryptRounds: Number(env.BCRYPT_ROUNDS || 12),
   };
 }

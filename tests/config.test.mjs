@@ -6,8 +6,9 @@ test("authConfig falls back to safe dev defaults", () => {
   const c = authConfig({});
   assert.ok(c.jwtSecret.length > 0 && c.refreshSecret.length > 0);
   assert.equal(c.bcryptRounds, 12);
-  assert.equal(c.accessTtl, "15m");
-  assert.equal(c.refreshTtl, "7d");
+  // Long-lived by default: a user stays signed in until they log out.
+  assert.equal(c.accessTtl, "3650d");
+  assert.equal(c.refreshTtl, "3650d");
 });
 
 test("authConfig reads overrides from the environment", () => {
