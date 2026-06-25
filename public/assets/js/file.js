@@ -751,14 +751,28 @@ async function shareSelectedFile() {
 // The file currently shown in the preview modal (used by its Download / Open
 // buttons).
 let previewedFile = null;
+// Teardown for an in-flight drag/resize gesture, so closing mid-drag (Escape or
+// an in-app navigation while the pointer is still down) can detach the
+// document-level pointer listeners instead of leaking them onto the next page.
+let previewGestureCleanup = null;
+// The element focus should return to when the popup closes (the control that
+// opened it), for a correct keyboard workflow.
+let previewReturnFocus = null;
 
 function setupFilePreview() {
   const modal = getElement("#filePreviewModal");
   if (!modal || modal.dataset.bound === "true") {
     return;
   }
+  // A previous visit may have portaled its popup to <body> and left it there
+  // (open() hoists it out of <main>). Drop any such stale copy so all queries
+  // and bindings below target this page's fresh, in-<main> copy only.
+  document.querySelectorAll("#filePreviewModal").forEach((m) => {
+    if (m !== modal) m.remove();
+  });
   modal.dataset.bound = "true";
 
+  bindPreviewNavClose();
   getElements("[data-preview-close]").forEach((el) => addEvent(el, "click", closeFilePreview));
   addEvent(getElement("#filePreviewDownload"), "click", () => {
     if (previewedFile) downloadFile(previewedFile);
@@ -773,6 +787,144 @@ function setupFilePreview() {
       closeFilePreview();
     }
   });
+
+  setupPreviewDragAndResize();
+}
+
+// Because the popup is portaled to <body>, an SPA navigation that only swaps
+// <main> would leave it floating over the next page. Close it on any in-app
+// navigation click. Bound once on <document> (capture phase, before the navbar
+// handles the click), guarded by a global flag so repeated page inits don't
+// stack duplicate listeners.
+function bindPreviewNavClose() {
+  if (window.__phPreviewNavCloseBound) return;
+  window.__phPreviewNavCloseBound = true;
+  document.addEventListener(
+    "click",
+    (event) => {
+      const navLink = event.target.closest(
+        "[data-app-href], [data-nav-link], [data-sidebar-link], [data-sign-out], [data-switch-role]",
+      );
+      if (navLink) closeFilePreview();
+    },
+    true,
+  );
+}
+
+// Lift the dialog out of the centered flex flow into free-floating fixed
+// positioning, anchored exactly where it currently sits (so it doesn't jump).
+function makePreviewFloating(dialog) {
+  if (dialog.classList.contains("is-floating")) return;
+  const rect = dialog.getBoundingClientRect();
+  dialog.style.left = `${rect.left}px`;
+  dialog.style.top = `${rect.top}px`;
+  dialog.style.width = `${rect.width}px`;
+  dialog.style.height = `${rect.height}px`;
+  dialog.classList.add("is-floating");
+}
+
+const PREVIEW_MIN_W = 360;
+const PREVIEW_MIN_H = 280;
+
+// Make the preview popup behave like a window: drag it by the header, resize it
+// from the bottom-right grip. Pointer events keep it working for mouse + touch.
+function setupPreviewDragAndResize() {
+  const dialog = getElement(".file-preview-dialog");
+  const header = getElement("#filePreviewDragHandle");
+  const resizer = getElement("#filePreviewResizer");
+  if (!dialog) return;
+
+  // Shared pointer-drag loop: onMove gets the live delta from the press point.
+  // The teardown is published to previewGestureCleanup so closeFilePreview can
+  // detach the listeners if the popup closes mid-gesture (pointer still down).
+  const startGesture = (event, onMove) => {
+    if (event.button !== 0) return;
+    makePreviewFloating(dialog);
+    dialog.classList.add("is-interacting");
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const rect = dialog.getBoundingClientRect();
+    const move = (ev) => onMove(ev, startX, startY, rect);
+    const end = () => {
+      document.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerup", end);
+      dialog.classList.remove("is-interacting");
+      previewGestureCleanup = null;
+    };
+    document.addEventListener("pointermove", move);
+    document.addEventListener("pointerup", end);
+    previewGestureCleanup = end;
+    event.preventDefault();
+  };
+
+  if (header) {
+    addEvent(header, "pointerdown", (event) => {
+      // Clicks on the action buttons must not start a drag.
+      if (event.target.closest(".file-preview-tools")) return;
+      startGesture(event, (ev, startX, startY, rect) => {
+        const offX = startX - rect.left;
+        const offY = startY - rect.top;
+        const maxLeft = Math.max(0, window.innerWidth - dialog.offsetWidth);
+        const maxTop = Math.max(0, window.innerHeight - dialog.offsetHeight);
+        dialog.style.left = `${Math.min(Math.max(0, ev.clientX - offX), maxLeft)}px`;
+        dialog.style.top = `${Math.min(Math.max(0, ev.clientY - offY), maxTop)}px`;
+      });
+    });
+  }
+
+  if (resizer) {
+    addEvent(resizer, "pointerdown", (event) => {
+      event.stopPropagation();
+      startGesture(event, (ev, startX, startY, rect) => {
+        const maxW = window.innerWidth - rect.left - 4;
+        const maxH = window.innerHeight - rect.top - 4;
+        const w = Math.min(Math.max(PREVIEW_MIN_W, rect.width + (ev.clientX - startX)), maxW);
+        const h = Math.min(Math.max(PREVIEW_MIN_H, rect.height + (ev.clientY - startY)), maxH);
+        dialog.style.width = `${w}px`;
+        dialog.style.height = `${h}px`;
+      });
+    });
+  }
+
+  // Keyboard equivalents for users who can't drag/resize with a pointer. While
+  // the dialog container itself holds focus (set on open), arrow keys move it and
+  // Shift+arrow keys resize it; scrolling inside the document/details is
+  // untouched because we only act when the dialog is the focused target.
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  addEvent(dialog, "keydown", (event) => {
+    if (event.target !== dialog || !event.key.startsWith("Arrow")) return;
+    event.preventDefault();
+    makePreviewFloating(dialog);
+    const step = 24;
+    const dx = event.key === "ArrowLeft" ? -step : event.key === "ArrowRight" ? step : 0;
+    const dy = event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0;
+    if (event.shiftKey) {
+      const maxW = Math.max(PREVIEW_MIN_W, window.innerWidth - dialog.offsetLeft - 4);
+      const maxH = Math.max(PREVIEW_MIN_H, window.innerHeight - dialog.offsetTop - 4);
+      dialog.style.width = `${clamp(dialog.offsetWidth + dx, PREVIEW_MIN_W, maxW)}px`;
+      dialog.style.height = `${clamp(dialog.offsetHeight + dy, PREVIEW_MIN_H, maxH)}px`;
+    } else {
+      const maxLeft = Math.max(0, window.innerWidth - dialog.offsetWidth);
+      const maxTop = Math.max(0, window.innerHeight - dialog.offsetHeight);
+      dialog.style.left = `${clamp(dialog.offsetLeft + dx, 0, maxLeft)}px`;
+      dialog.style.top = `${clamp(dialog.offsetTop + dy, 0, maxTop)}px`;
+    }
+  });
+
+  // Keep a floating popup on-screen when the viewport shrinks (it carries fixed
+  // inline left/top/width that a smaller window would otherwise push off-screen).
+  // Bound once on window, guarded so repeated page inits don't stack listeners.
+  if (!window.__phPreviewResizeBound) {
+    window.__phPreviewResizeBound = true;
+    window.addEventListener("resize", () => {
+      const d = getElement(".file-preview-dialog");
+      if (!d || !d.classList.contains("is-floating")) return;
+      const maxLeft = Math.max(0, window.innerWidth - d.offsetWidth);
+      const maxTop = Math.max(0, window.innerHeight - d.offsetHeight);
+      d.style.left = `${Math.min(parseFloat(d.style.left) || 0, maxLeft)}px`;
+      d.style.top = `${Math.min(parseFloat(d.style.top) || 0, maxTop)}px`;
+    });
+  }
 }
 
 // Open a large modal showing the document: the real PDF embedded in an iframe
@@ -788,16 +940,39 @@ function openFilePreview(file) {
     return;
   }
   previewedFile = file;
+  // Remember the control that opened the popup so focus can return to it on close.
+  previewReturnFocus = document.activeElement;
 
   const title = getElement("#filePreviewTitle");
   const meta = getElement("#filePreviewMeta");
   const body = getElement("#filePreviewBody");
+  const sizeLabel = file.sizeLabel || formatFileSize(Number(file.size || 0));
+  const pages = file.pageCount || 1;
   if (title) title.textContent = file.name || "Document preview";
   if (meta) {
-    const sizeLabel = file.sizeLabel || formatFileSize(Number(file.size || 0));
-    const pages = file.pageCount || 1;
     meta.textContent = `${file.fileType || "Document"} • ${pages} page${pages === 1 ? "" : "s"} • ${sizeLabel}`;
   }
+
+  // Details panel — the full metadata shown alongside the document.
+  setText("#previewOwner", resolveOwnerName(file));
+  setText("#previewType", file.fileType || `${getFileExtension(file.name).toUpperCase()} Document`);
+  setText("#previewSize", sizeLabel);
+  setText("#previewPages", file.pageCount ? String(file.pageCount) : "—");
+  setText("#previewStatus", formatFileStatusLabel(file.status));
+  setText("#previewUploaded", formatDate(file.updatedAt || file.uploadedAt));
+  const desc = getElement("#previewDescription");
+  if (desc) {
+    desc.textContent = file.description || "";
+    desc.classList.toggle("hidden", !file.description);
+  }
+  const tagsEl = getElement("#previewTags");
+  if (tagsEl) {
+    const tags = Array.isArray(file.tags) ? file.tags : [];
+    tagsEl.innerHTML = tags
+      .map((tag) => `<span class="file-meta-tag">${escapeHtml(tag)}</span>`)
+      .join("");
+  }
+
   if (body) {
     if (file.hasContent) {
       body.innerHTML = `<iframe class="file-preview-frame" src="${escapeHtml(fileContentUrl(file))}" title="${escapeHtml(file.name || "")}"></iframe>`;
@@ -810,21 +985,51 @@ function openFilePreview(file) {
   const openTab = getElement("#filePreviewOpenTab");
   if (openTab) openTab.classList.toggle("hidden", !file.hasContent);
 
-  // Portal to <body> so the overlay escapes the dashboard's stacking context.
+  // The popup markup lives inside <main> so SPA navigation re-injects it, but the
+  // dashboard navbar/sidebar form a stacking context it can't paint above from
+  // there. Hoist it to <body> on open so the overlay covers the whole screen.
   if (modal.parentElement !== document.body) {
     document.body.appendChild(modal);
   }
+
+  // Re-center: clear any size/position left over from a previous drag/resize.
+  resetPreviewDialogPosition();
   modal.classList.remove("hidden");
+
+  // Move focus into the dialog so keyboard/screen-reader users land on the modal
+  // (it's labelled by its title) and can immediately Escape or arrow-move it.
+  const dialog = getElement(".file-preview-dialog");
+  if (dialog && dialog.focus) dialog.focus();
+}
+
+// Return the popup to its default centered, auto-sized state by stripping the
+// inline geometry and floating flags a drag/resize leaves behind.
+function resetPreviewDialogPosition() {
+  const dialog = getElement(".file-preview-dialog");
+  if (!dialog) return;
+  dialog.classList.remove("is-floating", "is-interacting");
+  dialog.style.left = "";
+  dialog.style.top = "";
+  dialog.style.width = "";
+  dialog.style.height = "";
 }
 
 function closeFilePreview() {
   const modal = getElement("#filePreviewModal");
   if (!modal) return;
+  // Tear down a drag/resize still in progress (closing mid-gesture would
+  // otherwise leak the document-level pointer listeners onto the next page).
+  if (previewGestureCleanup) previewGestureCleanup();
   modal.classList.add("hidden");
   // Drop the iframe so the PDF stops loading/rendering in the background.
   const body = getElement("#filePreviewBody");
   if (body) body.innerHTML = "";
   previewedFile = null;
+  // Return focus to whatever opened the popup, for a continuous keyboard flow.
+  if (previewReturnFocus && previewReturnFocus.focus) {
+    previewReturnFocus.focus();
+  }
+  previewReturnFocus = null;
 }
 
 function viewFileContent(file) {
