@@ -73,7 +73,10 @@ test("google verify: rejects a token signed by a different key (forgery)", async
 });
 
 test("google verify: throws when not configured or credential is malformed", async () => {
-  await assert.rejects(verifyGoogleIdToken(googleToken(), {}, { fetchCerts }), /not configured/);
+  await assert.rejects(
+    verifyGoogleIdToken(googleToken(), { GOOGLE_CLIENT_ID: "" }, { fetchCerts }),
+    /not configured/,
+  );
   await assert.rejects(verifyGoogleIdToken("not-a-jwt", env, { fetchCerts }));
   await assert.rejects(verifyGoogleIdToken("", env, { fetchCerts }));
 });

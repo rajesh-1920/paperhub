@@ -12,9 +12,13 @@ export function authConfig(env = process.env) {
     accessTtl: env.ACCESS_TTL || "3650d",
     refreshTtl: env.REFRESH_TTL || "3650d",
     bcryptRounds: Number(env.BCRYPT_ROUNDS || 12),
-    // OAuth client id for "Sign in with Google". Empty = feature disabled; the
-    // login page hides the button and POST /api/auth/google returns 501.
-    googleClientId: env.GOOGLE_CLIENT_ID || "",
+    // OAuth client id for "Sign in with Google". A project default is baked in
+    // (a Google client id is public — not a secret); override it per deployment
+    // with GOOGLE_CLIENT_ID, or set GOOGLE_CLIENT_ID="" to disable the button.
+    googleClientId:
+      env.GOOGLE_CLIENT_ID != null
+        ? env.GOOGLE_CLIENT_ID
+        : "109774550365-gf5tpbfs9bliulj006uh5ap3dermt1u3.apps.googleusercontent.com",
   };
 }
 
