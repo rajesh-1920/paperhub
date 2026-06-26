@@ -11,44 +11,73 @@ const boot = () => {
 
 const rowCount = (document) => document.querySelectorAll("#fileTableBody tr").length;
 
-test("files: deleting your LAST files leaves the list empty (no global fallback)", () => {
+test("files: trashing your files removes them from the shared list (no reappear)", () => {
   const { window, document } = boot();
   assert.ok(rowCount(document) > 0, "starts with files");
 
-  // Trash every one of the user's files, then reload the list.
-  const ids = window
+  // Trash every one of the user's own files, then reload the list.
+  const myIds = window
     .getCurrentUserFiles()
     .filter((f) => !f.deletedAt)
     .map((f) => f.id);
-  window.phTrashFiles(ids);
+  assert.ok(myIds.length > 0, "the user owns some files");
+  window.phTrashFiles(myIds);
   window.loadFileList();
 
-  // Regression: previously loadFileList fell back to a global file list when the
-  // owned set was empty, so every file reappeared and delete looked broken.
-  assert.equal(rowCount(document), 0, "no files reappear after deleting them all");
+  // The files page is a shared space, so other owners' files remain — but the
+  // page must render exactly the non-trashed set: none of the just-trashed files
+  // may linger (a deleted file reappearing reads as "delete isn't working").
+  const activeCount = window.getPaperHubDataset().files.filter((f) => !f.deletedAt).length;
+  assert.equal(rowCount(document), activeCount, "list shows every non-trashed file, no more");
+  assert.ok(
+    myIds.every((id) => window.getPaperHubDataset().files.find((f) => f.id === id)?.deletedAt),
+    "every trashed file is gone from the active list",
+  );
 });
 
-test("files: select-all + bulk delete removes the rows and they stay gone", () => {
+test("files: select-all + bulk delete trashes only the user's own rows", () => {
   const { window, document } = boot();
   const before = rowCount(document);
   assert.ok(before > 0, "starts with files");
+  const myActive = window
+    .getCurrentUserFiles()
+    .filter((f) => !f.deletedAt)
+    .map((f) => f.id);
+  assert.ok(myActive.length > 0, "the user owns some files");
 
   const selectAll = document.getElementById("fileSelectAll");
   selectAll.checked = true;
   selectAll.dispatchEvent(new window.Event("change", { bubbles: true }));
   document.getElementById("fileBulkDelete").click();
 
-  assert.equal(rowCount(document), 0, "all rows deleted and do not come back");
+  // Select-all spans the whole shared list, but a regular user may only trash
+  // their OWN files; other owners' rows must survive the bulk delete.
+  const activeCount = window.getPaperHubDataset().files.filter((f) => !f.deletedAt).length;
+  assert.equal(rowCount(document), activeCount, "other owners' files remain");
+  assert.ok(rowCount(document) < before, "the user's own rows are gone");
   const uid = window.getCurrentUserData().id;
-  assert.equal(window.phListTrash(uid).length, before, "every deleted file is in Trash");
+  const trashIds = new Set(window.phListTrash(uid).map((f) => f.id));
+  assert.ok(
+    myActive.every((id) => trashIds.has(id)),
+    "every owned file moved to Trash",
+  );
 });
 
 test("files: meta-panel delete of the selected file removes exactly that row", () => {
   const { window, document } = boot();
   const before = rowCount(document);
-  document.querySelector("#fileTableBody tr").click(); // select first row
+  // Delete only shows for files the user owns, so select a row for an owned file.
+  const myId = window.getCurrentUserData().id;
+  const ds = window.getPaperHubDataset();
+  const ownRow = [...document.querySelectorAll("#fileTableBody tr")].find((tr) => {
+    const fid = tr.querySelector(".file-row-select")?.getAttribute("data-file-select");
+    const f = ds.files.find((x) => x.id === fid);
+    return f && f.ownerId === myId && !f.deletedAt;
+  });
+  assert.ok(ownRow, "a row for an owned file exists");
+  ownRow.click(); // select it
   const selected = window.getSelectedFile();
-  assert.ok(selected, "a file is selected");
+  assert.ok(selected && selected.ownerId === myId, "an owned file is selected");
 
   document.getElementById("metaDeleteBtn").click();
 

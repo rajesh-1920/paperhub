@@ -85,13 +85,14 @@
             <button type="submit" class="btn-primary w-full">Sign In</button>
           </form>
 
-          <div class="my-5 flex items-center gap-3">
-            <span class="h-px flex-1 bg-slate-200"></span>
-            <span class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">or</span>
-            <span class="h-px flex-1 bg-slate-200"></span>
+          <div id="googleAuthArea" class="hidden">
+            <div class="my-5 flex items-center gap-3">
+              <span class="h-px flex-1 bg-slate-200"></span>
+              <span class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">or</span>
+              <span class="h-px flex-1 bg-slate-200"></span>
+            </div>
+            <div id="googleSignInButton" class="flex justify-center"></div>
           </div>
-
-          <button type="button" class="btn-secondary w-full">Continue with Google</button>
 
           <p class="mt-6 text-center text-sm text-slate-600">
             New to PaperHub?
@@ -102,6 +103,7 @@
     </main>
   </div>
 
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="../../assets/js/utils.js"></script>
   <script src="../../assets/js/auth.js"></script>
 </body>

@@ -1,0 +1,34 @@
+# Single-container PaperHub on the built-in JSON-file store — no database needed.
+# Start it:   docker compose -f docker-compose.jsonstore.yml up -d --build
+# Then open:  http://localhost:7000
+#
+# The dataset (seeded from server/seed.json on first boot) and uploaded PDFs
+# persist in the "paperhub-data" volume mounted at /data. Want a real database?
+# Use docker-compose.yml instead (app + MongoDB).
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    init: true
+    # Optional: drop a .env next to this file to override the secrets below.
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PORT: "7000"
+      # MONGODB_URI is intentionally unset here, so the JSON-file store is used.
+      JWT_SECRET: ${JWT_SECRET:-paperhub-local-demo-secret-change-me-please}
+      REFRESH_SECRET: ${REFRESH_SECRET:-paperhub-local-demo-refresh-change-me-please}
+      ACCESS_TTL: ${ACCESS_TTL:-15m}
+      REFRESH_TTL: ${REFRESH_TTL:-7d}
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+      # "Sign in with Google" uses the app's built-in web client id by default, so
+      # the button just works. To use your own, set GOOGLE_CLIENT_ID in .env; to
+      # hide the button, set it to an empty value there.
+    ports:
+      - "7000:7000"
+    volumes:
+      - paperhub-data:/data
+
+volumes:
+  paperhub-data:

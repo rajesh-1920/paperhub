@@ -21,9 +21,17 @@ test("bulk UI: selecting rows shows the toolbar and deletes them", async () => {
   const boxes = document.querySelectorAll(".file-row-select");
   assert.ok(boxes.length > 0, "rows render with selection checkboxes");
 
-  const id = boxes[0].getAttribute("data-file-select");
-  boxes[0].checked = true;
-  boxes[0].dispatchEvent(new window.Event("change", { bubbles: true }));
+  // The files page is a shared space showing every owner's files, but a regular
+  // user may only delete their OWN — so pick a checkbox for a file they own.
+  const myId = window.getCurrentUser().id;
+  const ds = window.getPaperHubDataset();
+  const mine = (ds.files || []).find((f) => f.ownerId === myId && !f.deletedAt);
+  assert.ok(mine, "fixture has a file owned by the signed-in user");
+  const box = [...boxes].find((b) => b.getAttribute("data-file-select") === mine.id);
+  assert.ok(box, "the owned file has a row checkbox");
+
+  box.checked = true;
+  box.dispatchEvent(new window.Event("change", { bubbles: true }));
 
   assert.equal(document.getElementById("fileBulkBar").hidden, false, "toolbar appears");
   assert.match(document.getElementById("fileBulkCount").textContent, /1 selected/);
@@ -31,7 +39,7 @@ test("bulk UI: selecting rows shows the toolbar and deletes them", async () => {
   document
     .getElementById("fileBulkDelete")
     .dispatchEvent(new window.Event("click", { bubbles: true }));
-  const trashed = window.getPaperHubDataset().files.find((f) => f.id === id);
+  const trashed = window.getPaperHubDataset().files.find((f) => f.id === mine.id);
   assert.ok(trashed && trashed.deletedAt, "selected file moved to Trash (soft-deleted)");
 });
 

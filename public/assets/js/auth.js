@@ -99,6 +99,72 @@ function registerViaApi({ name, email, password }) {
   return postAuth("/api/auth/register", { name, email, password });
 }
 
+// --- Sign in with Google -----------------------------------------------------
+
+// Receives the Google ID token from Google Identity Services, exchanges it for a
+// PaperHub session, and redirects to the user's dashboard.
+async function handleGoogleCredential(response) {
+  if (!response || !response.credential) return;
+  try {
+    const { token, refreshToken, user } = await postAuth("/api/auth/google", {
+      credential: response.credential,
+    });
+    persistAuthSession(user, token, refreshToken);
+    showSuccess("Signed in with Google");
+    setTimeout(() => {
+      window.location.href = getAuthPageRouteByRole(user.role);
+    }, 500);
+  } catch (error) {
+    showError(error.message || "Google sign-in failed");
+  }
+}
+
+// The GIS script loads async, so wait until it's available.
+function whenGoogleReady(callback, attempts = 40) {
+  if (window.google && window.google.accounts && window.google.accounts.id) {
+    callback();
+  } else if (attempts > 0) {
+    setTimeout(() => whenGoogleReady(callback, attempts - 1), 100);
+  }
+}
+
+// Show the Google button only when the server has a client id configured.
+async function initGoogleSignIn() {
+  const area = getElement("#googleAuthArea");
+  const container = getElement("#googleSignInButton");
+  if (!area || !container) return;
+
+  let config;
+  try {
+    config = await (await fetch(paperhubApiUrl("/api/auth/providers"))).json();
+  } catch (error) {
+    return; // providers endpoint unavailable — keep the button hidden
+  }
+  if (!config || !config.google || !config.googleClientId) {
+    return; // not configured — keep hidden
+  }
+
+  whenGoogleReady(() => {
+    try {
+      window.google.accounts.id.initialize({
+        client_id: config.googleClientId,
+        callback: handleGoogleCredential,
+      });
+      window.google.accounts.id.renderButton(container, {
+        theme: "outline",
+        size: "large",
+        text: "continue_with",
+        shape: "rectangular",
+        logo_alignment: "left",
+        width: 320,
+      });
+      area.classList.remove("hidden");
+    } catch (error) {
+      /* GIS unavailable — leave the Google button hidden */
+    }
+  });
+}
+
 function enforceAuthLightTheme() {
   document.documentElement.classList.remove("dark");
   setStorage("paperhub-theme", "light");
@@ -109,6 +175,7 @@ function initLoginPage() {
   if (!loginForm) return;
 
   addEvent(loginForm, "submit", handleLogin);
+  initGoogleSignIn();
 }
 
 async function handleLogin(e) {

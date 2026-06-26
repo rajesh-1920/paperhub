@@ -27,8 +27,9 @@ The whole stack — the Node app and a MongoDB database — runs with one comman
 docker compose up -d --build
 ```
 
-Then open **http://localhost:8000**. The database is seeded automatically on
-first run and persists in a Docker volume. Useful commands:
+Then open **http://localhost:7000**. The database (and the bundled demo PDFs) is
+seeded automatically on first run and persists in a Docker volume. Useful
+commands:
 
 ```bash
 docker compose logs -f app     # tail app logs
@@ -36,11 +37,28 @@ docker compose down            # stop (keeps the data volume)
 docker compose down -v         # stop and wipe the database
 ```
 
-### Option B — Node directly (JSON-file database, no Docker)
+The app runs as a non-root user and ships a container healthcheck. Secrets and
+other settings are read from an optional `.env` file next to the compose file
+(see [Configuration](#configuration)); the bundled defaults are fine for a local
+demo.
+
+### Option B — Docker Compose, no database (JSON-file store)
+
+Zero external dependencies — a single container that keeps its data in a JSON
+file plus an uploads folder, both persisted in a Docker volume:
+
+```bash
+docker compose -f docker-compose.jsonstore.yml up -d --build
+```
+
+Same URL (**http://localhost:7000**), same auto-seeded demo data. Stop/wipe with
+`docker compose -f docker-compose.jsonstore.yml down [-v]`.
+
+### Option C — Node directly (JSON-file database, no Docker)
 
 ```bash
 npm install
-npm run dev        # start the server with --watch on http://localhost:8000
+npm run dev        # start the server with --watch on http://localhost:7000
 # or: npm run serve
 ```
 
@@ -69,6 +87,32 @@ the JSON file otherwise.** Nothing else in the app changes.
 
 To reset everything to the original sample data: **Settings → Security → Reset
 demo data** (which calls `POST /api/reset`).
+
+## Configuration
+
+All settings come from the environment. Copy `.env.example` to `.env` (the
+compose files load it automatically; `npm start`/`npm run dev` load it too). At
+minimum set strong token secrets:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"  # one per secret
+```
+
+| Variable                        | Default                | Purpose                                                                     |
+| ------------------------------- | ---------------------- | --------------------------------------------------------------------------- |
+| `PORT`                          | `7000`                 | HTTP port the server listens on.                                            |
+| `MONGODB_URI`                   | _(unset)_              | Set it to use MongoDB; leave it unset for the JSON-file store.              |
+| `MONGODB_DB`                    | `paperhub`             | Database name when using MongoDB.                                           |
+| `JWT_SECRET` / `REFRESH_SECRET` | dev fallback           | Token signing secrets. **Required** (≥16 chars) when `NODE_ENV=production`. |
+| `ACCESS_TTL` / `REFRESH_TTL`    | `3650d`                | Access/refresh token lifetimes (e.g. `15m`, `7d`).                          |
+| `BCRYPT_ROUNDS`                 | `12`                   | bcrypt cost factor for password hashing.                                    |
+| `GOOGLE_CLIENT_ID`              | project default        | OAuth web client id for "Sign in with Google"; empty hides it.              |
+| `PAPERHUB_DB_FILE`              | `public/assets/data/…` | JSON-store database file (the Docker image defaults it to `/data`).         |
+| `PAPERHUB_UPLOAD_DIR`           | `server/uploads`       | JSON-store uploaded-PDF directory (the image defaults it to `/data`).       |
+
+In the containers, JSON-store data (the database file + uploaded PDFs) lives in
+the `/data` volume so it survives restarts; the MongoDB stack keeps everything
+(including binaries in GridFS) in the `mongo-data` volume.
 
 ## API
 

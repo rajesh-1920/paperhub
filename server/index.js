@@ -240,7 +240,7 @@ export function createApp() {
   return app;
 }
 
-export async function start(port = process.env.PORT || 8000) {
+export async function start(port = process.env.PORT || 7000) {
   assertAuthConfig();
   await ensureDataset();
   const app = createApp();

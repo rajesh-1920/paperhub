@@ -34,6 +34,7 @@
             <button type="button" class="file-chip" data-status-chip="completed">Completed</button>
             <button type="button" class="file-chip" data-status-chip="reviewing">Reviewing</button>
             <button type="button" class="file-chip" data-status-chip="pending">Pending</button>
+            <button type="button" class="file-chip" data-status-chip="rejected">Rejected</button>
           </div>
 
           <div class="file-hero-search-wrap">
@@ -72,6 +73,7 @@
               <option value="reviewing">Reviewing</option>
               <option value="pending">Pending</option>
               <option value="completed">Completed</option>
+              <option value="rejected">Rejected</option>
             </select>
             <select id="fileSortSelect" class="file-status-filter" aria-label="Sort files">
               <option value="recent">Newest first</option>
@@ -103,6 +105,7 @@
                 <tr>
                   <th class="file-select-col"><input type="checkbox" id="fileSelectAll" aria-label="Select all files" /></th>
                   <th>Document Name</th>
+                  <th>Owner</th>
                   <th>Size</th>
                   <th>Status</th>
                   <th>Uploaded</th>
@@ -127,6 +130,7 @@
             <p class="file-meta-empty" id="metaEmpty">Select a file to see its details.</p>
             <div class="file-meta-body hidden" id="metaBody">
               <p class="file-meta-name" id="metaName">—</p>
+              <div class="meta-line"><span>Owner</span><span id="metaOwner">—</span></div>
               <div class="meta-line"><span>Type</span><span id="metaType">—</span></div>
               <div class="meta-line"><span>Size</span><span id="metaSize">—</span></div>
               <div class="meta-line"><span>Pages</span><span id="metaPages">—</span></div>
@@ -145,27 +149,46 @@
 
         </aside>
       </div>
+
+      <!-- Resizable, draggable document preview popup. Kept INSIDE <main> so SPA
+           navigation (which swaps only main's content) re-injects it, instead of
+           falling back to opening the PDF in a new browser tab. -->
+      <div id="filePreviewModal" class="file-preview-modal hidden" role="dialog" aria-modal="true"
+        aria-labelledby="filePreviewTitle">
+        <div class="file-preview-backdrop" data-preview-close></div>
+        <div class="file-preview-dialog" role="document" tabindex="-1"
+          aria-description="Use arrow keys to move this window, Shift with arrow keys to resize it.">
+          <header class="file-preview-header" id="filePreviewDragHandle"
+            title="Drag to move this preview window">
+            <div class="file-preview-titles">
+              <h3 id="filePreviewTitle">Document preview</h3>
+              <span class="file-preview-subtitle" id="filePreviewMeta"></span>
+            </div>
+            <div class="file-preview-tools">
+              <button type="button" class="btn btn-sm btn-outline" id="filePreviewOpenTab">Open in tab</button>
+              <button type="button" class="btn btn-sm btn-primary" id="filePreviewDownload">Download</button>
+              <button type="button" class="file-preview-close" data-preview-close aria-label="Close preview">✕</button>
+            </div>
+          </header>
+          <div class="file-preview-main">
+            <div class="file-preview-body" id="filePreviewBody"></div>
+            <aside class="file-preview-details" id="filePreviewDetails">
+              <h4>Details</h4>
+              <div class="meta-line"><span>Owner</span><span id="previewOwner">—</span></div>
+              <div class="meta-line"><span>Type</span><span id="previewType">—</span></div>
+              <div class="meta-line"><span>Size</span><span id="previewSize">—</span></div>
+              <div class="meta-line"><span>Pages</span><span id="previewPages">—</span></div>
+              <div class="meta-line"><span>Status</span><span id="previewStatus">—</span></div>
+              <div class="meta-line"><span>Uploaded</span><span id="previewUploaded">—</span></div>
+              <p id="previewDescription" class="file-preview-desc hidden"></p>
+              <div id="previewTags" class="file-meta-tags"></div>
+            </aside>
+          </div>
+          <span class="file-preview-resizer" id="filePreviewResizer" aria-hidden="true" title="Drag to resize"></span>
+        </div>
+      </div>
     </div>
   </main>
-
-  <div id="filePreviewModal" class="file-preview-modal hidden" role="dialog" aria-modal="true"
-    aria-labelledby="filePreviewTitle">
-    <div class="file-preview-backdrop" data-preview-close></div>
-    <div class="file-preview-dialog" role="document">
-      <header class="file-preview-header">
-        <div class="file-preview-titles">
-          <h3 id="filePreviewTitle">Document preview</h3>
-          <span class="file-preview-subtitle" id="filePreviewMeta"></span>
-        </div>
-        <div class="file-preview-tools">
-          <button type="button" class="btn btn-sm btn-outline" id="filePreviewOpenTab">Open in tab</button>
-          <button type="button" class="btn btn-sm btn-primary" id="filePreviewDownload">Download</button>
-          <button type="button" class="file-preview-close" data-preview-close aria-label="Close preview">✕</button>
-        </div>
-      </header>
-      <div class="file-preview-body" id="filePreviewBody"></div>
-    </div>
-  </div>
 
   <div id="footer-container"></div>
 

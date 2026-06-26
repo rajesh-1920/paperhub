@@ -23,7 +23,10 @@ test("upload persists and appears on the files page and officer queue (end-to-en
   );
   await files.window.loadFileList();
   assert.match(files.document.querySelector("#fileTableBody").textContent, /E2E-Proof\.pdf/);
-  assert.equal(files.document.querySelector("#filesStatTotal").textContent, "17");
+  // The files page is a shared space: the count reflects EVERY non-trashed file,
+  // not just the uploader's own.
+  const expectedTotal = files.window.getPaperHubDataset().files.filter((f) => !f.deletedAt).length;
+  assert.equal(files.document.querySelector("#filesStatTotal").textContent, String(expectedTotal));
 
   // 3. The officer sees it in the review queue.
   const queue = bootPage(

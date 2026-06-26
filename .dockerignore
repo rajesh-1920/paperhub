@@ -19,3 +19,5 @@ jsconfig.json
 .nvmrc
 Dockerfile
 docker-compose.yml
+docker-compose.*.yml
+.dockerignore

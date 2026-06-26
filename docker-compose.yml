@@ -1,3 +1,8 @@
+# Full stack: the PaperHub app + a MongoDB database (binaries in GridFS).
+# Start it:   docker compose up -d --build      then open http://localhost:7000
+#
+# Prefer zero external dependencies? Use the JSON-file store instead:
+#   docker compose -f docker-compose.jsonstore.yml up -d --build
 services:
   mongo:
     image: mongo:7
@@ -13,10 +18,15 @@ services:
   app:
     build: .
     restart: unless-stopped
+    init: true
+    # Optional: drop a .env next to this file to override the secrets below.
+    env_file:
+      - path: .env
+        required: false
     environment:
       MONGODB_URI: mongodb://mongo:27017
       MONGODB_DB: paperhub
-      PORT: "8000"
+      PORT: "7000"
       # Override these via a .env file or your shell. The defaults are for local
       # demos only — set strong random secrets (and NODE_ENV=production) in prod.
       JWT_SECRET: ${JWT_SECRET:-paperhub-local-demo-secret-change-me-please}
@@ -24,8 +34,11 @@ services:
       ACCESS_TTL: ${ACCESS_TTL:-15m}
       REFRESH_TTL: ${REFRESH_TTL:-7d}
       BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+      # "Sign in with Google" uses the app's built-in web client id by default, so
+      # the button just works. To use your own, set GOOGLE_CLIENT_ID in .env; to
+      # hide the button, set it to an empty value there.
     ports:
-      - "8000:8000"
+      - "7000:7000"
     depends_on:
       mongo:
         condition: service_healthy

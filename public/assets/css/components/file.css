@@ -220,6 +220,11 @@
   color: #075985;
 }
 
+.file-status-pill.status-rejected {
+  background: rgba(254, 226, 226, 0.92);
+  color: #b91c1c;
+}
+
 .file-sidebar {
   display: grid;
   gap: 1rem;
@@ -416,7 +421,8 @@ html.dark .file-row.is-selected {
 
 html.dark .file-status-pill.status-completed,
 html.dark .file-status-pill.status-reviewing,
-html.dark .file-status-pill.status-pending {
+html.dark .file-status-pill.status-pending,
+html.dark .file-status-pill.status-rejected {
   background: rgba(255, 255, 255, 0.03) !important;
   border-color: rgba(255, 255, 255, 0.03) !important;
   color: #e8eaec !important;
@@ -523,6 +529,11 @@ html.dark .file-status-pill.status-reviewing {
 html.dark .file-status-pill.status-pending {
   background: rgba(14, 165, 233, 0.1) !important;
   color: #bfe9ff !important;
+}
+
+html.dark .file-status-pill.status-rejected {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #f7b6b6 !important;
 }
 
 html.dark .file-type-icon {
@@ -667,14 +678,28 @@ html.dark .file-content-text {
 .file-preview-dialog {
   position: relative;
   z-index: 1;
-  width: min(1040px, 96vw);
-  height: 92vh;
+  width: min(1100px, 96vw);
+  height: 90vh;
+  min-width: 360px;
+  min-height: 280px;
+  max-width: 98vw;
+  max-height: 96vh;
   background: #fff;
   border-radius: 0.9rem;
   box-shadow: 0 24px 60px rgba(2, 6, 23, 0.45);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+/* Once the user drags or resizes, the dialog leaves the centered flex flow and
+   is positioned freely against the viewport (left/top/width/height set inline). */
+.file-preview-dialog.is-floating {
+  position: fixed;
+  margin: 0;
+}
+/* While dragging/resizing, stop the PDF iframe from swallowing pointer events. */
+.file-preview-dialog.is-interacting .file-preview-frame {
+  pointer-events: none;
 }
 .file-preview-header {
   display: flex;
@@ -683,6 +708,13 @@ html.dark .file-content-text {
   gap: 1rem;
   padding: 0.8rem 1.1rem;
   border-bottom: 1px solid #e2e8f0;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+}
+/* Buttons in the header must stay clickable, not initiate a drag. */
+.file-preview-header .file-preview-tools {
+  cursor: auto;
 }
 .file-preview-titles {
   min-width: 0;
@@ -718,8 +750,15 @@ html.dark .file-content-text {
   background: #f1f5f9;
   color: #0f172a;
 }
+/* Document on the left, details panel on the right. */
+.file-preview-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
 .file-preview-body {
   flex: 1;
+  min-width: 0;
   min-height: 0;
   background: #f8fafc;
 }
@@ -727,6 +766,69 @@ html.dark .file-content-text {
   width: 100%;
   height: 100%;
   border: 0;
+}
+.file-preview-details {
+  flex-shrink: 0;
+  width: 17rem;
+  max-width: 40%;
+  padding: 1rem 1.15rem;
+  border-left: 1px solid #e2e8f0;
+  background: #fff;
+  overflow-y: auto;
+}
+.file-preview-details h4 {
+  margin: 0 0 0.8rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+}
+.file-preview-details .meta-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.32rem 0;
+  font-size: 0.84rem;
+  color: #64748b;
+  border-bottom: 1px solid #f1f5f9;
+}
+.file-preview-details .meta-line span:last-child {
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+.file-preview-desc {
+  margin: 0.85rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: #475569;
+}
+/* On a narrow dialog the details panel would crowd the document — hide it. */
+@media (max-width: 640px) {
+  .file-preview-details {
+    display: none;
+  }
+}
+/* Bottom-right grab handle for resizing the popup. */
+.file-preview-resizer {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  touch-action: none;
+  z-index: 2;
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 6px,
+      #94a3b8 6px 8px,
+      transparent 8px 10px,
+      #94a3b8 10px 12px,
+      transparent 12px
+    );
 }
 .file-preview-text {
   margin: 0;
@@ -739,6 +841,46 @@ html.dark .file-content-text {
   font-size: 0.85rem;
   line-height: 1.55;
   color: #0f172a;
+}
+
+/* Dark mode: the popup is light by default; tint it to match the dark shell. */
+html.dark .file-preview-dialog {
+  background: #0f172a;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+html.dark .file-preview-header {
+  border-bottom-color: rgba(148, 163, 184, 0.18);
+}
+html.dark .file-preview-details {
+  background: #0f172a;
+  border-left-color: rgba(148, 163, 184, 0.18);
+}
+html.dark .file-preview-details h4,
+html.dark .file-preview-details .meta-line {
+  color: #94a3b8;
+}
+html.dark .file-preview-details .meta-line {
+  border-bottom-color: rgba(148, 163, 184, 0.12);
+}
+html.dark .file-preview-details .meta-line span:last-child {
+  color: #e2e8f0;
+}
+html.dark .file-preview-desc {
+  color: #cbd5e1;
+}
+html.dark .file-preview-body {
+  background: #0b1220;
+}
+/* Lighten the resize grip on the dark dialog so it stays discoverable. */
+html.dark .file-preview-resizer {
+  background: linear-gradient(
+    135deg,
+    transparent 0 6px,
+    #cbd5e1 6px 8px,
+    transparent 8px 10px,
+    #cbd5e1 10px 12px,
+    transparent 12px
+  );
 }
 
 /* Files-page header Trash link */
