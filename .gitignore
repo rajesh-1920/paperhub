@@ -47,6 +47,25 @@ coverage/
 *.sublime-project
 *.sublime-workspace
 
+# ───────────────────────────── AI assistants / agents ───────────────────
+# Local AI/agent tool config, rules, and chat history — never commit these.
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+.cursor/
+.cursorrules
+.cursorignore
+.aider*
+.windsurf/
+.windsurfrules
+.continue/
+.codeium/
+.github/copilot-instructions.md
+.mcp.json
+AGENTS.md
+GEMINI.md
+.gemini/
+
 # ───────────────────────────── OS files ─────────────────────────────────
 .DS_Store
 .DS_Store?
