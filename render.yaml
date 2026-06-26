@@ -1,0 +1,41 @@
+# Render.com Blueprint — deploy PaperHub free.
+# In Render: New + → Blueprint → pick this repo. Render builds the Dockerfile and
+# runs the app on the PORT it injects.
+#
+# For data that SURVIVES restarts/redeploys, set MONGODB_URI to a free MongoDB
+# Atlas (M0) connection string in the service's Environment tab — the free web
+# service has an EPHEMERAL disk, so the JSON-file store would reset otherwise.
+# Leave MONGODB_URI unset for a throwaway demo that reseeds the sample data.
+#
+# After the first deploy, add the service's https URL (e.g.
+# https://paperhub.onrender.com) to your Google OAuth client's
+# "Authorized JavaScript origins" so "Sign in with Google" works.
+services:
+  - type: web
+    name: paperhub
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Persistence (recommended): a MongoDB Atlas M0 URI. Set it in the
+      # dashboard — it's a secret, so it's not stored in this file.
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: paperhub
+      # Strong token secrets, generated once by Render and kept across deploys.
+      - key: JWT_SECRET
+        generateValue: true
+      - key: REFRESH_SECRET
+        generateValue: true
+      - key: ACCESS_TTL
+        value: 15m
+      - key: REFRESH_TTL
+        value: 7d
+      - key: BCRYPT_ROUNDS
+        value: "12"
+      # "Sign in with Google" uses the app's built-in client id by default.
+      # To use your own, set it here; to hide the button, set an empty value.
+      # - key: GOOGLE_CLIENT_ID
+      #   value: your-web-client-id.apps.googleusercontent.com
