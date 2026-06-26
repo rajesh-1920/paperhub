@@ -34,8 +34,9 @@ services:
       ACCESS_TTL: ${ACCESS_TTL:-15m}
       REFRESH_TTL: ${REFRESH_TTL:-7d}
       BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
-      # Optional "Sign in with Google" web client id (public; no secret needed).
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      # "Sign in with Google" uses the app's built-in web client id by default, so
+      # the button just works. To use your own, set GOOGLE_CLIENT_ID in .env; to
+      # hide the button, set it to an empty value there.
     ports:
       - "7000:7000"
     depends_on:
