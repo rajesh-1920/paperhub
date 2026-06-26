@@ -27,7 +27,7 @@ The whole stack — the Node app and a MongoDB database — runs with one comman
 docker compose up -d --build
 ```
 
-Then open **http://localhost:8000**. The database (and the bundled demo PDFs) is
+Then open **http://localhost:7000**. The database (and the bundled demo PDFs) is
 seeded automatically on first run and persists in a Docker volume. Useful
 commands:
 
@@ -51,14 +51,14 @@ file plus an uploads folder, both persisted in a Docker volume:
 docker compose -f docker-compose.jsonstore.yml up -d --build
 ```
 
-Same URL (**http://localhost:8000**), same auto-seeded demo data. Stop/wipe with
+Same URL (**http://localhost:7000**), same auto-seeded demo data. Stop/wipe with
 `docker compose -f docker-compose.jsonstore.yml down [-v]`.
 
 ### Option C — Node directly (JSON-file database, no Docker)
 
 ```bash
 npm install
-npm run dev        # start the server with --watch on http://localhost:8000
+npm run dev        # start the server with --watch on http://localhost:7000
 # or: npm run serve
 ```
 
@@ -100,7 +100,7 @@ node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"  # one 
 
 | Variable                        | Default                | Purpose                                                                     |
 | ------------------------------- | ---------------------- | --------------------------------------------------------------------------- |
-| `PORT`                          | `8000`                 | HTTP port the server listens on.                                            |
+| `PORT`                          | `7000`                 | HTTP port the server listens on.                                            |
 | `MONGODB_URI`                   | _(unset)_              | Set it to use MongoDB; leave it unset for the JSON-file store.              |
 | `MONGODB_DB`                    | `paperhub`             | Database name when using MongoDB.                                           |
 | `JWT_SECRET` / `REFRESH_SECRET` | dev fallback           | Token signing secrets. **Required** (≥16 chars) when `NODE_ENV=production`. |

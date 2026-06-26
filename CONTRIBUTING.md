@@ -7,7 +7,7 @@ frontend. Please keep changes proportionate to that — no frameworks or bundler
 
 ```bash
 npm install
-npm run serve      # serve public/ on http://localhost:8000
+npm run serve      # serve public/ on http://localhost:7000
 # or: npm run dev  # serve with cache disabled and open a browser
 ```
 

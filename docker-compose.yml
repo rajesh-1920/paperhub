@@ -1,5 +1,5 @@
 # Full stack: the PaperHub app + a MongoDB database (binaries in GridFS).
-# Start it:   docker compose up -d --build      then open http://localhost:8000
+# Start it:   docker compose up -d --build      then open http://localhost:7000
 #
 # Prefer zero external dependencies? Use the JSON-file store instead:
 #   docker compose -f docker-compose.jsonstore.yml up -d --build
@@ -26,7 +26,7 @@ services:
     environment:
       MONGODB_URI: mongodb://mongo:27017
       MONGODB_DB: paperhub
-      PORT: "8000"
+      PORT: "7000"
       # Override these via a .env file or your shell. The defaults are for local
       # demos only — set strong random secrets (and NODE_ENV=production) in prod.
       JWT_SECRET: ${JWT_SECRET:-paperhub-local-demo-secret-change-me-please}
@@ -37,7 +37,7 @@ services:
       # Optional "Sign in with Google" web client id (public; no secret needed).
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     ports:
-      - "8000:8000"
+      - "7000:7000"
     depends_on:
       mongo:
         condition: service_healthy

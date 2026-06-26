@@ -24,9 +24,9 @@ RUN mkdir -p /data && chown -R node:node /data
 VOLUME /data
 USER node
 
-EXPOSE 8000
+EXPOSE 7000
 
 # Liveness probe — uses Node's built-in fetch (no extra tooling in the image).
-HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=5 CMD ["node", "-e", "fetch('http://127.0.0.1:'+(process.env.PORT||8000)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=5 CMD ["node", "-e", "fetch('http://127.0.0.1:'+(process.env.PORT||7000)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
 
 CMD ["node", "server/index.js"]
