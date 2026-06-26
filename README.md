@@ -177,11 +177,37 @@ sending a change.
 
 ## Deploy
 
-PaperHub now needs a Node runtime (the backend serves the app and owns the JSON
-database). Run `npm ci --omit=dev && npm start` on any Node host. The compiled
-`public/assets/css/tailwind.css` is committed, so no CSS build step is needed at
-deploy time. (The `_headers` file still applies on hosts that read it; for a
-Node host, set the equivalent response headers at your proxy.)
+PaperHub needs a Node runtime (the backend serves the app and owns the
+database). Run `npm ci --omit=dev && npm start` on any Node host, or deploy the
+bundled `Dockerfile`. The compiled `public/assets/css/tailwind.css` is committed,
+so no CSS build step is needed at deploy time. The server listens on
+`process.env.PORT` (hosts inject it), so no port config is required.
+
+### Free hosting (Render + MongoDB Atlas)
+
+A free, always-reachable, HTTPS deployment — needed because the app has a backend
+and "Sign in with Google" requires an HTTPS origin:
+
+1. **Database (free, persistent).** Create a free **MongoDB Atlas** M0 cluster,
+   add a database user, allow access from anywhere (`0.0.0.0/0`), and copy the
+   `mongodb+srv://…` connection string. (Render's free disk is ephemeral, so the
+   JSON-file store would reset on every restart — use Atlas to persist data.)
+2. **App.** Push to GitHub, then in **Render** choose **New → Blueprint** and pick
+   this repo. The bundled [`render.yaml`](render.yaml) builds the Dockerfile and
+   wires up the env vars; in the service's **Environment** tab, paste your Atlas
+   string as `MONGODB_URI`. Deploy → you get an `https://<name>.onrender.com` URL.
+3. **Google sign-in.** Add that `https://…onrender.com` URL to your Google OAuth
+   client's **Authorized JavaScript origins** (Cloud Console → Credentials), or
+   set `GOOGLE_CLIENT_ID` empty to hide the button.
+
+Notes: the free Render service sleeps after ~15 min idle (first request then
+takes ~30–60 s to wake); Atlas M0 is capped at 512 MB (plenty for the demo).
+Other Node hosts (Fly.io with a volume for the JSON store, Koyeb, Railway) work
+the same way — point them at the `Dockerfile` and set the env vars from
+[`.env.example`](.env.example).
+
+(The `_headers` file still applies on hosts that read it; for a Node host, set the
+equivalent response headers at your proxy.)
 
 ## License
 
