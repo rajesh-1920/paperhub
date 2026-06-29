@@ -43,5 +43,22 @@ services:
       mongo:
         condition: service_healthy
 
+  # Web UI to browse the MongoDB database in a browser at http://localhost:9000.
+  # Dev/demo only — it exposes full read/write DB access, so don't run it in prod.
+  # Log in with the basic-auth user/pass below (ME_USER / ME_PASS, default admin/admin).
+  mongo-express:
+    image: mongo-express:1.0.2
+    restart: unless-stopped
+    ports:
+      - "9000:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_USER:-admin}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_PASS:-admin}
+    depends_on:
+      mongo:
+        condition: service_healthy
+
 volumes:
   mongo-data:
