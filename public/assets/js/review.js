@@ -686,9 +686,11 @@ function notifyForwardViaApi(payload) {
       method: "POST",
       headers,
       body: JSON.stringify(payload),
-    }).catch(() => {});
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null);
   } catch (error) {
-    return Promise.resolve();
+    return Promise.resolve(null);
   }
 }
 
@@ -732,31 +734,43 @@ function handleReviewAction(action) {
     if (typeof phSetReviewStatus === "function") {
       phSetReviewStatus(activeReview.id, nextStatus);
     }
-
-    // Forwarding escalates the document to the admin — notify them by email
-    // (server-side; best-effort, never blocks the forward).
-    if (action === "forwarded") {
-      notifyForwardViaApi({
-        reviewId: activeReview.id,
-        documentName: activeReview.documentName,
-        comment: comment.trim(),
-        ownerName: activeReview.submittedBy || activeReview.ownerName || "",
-      });
-    }
   }
 
-  showSuccess(
-    action === "forwarded"
-      ? "Document forwarded — the admin has been notified by email"
-      : `Document ${action} successfully`,
-  );
-
-  setTimeout(() => {
+  const goToQueue = () => {
     window.location.href =
       typeof resolveAppPath === "function"
         ? resolveAppPath("pages/review/review-queue.html")
         : "review-queue.html";
-  }, 900);
+  };
+
+  // Forwarding escalates the document to the admin — email them server-side and
+  // report the REAL delivery result, so the officer knows whether it actually
+  // sent (vs. just being logged because no email sender is configured).
+  if (action === "forwarded" && activeReview) {
+    showInfo("Forwarding to the admin…");
+    notifyForwardViaApi({
+      reviewId: activeReview.id,
+      documentName: activeReview.documentName,
+      comment: comment.trim(),
+      ownerName: activeReview.submittedBy || activeReview.ownerName || "",
+    }).then((res) => {
+      const emailed = res && res.emailed;
+      if (emailed && emailed.sent) {
+        showSuccess(`Forwarded — admin notified by email (${emailed.to})`);
+      } else if (emailed && emailed.reason === "not_configured") {
+        showWarning(
+          "Forwarded, but the email sender isn't configured (set GMAIL_USER / GMAIL_APP_PASSWORD).",
+        );
+      } else {
+        showSuccess("Document forwarded to the admin");
+      }
+      setTimeout(goToQueue, 1600);
+    });
+    return;
+  }
+
+  showSuccess(`Document ${action} successfully`);
+  setTimeout(goToQueue, 900);
 }
 
 function addComment() {
