@@ -17,6 +17,7 @@ import { authRouter } from "./routes/auth.js";
 import { filesRouter } from "./routes/files.js";
 import { shareRouter } from "./routes/share.js";
 import { auditRouter } from "./routes/audit.js";
+import { reviewsRouter } from "./routes/reviews.js";
 import { assertAuthConfig } from "./config.js";
 import { sanitizeDataset, applyDatasetWritePolicy, projectDatasetForViewer } from "./auth/users.js";
 import { requireAuth, authorize, optionalAuth } from "./middleware/auth.js";
@@ -59,6 +60,9 @@ export function createApp() {
 
   // Audit / activity log (read + record).
   app.use("/api/audit", auditRouter());
+
+  // Review side effects (e.g. email the admin when a document is forwarded).
+  app.use("/api/reviews", reviewsRouter());
 
   // Read the whole dataset. Never cache it — the frontend re-fetches after
   // every mutation and must always see the latest counts. Credentials and

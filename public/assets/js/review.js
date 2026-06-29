@@ -675,6 +675,23 @@ function setupReviewCommentAction() {
   addEvent(commentButton, "click", addComment);
 }
 
+// Tell the server an officer forwarded a document so it can email the admin.
+// Best-effort and non-blocking: the forward succeeds regardless of delivery.
+function notifyForwardViaApi(payload) {
+  try {
+    const headers = { "Content-Type": "application/json" };
+    const token = typeof getAuthToken === "function" ? getAuthToken() : "";
+    if (token) headers.Authorization = "Bearer " + token;
+    return fetch(paperhubApiUrl("/api/reviews/forward"), {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  } catch (error) {
+    return Promise.resolve();
+  }
+}
+
 function handleReviewAction(action) {
   // A terminal decision can't be changed — the document has left the queue.
   if (activeReview && (activeReview.status === "completed" || activeReview.status === "rejected")) {
@@ -715,9 +732,24 @@ function handleReviewAction(action) {
     if (typeof phSetReviewStatus === "function") {
       phSetReviewStatus(activeReview.id, nextStatus);
     }
+
+    // Forwarding escalates the document to the admin — notify them by email
+    // (server-side; best-effort, never blocks the forward).
+    if (action === "forwarded") {
+      notifyForwardViaApi({
+        reviewId: activeReview.id,
+        documentName: activeReview.documentName,
+        comment: comment.trim(),
+        ownerName: activeReview.submittedBy || activeReview.ownerName || "",
+      });
+    }
   }
 
-  showSuccess(`Document ${action} successfully`);
+  showSuccess(
+    action === "forwarded"
+      ? "Document forwarded — the admin has been notified by email"
+      : `Document ${action} successfully`,
+  );
 
   setTimeout(() => {
     window.location.href =
