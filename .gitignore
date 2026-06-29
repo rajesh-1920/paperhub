@@ -79,3 +79,11 @@ desktop.ini
 # Runtime JSON database (seeded from server/seed.json on first boot — never
 # commit it; it holds mutable state + credentials and must not be a static asset)
 public/assets/data/paperhub-backend.json
+
+# ───────────────────────────── Mobile / Android build ───────────────────
+# Built APKs, signing keystores, and intermediate build output (commit the
+# mobile/ source, not the binaries).
+*.apk
+*.keystore
+*.jks
+mobile/out/
