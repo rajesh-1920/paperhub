@@ -552,6 +552,17 @@ body.paperhub-has-navbar {
     display: inline-flex;
   }
 
+  /* On phones, drop the notification bell and surface the profile/account
+     dropdown (avatar) instead — it carries Profile, Settings, role switch and
+     Sign Out. */
+  .ph-notify-btn {
+    display: none;
+  }
+
+  .ph-user-btn {
+    display: inline-flex;
+  }
+
   .ph-menu {
     width: min(100vw - 1rem, 22rem);
     min-width: 0;
