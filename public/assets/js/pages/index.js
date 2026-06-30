@@ -32,8 +32,34 @@ function applyLandingTheme() {
   }
 }
 
+// Toggle the mobile nav dropdown (shown only below the md breakpoint).
+function setupMobileMenu() {
+  const toggle = document.getElementById("landingMenuToggle");
+  const menu = document.getElementById("landingMobileMenu");
+  if (!toggle || !menu) return;
+
+  const close = () => {
+    menu.classList.add("hidden");
+    toggle.setAttribute("aria-expanded", "false");
+  };
+
+  toggle.addEventListener("click", () => {
+    const isOpen = menu.classList.toggle("hidden") === false;
+    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+
+  // Close after choosing a link/action, or once the viewport reaches desktop.
+  menu.querySelectorAll("a, button").forEach((el) => el.addEventListener("click", close));
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 768) close();
+  });
+}
+
 window.navigateToAuth = navigateToAuth;
 window.scrollToSection = scrollToSection;
 window.handleContactForm = handleContactForm;
 
-document.addEventListener("DOMContentLoaded", applyLandingTheme);
+document.addEventListener("DOMContentLoaded", () => {
+  applyLandingTheme();
+  setupMobileMenu();
+});

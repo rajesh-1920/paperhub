@@ -802,14 +802,81 @@
 }
 
 @media (max-width: 767px) {
+  /* On phones the hero visual is hidden, so a full-height, vertically-centered
+     hero leaves a big empty gap above the copy. Let it size to its content and
+     start just below the fixed navbar instead. */
   .landing-hero {
-    min-height: 100svh;
-    padding-top: 4.45rem;
-    padding-bottom: 0.5rem;
+    min-height: auto;
+    align-items: flex-start;
+    padding-top: 5.5rem;
+    padding-bottom: 2.5rem;
   }
 
   .landing-hero-grid {
-    gap: 1.8rem;
+    gap: 1.6rem;
+  }
+}
+
+/* Button labels should never wrap onto two lines. */
+.btn {
+  white-space: nowrap;
+}
+
+/* --- Landing mobile nav -----------------------------------------------------
+   Styled by id rather than Tailwind utilities, because the prebuilt
+   tailwind.css doesn't include `md:hidden` (and may purge others). The
+   hamburger + dropdown show only below the md breakpoint. */
+#landingMenuToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: transparent;
+  color: #334155;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dark #landingMenuToggle {
+  border-color: rgba(148, 163, 184, 0.28);
+  color: #e2e8f0;
+}
+
+#landingMobileMenu {
+  border-top: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(255, 255, 255, 0.97);
+}
+
+.dark #landingMobileMenu {
+  background: rgba(2, 6, 23, 0.97);
+}
+
+#landingMobileMenu a {
+  padding: 0.7rem 0;
+  color: #334155;
+  text-decoration: none;
+}
+
+.dark #landingMobileMenu a {
+  color: #e2e8f0;
+}
+
+#landingMobileMenu a:hover {
+  color: #0ea5e9;
+}
+
+#landingMobileMenu .btn {
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  #landingMenuToggle,
+  #landingMobileMenu {
+    display: none !important;
   }
 }
 

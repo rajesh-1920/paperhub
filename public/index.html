@@ -45,8 +45,27 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <button class="btn btn-ghost btn-sm" onclick="navigateToAuth('login')">Sign In</button>
-                <button class="btn btn-primary btn-sm" onclick="navigateToAuth('register')">Get Started</button>
+                <div class="hidden md:flex items-center gap-3">
+                    <button class="btn btn-ghost btn-sm" onclick="navigateToAuth('login')">Sign In</button>
+                    <button class="btn btn-primary btn-sm" onclick="navigateToAuth('register')">Get Started</button>
+                </div>
+                <button id="landingMenuToggle" type="button" aria-label="Open menu" aria-expanded="false"
+                    class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xl leading-none">☰</button>
+            </div>
+        </div>
+
+        <div id="landingMobileMenu"
+            class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md">
+            <div class="container-wide flex flex-col py-3">
+                <a href="#" class="py-2.5 text-slate-700 dark:text-slate-200 hover:text-primary-500 transition-colors">Home</a>
+                <a href="#features" class="py-2.5 text-slate-700 dark:text-slate-200 hover:text-primary-500 transition-colors">Features</a>
+                <a href="#benefits" class="py-2.5 text-slate-700 dark:text-slate-200 hover:text-primary-500 transition-colors">Benefits</a>
+                <a href="#pricing" class="py-2.5 text-slate-700 dark:text-slate-200 hover:text-primary-500 transition-colors">Pricing</a>
+                <a href="#contact" class="py-2.5 text-slate-700 dark:text-slate-200 hover:text-primary-500 transition-colors">Contact</a>
+                <div class="flex items-center gap-3 pt-3 mt-2 border-t border-slate-200 dark:border-slate-800">
+                    <button class="btn btn-ghost btn-sm flex-1" onclick="navigateToAuth('login')">Sign In</button>
+                    <button class="btn btn-primary btn-sm flex-1" onclick="navigateToAuth('register')">Get Started</button>
+                </div>
             </div>
         </div>
     </nav>
