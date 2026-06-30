@@ -5,6 +5,14 @@
   align-items: start;
 }
 
+/* Grid items default to min-width:auto, which refuses to shrink below their
+   content — so a wide table inside the main column would stretch the whole grid
+   (and every stacked card) past the viewport. min-width:0 lets the column shrink
+   and the table scroll inside its own .table-container instead. */
+.payment-grid > * {
+  min-width: 0;
+}
+
 .payment-card {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.93));
   border: 1px solid rgba(148, 163, 184, 0.16);
@@ -124,6 +132,18 @@
   padding: 0.55rem 0;
 }
 
+/* Long, unbreakable filenames must wrap instead of stretching the invoice past
+   the viewport on mobile; keep the amount on its own line. */
+.invoice-item > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.invoice-item > span:last-child {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .invoice-item+.invoice-item {
   border-top: 1px solid rgba(15, 23, 42, 0.03);
 }
@@ -150,6 +170,10 @@
 
 .table-container {
   margin-top: 0.6rem;
+  /* Let a wide table scroll inside its box instead of stretching the page —
+     otherwise the table's min-width forces horizontal overflow on mobile. */
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 .payment-card {

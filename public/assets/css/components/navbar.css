@@ -541,6 +541,17 @@ body.paperhub-has-navbar {
     padding: 0.6rem 0.8rem;
   }
 
+  /* Collapse the top nav to a hamburger on tablet/mobile: hide the inline links
+     (the `>` rule above forces them visible, so match its specificity here) and
+     reveal the hamburger toggle. */
+  .ph-nav-inner > .ph-nav-links {
+    display: none;
+  }
+
+  .ph-mobile-toggle {
+    display: inline-flex;
+  }
+
   .ph-menu {
     width: min(100vw - 1rem, 22rem);
     min-width: 0;

@@ -743,9 +743,6 @@ function handleReviewAction(action) {
         : "review-queue.html";
   };
 
-  // Forwarding escalates the document to the admin — email them server-side and
-  // report the REAL delivery result, so the officer knows whether it actually
-  // sent (vs. just being logged because no email sender is configured).
   if (action === "forwarded" && activeReview) {
     showInfo("Forwarding to the admin…");
     notifyForwardViaApi({

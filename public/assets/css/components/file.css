@@ -110,6 +110,14 @@
   grid-template-columns: minmax(0, 1.5fr) minmax(290px, 0.8fr);
 }
 
+/* Grid items default to min-width:auto and refuse to shrink below their content,
+   so a wide table or a long filename would stretch the column past a phone's
+   width. min-width:0 lets the column shrink (tables scroll in their own box). */
+.file-layout > *,
+.file-page-shell > * {
+  min-width: 0;
+}
+
 .file-table-panel {
   display: grid;
   gap: 0.9rem;
