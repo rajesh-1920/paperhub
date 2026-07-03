@@ -52,7 +52,7 @@
   },
   "homepage": "https://github.com/rajesh-1920/paperhub#readme",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
+    "bcryptjs": "^3.0.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.3.0",
