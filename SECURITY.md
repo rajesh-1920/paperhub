@@ -1,56 +1,78 @@
 # Security
 
-## Threat model — read this first
+## Threat model
 
-PaperHub is a **demo**. It has a Node backend, but that backend only reads and
-writes a JSON file — it does **no** authentication or authorization. As a direct
-consequence, the following are **intentional, documented limitations** — not
-bugs:
+PaperHub is a document-management app with a real backend boundary:
 
-- **Authentication is client-side.** Seed credentials (e.g. `admin01`) live in
-  `public/assets/data/paperhub-backend.json`. They are sample values, not
-  secrets. Login compares them in plain text in the browser.
-- **Authorization (RBAC) is client-side and bypassable.** Role checks
-  (`hasRole`, `canAccessPathByRole`, `enforcePageAccess`) read the role from
-  `localStorage`. Anyone can set `localStorage["paperhub-user-role"] = "admin"`
-  and reload. The route guards are UX, not a security boundary.
-- **The API is unauthenticated.** `GET/PUT /api/dataset` and `POST /api/reset`
-  accept any caller; `PUT` overwrites the whole database. There is no identity,
-  no per-record authorization, and no integrity check.
+- **Authentication is server-side.** Credentials are `bcryptjs`-hashed
+  (`server/auth/passwords.js`); sessions are short-lived JWT access tokens
+  (default `15m`) + opaque refresh tokens (default `7d`, `sha256`-stored).
+  Google sign-in verifies ID tokens against Google's certs
+  (`server/auth/google.js`). `server/config.js:assertAuthConfig()` refuses to
+  boot in production with a weak `JWT_SECRET`.
+- **Authorization is server-enforced.** Every `/api/*` mutation checks the
+  JWT (`server/middleware/auth.js:requireAuth/authorize`) plus per-resource
+  ownership/ACL/team grants (`server/auth/ownership.js`). Non-staff callers
+  are further constrained by `applyDatasetWritePolicy()` on the legacy bulk
+  endpoint. Client-side role checks (`canAccessPathByRole`,
+  `enforcePageAccess`) are UX conveniences only — the server never trusts
+  them.
+- **What is still client-observable:** the app is a multi-page server-rendered
+  frontend, so route HTML/JS is public; only the _data_ is access-controlled
+  (`projectDatasetForViewer` scopes `GET /api/dataset`; `requireResourceAccess`
+  returns 404 instead of 403 so existence isn't leaked).
 
-**Do not deploy PaperHub with real user data or real credentials.** A
-production version would require per-user authentication, hashed credentials,
-and authorization enforced on every API mutation — not a single unguarded
-"replace the whole dataset" endpoint.
+Earlier versions of this file described the pre-auth demo ("no auth, open
+PUT /api/dataset"). That is **outdated and wrong** — the controls above are
+implemented and covered by `tests/server.test.mjs`,
+`tests/scoped-patch.test.mjs` and `tests/security.test.mjs`.
 
-## What we _do_ harden
+## What we harden
 
-Even as a demo, the app applies the protections that are meaningful client-side:
+- **Output escaping.** All dataset/user-derived values go through
+  `escapeHtml()` before `innerHTML`; plain text uses `textContent`
+  (see `CONTRIBUTING.md`). `tests/security.test.mjs` asserts malicious file
+  names cannot inject markup.
+- **Input validation on both layers.** Client `ph*` mutators enforce
+  allowlists/lengths; the server re-validates independently (status enums,
+  name/description/folder allowlists, pagination clamps, PDF magic check,
+  quota check). Never trust the client.
+- **Security headers from Express.** `server/middleware/securityHeaders.js`
+  sends `X-Content-Type-Options`, `X-Frame-Options: DENY`,
+  `Referrer-Policy`, `Permissions-Policy` and a CSP on every deployment
+  (`public/_headers` mirrors them for static hosts). The live DB file is
+  blocked from static serving (`app.use("/assets/data", 404)` in
+  `server/index.js`).
+- **Abuse caps.** Global `/api/` rate limit (600/15m) plus tighter caps on
+  `login`/`google` (10), `register` (20), `refresh` (60) and public
+  share-link resolution (120). JSON bodies capped at `2mb`, PDF uploads at
+  `100mb`.
+- **Audit trail.** `POST /api/audit` stamps actor identity server-side
+  (callers cannot forge `actorId`); auth/file/share events are recorded and
+  capped at 1000 entries.
 
-- **Output escaping.** All dataset/user-derived values are passed through
-  `escapeHtml()` before being interpolated into `innerHTML`. Plain text uses
-  `textContent`. See the escaping policy in [CONTRIBUTING.md](CONTRIBUTING.md).
-  A regression test (`tests/security.test.mjs`) asserts a malicious file name
-  cannot inject markup into the version-history view.
-- **Input validation at the store boundary.** The `ph*` mutators reject
-  out-of-range statuses, empty/oversized comments, and strip control characters
-  and clamp the length of uploaded file names.
-- **Security headers for static hosts.** `public/_headers` ships a
-  Content-Security-Policy plus `X-Frame-Options: DENY`,
-  `X-Content-Type-Options: nosniff`, `Referrer-Policy`, and a
-  `Permissions-Policy`. Hosts that read a `_headers` file (Netlify, Cloudflare
-  Pages) apply them automatically. The local `http-server` does **not** — and a
-  `<meta>` CSP cannot set `frame-ancestors`, so framing protection requires the
-  real response header.
+## Known follow-ups (not bugs — tracked work)
 
-## Known follow-ups (future work)
-
-- The CSP keeps `script-src 'unsafe-inline'` because a few pages still use inline
-  `<script>` blocks and event handlers (e.g. the landing page, `settings.html`).
-  Externalising those scripts/handlers would allow tightening to
+- CSP keeps `script-src 'unsafe-inline'` because a few pages still use inline
+  handlers (`index.html`, `settings.html`). Externalise them to tighten to
   `script-src 'self'`.
+- Access tokens are stateless JWTs (no server blacklist before expiry);
+  `change-password` revokes refresh tokens. Short `ACCESS_TTL=15m` bounds the
+  window. A token-version counter would close it fully.
+- Rate limits are in-memory per process (fine for single-instance; use a
+  shared store if you scale horizontally).
+- `PUT /api/dataset` (bulk sync) is **deprecated** (`Deprecation: true` +
+  `Sunset` header) in favour of scoped `PATCH` endpoints. It remains
+  write-policy-enforced until removal.
 
 ## Reporting
 
-This is a learning/demo project. If you find an issue, please open a GitHub
-issue: https://github.com/rajesh-1920/paperhub/issues
+Please **do not open a public issue for vulnerabilities**. Email the
+maintainers privately (see `package.json:author` / repository contacts) with:
+
+1. affected endpoint or page,
+2. steps to reproduce (role, request, response),
+3. impact assessment.
+
+We aim to acknowledge within 72 hours. Low-severity hardening ideas are
+welcome as public issues: https://github.com/rajesh-1920/paperhub/issues

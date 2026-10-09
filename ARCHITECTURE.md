@@ -12,19 +12,22 @@ server/
 ├── index.js               Express app: REST API + static hosting
 ├── db.js                  storage façade (JSON file or MongoDB)
 ├── stores/                jsonStore.js + mongoStore.js
+├── middleware/            auth.js + rateLimit.js + securityHeaders.js
+├── routes/                auth.js + files.js + users.js + share.js + audit.js + reviews.js
 ├── migrate.js             seed the configured database
 └── seed.json              pristine dataset used by POST /api/reset
 public/
 ├── index.html              Landing page
-├── _headers                Security headers for static hosts
+├── _headers                Security headers for static hosts (mirrored by Express)
 ├── components/             navbar / sidebar / footer partials (fetched at runtime)
 ├── pages/                  Auth, dashboard, file, review, payment, account, support
 └── assets/
-    ├── data/paperhub-backend.json   The JSON database (3 people, 30 files)
-    ├── js/                 Application scripts (shared-global architecture)
+    ├── js/                 Application scripts (classic globals + esm/ modules)
+    ├── js/esm/             Modern ESM layer: format/validate/api/store/session
     └── css/                Tailwind build output + component/page styles
 src/css/input.css           Tailwind source (compiled to assets/css/tailwind.css)
-tests/                      node:test + jsdom suite
+tests/                      node:test + jsdom suite (+ live-server API tests)
+docs/API.md                 Full REST contract (methods, auth, errors)
 ```
 
 ## The shared-global script layer
@@ -40,16 +43,41 @@ Because of this, ESLint runs with `no-undef`/`no-unused-vars` disabled for
 `public/assets/js/**` (cross-file references and the global "exported" API would
 otherwise look like errors). See `eslint.config.js` for the rationale.
 
+### The ESM layer (`public/assets/js/esm/`)
+
+New code must NOT add to the global namespace. `esm/` is the canonical ESM
+source, linted strictly (`no-undef` ON), type-checked via `// @ts-check` +
+JSDoc, and unit-tested directly in Node (`tests/esm.test.mjs` — no jsdom):
+
+- `format.mjs` / `validate.mjs` — pure helpers mirroring `utils.js` exactly
+  (`escapeHtml`, `formatDate`, `normalizeRole`, `canAccessPathByRole`, …).
+- `api.mjs` — async `apiFetch` (Bearer + single 401-refresh retry, injectable
+  `fetchImpl`/`origin` for tests). The replacement for sync XHR.
+- `store.mjs` — `createDatasetStore()` (cached `GET /api/dataset`,
+  `subscribe()`, and scoped writers: `patchFileStatus`, `patchFileMeta`,
+  `saveMyPreferences`, `setNotificationRead`). The replacement for
+  `window.__paperhubDataset` + `persistPaperHubData()`.
+- `session.mjs` — consolidated `paperhub-session:v1` / `paperhub-prefs:v1`
+  keys with legacy-key fallback and dual-write, so migration is non-breaking.
+- `paperhub.mjs` — barrel re-export (single import point).
+
+Strategy is strangler-fig: legacy pages keep working untouched while new code
+imports from `esm/`; the classic scripts migrate one page at a time.
+
 ## Data: pluggable storage behind one REST contract
 
 The Node backend (`server/`) owns the database and the frontend reads/writes it
-through a REST API:
+through a REST API (full reference: `docs/API.md`):
 
-| Method & path      | Purpose                                     |
-| ------------------ | ------------------------------------------- |
-| `GET /api/dataset` | return the current dataset                  |
-| `PUT /api/dataset` | overwrite the dataset                       |
-| `POST /api/reset`  | restore the dataset from `server/seed.json` |
+| Method & path                 | Purpose                                     | Status                                      |
+| ----------------------------- | ------------------------------------------- | ------------------------------------------- |
+| `GET /api/dataset`            | viewer-scoped dataset                       | current                                     |
+| `PATCH /api/files/:id`        | scoped file metadata edit                   | current                                     |
+| `PATCH /api/files/:id/status` | scoped review decision (officer/admin)      | current                                     |
+| `PATCH /api/users/me/*`       | own preferences / notification state        | current                                     |
+| `GET /api/files/search` etc.  | scoped files / share / audit / reviews      | current                                     |
+| `PUT /api/dataset`            | legacy whole-dataset overwrite              | deprecated (`Deprecation: true` + `Sunset`) |
+| `POST /api/reset`             | restore the dataset from `server/seed.json` | admin-only                                  |
 
 `server/db.js` is a **façade over two interchangeable stores**, chosen at call
 time by `MONGODB_URI`:
@@ -132,5 +160,6 @@ JSON store (`server.test.mjs`), and the MongoDB store against an in-memory mongo
   (minified). The compiled CSS **is committed** so no CSS build step is needed at
   deploy time.
 - Deploy on any Node host: `npm ci --omit=dev && npm start` (the backend serves
-  the app and owns the JSON database). Set security response headers at your
-  proxy; the `public/_headers` file applies on hosts that read it.
+  the app and owns the JSON database). Security response headers are sent by
+  Express itself (`server/middleware/securityHeaders.js`); the `public/_headers`
+  file keeps static hosts (Netlify/Cloudflare) consistent with it.

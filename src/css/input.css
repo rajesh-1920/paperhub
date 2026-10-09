@@ -193,3 +193,19 @@
 .animate-pulse-soft {
   animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Respect users who request reduced motion: kill the decorative
+   animations/transitions and instant scrolling app-wide. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}

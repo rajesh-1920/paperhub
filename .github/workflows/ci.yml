@@ -39,8 +39,11 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Run tests
-        run: npm test
+      - name: Run tests with coverage
+        run: npm run test:coverage
 
       - name: Build CSS
         run: npm run build:css
+
+      - name: Committed CSS must match src (no stale build output)
+        run: git diff --exit-code -- public/assets/css/tailwind.css

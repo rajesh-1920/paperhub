@@ -18,6 +18,7 @@
     "watch:css": "tailwindcss -i ./src/css/input.css -o ./public/assets/css/tailwind.css --watch",
     "test": "node --test",
     "test:watch": "node --test --watch",
+    "test:coverage": "node --test --experimental-test-coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
