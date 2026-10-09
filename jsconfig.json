@@ -8,6 +8,11 @@
     "checkJs": false,
     "noEmit": true
   },
-  "include": ["public/assets/js/**/*.js", "tests/**/*.mjs", "eslint.config.js"],
+  "include": [
+    "public/assets/js/**/*.js",
+    "public/assets/js/**/*.mjs",
+    "tests/**/*.mjs",
+    "eslint.config.js"
+  ],
   "exclude": ["node_modules", "public/assets/css"]
 }

@@ -39,6 +39,24 @@ export default [
     },
   },
 
+  // Modern ESM frontend modules (Plan B Phase 1 strangler).
+  // Strict on purpose: no-undef stays ON here so typos are caught; new code
+  // must import explicitly instead of relying on shared globals.
+  {
+    files: ["public/assets/js/esm/**/*.mjs"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: { ...globals.browser },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      eqeqeq: ["warn", "smart"],
+      "no-var": "warn",
+      "prefer-const": "warn",
+    },
+  },
+
   // Node ESM (server + tests + ESM config files).
   {
     files: ["server/**/*.js", "tests/**/*.mjs", "eslint.config.js"],

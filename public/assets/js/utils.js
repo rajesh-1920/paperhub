@@ -1,3 +1,9 @@
+/* PaperHub legacy shared-global bundle (classic <script>, load-order dependent).
+ * Plan B Phase 1: new code should import from `esm/paperhub.mjs` instead of
+ * relying on these globals. This file is unchanged at runtime; `esm/*.mjs`
+ * mirrors its pure helpers exactly so pages can migrate one at a time.
+ * See ARCHITECTURE.md (forthcoming ESM update) and tests/esm.test.mjs.
+ */
 function getElement(selector) {
   return document.querySelector(selector);
 }
