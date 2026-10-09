@@ -7,10 +7,11 @@ export function authConfig(env = process.env) {
   return {
     jwtSecret: env.JWT_SECRET || "dev-insecure-jwt-secret-change-me",
     refreshSecret: env.REFRESH_SECRET || env.JWT_SECRET || "dev-insecure-refresh-secret-change-me",
-    // Long-lived by default so a signed-in user stays logged in until they
-    // explicitly log out (set ACCESS_TTL / REFRESH_TTL to shorten for prod).
-    accessTtl: env.ACCESS_TTL || "3650d",
-    refreshTtl: env.REFRESH_TTL || "3650d",
+    // Short-lived by default (15m access / 7d refresh). Deployments that want
+    // long-lived demo sessions can still set ACCESS_TTL / REFRESH_TTL
+    // explicitly (e.g. "3650d"), but the default must be safe to ship.
+    accessTtl: env.ACCESS_TTL || "15m",
+    refreshTtl: env.REFRESH_TTL || "7d",
     bcryptRounds: Number(env.BCRYPT_ROUNDS || 12),
     // OAuth client id for "Sign in with Google". A project default is baked in
     // (a Google client id is public — not a secret); override it per deployment

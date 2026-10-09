@@ -2,8 +2,18 @@ import { Router } from "express";
 import crypto from "node:crypto";
 import { readDataset, writeDataset, readFileContent } from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
+import { rateLimit } from "../middleware/rateLimit.js";
 import { canAccessResource } from "../auth/ownership.js";
 import { hashPassword, verifyPassword } from "../auth/passwords.js";
+
+// Public link resolution is unauthenticated by design — cap it so share
+// tokens can't be brute-forced without bound.
+const resolveLimit = () =>
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 120,
+    message: "Too many attempts. Please try again later.",
+  });
 
 function findResource(dataset, type, id) {
   if (type === "file") return (dataset.files || []).find((f) => f.id === id) || null;
@@ -107,7 +117,7 @@ export function shareRouter() {
   });
 
   // Resolve a link (public).
-  router.get("/:token", async (req, res) => {
+  router.get("/:token", resolveLimit(), async (req, res) => {
     const dataset = await readDataset();
     const link = (dataset.shareLinks || []).find((l) => l.token === req.params.token);
     const denied = await validateLink(link, req);
@@ -125,7 +135,7 @@ export function shareRouter() {
   });
 
   // Serve a shared file's bytes (public; honors the link's password).
-  router.get("/:token/content", async (req, res) => {
+  router.get("/:token/content", resolveLimit(), async (req, res) => {
     const dataset = await readDataset();
     const link = (dataset.shareLinks || []).find((l) => l.token === req.params.token);
     const denied = await validateLink(link, req);

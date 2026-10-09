@@ -15,12 +15,15 @@ import {
 } from "./db.js";
 import { authRouter } from "./routes/auth.js";
 import { filesRouter } from "./routes/files.js";
+import { usersRouter } from "./routes/users.js";
 import { shareRouter } from "./routes/share.js";
 import { auditRouter } from "./routes/audit.js";
 import { reviewsRouter } from "./routes/reviews.js";
 import { assertAuthConfig } from "./config.js";
 import { sanitizeDataset, applyDatasetWritePolicy, projectDatasetForViewer } from "./auth/users.js";
 import { requireAuth, authorize, optionalAuth } from "./middleware/auth.js";
+import { rateLimit } from "./middleware/rateLimit.js";
+import { securityHeaders } from "./middleware/securityHeaders.js";
 import { wouldExceedQuota } from "./quota.js";
 import { countPdfPages } from "./pdf.js";
 
@@ -45,15 +48,28 @@ const PUBLIC_DIR = join(HERE, "..", "public");
 export function createApp() {
   const app = express();
   app.disable("x-powered-by");
-  app.use(express.json({ limit: "256mb" }));
+  // Baseline hardening for every deployment (static-host _headers can't be
+  // relied on when Express serves public/ itself).
+  app.use(securityHeaders());
+  // Generous global API guard against accidental loops / brute force. Sensitive
+  // routes (login/register/refresh/share-resolve) add tighter per-route limits.
+  app.use("/api/", rateLimit({ windowMs: 15 * 60 * 1000, max: 600 }));
+  // JSON bodies are dataset metadata / auth forms — never large. PDF bytes use
+  // the dedicated raw handlers below (100mb), so a small JSON cap blocks
+  // oversized-payload abuse without affecting uploads.
+  app.use(express.json({ limit: "2mb" }));
 
   app.get("/api/health", (req, res) => res.json({ ok: true }));
 
   // Authentication (login / refresh / logout).
   app.use("/api/auth", authRouter());
 
-  // File queries (search). Other /api/files/:id/* routes are defined below.
+  // File queries (search) + scoped file mutations (status / metadata).
   app.use("/api/files", filesRouter());
+
+  // Scoped user mutations (own preferences / notifications). Long-term
+  // replacement for the equivalent slices of PUT /api/dataset.
+  app.use("/api/users", usersRouter());
 
   // Shareable links (create / list / revoke / resolve / serve).
   app.use("/api/share", shareRouter());
@@ -78,9 +94,12 @@ export function createApp() {
     }
   });
 
-  // Persist the whole dataset (the frontend store posts the mutated dataset).
-  // The client never holds credentials/refresh tokens, so they are restored
-  // from the current dataset to prevent a round-tripped PUT from wiping them.
+  // Persist the whole dataset (legacy bulk-sync API).
+  // DEPRECATED: prefer the scoped endpoints (PATCH /api/files/:id[/status],
+  // PATCH /api/users/me/*, POST /api/share, POST /api/audit, ...). The bulk
+  // PUT stays for backward compatibility with older clients and is enforced by
+  // applyDatasetWritePolicy, but new code must not use it. Removal is tracked;
+  // clients should treat the `Deprecation` header as the migration signal.
   app.put("/api/dataset", requireAuth, async (req, res) => {
     if (!isValidDataset(req.body)) {
       return res.status(400).json({ error: "Invalid dataset payload" });
@@ -88,6 +107,8 @@ export function createApp() {
     try {
       const current = await readDataset();
       await writeDataset(applyDatasetWritePolicy(req.body, current, req.user));
+      res.setHeader("Deprecation", "true");
+      res.setHeader("Sunset", "Sat, 01 Aug 2026 00:00:00 GMT");
       res.json({ ok: true });
     } catch {
       res.status(500).json({ error: "Unable to write dataset" });
@@ -109,7 +130,7 @@ export function createApp() {
   app.put(
     "/api/files/:id/content",
     requireAuth,
-    express.raw({ type: "application/pdf", limit: "2gb" }),
+    express.raw({ type: "application/pdf", limit: "100mb" }),
     async (req, res) => {
       const { id } = req.params;
       const body = req.body;
@@ -195,7 +216,7 @@ export function createApp() {
   app.post(
     "/api/files/:id/versions",
     requireAuth,
-    express.raw({ type: "application/pdf", limit: "2gb" }),
+    express.raw({ type: "application/pdf", limit: "100mb" }),
     async (req, res) => {
       const { id } = req.params;
       const body = req.body;

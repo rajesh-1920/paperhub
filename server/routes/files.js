@@ -1,7 +1,22 @@
 import { Router } from "express";
-import { readDataset } from "../db.js";
+import { readDataset, writeDataset } from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
 import { canAccessResource } from "../auth/ownership.js";
+
+const FILE_STATUSES = ["pending", "reviewing", "completed", "rejected"];
+const MAX_NAME_LENGTH = 255;
+const MAX_DESCRIPTION_LENGTH = 2000;
+
+// Strip ASCII control characters (incl. NUL) then clamp — mirrors the
+// client's phSanitizeName so both layers enforce the same boundary.
+function sanitizeName(name) {
+  return (
+    String(name || "")
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\u0000-\u001f\u007f]/g, "")
+      .slice(0, MAX_NAME_LENGTH)
+  );
+}
 
 // Teams the user belongs to (for team-scoped ACL grants).
 function teamsForUser(dataset, userId) {
@@ -77,6 +92,72 @@ export function filesRouter() {
     const items = files.slice((page - 1) * pageSize, page * pageSize);
 
     res.json({ items, total, page, pageSize, pages: Math.ceil(total / pageSize) || 1 });
+  });
+
+  // PATCH /api/files/:id/status { status } — scoped review decision.
+  // Review power belongs to officers/admins only (mirrors the bulk-PUT policy
+  // where a regular user's file.status is server-frozen). Owners cannot
+  // self-approve; 404 (not 403) for invisible files so existence isn't leaked.
+  router.patch("/:id/status", requireAuth, async (req, res) => {
+    const { status } = req.body || {};
+    if (!FILE_STATUSES.includes(status)) {
+      return res.status(400).json({ error: `status must be one of: ${FILE_STATUSES.join(", ")}` });
+    }
+    if (req.user.role !== "admin" && req.user.role !== "officer") {
+      return res.status(403).json({ error: "Only reviewers can change file status" });
+    }
+    const dataset = await readDataset();
+    const file = (dataset.files || []).find((f) => f.id === req.params.id);
+    if (!file) return res.status(404).json({ error: "Not found" });
+    file.status = status;
+    file.updatedAt = new Date().toISOString();
+    await writeDataset(dataset);
+    res.json({ ok: true, file: { id: file.id, status: file.status, updatedAt: file.updatedAt } });
+  });
+
+  // PATCH /api/files/:id { name?, description?, folderId? } — scoped metadata
+  // edit. Owner, admin, or an ACL grantee may edit; names are sanitized and
+  // clamped exactly like the client's phSanitizeName.
+  router.patch("/:id", requireAuth, async (req, res) => {
+    const dataset = await readDataset();
+    const teamIds = teamsForUser(dataset, req.user.id);
+    const file = (dataset.files || []).find((f) => f.id === req.params.id);
+    if (!file || !canAccessResource(req.user, file, teamIds)) {
+      return res.status(404).json({ error: "Not found" });
+    }
+    const { name, description, folderId } = req.body || {};
+    if (name !== undefined) {
+      const clean = sanitizeName(name);
+      if (!clean) return res.status(400).json({ error: "name must not be empty" });
+      file.name = clean;
+    }
+    if (description !== undefined) {
+      if (typeof description !== "string" || description.length > MAX_DESCRIPTION_LENGTH) {
+        return res
+          .status(400)
+          .json({ error: `description must be a string up to ${MAX_DESCRIPTION_LENGTH} chars` });
+      }
+      file.description = description;
+    }
+    if (folderId !== undefined) {
+      if (folderId !== null) {
+        const folder = (dataset.folders || []).find((f) => f.id === folderId);
+        if (!folder) return res.status(400).json({ error: "Unknown folderId" });
+      }
+      file.folderId = folderId;
+    }
+    file.updatedAt = new Date().toISOString();
+    await writeDataset(dataset);
+    res.json({
+      ok: true,
+      file: {
+        id: file.id,
+        name: file.name,
+        description: file.description,
+        folderId: file.folderId,
+        updatedAt: file.updatedAt,
+      },
+    });
   });
 
   return router;

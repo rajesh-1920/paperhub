@@ -174,51 +174,61 @@ export function authRouter() {
   // POST /api/auth/register — self-service signup. Always creates a "user"
   // account (privileged roles are admin-provisioned), persisted to BOTH
   // authAccounts and users so the account is first-class, then auto-logged-in.
-  router.post("/register", async (req, res) => {
-    const { name, email, password } = req.body || {};
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Name, email and password are required" });
-    }
-    if (!EMAIL_RE.test(String(email))) {
-      return res.status(400).json({ error: "A valid email is required" });
-    }
-    if (String(password).length < 8) {
-      return res.status(400).json({ error: "Password must be at least 8 characters" });
-    }
+  // Rate-limited: open signup without a cap is a spam/bot vector.
+  router.post(
+    "/register",
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 20,
+      message: "Too many sign-ups. Please try again later.",
+    }),
+    async (req, res) => {
+      const { name, email, password } = req.body || {};
+      if (!name || !email || !password) {
+        return res.status(400).json({ error: "Name, email and password are required" });
+      }
+      if (!EMAIL_RE.test(String(email))) {
+        return res.status(400).json({ error: "A valid email is required" });
+      }
+      if (String(password).length < 8) {
+        return res.status(400).json({ error: "Password must be at least 8 characters" });
+      }
 
-    const dataset = await readDataset();
-    if (findAccountByEmail(dataset, email)) {
-      return res.status(409).json({ error: "An account with this email already exists" });
-    }
+      const dataset = await readDataset();
+      if (findAccountByEmail(dataset, email)) {
+        return res.status(409).json({ error: "An account with this email already exists" });
+      }
 
-    const account = {
-      id: `user-${slugify(String(email).split("@")[0] || name)}-${crypto.randomBytes(4).toString("hex")}`,
-      name: String(name).trim(),
-      email: String(email).toLowerCase(),
-      passwordHash: await hashPassword(password),
-      role: "user",
-      title: "User",
-    };
-    dataset.authAccounts = dataset.authAccounts || [];
-    dataset.users = dataset.users || [];
-    dataset.authAccounts.push(account);
-    dataset.users.push(buildUserProfile(account));
-    recordAudit(dataset, {
-      action: "auth.register",
-      actorId: account.id,
-      actorName: account.name,
-      actorRole: account.role,
-      ip: req.ip,
-    });
+      const account = {
+        id: `user-${slugify(String(email).split("@")[0] || name)}-${crypto.randomBytes(4).toString("hex")}`,
+        name: String(name).trim(),
+        email: String(email).toLowerCase(),
+        passwordHash: await hashPassword(password),
+        role: "user",
+        title: "User",
+      };
+      dataset.authAccounts = dataset.authAccounts || [];
+      dataset.users = dataset.users || [];
+      dataset.authAccounts.push(account);
+      dataset.users.push(buildUserProfile(account));
+      recordAudit(dataset, {
+        action: "auth.register",
+        actorId: account.id,
+        actorName: account.name,
+        actorRole: account.role,
+        ip: req.ip,
+      });
 
-    const session = issueSession(dataset, account);
-    await writeDataset(dataset);
+      const session = issueSession(dataset, account);
+      await writeDataset(dataset);
 
-    res.status(201).json({ ok: true, ...session, user: publicUser(dataset, account) });
-  });
+      res.status(201).json({ ok: true, ...session, user: publicUser(dataset, account) });
+    },
+  );
 
   // POST /api/auth/refresh — exchange a valid refresh token for a new access token.
-  router.post("/refresh", async (req, res) => {
+  // Rate-limited so a stolen-token spray can't be retried without bound.
+  router.post("/refresh", rateLimit({ windowMs: 15 * 60 * 1000, max: 60 }), async (req, res) => {
     const { id, secret } = splitRefreshToken((req.body || {}).refreshToken);
     if (!id || !secret) {
       return res.status(400).json({ error: "Refresh token is required" });

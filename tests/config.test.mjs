@@ -6,9 +6,10 @@ test("authConfig falls back to safe dev defaults", () => {
   const c = authConfig({});
   assert.ok(c.jwtSecret.length > 0 && c.refreshSecret.length > 0);
   assert.equal(c.bcryptRounds, 12);
-  // Long-lived by default: a user stays signed in until they log out.
-  assert.equal(c.accessTtl, "3650d");
-  assert.equal(c.refreshTtl, "3650d");
+  // Hardened by default: short-lived access, week-long refresh. Deployments
+  // that want long-lived demo sessions set ACCESS_TTL / REFRESH_TTL explicitly.
+  assert.equal(c.accessTtl, "15m");
+  assert.equal(c.refreshTtl, "7d");
 });
 
 test("authConfig reads overrides from the environment", () => {
