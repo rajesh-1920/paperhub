@@ -1,7 +1,52 @@
 // Effectively unlimited — kept only as a sane guard matching the server's
 // request-body cap so the client gives a friendly message instead of a raw 413.
-const MAX_UPLOAD_SIZE_BYTES = 2 * 1024 * 1024 * 1024;
-const FILE_ICON_MAP = {
+import {
+  addClass,
+  addEvent,
+  createElement,
+  createShareLinkViaApi,
+  escapeHtml,
+  formatDate,
+  formatFileSize,
+  generateId,
+  getAuthToken,
+  getCurrentUserData,
+  getElement,
+  getElements,
+  getPaperHubDataset,
+  hasRole,
+  hideElement,
+  logActivityViaApi,
+  phAddFile,
+  phCreateTag,
+  phDeleteFile,
+  phListFolders,
+  phListTrash,
+  phListVersions,
+  phMoveFiles,
+  phPurgeFile,
+  phRestoreFile,
+  phRestoreVersion,
+  phSanitizeName,
+  phSetFilePageCount,
+  phStorageUsage,
+  phTagFiles,
+  phTrashFile,
+  phTrashFiles,
+  refreshAccessTokenSync,
+  removeClass,
+  removeElement,
+  resolveAppPath,
+  shareLinkUrl,
+  showElement,
+  showError,
+  showInfo,
+  showSuccess,
+  showWarning,
+} from "./utils.js";
+
+export const MAX_UPLOAD_SIZE_BYTES = 2 * 1024 * 1024 * 1024;
+export const FILE_ICON_MAP = {
   "application/pdf": "📄",
   "application/msword": "📝",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "📝",
@@ -11,18 +56,18 @@ const FILE_ICON_MAP = {
   "image/png": "🖼️",
 };
 // Uploads are restricted to PDF files only.
-const ALLOWED_FILE_TYPES = new Set(["application/pdf"]);
-const ALLOWED_FILE_EXTENSIONS = new Set(["pdf"]);
-const uploadState = new Map();
-let filePageItems = [];
-let filePageFilteredItems = [];
-let filePageSearch = "";
-let filePageStatusFilter = "all";
-let filePageSortBy = "recent";
-let selectedFileId = null;
-const filePageSelected = new Set();
+export const ALLOWED_FILE_TYPES = new Set(["application/pdf"]);
+export const ALLOWED_FILE_EXTENSIONS = new Set(["pdf"]);
+export const uploadState = new Map();
+export let filePageItems = [];
+export let filePageFilteredItems = [];
+export let filePageSearch = "";
+export let filePageStatusFilter = "all";
+export let filePageSortBy = "recent";
+export let selectedFileId = null;
+export const filePageSelected = new Set();
 
-function initFileUploadPage() {
+export function initFileUploadPage() {
   const dropzone = getElement(".upload-dropzone");
   const fileInput = getElement("#fileInput");
   const uploadBtn = getElement("#uploadBtn");
@@ -54,19 +99,19 @@ function initFileUploadPage() {
   }
 }
 
-function handleDragOver(e) {
+export function handleDragOver(e) {
   e.preventDefault();
   e.stopPropagation();
   addClass(e.currentTarget, "upload-dropzone-active");
 }
 
-function handleDragLeave(e) {
+export function handleDragLeave(e) {
   e.preventDefault();
   e.stopPropagation();
   removeClass(e.currentTarget, "upload-dropzone-active");
 }
 
-function handleFileDrop(e) {
+export function handleFileDrop(e) {
   e.preventDefault();
   e.stopPropagation();
   removeClass(e.currentTarget, "upload-dropzone-active");
@@ -77,11 +122,11 @@ function handleFileDrop(e) {
   }
 }
 
-function handleFileSelect(e) {
+export function handleFileSelect(e) {
   handleFiles(e.target.files);
 }
 
-function handleFiles(files) {
+export function handleFiles(files) {
   const fileList = getElement(".file-preview-list");
   const uploadBtn = getElement("#uploadBtn");
   if (!fileList) return;
@@ -105,7 +150,7 @@ function handleFiles(files) {
   }
 }
 
-function validateFile(file) {
+export function validateFile(file) {
   if (file.size > MAX_UPLOAD_SIZE_BYTES) {
     showError(`File ${file.name} is too large to upload`);
     return false;
@@ -125,7 +170,7 @@ function validateFile(file) {
   return true;
 }
 
-function addFilePreview(container, file) {
+export function addFilePreview(container, file) {
   const fileId = createUploadId();
   const fileKey = getFileSignature(file);
 
@@ -171,7 +216,7 @@ function addFilePreview(container, file) {
   updateUploadSummary();
 }
 
-function updateUploadSummary() {
+export function updateUploadSummary() {
   let count = 0;
   let total = 0;
   for (const entry of uploadState.values()) {
@@ -182,7 +227,7 @@ function updateUploadSummary() {
   setText("#metaTotalSize", formatFileSize(total));
 }
 
-function handleClearQueue() {
+export function handleClearQueue() {
   uploadState.clear();
   const list = getElement(".file-preview-list");
   if (list) {
@@ -192,11 +237,11 @@ function handleClearQueue() {
   updateUploadSummary();
 }
 
-function getFileIcon(fileType) {
+export function getFileIcon(fileType) {
   return FILE_ICON_MAP[fileType] || "📎";
 }
 
-async function handleUpload() {
+export async function handleUpload() {
   const fileList = getElement(".file-preview-list");
   if (!fileList) return;
 
@@ -312,7 +357,7 @@ async function handleUpload() {
 // Best-effort PDF page count from the raw bytes. Uses the page-tree /Count and
 // the number of /Type /Page objects (latin1 so byte values survive), taking the
 // larger; falls back to 1 if the file can't be read or parsed.
-async function countPdfPagesFromFile(file) {
+export async function countPdfPagesFromFile(file) {
   try {
     if (!file || typeof file.arrayBuffer !== "function") return 1;
     const text = new TextDecoder("latin1").decode(await file.arrayBuffer());
@@ -325,7 +370,7 @@ async function countPdfPagesFromFile(file) {
   }
 }
 
-function persistUploadedFile(file, pageCount = 1) {
+export function persistUploadedFile(file, pageCount = 1) {
   if (typeof phAddFile !== "function") {
     return;
   }
@@ -406,13 +451,13 @@ function persistUploadedFile(file, pageCount = 1) {
 }
 
 // URL that serves a file's stored PDF bytes (same origin as the app).
-function fileContentUrl(file) {
+export function fileContentUrl(file) {
   return new URL(`/api/files/${encodeURIComponent(file.id)}/content`, window.location.origin).href;
 }
 
 // Query the server-side search endpoint (owner-scoped). Returns
 // { items, total, page, pageSize, pages }; an empty result on failure.
-async function searchFilesViaApi(params = {}) {
+export async function searchFilesViaApi(params = {}) {
   const qs = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") qs.set(key, value);
@@ -433,7 +478,7 @@ async function searchFilesViaApi(params = {}) {
 }
 
 // Authorization header for the (protected) content routes, when signed in.
-function fileAuthHeaders(extra) {
+export function fileAuthHeaders(extra) {
   const headers = Object.assign({}, extra);
   const token = typeof getAuthToken === "function" ? getAuthToken() : "";
   if (token) {
@@ -443,7 +488,7 @@ function fileAuthHeaders(extra) {
 }
 
 // Upload the real PDF bytes to the backend for a just-created file record.
-async function uploadFileBinary(id, file) {
+export async function uploadFileBinary(id, file) {
   const url = new URL(`/api/files/${encodeURIComponent(id)}/content`, window.location.origin).href;
   const doPut = () =>
     fetch(url, {
@@ -479,7 +524,7 @@ async function uploadFileBinary(id, file) {
 }
 
 // Upload a new version's bytes; returns { versionId, contentRef, size } or null.
-async function uploadFileVersionViaApi(fileId, file) {
+export async function uploadFileVersionViaApi(fileId, file) {
   const url = new URL(`/api/files/${encodeURIComponent(fileId)}/versions`, window.location.origin)
     .href;
   const doPost = () =>
@@ -504,7 +549,7 @@ async function uploadFileVersionViaApi(fileId, file) {
   }
 }
 
-function deleteFileBinary(id) {
+export function deleteFileBinary(id) {
   try {
     fetch(new URL(`/api/files/${encodeURIComponent(id)}/content`, window.location.origin).href, {
       method: "DELETE",
@@ -515,7 +560,7 @@ function deleteFileBinary(id) {
   }
 }
 
-function getFileTypeLabel(extension) {
+export function getFileTypeLabel(extension) {
   const map = {
     pdf: "PDF Document",
     doc: "Word Document",
@@ -529,7 +574,7 @@ function getFileTypeLabel(extension) {
   return map[String(extension || "").toLowerCase()] || "Document";
 }
 
-function createUploadId() {
+export function createUploadId() {
   if (window.crypto?.randomUUID) {
     return `file-${window.crypto.randomUUID()}`;
   }
@@ -537,22 +582,22 @@ function createUploadId() {
   return `file-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function getFileExtension(fileName) {
+export function getFileExtension(fileName) {
   return String(fileName || "")
     .split(".")
     .pop()
     .toLowerCase();
 }
 
-function getFileSignature(file) {
+export function getFileSignature(file) {
   return [file.name, file.size, file.lastModified].join("::");
 }
 
-function isDuplicateFile(file) {
+export function isDuplicateFile(file) {
   return uploadState.has(getFileSignature(file));
 }
 
-async function simulateUpload(progressElement) {
+export async function simulateUpload(progressElement) {
   for (let i = 0; i <= 100; i += 10) {
     if (progressElement) {
       progressElement.style.width = i + "%";
@@ -562,7 +607,7 @@ async function simulateUpload(progressElement) {
   }
 }
 
-function initFileDetailsPage() {
+export function initFileDetailsPage() {
   setupFileDetailsInteractions();
   setupBulkActions();
   setupFilePreview();
@@ -570,7 +615,7 @@ function initFileDetailsPage() {
 }
 
 // Multi-select toolbar: move / tag / delete the checked files in one action.
-function setupBulkActions() {
+export function setupBulkActions() {
   const body = getElement("#fileTableBody");
   addEvent(body, "change", (event) => {
     const box = event.target.closest(".file-row-select");
@@ -636,18 +681,18 @@ function setupBulkActions() {
 // (their own files, or anything if they're staff). Bulk actions on a shared
 // file list must drop other people's files so we never fire a write the server
 // would silently reject.
-function selectedMutableIds() {
+export function selectedMutableIds() {
   const byId = new Map();
   filePageItems.forEach((f) => byId.set(f.id || f._id, f));
   return [...filePageSelected].filter((id) => canMutateFile(byId.get(id)));
 }
 
-function warnNoMutableSelection() {
+export function warnNoMutableSelection() {
   if (!filePageSelected.size) return;
   showWarning("You can only modify your own files");
 }
 
-function populateBulkFolders() {
+export function populateBulkFolders() {
   const select = getElement("#fileBulkFolder");
   if (!select || typeof phListFolders !== "function") return;
   const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
@@ -659,21 +704,21 @@ function populateBulkFolders() {
       .join("");
 }
 
-function refreshBulkUI() {
+export function refreshBulkUI() {
   const bar = getElement("#fileBulkBar");
   const count = getElement("#fileBulkCount");
   if (count) count.textContent = `${filePageSelected.size} selected`;
   if (bar) bar.hidden = filePageSelected.size === 0;
 }
 
-function clearBulkSelection() {
+export function clearBulkSelection() {
   filePageSelected.clear();
   const selectAll = getElement("#fileSelectAll");
   if (selectAll) selectAll.checked = false;
   refreshBulkUI();
 }
 
-function setupFileDetailsInteractions() {
+export function setupFileDetailsInteractions() {
   const searchInput = getElement("#fileSearchInput");
   const statusFilter = getElement("#fileStatusFilter");
   const sortSelect = getElement("#fileSortSelect");
@@ -716,7 +761,7 @@ function setupFileDetailsInteractions() {
 }
 
 // Create a view-only share link for the selected file and copy it to clipboard.
-async function shareSelectedFile() {
+export async function shareSelectedFile() {
   const file = getSelectedFile();
   if (!file || !file.id) {
     showWarning("Select a file first");
@@ -750,16 +795,16 @@ async function shareSelectedFile() {
 
 // The file currently shown in the preview modal (used by its Download / Open
 // buttons).
-let previewedFile = null;
+export let previewedFile = null;
 // Teardown for an in-flight drag/resize gesture, so closing mid-drag (Escape or
 // an in-app navigation while the pointer is still down) can detach the
 // document-level pointer listeners instead of leaking them onto the next page.
-let previewGestureCleanup = null;
+export let previewGestureCleanup = null;
 // The element focus should return to when the popup closes (the control that
 // opened it), for a correct keyboard workflow.
-let previewReturnFocus = null;
+export let previewReturnFocus = null;
 
-function setupFilePreview() {
+export function setupFilePreview() {
   const modal = getElement("#filePreviewModal");
   if (!modal || modal.dataset.bound === "true") {
     return;
@@ -796,7 +841,7 @@ function setupFilePreview() {
 // navigation click. Bound once on <document> (capture phase, before the navbar
 // handles the click), guarded by a global flag so repeated page inits don't
 // stack duplicate listeners.
-function bindPreviewNavClose() {
+export function bindPreviewNavClose() {
   if (window.__phPreviewNavCloseBound) return;
   window.__phPreviewNavCloseBound = true;
   document.addEventListener(
@@ -813,7 +858,7 @@ function bindPreviewNavClose() {
 
 // Lift the dialog out of the centered flex flow into free-floating fixed
 // positioning, anchored exactly where it currently sits (so it doesn't jump).
-function makePreviewFloating(dialog) {
+export function makePreviewFloating(dialog) {
   if (dialog.classList.contains("is-floating")) return;
   const rect = dialog.getBoundingClientRect();
   dialog.style.left = `${rect.left}px`;
@@ -823,12 +868,12 @@ function makePreviewFloating(dialog) {
   dialog.classList.add("is-floating");
 }
 
-const PREVIEW_MIN_W = 360;
-const PREVIEW_MIN_H = 280;
+export const PREVIEW_MIN_W = 360;
+export const PREVIEW_MIN_H = 280;
 
 // Make the preview popup behave like a window: drag it by the header, resize it
 // from the bottom-right grip. Pointer events keep it working for mouse + touch.
-function setupPreviewDragAndResize() {
+export function setupPreviewDragAndResize() {
   const dialog = getElement(".file-preview-dialog");
   const header = getElement("#filePreviewDragHandle");
   const resizer = getElement("#filePreviewResizer");
@@ -929,7 +974,7 @@ function setupPreviewDragAndResize() {
 
 // Open a large modal showing the document: the real PDF embedded in an iframe
 // for uploaded files, or the stored text for legacy/demo records.
-function openFilePreview(file) {
+export function openFilePreview(file) {
   if (!file) {
     showWarning("Select a file first");
     return;
@@ -1004,7 +1049,7 @@ function openFilePreview(file) {
 
 // Return the popup to its default centered, auto-sized state by stripping the
 // inline geometry and floating flags a drag/resize leaves behind.
-function resetPreviewDialogPosition() {
+export function resetPreviewDialogPosition() {
   const dialog = getElement(".file-preview-dialog");
   if (!dialog) return;
   dialog.classList.remove("is-floating", "is-interacting");
@@ -1014,7 +1059,7 @@ function resetPreviewDialogPosition() {
   dialog.style.height = "";
 }
 
-function closeFilePreview() {
+export function closeFilePreview() {
   const modal = getElement("#filePreviewModal");
   if (!modal) return;
   // Tear down a drag/resize still in progress (closing mid-gesture would
@@ -1032,7 +1077,7 @@ function closeFilePreview() {
   previewReturnFocus = null;
 }
 
-function viewFileContent(file) {
+export function viewFileContent(file) {
   if (!file) {
     showWarning("No file to view");
     return;
@@ -1060,7 +1105,7 @@ function viewFileContent(file) {
   setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
 
-function downloadFile(file) {
+export function downloadFile(file) {
   if (!file) {
     showWarning("Select a file first");
     return;
@@ -1092,12 +1137,12 @@ function downloadFile(file) {
   showSuccess(`Downloaded ${link.download}`);
 }
 
-function ensureExtension(name, ext) {
+export function ensureExtension(name, ext) {
   const base = String(name || "document");
   return new RegExp(`\\.${ext}$`, "i").test(base) ? base : `${base.replace(/\.[^.]+$/, "")}.${ext}`;
 }
 
-function deleteSelectedFile() {
+export function deleteSelectedFile() {
   const file = getSelectedFile();
   if (!file) {
     showWarning("Select a file first");
@@ -1124,7 +1169,7 @@ function deleteSelectedFile() {
   showSuccess(`Moved ${file.name} to Trash`);
 }
 
-async function loadFileList() {
+export async function loadFileList() {
   const fileTableBody = getElement("#fileTableBody");
   if (!fileTableBody) return;
 
@@ -1162,7 +1207,7 @@ async function loadFileList() {
   }
 }
 
-function renderFileTable() {
+export function renderFileTable() {
   const fileTableBody = getElement("#fileTableBody");
   const emptyState = getElement("#filesEmptyState");
   if (!fileTableBody) {
@@ -1201,7 +1246,7 @@ function renderFileTable() {
   if (typeof refreshBulkUI === "function") refreshBulkUI();
 }
 
-function getFilteredAndSortedFiles(files) {
+export function getFilteredAndSortedFiles(files) {
   const filtered = files.filter((file) => {
     const normalizedStatus = String(file.status || "").toLowerCase();
     const matchesStatus =
@@ -1234,7 +1279,7 @@ function getFilteredAndSortedFiles(files) {
 
 // Resolve a human owner label for a file. Files created in-app carry ownerName;
 // for older/seed records we look the owner up in the dataset's user list.
-function resolveOwnerName(file) {
+export function resolveOwnerName(file) {
   if (file && file.ownerName) return file.ownerName;
   const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
   const owner = (dataset.users || []).find((u) => u.id === (file && file.ownerId));
@@ -1244,7 +1289,7 @@ function resolveOwnerName(file) {
 // Everyone can browse every file, but only the owner — or staff (officer/admin)
 // — may delete or share one. This mirrors the server's write policy so the UI
 // never offers an action the backend would reject.
-function canMutateFile(file) {
+export function canMutateFile(file) {
   if (!file) return false;
   const isStaff = typeof hasRole === "function" && hasRole(["officer", "admin"]);
   if (isStaff) return true;
@@ -1252,7 +1297,7 @@ function canMutateFile(file) {
   return Boolean(me && file.ownerId && me.id === file.ownerId);
 }
 
-function createFileRow(file) {
+export function createFileRow(file) {
   const row = createElement("tr", "file-row");
   row.setAttribute("data-file-id", file._id);
 
@@ -1308,21 +1353,21 @@ function createFileRow(file) {
   return row;
 }
 
-function syncSelectedRowState() {
+export function syncSelectedRowState() {
   getElements(".file-row").forEach((row) => {
     const rowId = row.getAttribute("data-file-id");
     row.classList.toggle("is-selected", rowId === selectedFileId);
   });
 }
 
-function updateVisibleFilesCount(count) {
+export function updateVisibleFilesCount(count) {
   const visibleCount = getElement("#filesVisibleCount");
   if (visibleCount) {
     visibleCount.textContent = `${count} file${count === 1 ? "" : "s"} visible`;
   }
 }
 
-function updateFileStats(files) {
+export function updateFileStats(files) {
   const total = files.length;
   const reviewing = files.filter((file) => normalizeFileStatus(file.status) === "reviewing").length;
   const pending = files.filter((file) => normalizeFileStatus(file.status) === "pending").length;
@@ -1334,7 +1379,7 @@ function updateFileStats(files) {
   setText("#filesStatTotalSize", formatFileSize(totalSize));
 }
 
-function updateStorageHealth(files) {
+export function updateStorageHealth(files) {
   const capacityBytes = 1024 * 1024 * 1024;
   const usedBytes = files.reduce((sum, file) => sum + Number(file.size || 0), 0);
   const usagePercentage = Math.min(100, Math.round((usedBytes / capacityBytes) * 100));
@@ -1347,7 +1392,7 @@ function updateStorageHealth(files) {
   setText("#storageLabel", `${usagePercentage}% used`);
 }
 
-function updateMetaPanel(file) {
+export function updateMetaPanel(file) {
   const empty = getElement("#metaEmpty");
   const body = getElement("#metaBody");
 
@@ -1395,14 +1440,14 @@ function updateMetaPanel(file) {
   if (deleteBtn) deleteBtn.classList.toggle("hidden", !mutable);
 }
 
-function syncStatusChip(status) {
+export function syncStatusChip(status) {
   getElements("[data-status-chip]").forEach((chip) => {
     const chipStatus = String(chip.getAttribute("data-status-chip") || "all").toLowerCase();
     chip.classList.toggle("active", chipStatus === status);
   });
 }
 
-function normalizeFileStatus(status) {
+export function normalizeFileStatus(status) {
   const normalized = String(status || "pending").toLowerCase();
   if (normalized === "in-review") {
     return "reviewing";
@@ -1410,12 +1455,12 @@ function normalizeFileStatus(status) {
   return normalized;
 }
 
-function formatFileStatusLabel(status) {
+export function formatFileStatusLabel(status) {
   const normalized = normalizeFileStatus(status);
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
 }
 
-function getFileIconByName(fileName) {
+export function getFileIconByName(fileName) {
   const extension = getFileExtension(fileName);
 
   if (extension === "pdf") {
@@ -1437,22 +1482,22 @@ function getFileIconByName(fileName) {
   return "📎";
 }
 
-function getSelectedFile() {
+export function getSelectedFile() {
   return filePageItems.find((file) => file._id === selectedFileId) || null;
 }
 
-function setText(selector, value) {
+export function setText(selector, value) {
   const element = getElement(selector);
   if (element) {
     element.textContent = value;
   }
 }
 
-function initTrashPage() {
+export function initTrashPage() {
   loadTrash();
 }
 
-function loadTrash() {
+export function loadTrash() {
   const container = getElement("#trashTableBody");
   if (!container) return;
   const user = typeof getCurrentUserData === "function" ? getCurrentUserData() : null;
@@ -1505,11 +1550,11 @@ function loadTrash() {
   container.appendChild(fragment);
 }
 
-function initVersionHistoryPage() {
+export function initVersionHistoryPage() {
   loadVersionHistory();
 }
 
-function loadVersionHistory() {
+export function loadVersionHistory() {
   const historyContainer = getElement("#versionHistoryContainer");
   if (!historyContainer) return;
 
@@ -1605,4 +1650,94 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (document.body.classList.contains("trash-page")) {
     initTrashPage();
   }
+});
+
+// Compatibility mirrors: legacy inline handlers, dynamically injected
+// classic scripts and the test harness read these as window globals.
+// (Native ESM consumers should import the bindings above instead.)
+Object.assign(window, {
+  MAX_UPLOAD_SIZE_BYTES,
+  FILE_ICON_MAP,
+  ALLOWED_FILE_TYPES,
+  ALLOWED_FILE_EXTENSIONS,
+  uploadState,
+  filePageItems,
+  filePageFilteredItems,
+  filePageSearch,
+  filePageStatusFilter,
+  filePageSortBy,
+  selectedFileId,
+  filePageSelected,
+  initFileUploadPage,
+  handleDragOver,
+  handleDragLeave,
+  handleFileDrop,
+  handleFileSelect,
+  handleFiles,
+  validateFile,
+  addFilePreview,
+  updateUploadSummary,
+  handleClearQueue,
+  getFileIcon,
+  handleUpload,
+  countPdfPagesFromFile,
+  persistUploadedFile,
+  fileContentUrl,
+  searchFilesViaApi,
+  fileAuthHeaders,
+  uploadFileBinary,
+  uploadFileVersionViaApi,
+  deleteFileBinary,
+  getFileTypeLabel,
+  createUploadId,
+  getFileExtension,
+  getFileSignature,
+  isDuplicateFile,
+  simulateUpload,
+  initFileDetailsPage,
+  setupBulkActions,
+  selectedMutableIds,
+  warnNoMutableSelection,
+  populateBulkFolders,
+  refreshBulkUI,
+  clearBulkSelection,
+  setupFileDetailsInteractions,
+  shareSelectedFile,
+  previewedFile,
+  previewGestureCleanup,
+  previewReturnFocus,
+  setupFilePreview,
+  bindPreviewNavClose,
+  makePreviewFloating,
+  PREVIEW_MIN_W,
+  PREVIEW_MIN_H,
+  setupPreviewDragAndResize,
+  openFilePreview,
+  resetPreviewDialogPosition,
+  closeFilePreview,
+  viewFileContent,
+  downloadFile,
+  ensureExtension,
+  deleteSelectedFile,
+  loadFileList,
+  renderFileTable,
+  getFilteredAndSortedFiles,
+  resolveOwnerName,
+  canMutateFile,
+  createFileRow,
+  syncSelectedRowState,
+  updateVisibleFilesCount,
+  updateFileStats,
+  updateStorageHealth,
+  updateMetaPanel,
+  syncStatusChip,
+  normalizeFileStatus,
+  formatFileStatusLabel,
+  getFileIconByName,
+  getSelectedFile,
+  setText,
+  initTrashPage,
+  loadTrash,
+  initVersionHistoryPage,
+  loadVersionHistory,
 });

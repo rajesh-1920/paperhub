@@ -1,7 +1,9 @@
 // Activity log view. Reads the server-side audit log (own events for users, all
 // for admins) and renders it.
 
-const ACTIVITY_LABELS = {
+import { escapeHtml, formatDate, listActivityViaApi } from "./utils.js";
+
+export const ACTIVITY_LABELS = {
   "auth.login": "Signed in",
   "auth.login_failed": "Failed sign-in",
   "auth.logout": "Signed out",
@@ -12,11 +14,11 @@ const ACTIVITY_LABELS = {
   "share.create": "Created a share link",
 };
 
-function formatActivityAction(action) {
+export function formatActivityAction(action) {
   return ACTIVITY_LABELS[action] || String(action || "Activity");
 }
 
-async function loadActivityLog() {
+export async function loadActivityLog() {
   const container = document.getElementById("activityLogBody");
   if (!container) return;
 
@@ -47,3 +49,12 @@ async function loadActivityLog() {
 }
 
 document.addEventListener("DOMContentLoaded", loadActivityLog);
+
+// Compatibility mirrors: legacy inline handlers, dynamically injected
+// classic scripts and the test harness read these as window globals.
+// (Native ESM consumers should import the bindings above instead.)
+Object.assign(window, {
+  ACTIVITY_LABELS,
+  formatActivityAction,
+  loadActivityLog,
+});

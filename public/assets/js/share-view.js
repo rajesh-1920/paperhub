@@ -1,7 +1,9 @@
 // Public share-link viewer. No authentication: a recipient opens
 // /pages/share/view.html?token=... and we resolve the link and embed the PDF.
 
-function shareViewEls() {
+import { escapeHtml } from "./utils.js";
+
+export function shareViewEls() {
   return {
     name: document.getElementById("shareResourceName"),
     body: document.getElementById("shareViewBody"),
@@ -9,13 +11,13 @@ function shareViewEls() {
   };
 }
 
-function shareViewError(message) {
+export function shareViewError(message) {
   const { error, body } = shareViewEls();
   if (error) error.textContent = message;
   if (body) body.innerHTML = "";
 }
 
-async function resolveAndRenderShare(token, password) {
+export async function resolveAndRenderShare(token, password) {
   const { name, body } = shareViewEls();
   const qs = password ? `?password=${encodeURIComponent(password)}` : "";
   let response;
@@ -64,7 +66,7 @@ async function resolveAndRenderShare(token, password) {
   }
 }
 
-function initShareView() {
+export function initShareView() {
   const token = new URLSearchParams(window.location.search).get("token");
   if (!token) {
     shareViewError("No share link was provided.");
@@ -74,3 +76,13 @@ function initShareView() {
 }
 
 document.addEventListener("DOMContentLoaded", initShareView);
+
+// Compatibility mirrors: legacy inline handlers, dynamically injected
+// classic scripts and the test harness read these as window globals.
+// (Native ESM consumers should import the bindings above instead.)
+Object.assign(window, {
+  shareViewEls,
+  shareViewError,
+  resolveAndRenderShare,
+  initShareView,
+});

@@ -41,8 +41,10 @@ repo so no CSS build step runs at deploy time).
 ## Conventions
 
 - **Architecture.** Read [ARCHITECTURE.md](ARCHITECTURE.md). The browser scripts
-  share a global namespace (`utils.js` loads first and defines the shared API),
-  and the JSON file is the database, served/persisted by `server/`.
+  are native ES modules: import what you use from `./utils.js` (or `esm/` for
+  DOM-free logic) — never rely on load order or undeclared globals. Page
+  modules reference each other only behind `typeof` guards + `/* global */`
+  (see ARCHITECTURE.md); `tests/esm-imports.test.mjs` enforces the subset.
 - **Escaping policy (important).** Any value derived from the dataset or user
   input that is interpolated into `innerHTML` **must** be wrapped in
   `escapeHtml()`. Prefer `textContent` for plain text. This is enforced by

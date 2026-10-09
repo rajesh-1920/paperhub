@@ -1,4 +1,17 @@
-function getFormDataSafe(form) {
+import {
+  addEvent,
+  createElement,
+  getElement,
+  isValidEmail,
+  isValidPassword,
+  paperhubApiUrl,
+  setCurrentUser,
+  setStorage,
+  showError,
+  showSuccess,
+} from "./utils.js";
+
+export function getFormDataSafe(form) {
   const data = {};
   const formData = new FormData(form);
   formData.forEach((value, key) => {
@@ -7,7 +20,7 @@ function getFormDataSafe(form) {
   return data;
 }
 
-function validateLoginData(formData) {
+export function validateLoginData(formData) {
   const errors = {};
 
   if (!formData.email) {
@@ -23,7 +36,7 @@ function validateLoginData(formData) {
   return errors;
 }
 
-function validateRegisterData(formData) {
+export function validateRegisterData(formData) {
   const errors = {};
 
   if (!formData.name || formData.name.length < 3) {
@@ -55,7 +68,7 @@ function validateRegisterData(formData) {
 // through /api/auth/* (see loginViaApi/registerViaApi and changePasswordViaApi).
 // The browser never holds or compares credentials.
 
-function getAuthPageRouteByRole(role) {
+export function getAuthPageRouteByRole(role) {
   const roleRoutes = {
     user: "../dashboard/user.html",
     officer: "../dashboard/officer.html",
@@ -66,7 +79,7 @@ function getAuthPageRouteByRole(role) {
   return new URL(relativePath, window.location.href).href;
 }
 
-function persistAuthSession(user, token, refreshToken) {
+export function persistAuthSession(user, token, refreshToken) {
   setCurrentUser(user);
   if (token) {
     setStorage("paperhub-auth-token", token);
@@ -78,7 +91,7 @@ function persistAuthSession(user, token, refreshToken) {
 
 // Call the server auth API and return { token, refreshToken, user } or throw a
 // message suitable for display.
-async function postAuth(path, payload) {
+export async function postAuth(path, payload) {
   const response = await fetch(paperhubApiUrl(path), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -91,11 +104,11 @@ async function postAuth(path, payload) {
   return data;
 }
 
-function loginViaApi(email, password) {
+export function loginViaApi(email, password) {
   return postAuth("/api/auth/login", { email, password });
 }
 
-function registerViaApi({ name, email, password }) {
+export function registerViaApi({ name, email, password }) {
   return postAuth("/api/auth/register", { name, email, password });
 }
 
@@ -103,7 +116,7 @@ function registerViaApi({ name, email, password }) {
 
 // Receives the Google ID token from Google Identity Services, exchanges it for a
 // PaperHub session, and redirects to the user's dashboard.
-async function handleGoogleCredential(response) {
+export async function handleGoogleCredential(response) {
   if (!response || !response.credential) return;
   try {
     const { token, refreshToken, user } = await postAuth("/api/auth/google", {
@@ -120,7 +133,7 @@ async function handleGoogleCredential(response) {
 }
 
 // The GIS script loads async, so wait until it's available.
-function whenGoogleReady(callback, attempts = 40) {
+export function whenGoogleReady(callback, attempts = 40) {
   if (window.google && window.google.accounts && window.google.accounts.id) {
     callback();
   } else if (attempts > 0) {
@@ -129,7 +142,7 @@ function whenGoogleReady(callback, attempts = 40) {
 }
 
 // Show the Google button only when the server has a client id configured.
-async function initGoogleSignIn() {
+export async function initGoogleSignIn() {
   const area = getElement("#googleAuthArea");
   const container = getElement("#googleSignInButton");
   if (!area || !container) return;
@@ -165,12 +178,12 @@ async function initGoogleSignIn() {
   });
 }
 
-function enforceAuthLightTheme() {
+export function enforceAuthLightTheme() {
   document.documentElement.classList.remove("dark");
   setStorage("paperhub-theme", "light");
 }
 
-function initLoginPage() {
+export function initLoginPage() {
   const loginForm = getElement("#loginForm");
   if (!loginForm) return;
 
@@ -178,7 +191,7 @@ function initLoginPage() {
   initGoogleSignIn();
 }
 
-async function handleLogin(e) {
+export async function handleLogin(e) {
   e.preventDefault();
 
   const formData = getFormDataSafe(e.target);
@@ -210,7 +223,7 @@ async function handleLogin(e) {
   }
 }
 
-function initRegisterPage() {
+export function initRegisterPage() {
   const registerForm = getElement("#registerForm");
   if (!registerForm) return;
 
@@ -229,7 +242,7 @@ function initRegisterPage() {
   }
 }
 
-function updatePasswordStrength(e) {
+export function updatePasswordStrength(e) {
   const password = e.target.value;
   const strengthIndicator = getElement("#passwordStrength");
 
@@ -272,7 +285,7 @@ function updatePasswordStrength(e) {
   }
 }
 
-async function handleRegister(e) {
+export async function handleRegister(e) {
   e.preventDefault();
 
   const formData = getFormDataSafe(e.target);
@@ -308,7 +321,7 @@ async function handleRegister(e) {
   }
 }
 
-function displayFormErrors(form, errors) {
+export function displayFormErrors(form, errors) {
   const errorMessages = form.querySelectorAll(".form-error");
   errorMessages.forEach((err) => err.remove());
 
@@ -338,4 +351,28 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (document.body.classList.contains("register-page")) {
     initRegisterPage();
   }
+});
+
+// Compatibility mirrors: legacy inline handlers, dynamically injected
+// classic scripts and the test harness read these as window globals.
+// (Native ESM consumers should import the bindings above instead.)
+Object.assign(window, {
+  getFormDataSafe,
+  validateLoginData,
+  validateRegisterData,
+  getAuthPageRouteByRole,
+  persistAuthSession,
+  postAuth,
+  loginViaApi,
+  registerViaApi,
+  handleGoogleCredential,
+  whenGoogleReady,
+  initGoogleSignIn,
+  enforceAuthLightTheme,
+  initLoginPage,
+  handleLogin,
+  initRegisterPage,
+  updatePasswordStrength,
+  handleRegister,
+  displayFormErrors,
 });

@@ -30,18 +30,33 @@ tests/                      node:test + jsdom suite (+ live-server API tests)
 docs/API.md                 Full REST contract (methods, auth, errors)
 ```
 
-## The shared-global script layer
+## The ES module script layer
 
-The browser scripts are loaded as **classic `<script>` files** (not ES modules)
-and deliberately share a single global namespace. `utils.js` defines helpers
-(`getElement`, `escapeHtml`, `formatDate`, the data store, …) that the other
-scripts (`main.js`, `file.js`, `review.js`, `navbar.js`, `auth.js`,
-`profile.js`) call directly. Load order matters: `utils.js` first, then the
-page scripts.
+The browser scripts are native ES modules (`type="module"`, no bundler).
+`utils.js` is the foundation — every page script imports its helpers
+explicitly (`getElement`, `escapeHtml`, `formatDate`, the `ph*` store, …)
+instead of relying on load order or globals. Only two small IIFE bundles
+stay classic (`profile.js`, `tailwind-setup.js` — self-contained, zero
+imports); everything else is linted strictly (`no-undef` ON).
 
-Because of this, ESLint runs with `no-undef`/`no-unused-vars` disabled for
-`public/assets/js/**` (cross-file references and the global "exported" API would
-otherwise look like errors). See `eslint.config.js` for the rationale.
+Two deliberate compat mechanisms remain until inline handlers are
+externalised (see SECURITY.md):
+
+- **Window mirrors.** Each module ends with `Object.assign(window, { … })`
+  covering its public API — the same properties classic scripts always had —
+  so inline `onclick=` handlers, page-inline scripts and dynamically injected
+  scripts keep working.
+- **Guarded page-to-page calls.** Page modules reference each other only
+  behind `typeof X === "function"` guards resolved via those mirrors (declared
+  to ESLint with `/* global … */`), keeping the module graph acyclic
+  (the only import edges are `* → utils.js`). `tests/esm-imports.test.mjs`
+  enforces the authoring subset and that every cross-module reference is
+  imported or acknowledged.
+
+The jsdom harness (`tests/helpers/dom.mjs`) evaluates the same sources with
+an equivalent source transform (import-strip + dependency order + window
+mirrors), so behavior tests run unchanged with fresh module state per boot —
+exactly like a real page reload.
 
 ### The ESM layer (`public/assets/js/esm/`)
 
@@ -61,8 +76,10 @@ JSDoc, and unit-tested directly in Node (`tests/esm.test.mjs` — no jsdom):
   keys with legacy-key fallback and dual-write, so migration is non-breaking.
 - `paperhub.mjs` — barrel re-export (single import point).
 
-Strategy is strangler-fig: legacy pages keep working untouched while new code
-imports from `esm/`; the classic scripts migrate one page at a time.
+Strategy is strangler-fig, now in its final stage: all page scripts are
+modules; the remaining classic surface is two IIFE bundles plus the
+intentional window mirrors above. `esm/` stays the home for DOM-free,
+directly-importable logic (pure helpers, async store, session).
 
 ## Data: pluggable storage behind one REST contract
 

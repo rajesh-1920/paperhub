@@ -1,15 +1,17 @@
-function navigateToAuth(page) {
+import { showToast } from "../utils.js";
+
+export function navigateToAuth(page) {
   window.location.href = `pages/auth/${page}.html`;
 }
 
-function scrollToSection(id) {
+export function scrollToSection(id) {
   const element = document.getElementById(id);
   if (element) {
     element.scrollIntoView({ behavior: "smooth" });
   }
 }
 
-function handleContactForm(event) {
+export function handleContactForm(event) {
   event.preventDefault();
 
   if (typeof showToast === "function") {
@@ -19,7 +21,7 @@ function handleContactForm(event) {
   event.target.reset();
 }
 
-function applyLandingTheme() {
+export function applyLandingTheme() {
   const root = document.documentElement;
 
   try {
@@ -33,7 +35,7 @@ function applyLandingTheme() {
 }
 
 // Toggle the mobile nav dropdown (shown only below the md breakpoint).
-function setupMobileMenu() {
+export function setupMobileMenu() {
   const toggle = document.getElementById("landingMenuToggle");
   const menu = document.getElementById("landingMobileMenu");
   if (!toggle || !menu) return;
@@ -55,11 +57,18 @@ function setupMobileMenu() {
   });
 }
 
-window.navigateToAuth = navigateToAuth;
-window.scrollToSection = scrollToSection;
-window.handleContactForm = handleContactForm;
-
 document.addEventListener("DOMContentLoaded", () => {
   applyLandingTheme();
   setupMobileMenu();
+});
+
+// Compatibility mirrors: legacy inline handlers, dynamically injected
+// classic scripts and the test harness read these as window globals.
+// (Native ESM consumers should import the bindings above instead.)
+Object.assign(window, {
+  navigateToAuth,
+  scrollToSection,
+  handleContactForm,
+  applyLandingTheme,
+  setupMobileMenu,
 });

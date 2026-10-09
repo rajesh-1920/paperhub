@@ -1,19 +1,42 @@
-let activeReview = null;
-let activeQueueItems = [];
-let activeQueueFilter = "all";
-let activeQueueSearch = "";
+import {
+  addClass,
+  addEvent,
+  createElement,
+  escapeHtml,
+  formatDate,
+  getAuthToken,
+  getCurrentUserData,
+  getElement,
+  getElements,
+  getPaperHubDataset,
+  hasRole,
+  paperhubApiUrl,
+  phAddReviewComment,
+  phSetReviewStatus,
+  removeClass,
+  resolveAppPath,
+  showError,
+  showInfo,
+  showSuccess,
+  showWarning,
+} from "./utils.js";
 
-function canManageReview() {
+export let activeReview = null;
+export let activeQueueItems = [];
+export let activeQueueFilter = "all";
+export let activeQueueSearch = "";
+
+export function canManageReview() {
   return typeof hasRole === "function" ? hasRole(["officer", "admin"]) : false;
 }
 
-function initReviewQueuePage() {
+export function initReviewQueuePage() {
   activeQueueItems = getReviewData();
   setupReviewQueueInteractions();
   renderReviewQueue();
 }
 
-function initReviewDetailsPage() {
+export function initReviewDetailsPage() {
   const reviewId = new URLSearchParams(window.location.search).get("id");
   activeReview = getReviewById(reviewId);
 
@@ -30,12 +53,12 @@ function initReviewDetailsPage() {
 }
 
 // Re-render hooks used by the live-sync bus (main.js paperhubSyncRefresh).
-function refreshReviewQueue() {
+export function refreshReviewQueue() {
   activeQueueItems = getReviewData();
   renderReviewQueue();
 }
 
-function refreshReviewDetails() {
+export function refreshReviewDetails() {
   if (!activeReview) return;
   const fresh = getReviewById(activeReview.id);
   if (fresh) {
@@ -47,17 +70,17 @@ function refreshReviewDetails() {
 // Read fresh from the live dataset every call: the ph* mutators replace the
 // reviewQueue array (e.g. phDeleteFile filters it), so a captured reference
 // would go stale across SPA navigation.
-function getReviewData() {
+export function getReviewData() {
   const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
   return Array.isArray(dataset.reviewQueue) ? dataset.reviewQueue.slice() : [];
 }
 
-function getReviewById(reviewId) {
+export function getReviewById(reviewId) {
   if (!reviewId) return null;
   return getReviewData().find((review) => review.id === reviewId) || null;
 }
 
-function renderReviewNotFound(reviewId) {
+export function renderReviewNotFound(reviewId) {
   const container = getElement("#reviewDetailsContent");
   const statusLabel = getElement("[data-review-status-label]");
   const accessNote = getElement("[data-review-access-note]");
@@ -88,7 +111,7 @@ function renderReviewNotFound(reviewId) {
   }
 }
 
-function setupReviewQueueInteractions() {
+export function setupReviewQueueInteractions() {
   const searchInput = getElement("#reviewSearchInput");
   addEvent(searchInput, "input", () => {
     activeQueueSearch = String(searchInput?.value || "")
@@ -118,7 +141,7 @@ function setupReviewQueueInteractions() {
   });
 }
 
-function renderReviewQueue() {
+export function renderReviewQueue() {
   const reviewTableBody = getElement("#reviewTableBody");
   if (!reviewTableBody) {
     return;
@@ -173,7 +196,7 @@ function renderReviewQueue() {
   updateVisibleCount(filteredReviews.length);
 }
 
-function updateQueueStats(visibleReviews) {
+export function updateQueueStats(visibleReviews) {
   const reviews = activeQueueItems;
   const pendingCount = reviews.filter((review) => review.status === "pending").length;
   const inReviewCount = reviews.filter((review) => review.status === "in-review").length;
@@ -187,7 +210,7 @@ function updateQueueStats(visibleReviews) {
   updateVisibleCount(visibleReviews.length);
 }
 
-function renderQueueInsights(visibleReviews) {
+export function renderQueueInsights(visibleReviews) {
   const insightGrid = getElement("[data-review-insight-grid]");
   const focusList = getElement("[data-review-focus-list]");
 
@@ -242,7 +265,7 @@ function renderQueueInsights(visibleReviews) {
   }
 }
 
-function getQueueFocusItems(visibleReviews) {
+export function getQueueFocusItems(visibleReviews) {
   const source = visibleReviews.length > 0 ? visibleReviews : activeQueueItems;
   const sorted = source.slice().sort((left, right) => {
     const priorityOrder =
@@ -278,19 +301,19 @@ function getQueueFocusItems(visibleReviews) {
   ];
 }
 
-function updateVisibleCount(count) {
+export function updateVisibleCount(count) {
   getElements("[data-review-visible-count]").forEach((element) => {
     element.textContent = String(count);
   });
 }
 
-function updateStatValue(statKey, value) {
+export function updateStatValue(statKey, value) {
   getElements(`[data-review-stat="${statKey}"]`).forEach((element) => {
     element.textContent = String(value);
   });
 }
 
-function createEmptyQueueRow() {
+export function createEmptyQueueRow() {
   const row = createElement("tr", "review-empty-row");
   row.innerHTML = `
     <td colspan="7">
@@ -303,7 +326,7 @@ function createEmptyQueueRow() {
   return row;
 }
 
-function createReviewRow(review) {
+export function createReviewRow(review) {
   const row = createElement("tr");
   row.dataset.priority = review.priority;
   row.dataset.status = review.status;
@@ -338,7 +361,7 @@ function createReviewRow(review) {
   return row;
 }
 
-function renderReviewDetails(review) {
+export function renderReviewDetails(review) {
   if (!review) {
     return;
   }
@@ -625,7 +648,7 @@ function renderReviewDetails(review) {
   }
 }
 
-function buildReviewTrailItems(review, openChecklistCount) {
+export function buildReviewTrailItems(review, openChecklistCount) {
   const commentsCount = review.comments.length;
   const latestComment = review.comments[review.comments.length - 1];
 
@@ -649,7 +672,7 @@ function buildReviewTrailItems(review, openChecklistCount) {
   ];
 }
 
-function getDocumentType(documentName) {
+export function getDocumentType(documentName) {
   const name = String(documentName || "");
   const extension = name.includes(".") ? name.split(".").pop() : "";
 
@@ -660,7 +683,7 @@ function getDocumentType(documentName) {
   return extension.toUpperCase();
 }
 
-function setupReviewActions() {
+export function setupReviewActions() {
   const approveBtn = getElement("#approveBtn");
   const rejectBtn = getElement("#rejectBtn");
   const forwardBtn = getElement("#forwardBtn");
@@ -670,14 +693,14 @@ function setupReviewActions() {
   addEvent(forwardBtn, "click", () => handleReviewAction("forwarded"));
 }
 
-function setupReviewCommentAction() {
+export function setupReviewCommentAction() {
   const commentButton = getElement("#addReviewCommentBtn");
   addEvent(commentButton, "click", addComment);
 }
 
 // Tell the server an officer forwarded a document so it can email the admin.
 // Best-effort and non-blocking: the forward succeeds regardless of delivery.
-function notifyForwardViaApi(payload) {
+export function notifyForwardViaApi(payload) {
   try {
     const headers = { "Content-Type": "application/json" };
     const token = typeof getAuthToken === "function" ? getAuthToken() : "";
@@ -694,7 +717,7 @@ function notifyForwardViaApi(payload) {
   }
 }
 
-function handleReviewAction(action) {
+export function handleReviewAction(action) {
   // A terminal decision can't be changed — the document has left the queue.
   if (activeReview && (activeReview.status === "completed" || activeReview.status === "rejected")) {
     showWarning(
@@ -770,7 +793,7 @@ function handleReviewAction(action) {
   setTimeout(goToQueue, 900);
 }
 
-function addComment() {
+export function addComment() {
   const commentInput = getElement("#reviewComment");
   const commentText = commentInput?.value?.trim();
 
@@ -821,7 +844,7 @@ function addComment() {
   showSuccess("Comment added");
 }
 
-function getInitials(name) {
+export function getInitials(name) {
   return (
     String(name || "U")
       .split(" ")
@@ -833,7 +856,7 @@ function getInitials(name) {
   );
 }
 
-function formatPriorityLabel(priority) {
+export function formatPriorityLabel(priority) {
   return (
     String(priority || "")
       .charAt(0)
@@ -841,7 +864,7 @@ function formatPriorityLabel(priority) {
   );
 }
 
-function formatStatusLabel(status) {
+export function formatStatusLabel(status) {
   if (status === "in-review") {
     return "In Review";
   }
@@ -853,7 +876,7 @@ function formatStatusLabel(status) {
   );
 }
 
-function getPrioritySortWeight(priority) {
+export function getPrioritySortWeight(priority) {
   if (priority === "high") {
     return 3;
   }
@@ -871,4 +894,43 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (document.body.classList.contains("review-details-page")) {
     initReviewDetailsPage();
   }
+});
+
+// Compatibility mirrors: legacy inline handlers, dynamically injected
+// classic scripts and the test harness read these as window globals.
+// (Native ESM consumers should import the bindings above instead.)
+Object.assign(window, {
+  activeReview,
+  activeQueueItems,
+  activeQueueFilter,
+  activeQueueSearch,
+  canManageReview,
+  initReviewQueuePage,
+  initReviewDetailsPage,
+  refreshReviewQueue,
+  refreshReviewDetails,
+  getReviewData,
+  getReviewById,
+  renderReviewNotFound,
+  setupReviewQueueInteractions,
+  renderReviewQueue,
+  updateQueueStats,
+  renderQueueInsights,
+  getQueueFocusItems,
+  updateVisibleCount,
+  updateStatValue,
+  createEmptyQueueRow,
+  createReviewRow,
+  renderReviewDetails,
+  buildReviewTrailItems,
+  getDocumentType,
+  setupReviewActions,
+  setupReviewCommentAction,
+  notifyForwardViaApi,
+  handleReviewAction,
+  addComment,
+  getInitials,
+  formatPriorityLabel,
+  formatStatusLabel,
+  getPrioritySortWeight,
 });

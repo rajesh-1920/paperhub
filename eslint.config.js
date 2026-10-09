@@ -4,11 +4,10 @@ import globals from "globals";
 /**
  * Flat ESLint config for PaperHub.
  *
- * The browser code is a set of classic <script> files that intentionally share
- * a single global namespace (utils.js defines helpers consumed by main.js,
- * file.js, review.js, ...). `no-undef` is therefore disabled for that layer to
- * avoid thousands of false positives on legitimate cross-file references; real
- * mistakes are caught by the test suite and editor type-checking instead.
+ * Page scripts are native ES modules (`type="module"`, explicit imports from
+ * ./utils.js). Only the two intentionally-classic IIFE bundles
+ * (profile.js, tailwind-setup.js — self-contained, zero imports) keep the
+ * lenient shared-global treatment.
  */
 export default [
   {
@@ -19,9 +18,28 @@ export default [
     ],
   },
 
-  // Browser scripts (shared-global architecture).
+  // Modern ESM page scripts: strict — typos and missing imports fail the build.
   {
     files: ["public/assets/js/**/*.js"],
+    ignores: ["public/assets/js/profile.js", "public/assets/js/tailwind-setup.js"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: { ...globals.browser },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      // Unused catch params are idiomatic here (best-effort cleanup paths).
+      "no-unused-vars": ["error", { args: "none", caughtErrors: "none" }],
+      eqeqeq: ["warn", "smart"],
+      "no-var": "warn",
+      "prefer-const": "warn",
+    },
+  },
+
+  // Intentionally-classic IIFE bundles (self-contained, no imports/exports).
+  {
+    files: ["public/assets/js/profile.js", "public/assets/js/tailwind-setup.js"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "script",
@@ -29,8 +47,8 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
-      // Cross-file globals are intentional in this layer (see header comment),
-      // so undefined/unused analysis produces false positives on the shared API.
+      // Encapsulated legacy bundles: cross-file references are not used here,
+      // but keep the lenient globals treatment for their window mirrors.
       "no-undef": "off",
       "no-unused-vars": "off",
       eqeqeq: ["warn", "smart"],

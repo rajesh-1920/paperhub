@@ -1,61 +1,60 @@
-/* PaperHub legacy shared-global bundle (classic <script>, load-order dependent).
- * Plan B Phase 1: new code should import from `esm/paperhub.mjs` instead of
- * relying on these globals. This file is unchanged at runtime; `esm/*.mjs`
- * mirrors its pure helpers exactly so pages can migrate one at a time.
- * See ARCHITECTURE.md (forthcoming ESM update) and tests/esm.test.mjs.
+/* PaperHub foundation module (native ESM, loaded as type="module").
+ * Every page script imports its shared helpers from here explicitly.
+ * The Object.assign(window, …) block at the end preserves the legacy
+ * global surface for inline handlers and dynamically injected scripts.
  */
-function getElement(selector) {
+export function getElement(selector) {
   return document.querySelector(selector);
 }
 
-function getElements(selector) {
+export function getElements(selector) {
   return document.querySelectorAll(selector);
 }
 
-function createElement(tag, className = "", id = "") {
+export function createElement(tag, className = "", id = "") {
   const element = document.createElement(tag);
   if (className) element.className = className;
   if (id) element.id = id;
   return element;
 }
 
-function addClass(element, className) {
+export function addClass(element, className) {
   if (element) element.classList.add(className);
 }
 
-function removeClass(element, className) {
+export function removeClass(element, className) {
   if (element) element.classList.remove(className);
 }
 
-function toggleClass(element, className) {
+export function toggleClass(element, className) {
   if (element) element.classList.toggle(className);
 }
 
-function hasClass(element, className) {
+export function hasClass(element, className) {
   return element && element.classList.contains(className);
 }
 
-function removeElement(element) {
+export function removeElement(element) {
   if (element) element.remove();
 }
 
-function showElement(element) {
+export function showElement(element) {
   if (element) removeClass(element, "hidden");
 }
 
-function hideElement(element) {
+export function hideElement(element) {
   if (element) addClass(element, "hidden");
 }
 
-function addEvent(element, event, handler) {
+export function addEvent(element, event, handler) {
   if (element) element.addEventListener(event, handler);
 }
 
-function removeEvent(element, event, handler) {
+export function removeEvent(element, event, handler) {
   if (element) element.removeEventListener(event, handler);
 }
 
-const PAPERHUB_APP_BASE_URL = (() => {
+export const PAPERHUB_APP_BASE_URL = (() => {
   const currentScript =
     document.currentScript ||
     Array.from(document.scripts || []).find(
@@ -69,12 +68,12 @@ const PAPERHUB_APP_BASE_URL = (() => {
   return new URL("./", window.location.href).href;
 })();
 
-function resolveAppPath(path) {
+export function resolveAppPath(path) {
   const normalizedPath = String(path || "").replace(/^\/+/, "");
   return new URL(normalizedPath, PAPERHUB_APP_BASE_URL).href;
 }
 
-const PAPERHUB_DATA_URL = resolveAppPath("assets/data/paperhub-backend.json");
+export const PAPERHUB_DATA_URL = resolveAppPath("assets/data/paperhub-backend.json");
 
 /* ---------------------------------------------------------------------------
  * Data store — the JSON file is the database, served and persisted by the Node
@@ -91,12 +90,12 @@ const PAPERHUB_DATA_URL = resolveAppPath("assets/data/paperhub-backend.json");
  * the UI still renders (read-only).
  * ------------------------------------------------------------------------- */
 
-function paperhubApiUrl(path) {
+export function paperhubApiUrl(path) {
   // The API lives at the server root, regardless of the current page's depth.
   return new URL(path, window.location.origin).href;
 }
 
-function fetchDatasetSync() {
+export function fetchDatasetSync() {
   const sources = [paperhubApiUrl("/api/dataset"), PAPERHUB_DATA_URL];
   for (const url of sources) {
     try {
@@ -117,7 +116,7 @@ function fetchDatasetSync() {
   return {};
 }
 
-function getPaperHubDataset() {
+export function getPaperHubDataset() {
   if (window.__paperhubDataset) {
     return window.__paperhubDataset;
   }
@@ -128,7 +127,7 @@ function getPaperHubDataset() {
 
 // Drop the in-page cache and re-read the dataset from the server. Used when a
 // page is restored from the back/forward cache so it never shows stale data.
-function refreshPaperHubDataset() {
+export function refreshPaperHubDataset() {
   delete window.__paperhubDataset;
   return getPaperHubDataset();
 }
@@ -136,7 +135,7 @@ function refreshPaperHubDataset() {
 // When a write fails auth and the token can't be refreshed, the session is
 // dead (e.g. a stale pre-auth token). Clear it and send the user to log in so
 // they get a working token, instead of writes failing silently.
-function handleSessionExpired() {
+export function handleSessionExpired() {
   try {
     if (/\/pages\/auth\//.test(window.location.pathname || "")) return;
   } catch (error) {
@@ -164,7 +163,7 @@ function handleSessionExpired() {
 
 // Send a synchronous, authenticated request; on a 401 refresh the access token
 // once and retry. If it's still unauthorized, the session is dead → re-login.
-function sendAuthedSync(method, url, { body = null, contentType = null } = {}) {
+export function sendAuthedSync(method, url, { body = null, contentType = null } = {}) {
   const send = () => {
     const request = new XMLHttpRequest();
     request.open(method, url, false);
@@ -185,7 +184,7 @@ function sendAuthedSync(method, url, { body = null, contentType = null } = {}) {
   return request;
 }
 
-function persistPaperHubData() {
+export function persistPaperHubData() {
   try {
     const request = sendAuthedSync("PUT", paperhubApiUrl("/api/dataset"), {
       body: JSON.stringify(getPaperHubDataset()),
@@ -200,7 +199,7 @@ function persistPaperHubData() {
   notifyPaperHubChange();
 }
 
-function resetPaperHubData() {
+export function resetPaperHubData() {
   try {
     sendAuthedSync("POST", paperhubApiUrl("/api/reset"));
   } catch (error) {
@@ -216,7 +215,7 @@ function resetPaperHubData() {
  * the open view immediately — no reload needed.
  * ------------------------------------------------------------------------- */
 
-function notifyPaperHubChange() {
+export function notifyPaperHubChange() {
   if (typeof window === "undefined") return;
   try {
     window.dispatchEvent(new CustomEvent("paperhub:change"));
@@ -225,7 +224,7 @@ function notifyPaperHubChange() {
   }
 }
 
-function setPaperHubRefresh(refresh) {
+export function setPaperHubRefresh(refresh) {
   if (typeof window !== "undefined") {
     window.__paperhubRefresh = typeof refresh === "function" ? refresh : null;
   }
@@ -244,19 +243,19 @@ if (typeof window !== "undefined" && !window.__paperhubSyncBound) {
   });
 }
 
-function phFindUser(userId) {
+export function phFindUser(userId) {
   const dataset = getPaperHubDataset();
   return (dataset.users || []).find((user) => user.id === userId) || null;
 }
 
-function phMapReviewToFileStatus(status) {
+export function phMapReviewToFileStatus(status) {
   if (status === "completed" || status === "approved") return "completed";
   if (status === "rejected") return "rejected";
   if (status === "in-review" || status === "forwarded") return "reviewing";
   return "pending";
 }
 
-function phMapFileToReviewStatus(status) {
+export function phMapFileToReviewStatus(status) {
   if (status === "completed") return "completed";
   if (status === "rejected") return "rejected";
   if (status === "reviewing") return "in-review";
@@ -273,7 +272,7 @@ function phMapFileToReviewStatus(status) {
  * dashboards).
  * ------------------------------------------------------------------------- */
 
-function phApplyFileStatus(dataset, fileId, fileStatus) {
+export function phApplyFileStatus(dataset, fileId, fileStatus) {
   (dataset.files || []).forEach((file) => {
     if (file.id === fileId) file.status = fileStatus;
   });
@@ -284,7 +283,7 @@ function phApplyFileStatus(dataset, fileId, fileStatus) {
   );
 }
 
-function phApplyReviewStatus(dataset, reviewId, reviewStatus) {
+export function phApplyReviewStatus(dataset, reviewId, reviewStatus) {
   (dataset.reviewQueue || []).forEach((review) => {
     if (review.id === reviewId) review.status = reviewStatus;
   });
@@ -296,7 +295,7 @@ function phApplyReviewStatus(dataset, reviewId, reviewStatus) {
 }
 
 // Resolve the file <-> review link from whichever id is known.
-function phResolveLink(dataset, { fileId, reviewId }) {
+export function phResolveLink(dataset, { fileId, reviewId }) {
   const queue = dataset.reviewQueue || [];
   let fid = fileId || null;
   let rid = reviewId || null;
@@ -312,7 +311,7 @@ function phResolveLink(dataset, { fileId, reviewId }) {
 }
 
 // Keep the aggregate dashboard counters in step with the files.
-function phRecomputeDashboardStats(dataset) {
+export function phRecomputeDashboardStats(dataset) {
   const files = dataset.files || [];
   dataset.dashboardStats = dataset.dashboardStats || {};
   dataset.dashboardStats.totalDocuments = files.length;
@@ -343,7 +342,7 @@ function phRecomputeDashboardStats(dataset) {
 // Allowlists and limits guard the mutators against malformed input (e.g. an
 // out-of-range status, an oversized name, or an empty comment) before anything
 // is written to the persistent store.
-const PH_REVIEW_STATUSES = [
+export const PH_REVIEW_STATUSES = [
   "pending",
   "in-review",
   "completed",
@@ -351,18 +350,18 @@ const PH_REVIEW_STATUSES = [
   "approved",
   "forwarded",
 ];
-const PH_FILE_STATUSES = ["pending", "reviewing", "completed", "rejected"];
-const PH_MAX_NAME_LENGTH = 255;
-const PH_MAX_COMMENT_LENGTH = 2000;
+export const PH_FILE_STATUSES = ["pending", "reviewing", "completed", "rejected"];
+export const PH_MAX_NAME_LENGTH = 255;
+export const PH_MAX_COMMENT_LENGTH = 2000;
 
-function phSanitizeName(name) {
+export function phSanitizeName(name) {
   // Strip ASCII control characters (incl. NUL) then clamp length.
   // eslint-disable-next-line no-control-regex
   const stripped = String(name || "").replace(/[\u0000-\u001f\u007f]/g, "");
   return stripped.slice(0, PH_MAX_NAME_LENGTH);
 }
 
-function phAddFile(file, reviewItem) {
+export function phAddFile(file, reviewItem) {
   const dataset = getPaperHubDataset();
   dataset.files = dataset.files || [];
   dataset.files.unshift(file);
@@ -386,7 +385,7 @@ function phAddFile(file, reviewItem) {
   persistPaperHubData();
 }
 
-function phUpdateFileStatus(fileId, status) {
+export function phUpdateFileStatus(fileId, status) {
   if (!PH_FILE_STATUSES.includes(status)) return;
   const dataset = getPaperHubDataset();
   const { fid, rid } = phResolveLink(dataset, { fileId });
@@ -396,7 +395,7 @@ function phUpdateFileStatus(fileId, status) {
   persistPaperHubData();
 }
 
-function phDeleteFile(fileId) {
+export function phDeleteFile(fileId) {
   const dataset = getPaperHubDataset();
   dataset.files = (dataset.files || []).filter((file) => file.id !== fileId);
   (dataset.users || []).forEach((user) => {
@@ -414,7 +413,7 @@ function phDeleteFile(fileId) {
 
 // Stamp a file's real page count (from the server's PDF parse) onto every copy:
 // the global file list, the owner's file list, and any matching review item.
-function phSetFilePageCount(fileId, pageCount) {
+export function phSetFilePageCount(fileId, pageCount) {
   const pages = Number(pageCount) || 1;
   if (!fileId || pages < 1) return false;
   const dataset = getPaperHubDataset();
@@ -441,20 +440,20 @@ function phSetFilePageCount(fileId, pageCount) {
  * and search. Files reference a folder via file.folderId (null = root).
  * ------------------------------------------------------------------------- */
 
-function phListFolders(ownerId) {
+export function phListFolders(ownerId) {
   const dataset = getPaperHubDataset();
   return (dataset.folders || []).filter(
     (folder) => !folder.deletedAt && (!ownerId || folder.ownerId === ownerId),
   );
 }
 
-function phGetFolder(folderId) {
+export function phGetFolder(folderId) {
   const dataset = getPaperHubDataset();
   return (dataset.folders || []).find((folder) => folder.id === folderId) || null;
 }
 
 // Materialized "/a/b/c" path for a folder given its parent and name.
-function phComputeFolderPath(dataset, parentId, name) {
+export function phComputeFolderPath(dataset, parentId, name) {
   if (!parentId) {
     return "/" + name;
   }
@@ -463,7 +462,7 @@ function phComputeFolderPath(dataset, parentId, name) {
 }
 
 // Recompute path for a folder and all of its descendants (after move/rename).
-function phReindexFolderPaths(dataset, folderId) {
+export function phReindexFolderPaths(dataset, folderId) {
   const folders = dataset.folders || [];
   const folder = folders.find((f) => f.id === folderId);
   if (!folder) return;
@@ -475,7 +474,13 @@ function phReindexFolderPaths(dataset, folderId) {
     });
 }
 
-function phAddFolder({ name, parentId = null, ownerId, color = null, description = "" } = {}) {
+export function phAddFolder({
+  name,
+  parentId = null,
+  ownerId,
+  color = null,
+  description = "",
+} = {}) {
   const cleanName = String(name || "").trim();
   if (!cleanName) return null;
   const dataset = getPaperHubDataset();
@@ -502,7 +507,7 @@ function phAddFolder({ name, parentId = null, ownerId, color = null, description
   return folder;
 }
 
-function phRenameFolder(folderId, newName) {
+export function phRenameFolder(folderId, newName) {
   const cleanName = String(newName || "").trim();
   if (!cleanName) return false;
   const dataset = getPaperHubDataset();
@@ -517,7 +522,7 @@ function phRenameFolder(folderId, newName) {
 
 // Remove a folder, reparenting its subfolders and files to its parent so
 // nothing is orphaned (the parent of a root folder is null = root).
-function phDeleteFolder(folderId) {
+export function phDeleteFolder(folderId) {
   const dataset = getPaperHubDataset();
   const folders = dataset.folders || [];
   const folder = folders.find((f) => f.id === folderId);
@@ -544,7 +549,7 @@ function phDeleteFolder(folderId) {
 }
 
 // Rename a file across every copy (global list, owner's list, review queue).
-function phRenameFile(fileId, newName) {
+export function phRenameFile(fileId, newName) {
   const clean = String(newName || "").trim();
   if (!clean) return false;
   const dataset = getPaperHubDataset();
@@ -571,7 +576,7 @@ function phRenameFile(fileId, newName) {
 }
 
 // Move a file into a folder (null = root) across every copy.
-function phMoveFile(fileId, folderId = null) {
+export function phMoveFile(fileId, folderId = null) {
   const dataset = getPaperHubDataset();
   const now = new Date().toISOString();
   let found = false;
@@ -590,7 +595,7 @@ function phMoveFile(fileId, folderId = null) {
 }
 
 // Synchronously duplicate a file's stored bytes to a new id (server-side copy).
-function copyFileContentSync(srcId, destId) {
+export function copyFileContentSync(srcId, destId) {
   try {
     const request = new XMLHttpRequest();
     request.open("POST", paperhubApiUrl(`/api/files/${encodeURIComponent(srcId)}/copy`), false);
@@ -606,7 +611,7 @@ function copyFileContentSync(srcId, destId) {
   }
 }
 
-function phCopyName(name) {
+export function phCopyName(name) {
   const value = String(name || "file");
   const dot = value.lastIndexOf(".");
   if (dot > 0) {
@@ -616,7 +621,7 @@ function phCopyName(name) {
 }
 
 // Duplicate a file (new id + duplicated binary) into a target folder.
-function phCopyFile(fileId, targetFolderId = null) {
+export function phCopyFile(fileId, targetFolderId = null) {
   const dataset = getPaperHubDataset();
   const source = (dataset.files || []).find((file) => file.id === fileId);
   if (!source) return null;
@@ -653,7 +658,7 @@ function phCopyFile(fileId, targetFolderId = null) {
  * points at the live one. The binary for a version lives at its contentRef.
  * ------------------------------------------------------------------------- */
 
-function phListVersions(fileId) {
+export function phListVersions(fileId) {
   const file = (getPaperHubDataset().files || []).find((f) => f.id === fileId);
   if (!file) return [];
   if (Array.isArray(file.versions) && file.versions.length) {
@@ -679,7 +684,7 @@ function phListVersions(fileId) {
   return [];
 }
 
-function phAddFileVersion(fileId, meta = {}) {
+export function phAddFileVersion(fileId, meta = {}) {
   const dataset = getPaperHubDataset();
   const now = new Date().toISOString();
   let found = false;
@@ -718,7 +723,7 @@ function phAddFileVersion(fileId, meta = {}) {
 
 // Revert a file to an earlier version: copy that version's archived binary back
 // to the live content and point currentVersion at it (history is unchanged).
-function phRestoreVersion(fileId, versionId) {
+export function phRestoreVersion(fileId, versionId) {
   const dataset = getPaperHubDataset();
   const file = (dataset.files || []).find((f) => f.id === fileId);
   if (!file) return false;
@@ -758,10 +763,10 @@ function phRestoreVersion(fileId, versionId) {
  * maintain the grants.
  * ------------------------------------------------------------------------- */
 
-const PH_PERMISSIONS = ["view", "comment", "edit", "owner"];
-const PH_PRINCIPAL_TYPES = ["user", "role", "team"];
+export const PH_PERMISSIONS = ["view", "comment", "edit", "owner"];
+export const PH_PRINCIPAL_TYPES = ["user", "role", "team"];
 
-function phNormalizeGrant(grant) {
+export function phNormalizeGrant(grant) {
   if (!grant || !PH_PRINCIPAL_TYPES.includes(grant.principalType) || !grant.principalId) {
     return null;
   }
@@ -779,7 +784,7 @@ function phNormalizeGrant(grant) {
   };
 }
 
-function phUpsertGrant(acl, entry) {
+export function phUpsertGrant(acl, entry) {
   const next = (acl || []).filter(
     (g) => !(g.principalType === entry.principalType && g.principalId === entry.principalId),
   );
@@ -787,7 +792,7 @@ function phUpsertGrant(acl, entry) {
   return next;
 }
 
-function phGrantFileAccess(fileId, grant) {
+export function phGrantFileAccess(fileId, grant) {
   const entry = phNormalizeGrant(grant);
   if (!entry) return false;
   const dataset = getPaperHubDataset();
@@ -805,7 +810,7 @@ function phGrantFileAccess(fileId, grant) {
   return found;
 }
 
-function phRevokeFileAccess(fileId, principalType, principalId) {
+export function phRevokeFileAccess(fileId, principalType, principalId) {
   const dataset = getPaperHubDataset();
   let found = false;
   const apply = (list) =>
@@ -823,12 +828,12 @@ function phRevokeFileAccess(fileId, principalType, principalId) {
   return found;
 }
 
-function phListFileGrants(fileId) {
+export function phListFileGrants(fileId) {
   const file = (getPaperHubDataset().files || []).find((f) => f.id === fileId);
   return file && Array.isArray(file.acl) ? file.acl : [];
 }
 
-function phGrantFolderAccess(folderId, grant) {
+export function phGrantFolderAccess(folderId, grant) {
   const entry = phNormalizeGrant(grant);
   if (!entry) return false;
   const dataset = getPaperHubDataset();
@@ -839,7 +844,7 @@ function phGrantFolderAccess(folderId, grant) {
   return true;
 }
 
-function phRevokeFolderAccess(folderId, principalType, principalId) {
+export function phRevokeFolderAccess(folderId, principalType, principalId) {
   const dataset = getPaperHubDataset();
   const folder = (dataset.folders || []).find((f) => f.id === folderId);
   if (!folder || !Array.isArray(folder.acl)) return false;
@@ -850,14 +855,14 @@ function phRevokeFolderAccess(folderId, principalType, principalId) {
   return true;
 }
 
-function phListFolderGrants(folderId) {
+export function phListFolderGrants(folderId) {
   const folder = (getPaperHubDataset().folders || []).find((f) => f.id === folderId);
   return folder && Array.isArray(folder.acl) ? folder.acl : [];
 }
 
 // --- Shareable links (server-side; tokens never live in the dataset read) ---
 
-async function phShareApi(method, path, body) {
+export async function phShareApi(method, path, body) {
   const headers = { "Content-Type": "application/json" };
   const token = getAuthToken();
   if (token) headers.Authorization = "Bearer " + token;
@@ -873,21 +878,21 @@ async function phShareApi(method, path, body) {
   return data;
 }
 
-function createShareLinkViaApi(resourceType, resourceId, options = {}) {
+export function createShareLinkViaApi(resourceType, resourceId, options = {}) {
   return phShareApi("POST", "/api/share", { resourceType, resourceId, ...options });
 }
 
-function revokeShareLinkViaApi(token) {
+export function revokeShareLinkViaApi(token) {
   return phShareApi("DELETE", `/api/share/${encodeURIComponent(token)}`);
 }
 
-function listMyShareLinksViaApi() {
+export function listMyShareLinksViaApi() {
   return phShareApi("GET", "/api/share/mine");
 }
 
 // Record a user action in the server-side audit log (best-effort, non-blocking).
 // The server stamps the verified actor; the client only supplies the action.
-function logActivityViaApi(action, details = {}) {
+export function logActivityViaApi(action, details = {}) {
   try {
     const headers = { "Content-Type": "application/json" };
     const token = getAuthToken();
@@ -902,7 +907,7 @@ function logActivityViaApi(action, details = {}) {
   }
 }
 
-function listActivityViaApi(params = {}) {
+export function listActivityViaApi(params = {}) {
   const qs = new URLSearchParams(params).toString();
   const headers = {};
   const token = getAuthToken();
@@ -913,7 +918,7 @@ function listActivityViaApi(params = {}) {
 }
 
 // Absolute URL a recipient opens to view a shared resource.
-function shareLinkUrl(token) {
+export function shareLinkUrl(token) {
   return new URL(
     `/pages/share/view.html?token=${encodeURIComponent(token)}`,
     window.location.origin,
@@ -925,21 +930,21 @@ function shareLinkUrl(token) {
  * group is granted access to a file/folder at once.
  * ------------------------------------------------------------------------- */
 
-function phListTeams() {
+export function phListTeams() {
   return getPaperHubDataset().teams || [];
 }
 
-function phGetTeam(teamId) {
+export function phGetTeam(teamId) {
   return (getPaperHubDataset().teams || []).find((t) => t.id === teamId) || null;
 }
 
-function phListMyTeams(userId) {
+export function phListMyTeams(userId) {
   return (getPaperHubDataset().teams || []).filter(
     (t) => t.ownerId === userId || (t.members || []).some((m) => m.userId === userId),
   );
 }
 
-function phCreateTeam({ name, ownerId } = {}) {
+export function phCreateTeam({ name, ownerId } = {}) {
   const clean = String(name || "").trim();
   if (!clean) return null;
   const dataset = getPaperHubDataset();
@@ -958,7 +963,7 @@ function phCreateTeam({ name, ownerId } = {}) {
   return team;
 }
 
-function phAddTeamMember(teamId, userId, role = "member") {
+export function phAddTeamMember(teamId, userId, role = "member") {
   const team = phGetTeam(teamId);
   if (!team || !userId) return false;
   team.members = team.members || [];
@@ -969,7 +974,7 @@ function phAddTeamMember(teamId, userId, role = "member") {
   return true;
 }
 
-function phRemoveTeamMember(teamId, userId) {
+export function phRemoveTeamMember(teamId, userId) {
   const team = phGetTeam(teamId);
   if (!team || !Array.isArray(team.members)) return false;
   team.members = team.members.filter((m) => m.userId !== userId);
@@ -977,7 +982,7 @@ function phRemoveTeamMember(teamId, userId) {
   return true;
 }
 
-function phDeleteTeam(teamId) {
+export function phDeleteTeam(teamId) {
   const dataset = getPaperHubDataset();
   const before = (dataset.teams || []).length;
   dataset.teams = (dataset.teams || []).filter((t) => t.id !== teamId);
@@ -993,7 +998,7 @@ function phDeleteTeam(teamId) {
  * copy of the affected files and persists once.
  * ------------------------------------------------------------------------- */
 
-function phMoveFiles(ids, folderId = null) {
+export function phMoveFiles(ids, folderId = null) {
   const set = new Set(ids || []);
   if (!set.size) return;
   const dataset = getPaperHubDataset();
@@ -1010,7 +1015,7 @@ function phMoveFiles(ids, folderId = null) {
   persistPaperHubData();
 }
 
-function phTagFiles(ids, tagId) {
+export function phTagFiles(ids, tagId) {
   const set = new Set(ids || []);
   if (!set.size || !tagId) return;
   const dataset = getPaperHubDataset();
@@ -1026,7 +1031,7 @@ function phTagFiles(ids, tagId) {
   persistPaperHubData();
 }
 
-function phDeleteFiles(ids) {
+export function phDeleteFiles(ids) {
   const set = new Set(ids || []);
   if (!set.size) return;
   const dataset = getPaperHubDataset();
@@ -1047,7 +1052,7 @@ function phDeleteFiles(ids) {
  * deletedAt; phListTrash surfaces them for restore or permanent deletion.
  * ------------------------------------------------------------------------- */
 
-function phTrashFiles(ids, deletedBy) {
+export function phTrashFiles(ids, deletedBy) {
   const set = new Set(ids || []);
   if (!set.size) return 0;
   const dataset = getPaperHubDataset();
@@ -1072,11 +1077,11 @@ function phTrashFiles(ids, deletedBy) {
   return count;
 }
 
-function phTrashFile(fileId, deletedBy) {
+export function phTrashFile(fileId, deletedBy) {
   return phTrashFiles([fileId], deletedBy) > 0;
 }
 
-function phRestoreFile(fileId) {
+export function phRestoreFile(fileId) {
   const dataset = getPaperHubDataset();
   let found = false;
   const apply = (list) =>
@@ -1097,7 +1102,7 @@ function phRestoreFile(fileId) {
   return found;
 }
 
-function phListTrash(ownerId) {
+export function phListTrash(ownerId) {
   return (getPaperHubDataset().files || []).filter(
     (f) => f.deletedAt && (!ownerId || f.ownerId === ownerId),
   );
@@ -1106,7 +1111,7 @@ function phListTrash(ownerId) {
 // Storage usage for a user: bytes used by non-trashed owned files vs the limit.
 // Unlimited by default (Number.MAX_SAFE_INTEGER) — only an explicit
 // user.storage.limitBytes or meta.quotaDefaults.limitBytes caps the user.
-function phStorageUsage(userId) {
+export function phStorageUsage(userId) {
   const dataset = getPaperHubDataset();
   const owner = (dataset.users || []).find((u) => u.id === userId);
   const files = (dataset.files || []).filter((f) => f.ownerId === userId && !f.deletedAt);
@@ -1127,11 +1132,11 @@ function phStorageUsage(userId) {
 
 // Permanently remove files. The record is dropped (its binary is reclaimed by
 // the server's orphan prune on the next write).
-function phPurgeFiles(ids) {
+export function phPurgeFiles(ids) {
   return phDeleteFiles(ids);
 }
 
-function phPurgeFile(fileId) {
+export function phPurgeFile(fileId) {
   return phDeleteFiles([fileId]);
 }
 
@@ -1140,19 +1145,19 @@ function phPurgeFile(fileId) {
  * The legacy free-text file.tags[] is left untouched.
  * ------------------------------------------------------------------------- */
 
-function phTagSlug(label) {
+export function phTagSlug(label) {
   return String(label || "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
 
-function phListTags() {
+export function phListTags() {
   return getPaperHubDataset().tags || [];
 }
 
 // Create a tag, or return the existing one with the same slug (idempotent).
-function phCreateTag({ label, color = null, createdBy = null } = {}) {
+export function phCreateTag({ label, color = null, createdBy = null } = {}) {
   const clean = String(label || "").trim();
   if (!clean) return null;
   const slug = phTagSlug(clean);
@@ -1178,12 +1183,12 @@ function phCreateTag({ label, color = null, createdBy = null } = {}) {
 }
 
 // Resolve a file's/folder's tagIds to tag objects.
-function phResolveTags(tagIds) {
+export function phResolveTags(tagIds) {
   const tags = getPaperHubDataset().tags || [];
   return (tagIds || []).map((id) => tags.find((t) => t.id === id)).filter(Boolean);
 }
 
-function phTagFile(fileId, tagId) {
+export function phTagFile(fileId, tagId) {
   const dataset = getPaperHubDataset();
   let found = false;
   const apply = (list) =>
@@ -1200,7 +1205,7 @@ function phTagFile(fileId, tagId) {
   return found;
 }
 
-function phUntagFile(fileId, tagId) {
+export function phUntagFile(fileId, tagId) {
   const dataset = getPaperHubDataset();
   let found = false;
   const apply = (list) =>
@@ -1216,7 +1221,7 @@ function phUntagFile(fileId, tagId) {
   return found;
 }
 
-function phTagFolder(folderId, tagId) {
+export function phTagFolder(folderId, tagId) {
   const dataset = getPaperHubDataset();
   const folder = (dataset.folders || []).find((f) => f.id === folderId);
   if (!folder) return false;
@@ -1228,7 +1233,7 @@ function phTagFolder(folderId, tagId) {
   return true;
 }
 
-function phUntagFolder(folderId, tagId) {
+export function phUntagFolder(folderId, tagId) {
   const dataset = getPaperHubDataset();
   const folder = (dataset.folders || []).find((f) => f.id === folderId);
   if (!folder || !Array.isArray(folder.tagIds)) return false;
@@ -1237,7 +1242,7 @@ function phUntagFolder(folderId, tagId) {
   return true;
 }
 
-function phUpdateUser(userId, patch) {
+export function phUpdateUser(userId, patch) {
   const dataset = getPaperHubDataset();
   const user = phFindUser(userId);
   if (user) {
@@ -1254,7 +1259,7 @@ function phUpdateUser(userId, patch) {
   return user;
 }
 
-function phAddUser(account, profile) {
+export function phAddUser(account, profile) {
   const dataset = getPaperHubDataset();
   dataset.authAccounts = dataset.authAccounts || [];
   dataset.users = dataset.users || [];
@@ -1268,7 +1273,7 @@ function phAddUser(account, profile) {
 // records are left pointing at a user that no longer exists. Also scrubs the
 // removed user's files/reviews from any OTHER user's embedded copies (e.g. an
 // officer's review list). Returns true if a matching user/account was removed.
-function phRemoveUser(userId) {
+export function phRemoveUser(userId) {
   if (!userId) return false;
   const dataset = getPaperHubDataset();
   const existed =
@@ -1305,7 +1310,7 @@ function phRemoveUser(userId) {
   return true;
 }
 
-function phSetReviewStatus(reviewId, status) {
+export function phSetReviewStatus(reviewId, status) {
   if (!PH_REVIEW_STATUSES.includes(status)) return;
   const dataset = getPaperHubDataset();
   const { fid, rid } = phResolveLink(dataset, { reviewId });
@@ -1315,7 +1320,7 @@ function phSetReviewStatus(reviewId, status) {
   persistPaperHubData();
 }
 
-function phAddReviewComment(reviewId, comment) {
+export function phAddReviewComment(reviewId, comment) {
   const text = String(comment?.text || "").trim();
   if (!text) return;
   const safeComment = { ...comment, text: text.slice(0, PH_MAX_COMMENT_LENGTH) };
@@ -1335,7 +1340,7 @@ function phAddReviewComment(reviewId, comment) {
   persistPaperHubData();
 }
 
-function phSetNotificationRead(userId, notificationId, read = true) {
+export function phSetNotificationRead(userId, notificationId, read = true) {
   const user = phFindUser(userId);
   if (user) {
     (user.notifications || []).forEach((notification) => {
@@ -1345,7 +1350,7 @@ function phSetNotificationRead(userId, notificationId, read = true) {
   persistPaperHubData();
 }
 
-function phMarkAllNotificationsRead(userId) {
+export function phMarkAllNotificationsRead(userId) {
   const user = phFindUser(userId);
   if (user) {
     (user.notifications || []).forEach((notification) => {
@@ -1355,7 +1360,7 @@ function phMarkAllNotificationsRead(userId) {
   persistPaperHubData();
 }
 
-function phSaveUserPreferences(userId, prefs) {
+export function phSaveUserPreferences(userId, prefs) {
   const user = phFindUser(userId);
   if (user) {
     user.preferences = Object.assign({}, user.preferences, prefs);
@@ -1365,7 +1370,7 @@ function phSaveUserPreferences(userId, prefs) {
   persistPaperHubData();
 }
 
-function phSetPaymentStatus(userId, status) {
+export function phSetPaymentStatus(userId, status) {
   const user = phFindUser(userId);
   if (user && user.payment) {
     user.payment.status = status;
@@ -1380,7 +1385,7 @@ function phSetPaymentStatus(userId, status) {
 
 // Mark a file as freshly updated (used by "Restore version"); bumps it to the
 // top of the most-recent ordering everywhere it appears.
-function phTouchFile(fileId) {
+export function phTouchFile(fileId) {
   const dataset = getPaperHubDataset();
   const now = new Date().toISOString();
   const apply = (files) =>
@@ -1392,7 +1397,7 @@ function phTouchFile(fileId) {
   persistPaperHubData();
 }
 
-function showToast(message, type = "info", duration = 3000) {
+export function showToast(message, type = "info", duration = 3000) {
   const container = getOrCreateToastContainer();
   const toastId = "toast-" + Date.now();
 
@@ -1419,7 +1424,7 @@ function showToast(message, type = "info", duration = 3000) {
   return toastId;
 }
 
-function getOrCreateToastContainer() {
+export function getOrCreateToastContainer() {
   let container = getElement("#toast-container");
   if (!container) {
     container = createElement(
@@ -1436,23 +1441,23 @@ function getOrCreateToastContainer() {
   return container;
 }
 
-function showSuccess(message, duration = 3000) {
+export function showSuccess(message, duration = 3000) {
   return showToast(message, "success", duration);
 }
 
-function showError(message, duration = 3000) {
+export function showError(message, duration = 3000) {
   return showToast(message, "error", duration);
 }
 
-function showWarning(message, duration = 3000) {
+export function showWarning(message, duration = 3000) {
   return showToast(message, "warning", duration);
 }
 
-function showInfo(message, duration = 3000) {
+export function showInfo(message, duration = 3000) {
   return showToast(message, "info", duration);
 }
 
-function fadeIn(element, duration = 300) {
+export function fadeIn(element, duration = 300) {
   element.style.opacity = "0";
   element.style.transition = `opacity ${duration}ms ease-in`;
   setTimeout(() => {
@@ -1460,7 +1465,7 @@ function fadeIn(element, duration = 300) {
   }, 10);
 }
 
-function fadeOut(element, callback, duration = 300) {
+export function fadeOut(element, callback, duration = 300) {
   element.style.opacity = "1";
   element.style.transition = `opacity ${duration}ms ease-out`;
   element.style.opacity = "0";
@@ -1469,7 +1474,7 @@ function fadeOut(element, callback, duration = 300) {
   }, duration);
 }
 
-const StorageKey = {
+export const StorageKey = {
   USER: "paperhub-user",
   USER_ROLE: "paperhub-user-role",
   THEME: "paperhub-theme",
@@ -1479,13 +1484,13 @@ const StorageKey = {
 };
 
 // The current access token (sent as a Bearer header on API calls), or "".
-function getAuthToken() {
+export function getAuthToken() {
   const token = getStorage(StorageKey.TOKEN, "");
   return typeof token === "string" ? token : "";
 }
 
 // Attach the bearer token to an open XHR (no-op when signed out).
-function attachAuthHeader(request) {
+export function attachAuthHeader(request) {
   const token = getAuthToken();
   if (token) {
     request.setRequestHeader("Authorization", "Bearer " + token);
@@ -1494,7 +1499,7 @@ function attachAuthHeader(request) {
 
 // Exchange the stored refresh token for a fresh access token (synchronously, so
 // the sync-XHR data layer can retry a 401 in place). Returns true on success.
-function refreshAccessTokenSync() {
+export function refreshAccessTokenSync() {
   try {
     const refreshToken = getStorage(StorageKey.REFRESH, "");
     if (!refreshToken) {
@@ -1524,7 +1529,7 @@ function refreshAccessTokenSync() {
 
 // Rotate the signed-in user's password through the server (credentials never
 // live in the browser). Resolves on success, throws a displayable message.
-async function changePasswordViaApi(currentPassword, newPassword) {
+export async function changePasswordViaApi(currentPassword, newPassword) {
   const headers = { "Content-Type": "application/json" };
   const token = getAuthToken();
   if (token) {
@@ -1542,7 +1547,7 @@ async function changePasswordViaApi(currentPassword, newPassword) {
   return data;
 }
 
-function setStorage(key, value) {
+export function setStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
     return true;
@@ -1552,7 +1557,7 @@ function setStorage(key, value) {
   }
 }
 
-function getStorage(key, defaultValue = null) {
+export function getStorage(key, defaultValue = null) {
   try {
     const value = localStorage.getItem(key);
     if (value === null) {
@@ -1570,7 +1575,7 @@ function getStorage(key, defaultValue = null) {
   }
 }
 
-function removeStorage(key) {
+export function removeStorage(key) {
   try {
     localStorage.removeItem(key);
     return true;
@@ -1580,7 +1585,7 @@ function removeStorage(key) {
   }
 }
 
-function clearStorage() {
+export function clearStorage() {
   try {
     localStorage.clear();
     return true;
@@ -1590,29 +1595,29 @@ function clearStorage() {
   }
 }
 
-function setCurrentUser(user) {
+export function setCurrentUser(user) {
   setStorage(StorageKey.USER, user);
   setStorage(StorageKey.USER_ROLE, user.role);
 }
 
-function getCurrentUser() {
+export function getCurrentUser() {
   return getStorage(StorageKey.USER);
 }
 
-function getCurrentUserRole() {
+export function getCurrentUserRole() {
   return getStorage(StorageKey.USER_ROLE, "user");
 }
 
-function isLoggedIn() {
+export function isLoggedIn() {
   return !!getCurrentUser();
 }
 
-function hasRole(role) {
+export function hasRole(role) {
   const currentRole = getCurrentUserRole();
   return typeof role === "string" ? currentRole === role : role.includes(currentRole);
 }
 
-function logout() {
+export function logout() {
   // Best-effort server-side revocation of the refresh token.
   try {
     const refreshToken = getStorage(StorageKey.REFRESH, "");
@@ -1632,7 +1637,7 @@ function logout() {
   window.location.href = resolveAppPath("pages/auth/login.html");
 }
 
-function setTheme(isDark) {
+export function setTheme(isDark) {
   const html = document.documentElement;
   if (isDark) {
     html.classList.add("dark");
@@ -1647,24 +1652,24 @@ function setTheme(isDark) {
   }
 }
 
-function getTheme() {
+export function getTheme() {
   const stored = getStorage(StorageKey.THEME);
   if (stored) return stored === "dark";
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
 
-function toggleTheme() {
+export function toggleTheme() {
   const isDark = !getTheme();
   setTheme(isDark);
   return isDark;
 }
 
-function initializeTheme() {
+export function initializeTheme() {
   const isDark = getTheme();
   setTheme(isDark);
 }
 
-function formatDate(date, format = "MMM DD, YYYY") {
+export function formatDate(date, format = "MMM DD, YYYY") {
   const d = new Date(date);
   if (isNaN(d.getTime())) return "Invalid date";
 
@@ -1698,14 +1703,14 @@ function formatDate(date, format = "MMM DD, YYYY") {
     .replace("ss", ss);
 }
 
-function formatTime(date) {
+export function formatTime(date) {
   const d = new Date(date);
   const hours = String(d.getHours()).padStart(2, "0");
   const minutes = String(d.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
 }
 
-function timeAgo(date) {
+export function timeAgo(date) {
   const now = new Date();
   const then = new Date(date);
   const seconds = Math.floor((now - then) / 1000);
@@ -1718,16 +1723,16 @@ function timeAgo(date) {
   return formatDate(date);
 }
 
-function isValidEmail(email) {
+export function isValidEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
 }
 
-function isValidPassword(password) {
+export function isValidPassword(password) {
   return password && password.length >= 8;
 }
 
-function isValidUrl(url) {
+export function isValidUrl(url) {
   try {
     new URL(url);
     return true;
@@ -1736,7 +1741,7 @@ function isValidUrl(url) {
   }
 }
 
-function formatFileSize(bytes) {
+export function formatFileSize(bytes) {
   const value = Math.max(0, Number(bytes) || 0);
   if (value === 0) return "0 Bytes";
   const k = 1024;
@@ -1745,14 +1750,14 @@ function formatFileSize(bytes) {
   return Math.round((value / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 }
 
-function formatCurrency(amount, currency = "USD") {
+export function formatCurrency(amount, currency = "USD") {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency,
   }).format(amount);
 }
 
-function slugify(text) {
+export function slugify(text) {
   return text
     .toLowerCase()
     .trim()
@@ -1761,7 +1766,7 @@ function slugify(text) {
     .replace(/^-+|-+$/g, "");
 }
 
-function debounce(func, delay) {
+export function debounce(func, delay) {
   let timeoutId;
   return function (...args) {
     clearTimeout(timeoutId);
@@ -1769,7 +1774,7 @@ function debounce(func, delay) {
   };
 }
 
-function throttle(func, limit) {
+export function throttle(func, limit) {
   let inThrottle;
   return function (...args) {
     if (!inThrottle) {
@@ -1780,11 +1785,11 @@ function throttle(func, limit) {
   };
 }
 
-function delay(ms) {
+export function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function copyToClipboard(text) {
+export function copyToClipboard(text) {
   navigator.clipboard
     .writeText(text)
     .then(() => {
@@ -1795,11 +1800,11 @@ function copyToClipboard(text) {
     });
 }
 
-function generateId(prefix = "id") {
+export function generateId(prefix = "id") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
-function redirect(url, delay = 0) {
+export function redirect(url, delay = 0) {
   if (delay > 0) {
     setTimeout(() => {
       window.location.href = url;
@@ -1809,24 +1814,24 @@ function redirect(url, delay = 0) {
   }
 }
 
-function reloadPage() {
+export function reloadPage() {
   window.location.reload();
 }
 
-function goBack() {
+export function goBack() {
   window.history.back();
 }
 
-function getCurrentPage() {
+export function getCurrentPage() {
   return window.location.pathname;
 }
 
-function getQueryParam(param) {
+export function getQueryParam(param) {
   const searchParams = new URLSearchParams(window.location.search);
   return searchParams.get(param);
 }
 
-function getAllQueryParams() {
+export function getAllQueryParams() {
   const searchParams = new URLSearchParams(window.location.search);
   const params = {};
   for (const [key, value] of searchParams) {
@@ -1839,7 +1844,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeTheme();
 });
 
-async function apiCall(endpoint) {
+export async function apiCall(endpoint) {
   const delay = 500;
 
   return new Promise((resolve) => {
@@ -1861,7 +1866,7 @@ async function apiCall(endpoint) {
   });
 }
 
-function escapeHtml(value) {
+export function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -1870,7 +1875,7 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
-function normalizeRole(role) {
+export function normalizeRole(role) {
   const safeRole = String(role || "user").toLowerCase();
 
   if (safeRole === "admin") return "admin";
@@ -1879,36 +1884,36 @@ function normalizeRole(role) {
   return "user";
 }
 
-const PAPERHUB_ROLE_STORAGE_KEY = "paperhub-role";
-const PAPERHUB_CURRENT_USER_STORAGE_KEY = "paperhub-current-user-id";
+export const PAPERHUB_ROLE_STORAGE_KEY = "paperhub-role";
+export const PAPERHUB_CURRENT_USER_STORAGE_KEY = "paperhub-current-user-id";
 
 // Always read users from the live dataset so additions (admin add-user) and
 // any array replacement by the ph* mutators are reflected, including after
 // SPA-style navigation. Capturing the array once would go stale.
-function getMockUsers() {
+export function getMockUsers() {
   const dataset = getPaperHubDataset();
   return Array.isArray(dataset.users) ? dataset.users : [];
 }
 
-function getDashboardRole(role) {
+export function getDashboardRole(role) {
   return normalizeRole(role);
 }
 
-function getDashboardRouteForRole(role) {
+export function getDashboardRouteForRole(role) {
   const dashboardRole = getDashboardRole(role);
   return resolveAppPath(`pages/dashboard/${dashboardRole}.html`);
 }
 
-function getDashboardRouteForUser(user) {
+export function getDashboardRouteForUser(user) {
   return getDashboardRouteForRole(user?.role || "user");
 }
 
-function getMockUserById(userId) {
+export function getMockUserById(userId) {
   const value = String(userId || "");
   return getMockUsers().find((user) => user.id === value) || null;
 }
 
-function getMockUserByIdentity(user) {
+export function getMockUserByIdentity(user) {
   if (!user) {
     return null;
   }
@@ -1939,12 +1944,12 @@ function getMockUserByIdentity(user) {
   );
 }
 
-function getDefaultUserForRole(role) {
+export function getDefaultUserForRole(role) {
   const normalizedRole = normalizeRole(role);
   return getMockUsers().find((user) => user.role === normalizedRole) || null;
 }
 
-function setStoredRole(role) {
+export function setStoredRole(role) {
   const normalizedRole = normalizeRole(role);
   try {
     localStorage.setItem(PAPERHUB_ROLE_STORAGE_KEY, normalizedRole);
@@ -1954,7 +1959,7 @@ function setStoredRole(role) {
   return normalizedRole;
 }
 
-function getStoredRole() {
+export function getStoredRole() {
   try {
     const storedRole = localStorage.getItem(PAPERHUB_ROLE_STORAGE_KEY);
     if (storedRole) {
@@ -1967,7 +1972,7 @@ function getStoredRole() {
   }
 }
 
-function setCurrentUserById(userId) {
+export function setCurrentUserById(userId) {
   const selectedUser = getMockUserById(userId);
   const nextUser = selectedUser || getDefaultUserForRole(getStoredRole());
 
@@ -1989,7 +1994,7 @@ function setCurrentUserById(userId) {
   return nextUser;
 }
 
-function getCurrentUserData() {
+export function getCurrentUserData() {
   const authUser = getCurrentUser();
   if (authUser && authUser.name && authUser.email) {
     const matchedUser = getMockUserByIdentity(authUser);
@@ -2034,7 +2039,7 @@ function getCurrentUserData() {
   return fallbackUser;
 }
 
-function getCurrentUserFiles() {
+export function getCurrentUserFiles() {
   const user = getCurrentUserData();
   if (!user) return [];
   // The global dataset.files is the source of truth — an upload always lands
@@ -2052,17 +2057,17 @@ function getCurrentUserFiles() {
   return [...byId.values()];
 }
 
-function getCurrentUserPayment() {
+export function getCurrentUserPayment() {
   const user = getCurrentUserData();
   return user ? user.payment || null : null;
 }
 
-function getCurrentUserNotifications() {
+export function getCurrentUserNotifications() {
   const user = getCurrentUserData();
   return user && Array.isArray(user.notifications) ? user.notifications : [];
 }
 
-function canAccessPathByRole(pathname, role) {
+export function canAccessPathByRole(pathname, role) {
   const path = String(pathname || "").toLowerCase();
   const normalizedRole = normalizeRole(role);
 
@@ -2097,7 +2102,7 @@ function canAccessPathByRole(pathname, role) {
   return true;
 }
 
-function enforcePageAccess() {
+export function enforcePageAccess() {
   const currentUser = getCurrentUserData();
   const hasAccess = canAccessPathByRole(window.location.pathname, currentUser.role);
   if (hasAccess) {
@@ -2108,3 +2113,185 @@ function enforcePageAccess() {
   window.location.replace(redirectPath);
   return false;
 }
+
+// Compatibility mirrors: legacy inline handlers, dynamically injected
+// classic scripts and the test harness read these as window globals.
+// (Native ESM consumers should import the bindings above instead.)
+Object.assign(window, {
+  getElement,
+  getElements,
+  createElement,
+  addClass,
+  removeClass,
+  toggleClass,
+  hasClass,
+  removeElement,
+  showElement,
+  hideElement,
+  addEvent,
+  removeEvent,
+  PAPERHUB_APP_BASE_URL,
+  resolveAppPath,
+  PAPERHUB_DATA_URL,
+  paperhubApiUrl,
+  fetchDatasetSync,
+  getPaperHubDataset,
+  refreshPaperHubDataset,
+  handleSessionExpired,
+  sendAuthedSync,
+  persistPaperHubData,
+  resetPaperHubData,
+  notifyPaperHubChange,
+  setPaperHubRefresh,
+  phFindUser,
+  phMapReviewToFileStatus,
+  phMapFileToReviewStatus,
+  phApplyFileStatus,
+  phApplyReviewStatus,
+  phResolveLink,
+  phRecomputeDashboardStats,
+  PH_REVIEW_STATUSES,
+  PH_FILE_STATUSES,
+  PH_MAX_NAME_LENGTH,
+  PH_MAX_COMMENT_LENGTH,
+  phSanitizeName,
+  phAddFile,
+  phUpdateFileStatus,
+  phDeleteFile,
+  phSetFilePageCount,
+  phListFolders,
+  phGetFolder,
+  phComputeFolderPath,
+  phReindexFolderPaths,
+  phAddFolder,
+  phRenameFolder,
+  phDeleteFolder,
+  phRenameFile,
+  phMoveFile,
+  copyFileContentSync,
+  phCopyName,
+  phCopyFile,
+  phListVersions,
+  phAddFileVersion,
+  phRestoreVersion,
+  PH_PERMISSIONS,
+  PH_PRINCIPAL_TYPES,
+  phNormalizeGrant,
+  phUpsertGrant,
+  phGrantFileAccess,
+  phRevokeFileAccess,
+  phListFileGrants,
+  phGrantFolderAccess,
+  phRevokeFolderAccess,
+  phListFolderGrants,
+  phShareApi,
+  createShareLinkViaApi,
+  revokeShareLinkViaApi,
+  listMyShareLinksViaApi,
+  logActivityViaApi,
+  listActivityViaApi,
+  shareLinkUrl,
+  phListTeams,
+  phGetTeam,
+  phListMyTeams,
+  phCreateTeam,
+  phAddTeamMember,
+  phRemoveTeamMember,
+  phDeleteTeam,
+  phMoveFiles,
+  phTagFiles,
+  phDeleteFiles,
+  phTrashFiles,
+  phTrashFile,
+  phRestoreFile,
+  phListTrash,
+  phStorageUsage,
+  phPurgeFiles,
+  phPurgeFile,
+  phTagSlug,
+  phListTags,
+  phCreateTag,
+  phResolveTags,
+  phTagFile,
+  phUntagFile,
+  phTagFolder,
+  phUntagFolder,
+  phUpdateUser,
+  phAddUser,
+  phRemoveUser,
+  phSetReviewStatus,
+  phAddReviewComment,
+  phSetNotificationRead,
+  phMarkAllNotificationsRead,
+  phSaveUserPreferences,
+  phSetPaymentStatus,
+  phTouchFile,
+  showToast,
+  getOrCreateToastContainer,
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo,
+  fadeIn,
+  fadeOut,
+  StorageKey,
+  getAuthToken,
+  attachAuthHeader,
+  refreshAccessTokenSync,
+  changePasswordViaApi,
+  setStorage,
+  getStorage,
+  removeStorage,
+  clearStorage,
+  setCurrentUser,
+  getCurrentUser,
+  getCurrentUserRole,
+  isLoggedIn,
+  hasRole,
+  logout,
+  setTheme,
+  getTheme,
+  toggleTheme,
+  initializeTheme,
+  formatDate,
+  formatTime,
+  timeAgo,
+  isValidEmail,
+  isValidPassword,
+  isValidUrl,
+  formatFileSize,
+  formatCurrency,
+  slugify,
+  debounce,
+  throttle,
+  delay,
+  copyToClipboard,
+  generateId,
+  redirect,
+  reloadPage,
+  goBack,
+  getCurrentPage,
+  getQueryParam,
+  getAllQueryParams,
+  apiCall,
+  escapeHtml,
+  normalizeRole,
+  PAPERHUB_ROLE_STORAGE_KEY,
+  PAPERHUB_CURRENT_USER_STORAGE_KEY,
+  getMockUsers,
+  getDashboardRole,
+  getDashboardRouteForRole,
+  getDashboardRouteForUser,
+  getMockUserById,
+  getMockUserByIdentity,
+  getDefaultUserForRole,
+  setStoredRole,
+  getStoredRole,
+  setCurrentUserById,
+  getCurrentUserData,
+  getCurrentUserFiles,
+  getCurrentUserPayment,
+  getCurrentUserNotifications,
+  canAccessPathByRole,
+  enforcePageAccess,
+});

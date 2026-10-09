@@ -10,6 +10,137 @@ const SEED = readFileSync(join(ROOT, "tests/fixtures/dataset.json"), "utf8");
 
 const loadScript = (name) => readFileSync(join(ROOT, "public/assets/js", name), "utf8");
 
+/**
+ * ESM-subset loader for converted page scripts.
+ *
+ * Production loads page scripts as native ES modules (`type="module"`).
+ * jsdom cannot execute modules, so the harness evaluates them in the shared
+ * jsdom scope with a source transform that preserves exact runtime semantics:
+ *
+ *  - depth-first dependency order (matches native module graph evaluation),
+ *  - `import { a, b as c }` lines are stripped (deps already evaluated above;
+ *    `as` aliases become `const` bindings),
+ *  - `export` keywords are stripped (declarations stay in the shared scope,
+ *    exactly like classic scripts), and every export is mirrored to `window`
+ *    (mirrors what the modules assign explicitly for inline handlers/tests).
+ *
+ * Authoring subset (enforced by tests/esm-imports.test.mjs — keep in sync):
+ * only single-line `import { a, b as c } from "<relative>"`, only
+ * `export [async] function/const/let` and `export { a, b as c }`. No `export default`,
+ * no `import *`, no dynamic `import()`, no `import.meta`.
+ */
+const ESM_IMPORT_RE = /^[ \t]*import\s*\{([^}]+)\}\s*from\s*["']([^"']+)["'];?[ \t]*$/gm;
+const ESM_EXPORT_LIST_RE = /^[ \t]*export\s*\{([^}]+)\}[ \t]*;?[ \t]*$/gm;
+
+function isESM(source) {
+  return (
+    ESM_IMPORT_RE.test(source) ||
+    /^[ \t]*export\s+((async\s+)?(function|const|let)|\{)/m.test(source)
+  );
+}
+
+function resolveScriptKey(baseKey, spec) {
+  const baseDir = baseKey.includes("/") ? baseKey.slice(0, baseKey.lastIndexOf("/")) : "";
+  const parts = [];
+  for (const seg of `${baseDir}/${spec}`.split("/")) {
+    if (!seg || seg === ".") continue;
+    if (seg === "..") parts.pop();
+    else parts.push(seg);
+  }
+  return parts.join("/");
+}
+
+function parseImportNames(clause) {
+  return clause
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => {
+      const seg = p.split(/\s+as\s+/);
+      return seg.length === 2
+        ? { original: seg[0].trim(), alias: seg[1].trim() }
+        : { original: seg[0].trim(), alias: null };
+    });
+}
+
+function parseExportListNames(clause) {
+  return parseImportNames(clause).map(({ original, alias }) => alias || original);
+}
+
+function collectExportNames(source) {
+  const names = [];
+  for (const m of source.matchAll(/^[ \t]*export\s+(?:async\s+)?function\s+([A-Za-z_$][\w$]*)/gm)) {
+    names.push(m[1]);
+  }
+  for (const m of source.matchAll(/^[ \t]*export\s+(?:const|let)\s+([A-Za-z_$][\w$]*)/gm)) {
+    names.push(m[1]);
+  }
+  for (const m of source.matchAll(ESM_EXPORT_LIST_RE)) {
+    names.push(...parseExportListNames(m[1]));
+  }
+  return [...new Set(names)];
+}
+
+/**
+ * Evaluate classic + ESM-subset scripts in dependency order inside the jsdom
+ * window scope. ESM evaluation is single-pass per bootPage call, so module
+ * state is fresh on every boot — exactly like a real page reload.
+ */
+function runScriptsInOrder(window, scripts) {
+  const run = window.eval.bind(window);
+  const done = new Set();
+  const inProgress = new Set();
+
+  const evaluate = (key) => {
+    if (done.has(key)) return;
+    if (inProgress.has(key)) return; // import cycle: live bindings resolve at call time
+    inProgress.add(key);
+
+    let source = loadScript(key);
+    if (!isESM(source)) {
+      run(source);
+      done.add(key);
+      return;
+    }
+
+    const aliases = [];
+    for (const m of source.matchAll(ESM_IMPORT_RE)) {
+      evaluate(resolveScriptKey(key, m[2].trim()));
+      for (const { original, alias } of parseImportNames(m[1])) {
+        if (alias && alias !== original) aliases.push(`const ${alias} = ${original};`);
+      }
+    }
+
+    ESM_IMPORT_RE.lastIndex = 0;
+    source = source.replace(ESM_IMPORT_RE, "");
+    const exportNames = collectExportNames(source);
+    ESM_EXPORT_LIST_RE.lastIndex = 0;
+    source = source.replace(ESM_EXPORT_LIST_RE, (m, clause) => {
+      const extra = [];
+      for (const { original, alias } of parseImportNames(clause)) {
+        if (alias && alias !== original) extra.push(`const ${alias} = ${original};`);
+      }
+      return extra.length ? extra.join("\n") : "";
+    });
+    source = source
+      .replace(/^[ \t]*export\s+async\s+function\s+/gm, "async function ")
+      .replace(/^[ \t]*export\s+function\s+/gm, "function ")
+      .replace(/^[ \t]*export\s+const\s+/gm, "const ")
+      .replace(/^[ \t]*export\s+let\s+/gm, "let ");
+
+    if (aliases.length) run(aliases.join("\n"));
+    run(source);
+    // Mirror exports to window (same assignments the modules make explicitly
+    // for inline handlers; harmless for function declarations).
+    if (exportNames.length) {
+      run(`Object.assign(window, { ${exportNames.join(", ")} });`);
+    }
+    done.add(key);
+  };
+
+  for (const s of scripts) evaluate(s);
+}
+
 /** Parsed copy of the seed dataset (fresh object each call). */
 export function seedDataset() {
   return JSON.parse(SEED);
@@ -304,8 +435,7 @@ export function bootPage(
   window.URL.createObjectURL = () => "blob:mock";
   window.URL.revokeObjectURL = () => {};
 
-  const run = window.eval.bind(window);
-  for (const s of scripts) run(loadScript(s));
+  runScriptsInOrder(window, scripts);
 
   const user = seedDataset().users.find((u) => u.role === role);
   window.getCurrentUser = () => ({

@@ -1,6 +1,38 @@
-const COMPONENT_CACHE_KEY = "paperhub-component-cache";
+/* global refreshReviewQueue, refreshReviewDetails, loadFileList */
+// Page-module live bindings above: review.js / file.js mirror these to window
+// and main.js calls them behind typeof guards, so no static import exists
+// (this also avoids a main<->review import cycle).
+import {
+  addEvent,
+  enforcePageAccess,
+  escapeHtml,
+  formatDate,
+  formatFileSize,
+  getCurrentUserData,
+  getCurrentUserPayment,
+  getDashboardRouteForUser,
+  getElement,
+  getPaperHubDataset,
+  logActivityViaApi,
+  normalizeRole,
+  phAddUser,
+  phFindUser,
+  phRemoveUser,
+  phSetPaymentStatus,
+  phSetReviewStatus,
+  phUpdateUser,
+  refreshPaperHubDataset,
+  resolveAppPath,
+  setPaperHubRefresh,
+  showError,
+  showInfo,
+  showSuccess,
+  slugify,
+} from "./utils.js";
 
-const PAPERHUB_MAIN_APP_BASE_URL = (() => {
+export const COMPONENT_CACHE_KEY = "paperhub-component-cache";
+
+export const PAPERHUB_MAIN_APP_BASE_URL = (() => {
   const currentScript =
     document.currentScript ||
     Array.from(document.scripts || []).find(
@@ -14,7 +46,7 @@ const PAPERHUB_MAIN_APP_BASE_URL = (() => {
   return new URL("./", window.location.href).href;
 })();
 
-function resolveMainAppUrl(path) {
+export function resolveMainAppUrl(path) {
   const normalizedPath = String(path || "").replace(/^\/+/, "");
   return new URL(normalizedPath, PAPERHUB_MAIN_APP_BASE_URL).href;
 }
@@ -34,7 +66,7 @@ function resolveMainAppUrl(path) {
   }
 })();
 
-async function initApp() {
+export async function initApp() {
   ensureStyles([
     "assets/css/components/navbar.css",
     "assets/css/components/sidebar.css",
@@ -98,7 +130,7 @@ async function initApp() {
 // Re-render every dynamic surface on the current page after a data change, so a
 // status update reflects everywhere at once (files list, review queue/details,
 // dashboards) without a reload.
-function paperhubSyncRefresh() {
+export function paperhubSyncRefresh() {
   const body = document.body;
   try {
     if (body.classList.contains("review-queue-page") && typeof refreshReviewQueue === "function") {
@@ -117,7 +149,7 @@ function paperhubSyncRefresh() {
   applyCurrentUserPageData();
 }
 
-function ensureStyles(styles) {
+export function ensureStyles(styles) {
   styles.forEach((href) => {
     const resolvedHref = resolveMainAppUrl(href);
     const alreadyLoaded = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some(
@@ -136,7 +168,7 @@ function ensureStyles(styles) {
   });
 }
 
-function applyCurrentUserPageData() {
+export function applyCurrentUserPageData() {
   if (typeof getCurrentUserData !== "function") {
     return;
   }
@@ -383,11 +415,11 @@ function applyCurrentUserPageData() {
   }
 }
 
-function phPill(label, variant) {
+export function phPill(label, variant) {
   return `<span class="accent-pill pill-${variant}">${escapeHtml(label)}</span>`;
 }
 
-function phStatusVariant(status) {
+export function phStatusVariant(status) {
   const value = String(status || "").toLowerCase();
   if (["completed", "approved", "active", "settled"].includes(value)) return "emerald";
   if (["reviewing", "in-review", "pending", "pending approval", "revision"].includes(value))
@@ -396,32 +428,32 @@ function phStatusVariant(status) {
   return "slate";
 }
 
-function phPriorityVariant(priority) {
+export function phPriorityVariant(priority) {
   const value = String(priority || "").toLowerCase();
   if (value === "high") return "rose";
   if (value === "medium") return "amber";
   return "slate";
 }
 
-function phRoleVariant(role) {
+export function phRoleVariant(role) {
   const value = String(role || "").toLowerCase();
   if (value === "admin") return "rose";
   if (value === "officer") return "amber";
   return "sky";
 }
 
-function phRoleLabel(role) {
+export function phRoleLabel(role) {
   const map = { admin: "Admin", officer: "Officer", user: "Student" };
   return map[String(role || "").toLowerCase()] || "User";
 }
 
-function phStatusLabel(status) {
+export function phStatusLabel(status) {
   const value = String(status || "").toLowerCase();
   if (value === "in-review") return "In Review";
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-function phTimeAgo(iso) {
+export function phTimeAgo(iso) {
   if (!iso) return "Recently";
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "Recently";
@@ -437,7 +469,7 @@ function phTimeAgo(iso) {
   return `${months}mo ago`;
 }
 
-function phFileEmoji(name) {
+export function phFileEmoji(name) {
   const ext = String(name || "")
     .split(".")
     .pop()
@@ -449,19 +481,19 @@ function phFileEmoji(name) {
   return "📎";
 }
 
-function phRenderInto(selector, html) {
+export function phRenderInto(selector, html) {
   document.querySelectorAll(selector).forEach((node) => {
     node.innerHTML = html;
   });
 }
 
-function phSetText(selector, value) {
+export function phSetText(selector, value) {
   document.querySelectorAll(selector).forEach((node) => {
     node.textContent = String(value);
   });
 }
 
-function renderDashboard(user) {
+export function renderDashboard(user) {
   const dataset = typeof getPaperHubDataset === "function" ? getPaperHubDataset() : {};
   const allFiles = Array.isArray(dataset.files) ? dataset.files : [];
   const allUsers = Array.isArray(dataset.users) ? dataset.users : [];
@@ -506,7 +538,7 @@ function renderDashboard(user) {
   }
 }
 
-function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
+export function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
   const emptyRow = (cols, message) =>
     `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
 
@@ -605,7 +637,7 @@ function renderAdminDashboard(allUsers, allFiles, queue, dataset) {
   phRenderInto("[data-admin-infrastructure]", infraRows);
 }
 
-function setupAdminUserManagement() {
+export function setupAdminUserManagement() {
   const modal = document.getElementById("adminUserModal");
   const addButton = document.getElementById("adminAddUserBtn");
   const form = document.getElementById("adminUserForm");
@@ -746,7 +778,7 @@ function setupAdminUserManagement() {
   });
 }
 
-function buildNewUserProfile(account) {
+export function buildNewUserProfile(account) {
   const today = new Date().toISOString().slice(0, 10);
   return {
     id: account.id,
@@ -785,7 +817,7 @@ function buildNewUserProfile(account) {
   };
 }
 
-function renderOfficerDashboard(queue) {
+export function renderOfficerDashboard(queue) {
   const emptyRow = (cols, message) =>
     `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
 
@@ -852,7 +884,7 @@ function renderOfficerDashboard(queue) {
 }
 
 // The highest-priority item still awaiting a decision.
-function officerNextReview() {
+export function officerNextReview() {
   const dataset = getPaperHubDataset();
   const queue = Array.isArray(dataset.reviewQueue) ? dataset.reviewQueue : [];
   const open = queue.filter((r) => r.status === "pending" || r.status === "in-review");
@@ -860,7 +892,7 @@ function officerNextReview() {
   return open.sort((a, b) => weight(b.priority) - weight(a.priority))[0] || null;
 }
 
-function setupOfficerShortcuts() {
+export function setupOfficerShortcuts() {
   document.querySelectorAll("[data-officer-action]").forEach((button) => {
     if (button.dataset.bound === "true") return;
     button.dataset.bound = "true";
@@ -897,7 +929,7 @@ function setupOfficerShortcuts() {
   });
 }
 
-function renderUserDashboard(user, userFiles) {
+export function renderUserDashboard(user, userFiles) {
   const emptyRow = (cols, message) =>
     `<tr><td colspan="${cols}" class="muted">${escapeHtml(message)}</td></tr>`;
 
@@ -947,7 +979,7 @@ function renderUserDashboard(user, userFiles) {
   }
 }
 
-function renderPaymentPage(user) {
+export function renderPaymentPage(user) {
   const payment = user.payment || {};
   const files = Array.isArray(user.files) ? user.files : [];
   const notifications = Array.isArray(user.notifications) ? user.notifications : [];
@@ -1116,7 +1148,7 @@ function renderPaymentPage(user) {
   }
 }
 
-async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage }) {
+export async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage }) {
   if (typeof window[globalKey] === "function") {
     return;
   }
@@ -1124,6 +1156,8 @@ async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage
   if (!document.querySelector(selector)) {
     await new Promise((resolve) => {
       const script = document.createElement("script");
+      // navbar.js is an ES module (all page scripts are type="module").
+      script.type = "module";
       script.src = resolveMainAppUrl(src);
       script.dataset[datasetKey] = "true";
       script.onload = resolve;
@@ -1136,7 +1170,7 @@ async function ensureScript({ globalKey, selector, src, datasetKey, errorMessage
   }
 }
 
-async function loadComponents() {
+export async function loadComponents() {
   const componentsToLoad = [
     { id: "navbar-container", file: "components/navbar.html" },
     { id: "sidebar-container", file: "components/sidebar.html" },
@@ -1217,7 +1251,7 @@ async function loadComponents() {
   }
 }
 
-function initNavbar() {
+export function initNavbar() {
   const tryInit = (attemptsLeft) => {
     try {
       if (typeof window.initPaperHubNavbar === "function") {
@@ -1240,7 +1274,7 @@ function initNavbar() {
   tryInit(5);
 }
 
-function initPageSpecificForms() {
+export function initPageSpecificForms() {
   const registerSimpleForm = (formId, successMessage, options = {}) => {
     const form = getElement(`#${formId}`);
     if (!form) {
@@ -1279,3 +1313,39 @@ function initPageSpecificForms() {
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
+
+// Compatibility mirrors: legacy inline handlers, dynamically injected
+// classic scripts and the test harness read these as window globals.
+// (Native ESM consumers should import the bindings above instead.)
+Object.assign(window, {
+  COMPONENT_CACHE_KEY,
+  PAPERHUB_MAIN_APP_BASE_URL,
+  resolveMainAppUrl,
+  initApp,
+  paperhubSyncRefresh,
+  ensureStyles,
+  applyCurrentUserPageData,
+  phPill,
+  phStatusVariant,
+  phPriorityVariant,
+  phRoleVariant,
+  phRoleLabel,
+  phStatusLabel,
+  phTimeAgo,
+  phFileEmoji,
+  phRenderInto,
+  phSetText,
+  renderDashboard,
+  renderAdminDashboard,
+  setupAdminUserManagement,
+  buildNewUserProfile,
+  renderOfficerDashboard,
+  officerNextReview,
+  setupOfficerShortcuts,
+  renderUserDashboard,
+  renderPaymentPage,
+  ensureScript,
+  loadComponents,
+  initNavbar,
+  initPageSpecificForms,
+});
