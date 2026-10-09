@@ -16,6 +16,14 @@ import {
   normalizeRole,
 } from "../public/assets/js/esm/validate.mjs";
 import { apiFetch, getAuthHeaders, paperhubApiUrl } from "../public/assets/js/esm/api.mjs";
+import { createDatasetStore } from "../public/assets/js/esm/store.mjs";
+import {
+  clearSession,
+  readPrefs,
+  readSession,
+  writePrefs,
+  writeSession,
+} from "../public/assets/js/esm/session.mjs";
 
 describe("esm/format.mjs — parity with legacy utils.js", () => {
   it("escapeHtml escapes all HTML metacharacters", () => {
@@ -129,5 +137,99 @@ describe("esm/api.mjs — async replacement for sync XHR", () => {
       apiFetch("/api/dataset", { origin: "http://x.test", fetchImpl }),
       /Insufficient permissions/,
     );
+  });
+});
+
+describe("esm/store.mjs — async replacement for sync globals", () => {
+  const stubServer = () => {
+    const calls = [];
+    const fetchImpl = async (url, init = {}) => {
+      calls.push({ url, init });
+      if (url.endsWith("/api/dataset")) {
+        return { ok: true, status: 200, text: async () => '{"files":[],"users":[]}' };
+      }
+      return { ok: true, status: 200, text: async () => '{"ok":true}' };
+    };
+    return { calls, fetchImpl };
+  };
+
+  it("refresh() caches + notifies subscribers; unsubscribe works", async () => {
+    const { fetchImpl } = stubServer();
+    const store = createDatasetStore({ origin: "http://x.test", fetchImpl });
+    assert.equal(store.get(), null);
+    const seen = [];
+    const off = store.subscribe((d) => seen.push(d));
+    await store.refresh();
+    assert.deepEqual(store.get(), { files: [], users: [] });
+    assert.equal(seen.length, 1);
+    off();
+    await store.refresh();
+    assert.equal(seen.length, 1);
+  });
+
+  it("patchFileStatus hits the scoped endpoint then refreshes", async () => {
+    const { calls, fetchImpl } = stubServer();
+    const store = createDatasetStore({ origin: "http://x.test", fetchImpl });
+    await store.patchFileStatus("file-1", "completed");
+    assert.match(calls[0].url, /\/api\/files\/file-1\/status$/);
+    assert.equal(calls[0].init.method, "PATCH");
+    assert.deepEqual(JSON.parse(calls[0].init.body), { status: "completed" });
+    assert.match(calls[1].url, /\/api\/dataset$/);
+  });
+
+  it("saveMyPreferences + setNotificationRead hit scoped endpoints", async () => {
+    const { calls, fetchImpl } = stubServer();
+    const store = createDatasetStore({ origin: "http://x.test", fetchImpl });
+    await store.saveMyPreferences({ theme: "dark" });
+    assert.match(calls[0].url, /\/api\/users\/me\/preferences$/);
+    await store.setNotificationRead("n1", true);
+    assert.match(calls[2].url, /\/api\/users\/me\/notifications\/n1$/);
+    assert.deepEqual(JSON.parse(calls[2].init.body), { read: true });
+  });
+});
+
+describe("esm/session.mjs — consolidated keys with legacy fallback", () => {
+  const memStore = (seed = {}) => {
+    const data = { ...seed };
+    return {
+      getItem: (k) => (k in data ? data[k] : null),
+      setItem: (k, v) => {
+        data[k] = String(v);
+      },
+      removeItem: (k) => {
+        delete data[k];
+      },
+      _data: data,
+    };
+  };
+
+  it("reads legacy keys when consolidated key is absent", () => {
+    const s = memStore({
+      "paperhub-user": JSON.stringify({ id: "u1", role: "admin" }),
+      "paperhub-auth-token": JSON.stringify("tok"),
+    });
+    const sess = readSession(s);
+    assert.equal(sess.user.id, "u1");
+    assert.equal(sess.token, "tok");
+    assert.equal(sess.refreshToken, "");
+  });
+
+  it("dual-writes consolidated + legacy keys; clear removes both", () => {
+    const s = memStore();
+    writeSession(s, { user: { id: "u2", role: "user" }, token: "a", refreshToken: "r" });
+    assert.equal(readSession(s).token, "a");
+    assert.ok("paperhub-session:v1" in s._data);
+    assert.ok("paperhub-auth-token" in s._data);
+    clearSession(s);
+    assert.equal(readSession(s).user, null);
+    assert.equal(readSession(s).token, "");
+  });
+
+  it("prefs fall back to legacy theme key", () => {
+    const s = memStore({ "paperhub-theme": "dark" });
+    assert.equal(readPrefs(s).theme, "dark");
+    writePrefs(s, { theme: "light", sidebar: "collapsed" });
+    assert.equal(readPrefs(s).theme, "light");
+    assert.equal(readPrefs(s).sidebar, "collapsed");
   });
 });

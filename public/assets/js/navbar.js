@@ -4,6 +4,11 @@
   const SIDEBAR_COLLAPSED_BREAKPOINT = 768;
   const SIDEBAR_EXPANDED_BREAKPOINT = 1200;
   let hasPartialRoutingSetup = false;
+  // Race-safety for partial navigation: rapid clicks / popstate can overlap
+  // in-flight fetches. The sequence drops stale responses and the controller
+  // aborts the previous request so only the latest navigation commits.
+  let paperhubNavSeq = 0;
+  let paperhubNavController = null;
 
   const TOP_NAV_ROUTE_GROUPS = {
     dashboard: [
@@ -434,14 +439,37 @@
   }
 
   async function loadMainContentFromUrl(url, { replaceState = false } = {}) {
+    // Supersede any in-flight navigation before starting a new one.
+    const myNav = ++paperhubNavSeq;
+    if (paperhubNavController) {
+      try {
+        paperhubNavController.abort();
+      } catch (err) {
+        /* abort is best-effort */
+      }
+    }
+    paperhubNavController = typeof AbortController !== "undefined" ? new AbortController() : null;
+    // A stale preview modal must never survive navigation (it portals to
+    // document.body, outside the swapped <main>).
     try {
-      const res = await fetch(url, { credentials: "same-origin" });
+      if (typeof closeFilePreview === "function") closeFilePreview();
+    } catch (err) {
+      /* preview cleanup is best-effort */
+    }
+    try {
+      const res = await fetch(url, {
+        credentials: "same-origin",
+        signal: paperhubNavController ? paperhubNavController.signal : undefined,
+      });
+      // A newer navigation started while we were fetching — drop this one.
+      if (myNav !== paperhubNavSeq) return;
       if (!res.ok) {
         window.location.href = url;
         return;
       }
 
       const text = await res.text();
+      if (myNav !== paperhubNavSeq) return;
       const parser = new DOMParser();
       const doc = parser.parseFromString(text, "text/html");
 
@@ -541,6 +569,8 @@
         if (scriptPromises.length > 0) {
           await Promise.all(scriptPromises);
         }
+        // Scripts may have taken a while — re-check before committing to DOM.
+        if (myNav !== paperhubNavSeq) return;
 
         const runPageInitializer = () => {
           const body = document.body;
@@ -623,6 +653,9 @@
 
       window.location.href = url;
     } catch (err) {
+      // Aborts are intentional (superseded navigation) — the newer navigation
+      // owns the URL now, so never fall back to a full reload for them.
+      if (err && (err.name === "AbortError" || myNav !== paperhubNavSeq)) return;
       console.warn("Partial navigation failed, falling back to full reload", err);
       window.location.href = url;
     }

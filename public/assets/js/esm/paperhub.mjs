@@ -29,3 +29,15 @@ export {
 } from "./validate.mjs";
 
 export { paperhubApiUrl, getAuthHeaders, apiFetch, apiGet } from "./api.mjs";
+
+export { createDatasetStore } from "./store.mjs";
+
+export {
+  SESSION_KEY,
+  PREFS_KEY,
+  readSession,
+  writeSession,
+  clearSession,
+  readPrefs,
+  writePrefs,
+} from "./session.mjs";
